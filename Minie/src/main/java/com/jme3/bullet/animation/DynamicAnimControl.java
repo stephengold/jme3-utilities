@@ -43,7 +43,6 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -107,6 +106,10 @@ public class DynamicAnimControl
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
      */
     final private static Quaternion rotateIdentity = new Quaternion();
+    /**
+     * local copy of {@link com.jme3.math.Transform#IDENTITY}
+     */
+    final private static Transform transformIdentity = new Transform();
     /**
      * local copy of {@link com.jme3.math.Vector3f#ZERO}
      */
@@ -1255,7 +1258,7 @@ public class DynamicAnimControl
 
     /**
      * Create a jointed AttachmentLink for the named bone and add it to the
-     * attachLinks map.
+     * attachmentLinks map.
      *
      * @param boneName the name of the attachment bone to be linked (not null)
      * @param skeletonControl (not null)
@@ -1271,6 +1274,8 @@ public class DynamicAnimControl
 
         Spatial attachModel = getAttachmentModel(boneName);
         attachModel = (Spatial) Misc.deepCopy(attachModel);
+        List<Vector3f> vertexLocations
+                = RagUtils.vertexLocations(attachModel, null);
 
         Node node = skeletonControl.getAttachmentsNode(boneName);
         node.attachChild(attachModel);
@@ -1284,15 +1289,18 @@ public class DynamicAnimControl
         } else {
             manager = boneLinks.get(managerName);
         }
+        /*
+         * Create the collision shape.
+         */
+        Vector3f center = RagUtils.center(vertexLocations, null);
+        CollisionShape shape = RagUtils.createShape(transformIdentity, center,
+                vertexLocations);
 
-        CollisionShape shape
-                = CollisionShapeFactory.createDynamicMeshShape(attachModel);
         float mass = attachmentMass(boneName);
         PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
 
-        Vector3f localOffset = translateIdentity;// TODO estimate center of mass
         AttachmentLink link = new AttachmentLink(this, bone, manager,
-                attachModel, rigidBody, localOffset);
+                attachModel, rigidBody, center);
         attachmentLinks.put(boneName, link);
     }
 

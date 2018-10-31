@@ -41,6 +41,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -417,6 +418,43 @@ public class RagUtils {
             }
             nameSet.add(boneName);
         }
+    }
+
+    /**
+     * Enumerate the world locations of all vertices in the specified subtree of
+     * the scene graph. Note: recursive!
+     *
+     * @param subtree (may be null)
+     * @param storeResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    public static List<Vector3f> vertexLocations(Spatial subtree,
+            List<Vector3f> storeResult) {
+        List<Vector3f> result = (storeResult == null)
+                ? new ArrayList<Vector3f>(100) : storeResult;
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            int numVertices = mesh.getVertexCount();
+            Vector3f meshLocation = new Vector3f();
+            for (int vertexI = 0; vertexI < numVertices; ++vertexI) {
+                MyMesh.vertexVector3f(mesh, VertexBuffer.Type.Position, vertexI,
+                        meshLocation);
+                Vector3f worldLocation
+                        = geometry.localToWorld(meshLocation, null);
+                result.add(worldLocation);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                vertexLocations(child, result);
+            }
+        }
+
+        return result;
     }
 
     /**
