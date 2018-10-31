@@ -29,9 +29,10 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jme3.bullet.collision;
+package com.jme3.bullet.animation;
 
-import com.jme3.animation.Bone;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 
 /**
  * Interface to receive notifications whenever a ragdoll collides with another
@@ -40,14 +41,13 @@ import com.jme3.animation.Bone;
  * @author Nehon
  */
 public interface RagdollCollisionListener {
-
     /**
      * Invoked when a collision involving a ragdoll occurs.
      *
-     * @param bone the ragdoll bone that collided (not null)
+     * @param physicsLink the physics link that collided (not null)
      * @param object the collision object that collided with the bone (not null)
      * @param event other event details (not null)
      */
-    void collide(Bone bone, PhysicsCollisionObject object,
+    void collide(PhysicsLink physicsLink, PhysicsCollisionObject object,
             PhysicsCollisionEvent event);
 }

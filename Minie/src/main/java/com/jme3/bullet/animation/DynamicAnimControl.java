@@ -39,7 +39,6 @@ import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.RagdollCollisionListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
@@ -1095,30 +1094,20 @@ public class DynamicAnimControl
          * other collision object involved.
          */
         boolean thisControlInvolved = false;
-        Bone bone = null;
+        PhysicsLink physicsLink = null;
         PhysicsCollisionObject otherPco = null;
         PhysicsCollisionObject pcoA = event.getObjectA();
         PhysicsCollisionObject pcoB = event.getObjectB();
 
         Object userA = pcoA.getUserObject();
         Object userB = pcoB.getUserObject();
-        if (userA instanceof BoneLink) {
-            BoneLink boneLink = (BoneLink) userA;
+        if (userA instanceof PhysicsLink) {
+            physicsLink = (PhysicsLink) userA;
             thisControlInvolved = true;
-            bone = boneLink.getBone();
             otherPco = pcoB;
-        } else if (userA == this) { // TODO check for torsoLink
+        } else if (userB instanceof PhysicsLink) {
+            physicsLink = (PhysicsLink) userB;
             thisControlInvolved = true;
-            bone = null;
-            otherPco = pcoB;
-        } else if (userB instanceof BoneLink) {
-            BoneLink boneLink = (BoneLink) userB;
-            thisControlInvolved = true;
-            bone = boneLink.getBone();
-            otherPco = pcoA;
-        } else if (userB == this) {
-            thisControlInvolved = true;
-            bone = null;
             otherPco = pcoA;
         }
         /*
@@ -1133,7 +1122,7 @@ public class DynamicAnimControl
          */
         if (thisControlInvolved) {
             for (RagdollCollisionListener listener : listeners) {
-                listener.collide(bone, otherPco, event);
+                listener.collide(physicsLink, otherPco, event);
             }
         }
     }
