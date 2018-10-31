@@ -106,7 +106,7 @@ public class MyObject {
                 builder.append(text);
             } else if (user instanceof PhysicsLink) {
                 PhysicsLink link = (PhysicsLink) user;
-                String name = link.getBoneName();
+                String name = link.boneName();
                 String text = MyString.quote(name);
                 builder.append(text);
             }

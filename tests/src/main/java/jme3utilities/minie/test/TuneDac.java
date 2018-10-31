@@ -249,7 +249,7 @@ public class TuneDac extends ActionApplication {
             model.rotate(0f, -tpf, 0f);
         }
 
-        String text = wiggleLink.getBoneName();
+        String text = wiggleLink.boneName();
         if (wiggleLink.getParent() == null) {
             text = "TORSO";
         }
@@ -386,7 +386,7 @@ public class TuneDac extends ActionApplication {
 
     private void setWiggleLink(PhysicsLink link) {
         if (wiggleLink != link) {
-            String name = link.getBoneName();
+            String name = link.boneName();
             logger.log(Level.SEVERE, "change link to {0}",
                     MyString.quote(name));
             wiggleLink = link;

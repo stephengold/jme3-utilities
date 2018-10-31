@@ -871,7 +871,7 @@ public class DynamicAnimControl
         boneLinkList
                 = ic.readSavableArrayList("boneLinkList", new ArrayList<>());
         for (BoneLink link : boneLinkList) {
-            String name = link.getBoneName();
+            String name = link.boneName();
             boneLinks.put(name, link);
         }
 
@@ -880,7 +880,7 @@ public class DynamicAnimControl
                 = ic.readSavableArray("attachmentLinks", new AttachmentLink[0]);
         for (Savable savable : savableArray) {
             AttachmentLink link = (AttachmentLink) savable;
-            String name = link.getBoneName();
+            String name = link.boneName();
             attachmentLinks.put(name, link);
         }
 
@@ -1271,7 +1271,7 @@ public class DynamicAnimControl
         if (link == torsoLink) {
             linkName = torsoName;
         } else {
-            linkName = link.getBoneName();
+            linkName = link.boneName();
         }
 
         List<String> result = new ArrayList<>(8);

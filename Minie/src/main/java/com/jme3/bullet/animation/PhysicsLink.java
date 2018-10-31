@@ -151,6 +151,18 @@ abstract public class PhysicsLink
     // new methods exposed
 
     /**
+     * Read the name of the corresponding bone.
+     *
+     * @return the bone name (not null)
+     */
+    public String boneName() {
+        String boneName = bone.getName();
+
+        assert boneName != null;
+        return boneName;
+    }
+
+    /**
      * Count this link's immediate children in the link hierarchy.
      *
      * @return the count (&ge;0)
@@ -176,18 +188,6 @@ abstract public class PhysicsLink
     final public Bone getBone() {
         assert bone != null;
         return bone;
-    }
-
-    /**
-     * Read the name of the corresponding bone.
-     *
-     * @return the bone name (not null)
-     */
-    public String getBoneName() {
-        String boneName = bone.getName();
-
-        assert boneName != null;
-        return boneName;
     }
 
     /**

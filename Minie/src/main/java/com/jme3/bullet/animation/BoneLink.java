@@ -153,12 +153,12 @@ public class BoneLink extends PhysicsLink {
                 = childToWorld.transformInverseVector(pivotWorld, null);
         Matrix3f rotParent = childToParent.getRotation().toRotationMatrix();
         Matrix3f rotChild = matrixIdentity;
-        // TODO try Point2PointJoint or HingeJoint
+        // TODO try HingeJoint or ConeJoint
         SixDofJoint joint = new SixDofJoint(parentBody, childBody, pivotParent,
                 pivotChild, rotParent, rotChild, true);
         super.setJoint(joint);
 
-        String name = getBoneName();
+        String name = boneName();
         RangeOfMotion rangeOfMotion = getControl().getJointLimits(name);
         rangeOfMotion.setupJoint(joint, false, false, false);
 
@@ -232,7 +232,7 @@ public class BoneLink extends PhysicsLink {
 
         super.setDynamic(uniformAcceleration);
 
-        String name = getBoneName();
+        String name = boneName();
         RangeOfMotion preset = getControl().getJointLimits(name);
         preset.setupJoint((SixDofJoint) getJoint(), lockX, lockY, lockZ);
 
