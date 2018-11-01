@@ -56,6 +56,8 @@ import jme3utilities.Validate;
  * <li>Lowerlimit &lt; Upperlimit &rarr; axis it limited in that range</li>
  * </ul>
  *
+ * TODO try btGeneric6DofSpring2Constraint
+ *
  * @author normenhansen
  */
 public class SixDofSpringJoint extends SixDofJoint {

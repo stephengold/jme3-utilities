@@ -35,14 +35,14 @@ import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 
 /**
- * Interface to receive notifications whenever a ragdoll collides with another
- * physics object.
+ * Interface to receive notifications whenever a linked rigid body in a
+ * DynamicAnimControl collides with another physics object.
  *
  * @author Nehon
  */
 public interface RagdollCollisionListener {
     /**
-     * Invoked when a collision involving a ragdoll occurs.
+     * Invoked when a collision involving a linked rigid body occurs.
      *
      * @param physicsLink the physics link that collided (not null)
      * @param object the collision object that collided with the bone (not null)
