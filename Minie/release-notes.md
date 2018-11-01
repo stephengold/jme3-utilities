@@ -1,5 +1,37 @@
 # release notes for the Minie library and related tests
 
+## Version 0.4.1 released on TBD
+
+More design and implementation changes to `DynamicAnimControl`.
+
+ + Added support for attachments nodes.
+ + The center of a linked rigid body can be offset from its joint.
+ + Major refactoring to base `AttachmentLink`, `BoneLink`, and `TorsoLink`
+   on a new `PhysicsLink` class.
+ + Renamed `JointPreset` class to `RangeOfMotion`.
+ + Refer to links by reference instead of by name.
+ + Added a `forceKinematic` option to the `freeze()` methods.
+ + Renamed many methods.
+ + Preserve animation data during a `rebuild()`.
+ + Moved `RagdollCollisionListener` to the `com.jme3.bullet.animation` package.
+ + Completed the `read()` and `write()` methods.
+ + Lowered the default for `torsoMass` from 15 to 1.
+ + Fixed bug where `DynamicAnimControl` reported collisions from other DACs.
+ + Catch any attempt to set local physics.
+ + Don't re-order controls unless it's necessary.
+
+Other noteworthy changes to Minie:
+
+ + Improved dumps and descriptions of joints, physics controls,
+   collision objects, and rigid bodies.
+ + Standardized `getPivot()` methods to avoid aliasing.
+ + Avoided aliasing in `setViewPorts()` methods.
+ + Added a `getTargetVelocity()` method to `TranslationalLimitMotor`.
+ + Added an `activate()` method to `PhysicsCollisionObject`.
+ + Fixed a bug that caused an assertion failure while reading
+   a `CompoundCollisionShape`.
+ + Updated native shared libraries to v1.0.12 of `jme3-bullet-native`.
+
 ## Version 0.4.0 released on 20 October 2018
 
 Extensive design and implementation changes to `KinematicRagdollControl`
