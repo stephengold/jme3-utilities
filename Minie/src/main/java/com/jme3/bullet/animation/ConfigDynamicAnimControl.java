@@ -48,7 +48,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,7 +131,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
             throw new IllegalStateException(
                     "Cannot attach a model while added to a spatial.");
         }
-        if (isLinkName(boneName)) {
+        if (hasAttachmentLink(boneName)) {
             logger2.log(Level.WARNING, "Bone {0} already has an attachment.",
                     MyString.quote(boneName));
         }
@@ -213,7 +212,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * @param boneName the name of the bone (not null, not empty)
      */
     public void detach(String boneName) {
-        if (!isBoneLinkName(boneName)) {
+        if (!hasBoneLink(boneName)) {
             String msg = "No attachment associated with "
                     + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
@@ -256,7 +255,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * @return the pre-existing instance (not null)
      */
     public RangeOfMotion getJointLimits(String boneName) {
-        if (!isBoneLinkName(boneName)) {
+        if (!hasBoneLink(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
@@ -280,36 +279,34 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Test whether the named bone link exists.
+     * Test whether an AttachmentLink exists for the named bone.
      *
-     * @param name (may be null)
+     * @param boneName the name of the associated bone (may be null)
      * @return true if found, otherwise false
      */
-    public boolean isBoneLinkName(String name) {
+    public boolean hasAttachmentLink(String boneName) {
         boolean result;
-        if (name == null) {
+        if (boneName == null) {
             result = false;
         } else {
-            result = massMap.containsKey(name);
+            result = attachMassMap.containsKey(boneName);
         }
 
         return result;
     }
 
     /**
-     * Test whether the named bone/torso link exists.
+     * Test whether a BoneLink exists for the named bone.
      *
-     * @param name (may be null)
+     * @param boneName the name of the bone (may be null)
      * @return true if found, otherwise false
      */
-    public boolean isLinkName(String name) {
+    public boolean hasBoneLink(String boneName) {
         boolean result;
-        if (name == null) {
+        if (boneName == null) {
             result = false;
-        } else if (name.equals(torsoName)) {
-            result = true;
         } else {
-            result = massMap.containsKey(name);
+            result = massMap.containsKey(boneName);
         }
 
         return result;
@@ -334,7 +331,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
             throw new IllegalStateException(
                     "Cannot link a bone while added to a spatial.");
         }
-        if (isLinkName(boneName)) {
+        if (hasBoneLink(boneName)) {
             logger2.log(Level.WARNING, "Bone {0} is already linked.",
                     MyString.quote(boneName));
         }
@@ -358,20 +355,20 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Read the mass of the named bone/torso link.
+     * Read the mass of the named bone/torso.
      *
-     * @param linkName the name of the link (not null)
+     * @param boneName the name of the bone/torso (not null)
      * @return the mass (&gt;0)
      */
-    public float mass(String linkName) {
+    public float mass(String boneName) {
         float mass;
 
-        if (torsoName.equals(linkName)) {
+        if (torsoName.equals(boneName)) {
             mass = torsoMass;
-        } else if (isBoneLinkName(linkName)) {
-            mass = massMap.get(linkName);
+        } else if (hasBoneLink(boneName)) {
+            mass = massMap.get(boneName);
         } else {
-            String msg = "No link named " + MyString.quote(linkName);
+            String msg = "No bone/torso named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
 
@@ -416,7 +413,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      */
     public void setJointLimits(String boneName, RangeOfMotion rom) {
         Validate.nonNull(rom, "range of motion");
-        if (!isBoneLinkName(boneName)) {
+        if (!hasBoneLink(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
@@ -425,20 +422,20 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Alter the mass of the named bone/torso link.
+     * Alter the mass of the named bone/torso.
      *
-     * @param linkName the name of the link (not null)
+     * @param boneName the name of the bone/torso (not null)
      * @param mass the desired mass (&gt;0)
      */
-    public void setMass(String linkName, float mass) {
+    public void setMass(String boneName, float mass) {
         Validate.positive(mass, "mass");
 
-        if (torsoName.equals(linkName)) {
+        if (torsoName.equals(boneName)) {
             torsoMass = mass;
-        } else if (isBoneLinkName(linkName)) {
-            massMap.put(linkName, mass);
+        } else if (hasBoneLink(boneName)) {
+            massMap.put(boneName, mass);
         } else {
-            String msg = "No link named " + MyString.quote(linkName);
+            String msg = "No bone/torso named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
     }
@@ -462,15 +459,35 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Unlink the named bone.
+     * Unlink the AttachmentLink of the named bone.
      * <p>
      * Allowed only when the control is NOT added to a spatial.
      *
-     * @param boneName the name of the linked bone to unlink (not null, not
-     * empty)
+     * @param boneName the name of the associated bone (not null, not empty)
      */
-    public void unlink(String boneName) {
-        if (!isBoneLinkName(boneName)) {
+    public void unlinkAttachment(String boneName) {
+        if (!hasAttachmentLink(boneName)) {
+            String msg = "No attachment bone named " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+        if (getSpatial() != null) {
+            throw new IllegalStateException(
+                    "Cannot unlink an attachment while added to a spatial.");
+        }
+
+        attachMassMap.remove(boneName);
+        attachModelMap.remove(boneName);
+    }
+
+    /**
+     * Unlink the BoneLink of the named bone.
+     * <p>
+     * Allowed only when the control is NOT added to a spatial.
+     *
+     * @param boneName the name of the bone to unlink (not null, not empty)
+     */
+    public void unlinkBone(String boneName) {
+        if (!hasBoneLink(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
@@ -622,16 +639,18 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     // protected methods
 
     /**
-     * Add unlinked descendants of the specified bone to the specified list.
-     * Note: recursive.
+     * Add unlinked descendants of the specified bone to the specified
+     * collection. Note: recursive.
      *
-     * @param bone (not null, alias created)
-     * @param addResult (not null, modified)
+     * @param startBone the starting bone (not null, unaffected)
+     * @param addResult the collection of bone names to append to (not null,
+     * modified)
      */
-    protected void addUnlinkedDescendants(Bone bone, List<Bone> addResult) {
-        for (Bone childBone : bone.getChildren()) {
+    protected void addUnlinkedDescendants(Bone startBone,
+            Collection<Bone> addResult) {
+        for (Bone childBone : startBone.getChildren()) {
             String childName = childBone.getName();
-            if (!isLinkName(childName)) {
+            if (!hasBoneLink(childName)) {
                 addResult.add(childBone);
                 addUnlinkedDescendants(childBone, addResult);
             }
@@ -642,7 +661,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * Find the manager of the specified bone.
      *
      * @param bone the bone (not null, unaffected)
-     * @return a bone/torso link name (not null)
+     * @return a bone/torso name (not null)
      */
     protected String findManager(Bone bone) {
         Validate.nonNull(bone, "bone");
@@ -650,7 +669,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
         String managerName;
         while (true) {
             String boneName = bone.getName();
-            if (isBoneLinkName(boneName)) {
+            if (hasBoneLink(boneName)) {
                 managerName = boneName;
                 break;
             }
@@ -666,11 +685,11 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Create a map from bone indices to the names of the bone/torso links that
-     * manage them.
+     * Create a map from bone indices to the names of the bones that manage
+     * them.
      *
      * @param skeleton (not null, unaffected)
-     * @return a new array of link names (not null)
+     * @return a new array of bone/torso names (not null)
      */
     protected String[] managerMap(Skeleton skeleton) {
         int numBones = skeleton.getBoneCount();

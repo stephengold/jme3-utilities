@@ -987,7 +987,7 @@ public class DynamicAnimControl
      */
     @Override
     public void setJointLimits(String boneName, RangeOfMotion rom) {
-        if (!isBoneLinkName(boneName)) {
+        if (!hasBoneLink(boneName)) {
             String msg = "No linked bone named " + MyString.quote(boneName);
             throw new IllegalArgumentException(msg);
         }
