@@ -124,14 +124,14 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     public void attach(String boneName, float mass, Spatial model) {
         Validate.nonEmpty(boneName, "bone name");
         Validate.positive(mass, "mass");
-        Validate.nonNull(model, "model");
+        RagUtils.validate(model);
         assert MySpatial.isOrphan(model);
         if (getSpatial() != null) {
             throw new IllegalStateException(
                     "Cannot attach a model while added to a spatial.");
         }
         if (hasAttachmentLink(boneName)) {
-            logger2.log(Level.WARNING, "Bone {0} already has an attachment.",
+            logger2.log(Level.WARNING, "Bone {0} already had an attachment.",
                     MyString.quote(boneName));
         }
 

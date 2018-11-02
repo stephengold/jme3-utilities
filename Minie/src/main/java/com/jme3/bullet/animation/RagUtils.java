@@ -61,6 +61,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import jme3utilities.MyMesh;
 import jme3utilities.MySkeleton;
+import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 
@@ -344,7 +345,7 @@ public class RagUtils {
     }
 
     /**
-     * Validate a skeleton for use in a DynamicAnimControl.
+     * Validate a skeleton for use with DynamicAnimControl.
      *
      * @param skeleton the skeleton to validate (not null, unaffected)
      */
@@ -378,6 +379,27 @@ public class RagUtils {
                 throw new IllegalArgumentException(msg);
             }
             nameSet.add(boneName);
+        }
+    }
+
+    /**
+     * Validate a model for use with DynamicAnimControl.
+     *
+     * @param model the model to validate (not null, unaffected)
+     */
+    public static void validate(Spatial model) {
+        Validate.nonNull(model, "model");
+
+        List<Geometry> geometries
+                = MySpatial.listSpatials(model, Geometry.class, null);
+        if (geometries.isEmpty()) {
+            throw new IllegalArgumentException("No meshes in the model.");
+        }
+        for (Geometry geometry : geometries) {
+            if (geometry.isIgnoreTransform()) {
+                throw new IllegalArgumentException(
+                        "A model geometry ignores transforms.");
+            }
         }
     }
 

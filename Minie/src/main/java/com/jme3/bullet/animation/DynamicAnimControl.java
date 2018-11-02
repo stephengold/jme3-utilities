@@ -73,8 +73,8 @@ import jme3utilities.Validate;
 /**
  * Before adding this control to a spatial, configure it by invoking
  * {@link #link(java.lang.String, float, com.jme3.bullet.animation.RangeOfMotion)}
- * for each bone that should have its own rigid body. Leave some unlinked bones
- * near the root of the skeleton to form the torso of the ragdoll.
+ * for each bone that should have its own rigid body. Leave unlinked bones near
+ * the root of the skeleton to form the torso of the ragdoll.
  * <p>
  * When you add the control to a spatial, it generates a rigid body with a hull
  * collision shape for the torso and another for each linked bone. It also
@@ -86,7 +86,7 @@ import jme3utilities.Validate;
  * (unaffected by forces and collisions). Transitions from dynamic to kinematic
  * can be immediate or gradual.
  *
- * TODO catch ignoreTransforms, ghost mode
+ * TODO ghost mode
  *
  * @author Stephen Gold sgold@sonic.net
  *
@@ -808,6 +808,7 @@ public class DynamicAnimControl
     @Override
     protected void createSpatialData(Spatial spatial) {
         Validate.nonNull(spatial, "controlled spatial");
+        RagUtils.validate(spatial);
 
         SkeletonControl skeletonControl
                 = spatial.getControl(SkeletonControl.class);
@@ -825,7 +826,7 @@ public class DynamicAnimControl
         String[] tempManagerMap = managerMap(skeleton);
         int numBones = skeleton.getBoneCount();
         /*
-         * Temporarily set all local translations and rotations to bind.
+         * Temporarily set all bones' local translations and rotations to bind.
          */
         MySkeleton.setUserControl(skeleton, true);
         Transform[] savedTransforms = new Transform[numBones];
@@ -843,22 +844,19 @@ public class DynamicAnimControl
         MySkeleton.setUserControl(skeleton, false);
         skeleton.updateWorldVectors();
         /*
-         * Find the target meshes and the main bone.  Don't invoke
-         * skeletonControl.getTargets() here, since the SkeletonControl
-         * might not be initialized yet.
+         * Find the target meshes and choose the transform spatial.
+         * Don't invoke SkeletonControl.getTargets() here, since the
+         * SkeletonControl might not be initialized yet.
          */
         List<Mesh> targetList = MySpatial.listAnimatedMeshes(spatial, null);
         Mesh[] targets = new Mesh[targetList.size()];
         targetList.toArray(targets);
-        /*
-         * Analyze the model's coordinate systems.
-         */
         transformer = MySpatial.findAnimatedGeometry(spatial);
         if (transformer == null) {
             transformer = spatial;
         }
         /*
-         * Analyze the model's meshes.
+         * Enumerate mesh-vertex coordinates and assign them to managers.
          */
         Map<String, List<Vector3f>> coordsMap
                 = RagUtils.coordsMap(targets, tempManagerMap);
@@ -868,7 +866,7 @@ public class DynamicAnimControl
         List<Vector3f> vertexLocations = coordsMap.get(torsoName);
         createTorsoLink(vertexLocations, targets);
         /*
-         * Create bone links.
+         * Create bone links without joints.
          */
         String[] linkedBoneNames = listLinkedBoneNames();
         for (String boneName : linkedBoneNames) {
