@@ -425,6 +425,17 @@ abstract public class PhysicsLink
         this.parent = parent;
         parent.children.add(this);
     }
+
+    /**
+     * Alter the rigid body for this link.
+     *
+     * @param body the desired rigid body (not null, alias created)
+     */
+    protected void setRigidBody(PhysicsRigidBody body) {
+        assert body != null;
+        assert rigidBody != null;
+        rigidBody = body;
+    }
     // *************************************************************************
     // JmeCloneable methods
 

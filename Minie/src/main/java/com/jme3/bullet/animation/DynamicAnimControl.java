@@ -977,11 +977,13 @@ public class DynamicAnimControl
         }
 
         for (AttachmentLink link : attachmentLinks.values()) {
-            rigidBody = link.getRigidBody();
-            space.remove(rigidBody);
+            if (!link.isReleased()) {
+                rigidBody = link.getRigidBody();
+                space.remove(rigidBody);
 
-            PhysicsJoint joint = link.getJoint();
-            space.remove(joint);
+                PhysicsJoint joint = link.getJoint();
+                space.remove(joint);
+            }
         }
 
         space.removeCollisionListener(this);

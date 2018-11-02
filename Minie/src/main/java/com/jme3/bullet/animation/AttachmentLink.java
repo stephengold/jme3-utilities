@@ -77,6 +77,10 @@ public class AttachmentLink extends PhysicsLink {
      * local copy of {@link com.jme3.math.Quaternion#IDENTITY}
      */
     final private static Quaternion rotateIdentity = new Quaternion();
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
@@ -278,7 +282,7 @@ public class AttachmentLink extends PhysicsLink {
         if (forceKinematic || isKinematic()) {
             blendToKinematicMode(0f, null);
         } else {
-            setDynamic(new Vector3f(0f, 0f, 0f));
+            setDynamic(translateIdentity);
         }
     }
 
@@ -386,6 +390,17 @@ public class AttachmentLink extends PhysicsLink {
         assert oldLink != null;
 
         super.postRebuild(oldLink);
+        if (oldLink.isReleased()) {
+            setDynamic(translateIdentity);
+            release();
+            PhysicsRigidBody newBody = getRigidBody();
+            if (newBody.isInWorld()) {
+                PhysicsSpace physicsSpace = getControl().getPhysicsSpace();
+                physicsSpace.remove(newBody);
+            }
+            PhysicsRigidBody oldBody = oldLink.getRigidBody();
+            setRigidBody(oldBody);
+        }
         endModelTransform
                 = (Transform) Misc.deepCopy(oldLink.endModelTransform);
         startModelTransform.set(oldLink.startModelTransform);
