@@ -46,7 +46,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -141,20 +140,6 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Enumerate all bones with attachments.
-     *
-     * @return an unmodifiable collection of bone names
-     */
-    public Collection<String> attachmentBoneNames() {
-        assert attachMassMap.size() == attachModelMap.size();
-        Collection<String> names = attachMassMap.keySet();
-        Collection<String> result = Collections.unmodifiableCollection(names);
-        assert result.size() == attachMassMap.size();
-
-        return result;
-    }
-
-    /**
      * Read the mass of the attachment associated with the named bone.
      *
      * @param boneName the name of the associated bone (not null, not empty)
@@ -180,8 +165,11 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * @return count (&ge;0)
      */
     public int countAttachments() {
-        int result = attachMassMap.size();
-        return result;
+        int count = attachMassMap.size();
+
+        assert count == attachModelMap.size();
+        assert count >= 0 : count;
+        return count;
     }
 
     /**
@@ -190,8 +178,11 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * @return count (&ge;0)
      */
     public int countLinkedBones() {
-        int result = massMap.size();
-        return result;
+        int count = massMap.size();
+
+        assert count == jointMap.size();
+        assert count >= 0 : count;
+        return count;
     }
 
     /**
@@ -341,15 +332,29 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
-     * Enumerate all linked bones in this control.
+     * Enumerate all bones with attachment links.
      *
-     * @return an unmodifiable collection of bone names
+     * @return a new array of bone names (not null, may be empty)
      */
-    public Collection<String> linkedBoneNames() {
-        assert massMap.size() == jointMap.size();
+    public String[] listAttachmentBoneNames() {
+        int size = countAttachments();
+        String[] result = new String[size];
+        Collection<String> names = attachMassMap.keySet();
+        names.toArray(result);
+
+        return result;
+    }
+
+    /**
+     * Enumerate all bones with bone links.
+     *
+     * @return a new array of bone names (not null, may be empty)
+     */
+    public String[] listLinkedBoneNames() {
+        int size = countLinkedBones();
+        String[] result = new String[size];
         Collection<String> names = massMap.keySet();
-        Collection<String> result = Collections.unmodifiableCollection(names);
-        assert result.size() == massMap.size();
+        names.toArray(result);
 
         return result;
     }

@@ -870,13 +870,12 @@ public class DynamicAnimControl
         /*
          * Create bone links.
          */
-        Collection<String> linkedBoneNames = linkedBoneNames();
-        int numLinkedBones = countLinkedBones();
-        assert linkedBoneNames.size() == numLinkedBones;
+        String[] linkedBoneNames = listLinkedBoneNames();
         for (String boneName : linkedBoneNames) {
             vertexLocations = coordsMap.get(boneName);
             createBoneLink(boneName, vertexLocations);
         }
+        int numLinkedBones = countLinkedBones();
         assert boneLinks.size() == numLinkedBones;
         /*
          * Add joints to connect each BoneLink rigid body with its parent in the
@@ -888,7 +887,7 @@ public class DynamicAnimControl
         /*
          * Create attachment links with joints.
          */
-        Collection<String> attachBoneNames = attachmentBoneNames();
+        String[] attachBoneNames = listAttachmentBoneNames();
         for (String boneName : attachBoneNames) {
             createAttachmentLink(boneName, skeletonControl, tempManagerMap);
         }
@@ -1355,7 +1354,7 @@ public class DynamicAnimControl
         }
 
         List<String> result = new ArrayList<>(8);
-        for (String childName : linkedBoneNames()) {
+        for (String childName : listLinkedBoneNames()) {
             Bone bone = findBone(childName);
             Bone parent = bone.getParent();
             if (parent != null && findManager(parent).equals(linkName)) {
