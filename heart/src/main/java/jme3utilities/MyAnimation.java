@@ -71,9 +71,9 @@ public class MyAnimation {
     /**
      * Count all tracks of the specified type in the specified animation.
      *
-     * @param <T> superclass of Track
+     * @param <T> subclass of Track
      * @param animation animation to search (may be null, unaffected)
-     * @param trackType superclass of Track to search for
+     * @param trackType the subclass of Track to search for
      * @return number of tracks (&ge;0)
      */
     public static <T extends Track> int countTracks(Animation animation,

@@ -122,9 +122,9 @@ public class MySpatial {
      * Count all controls of the specified type in the specified subtree of a
      * scene graph. Note: recursive!
      *
-     * @param <T> superclass of Control
+     * @param <T> subclass of Control
      * @param subtree subtree to traverse (may be null, unaffected)
-     * @param controlType superclass of Control to search for
+     * @param controlType the subclass of Control to search for
      * @return number of scene-graph controls (&ge;0)
      */
     public static <T extends Control> int countControls(Spatial subtree,
@@ -185,9 +185,9 @@ public class MySpatial {
      * Count all spatials of the specified type in the specified subtree of a
      * scene graph. Note: recursive!
      *
-     * @param <T> superclass of Spatial
+     * @param <T> subclass of Spatial
      * @param subtree subtree to traverse (may be null, unaffected)
-     * @param spatialType superclass of Spatial to search for
+     * @param spatialType the subclass of Spatial to search for
      * @return number of spatials (&ge;0)
      */
     public static <T extends Spatial> int countSpatials(Spatial subtree,
@@ -816,9 +816,9 @@ public class MySpatial {
      * Enumerate all controls of the specified type in the specified subtree of
      * a scene graph. Note: recursive!
      *
-     * @param <T> superclass of Control
+     * @param <T> subclass of Control
      * @param subtree which subtree (not null, aliases created)
-     * @param controlType superclass of Control to search for
+     * @param controlType the subclass of Control to search for
      * @param storeResult (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
@@ -887,9 +887,9 @@ public class MySpatial {
      *
      * @see com.jme3.scene.Node#descendantMatches(java.lang.Class)
      *
-     * @param <T> superclass of Spatial
+     * @param <T> subclass of Spatial
      * @param subtree (not null, aliases created)
-     * @param spatialType superclass of Spatial to search for
+     * @param spatialType the subclass of Spatial to search for
      * @param addResult (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */

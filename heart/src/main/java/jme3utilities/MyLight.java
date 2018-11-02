@@ -63,9 +63,9 @@ public class MyLight {
      * Count all lights of the specified type in the specified subtree of a
      * scene graph. Note: recursive!
      *
-     * @param <T> superclass of Light
+     * @param <T> subclass of Light
      * @param subtree subtree to traverse (may be null, unaffected)
-     * @param lightType superclass of Light to search for
+     * @param lightType the subclass of Light to search for
      * @return number of lights controls found (&ge;0)
      */
     public static <T extends Light> int countLights(Spatial subtree,
@@ -196,9 +196,9 @@ public class MyLight {
      * Enumerate all lights of the specified type in the specified subtree of a
      * scene graph. Note: recursive!
      *
-     * @param <T> superclass of Light
+     * @param <T> subclass of Light
      * @param subtree (not null)
-     * @param lightType superclass of Light to search for
+     * @param lightType the subclass of Light to search for
      * @param storeResult (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */

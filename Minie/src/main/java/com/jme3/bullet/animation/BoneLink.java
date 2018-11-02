@@ -128,6 +128,7 @@ public class BoneLink extends PhysicsLink {
      */
     void addJoint(PhysicsLink parentLink) {
         assert parentLink != null;
+        assert getJoint() == null;
 
         setParent(parentLink);
 
