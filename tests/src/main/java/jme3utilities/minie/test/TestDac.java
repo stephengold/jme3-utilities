@@ -318,10 +318,6 @@ public class TestDac extends ActionApplication {
         if (signals.test("shower")) {
             addBall();
         }
-
-        if (animChannel.getSpeed() == 0f) {
-            fpsText.setText("PAUSED");
-        }
     }
     // *************************************************************************
     // private methods
@@ -667,10 +663,8 @@ public class TestDac extends ActionApplication {
      * Toggle the animation and physics simulation: paused/running.
      */
     private void togglePause() {
-        float oldSpeed = animChannel.getSpeed();
-        float newSpeed = (oldSpeed > 0f) ? 0f : 1f;
-        animChannel.setSpeed(newSpeed);
-        bulletAppState.setSpeed(newSpeed);
+        float newSpeed = (speed > Float.MIN_VALUE) ? Float.MIN_VALUE : 1f;
+        setSpeed(newSpeed);
     }
 
     /**
