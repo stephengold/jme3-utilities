@@ -268,7 +268,7 @@ abstract public class PhysicsLink
     /**
      * Unambiguously identify this link by name, within its DynamicAnimControl.
      *
-     * @return a brief textual description (not null, not empty)
+     * @return a text string (not null, not empty)
      */
     abstract public String name();
 
@@ -406,13 +406,11 @@ abstract public class PhysicsLink
     }
 
     /**
-     * Assign a physics joint to this link.
+     * Assign a physics joint to this link, or cancel the assigned joint.
      *
-     * @param joint (not null, alias created)
+     * @param joint (may be null, alias created)
      */
     final protected void setJoint(PhysicsJoint joint) {
-        assert joint != null;
-        assert this.joint == null;
         this.joint = joint;
     }
 

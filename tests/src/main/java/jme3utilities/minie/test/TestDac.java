@@ -155,7 +155,7 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Add new hotkey bindings and override existing ones.
+     * Add application-specific hotkey bindings and override existing ones.
      */
     @Override
     public void moreDefaultBindings() {
@@ -163,6 +163,7 @@ public class TestDac extends ActionApplication {
 
         dim.bind("amputate left elbow", KeyInput.KEY_DELETE);
         dim.bind("blend all to kinematic", KeyInput.KEY_K);
+        dim.bind("drop attachments", KeyInput.KEY_PGDN);
         dim.bind("dump physicsSpace", KeyInput.KEY_O);
         dim.bind("dump scene", KeyInput.KEY_P);
         dim.bind("freeze all", KeyInput.KEY_F);
@@ -170,7 +171,7 @@ public class TestDac extends ActionApplication {
         dim.bind("go bind pose", KeyInput.KEY_B);
         dim.bind("go floating", KeyInput.KEY_0);
         dim.bind("go limp", KeyInput.KEY_SPACE);
-        dim.bind("limp left arm", KeyInput.KEY_LBRACKET);
+        dim.bind("limp left arm", KeyInput.KEY_LBRACKET); // TODO drop
         dim.bind("limp right arm", KeyInput.KEY_RBRACKET);
         dim.bind("load", KeyInput.KEY_L);
         dim.bind("load elephant", KeyInput.KEY_F3);
@@ -202,6 +203,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "blend all to kinematic":
                     dac.blendToKinematicMode(2f, null);
+                    return;
+                case "drop attachments":
+                    dac.dropAttachments();
                     return;
                 case "dump physicsSpace":
                     dumpPhysicsSpace();

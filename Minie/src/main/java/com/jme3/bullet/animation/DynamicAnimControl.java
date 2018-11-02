@@ -232,7 +232,7 @@ public class DynamicAnimControl
 
     /**
      * Begin blending all links to fully kinematic mode, driven by animation.
-     * TODO callback at end of transition
+     * TODO callback when the transition completes
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
@@ -257,7 +257,9 @@ public class DynamicAnimControl
                     blendInterval);
         }
         for (AttachmentLink link : attachmentLinks.values()) {
-            link.blendToKinematicMode(blendInterval, null);
+            if (!link.isReleased()) {
+                link.blendToKinematicMode(blendInterval, null);
+            }
         }
     }
 
@@ -270,6 +272,19 @@ public class DynamicAnimControl
     public float damping() {
         assert damping >= 0f : damping;
         return damping;
+    }
+
+    /**
+     * Release all unreleased attachments to gravity.
+     */
+    public void dropAttachments() {
+        for (AttachmentLink link : attachmentLinks.values()) {
+            if (!link.isReleased()) {
+                Vector3f gravity = gravity(null);
+                link.setDynamic(gravity);
+                link.release();
+            }
+        }
     }
 
     /**
@@ -446,9 +461,39 @@ public class DynamicAnimControl
     }
 
     /**
+     * Enumerate all physics links of the specified type managed by this
+     * control.
+     *
+     * @param <T> subclass of PhysicsLink
+     * @param linkType the subclass of PhysicsLink to search for (not null)
+     * @return a new array of links (not null, not empty)
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends PhysicsLink> List<T> listLinks(Class<T> linkType) {
+        int numLinks = countLinks();
+        List<T> result = new ArrayList<>(numLinks);
+
+        if (linkType.isAssignableFrom(torsoLink.getClass())) {
+            result.add((T) torsoLink);
+        }
+        for (BoneLink link : boneLinkList) {
+            if (linkType.isAssignableFrom(link.getClass())) {
+                result.add((T) link);
+            }
+        }
+        for (AttachmentLink link : attachmentLinks.values()) {
+            if (linkType.isAssignableFrom(link.getClass())) {
+                result.add((T) link);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Enumerate all the rigid bodies managed by this control.
      *
-     * @return a new array of rigid bodies (not null)
+     * @return a new array of rigid bodies (not null, not empty)
      */
     public PhysicsRigidBody[] listRigidBodies() {
         int numLinks = countLinks();
@@ -602,8 +647,8 @@ public class DynamicAnimControl
     }
 
     /**
-     * Immediately put the specified link and all its descendants into dynamic
-     * mode. Note: recursive!
+     * Immediately put the specified link and all its descendants (excluding
+     * released attachments) into dynamic mode. Note: recursive!
      * <p>
      * Allowed only when the control IS added to a spatial.
      *
@@ -628,7 +673,9 @@ public class DynamicAnimControl
             boneLink.setDynamic(uniformAcceleration, lockAll, lockAll, lockAll);
         } else {
             AttachmentLink attachmentLink = (AttachmentLink) rootLink;
-            attachmentLink.setDynamic(uniformAcceleration);
+            if (!attachmentLink.isReleased()) {
+                attachmentLink.setDynamic(uniformAcceleration);
+            }
         }
 
         PhysicsLink[] children = rootLink.listChildren();
@@ -945,8 +992,8 @@ public class DynamicAnimControl
     }
 
     /**
-     * Remove spatial-dependent data. Invoked each time this control is removed
-     * from a spatial.
+     * Remove spatial-dependent data. Invoked each time this control is rebuilt
+     * or removed from a spatial.
      *
      * @param spat the previously controlled spatial (unused)
      */
@@ -955,13 +1002,22 @@ public class DynamicAnimControl
         if (added) {
             removePhysics();
         }
-        MySkeleton.setUserControl(skeleton, false);
-        boneLinkList = null;
+
+        for (AttachmentLink attachmentLink : attachmentLinks.values()) {
+            Bone bone = attachmentLink.getBone();
+            Node node = MySkeleton.getAttachments(bone);
+            MySkeleton.cancelAttachments(bone);
+            node.removeFromParent();
+        }
         attachmentLinks.clear();
-        boneLinks.clear();
+
+        MySkeleton.setUserControl(skeleton, false);
         skeleton = null;
-        transformer = null;
+
+        boneLinks.clear();
+        boneLinkList = null;
         torsoLink = null;
+        transformer = null;
     }
 
     /**

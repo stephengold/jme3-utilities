@@ -32,6 +32,8 @@
 package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
+import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.InputCapsule;
@@ -171,6 +173,10 @@ public class AttachmentLink extends PhysicsLink {
     public void blendToKinematicMode(float blendInterval,
             Transform endModelTransform) {
         Validate.nonNegative(blendInterval, "blend interval");
+        if (isReleased()) {
+            throw new IllegalStateException(
+                    "Cannot change modes once released.");
+        }
 
         super.blendToKinematicMode(blendInterval);
         this.endModelTransform = endModelTransform;
@@ -191,6 +197,42 @@ public class AttachmentLink extends PhysicsLink {
     public Spatial getAttachedModel() {
         assert attachedModel != null;
         return attachedModel;
+    }
+
+    /**
+     * Test whether the attached model has been released.
+     *
+     * @return true if released, otherwise false
+     */
+    public boolean isReleased() {
+        PhysicsJoint joint = getJoint();
+        if (joint == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Release the attached model. The link must already be in dynamic mode and
+     * cannot have been previously released.
+     */
+    public void release() {
+        if (isKinematic()) {
+            throw new IllegalStateException(
+                    "Cannot release an attachment in kinematic mode.");
+        }
+        if (isReleased()) {
+            throw new IllegalStateException(
+                    "Cannot release the same attachment twice.");
+        }
+
+        PhysicsJoint joint = getJoint();
+        joint.destroy();
+
+        PhysicsSpace space = getControl().getPhysicsSpace();
+        space.remove(joint);
+        setJoint(null);
     }
     // *************************************************************************
     // PhysicsLink methods
@@ -411,8 +453,8 @@ public class AttachmentLink extends PhysicsLink {
         /**
          * Convert to bone local coordinates.
          */
-        Transform meshToBone
-                = MySkeleton.copyMeshTransform(getBone(), null).invert();
+        Transform boneToMesh = MySkeleton.copyMeshTransform(getBone(), null);
+        Transform meshToBone = boneToMesh.invert();
         result.combineWithParent(meshToBone);
         /*
          * Subtract the body's local offset, rotated and scaled.
