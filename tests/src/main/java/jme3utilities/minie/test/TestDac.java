@@ -47,6 +47,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
@@ -302,14 +303,24 @@ public class TestDac extends ActionApplication {
         super.simpleUpdate(tpf);
 
         Signals signals = getSignals();
-        if (signals.test("rotateRight")) {
-            cgModel.rotate(0f, tpf, 0f); // TODO rotate around world +Y axis
-        }
         if (signals.test("rotateLeft")) {
-            cgModel.rotate(0f, -tpf, 0f); // TODO rotate around world +Y axis
+            Quaternion orientation = MySpatial.worldOrientation(cgModel, null);
+            Quaternion rotate = new Quaternion().fromAngles(0f, -tpf, 0f);
+            rotate.mult(orientation, orientation);
+            MySpatial.setWorldOrientation(cgModel, orientation);
+        }
+        if (signals.test("rotateRight")) {
+            Quaternion orientation = MySpatial.worldOrientation(cgModel, null);
+            Quaternion rotate = new Quaternion().fromAngles(0f, tpf, 0f);
+            rotate.mult(orientation, orientation);
+            MySpatial.setWorldOrientation(cgModel, orientation);
         }
         if (signals.test("shower")) {
             addBall();
+        }
+
+        if (animChannel.getSpeed() == 0f) {
+            fpsText.setText("PAUSED");
         }
     }
     // *************************************************************************
