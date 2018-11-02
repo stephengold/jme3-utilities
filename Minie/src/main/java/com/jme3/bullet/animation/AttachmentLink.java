@@ -287,6 +287,17 @@ public class AttachmentLink extends PhysicsLink {
     }
 
     /**
+     * Unambiguously identify this link by name, within its DynamicAnimControl.
+     *
+     * @return a brief textual description (not null, not empty)
+     */
+    @Override
+    public String name() {
+        String result = "Attachment:" + boneName();
+        return result;
+    }
+
+    /**
      * Calculate a physics transform for the rigid body.
      *
      * @param storeResult storage for the result (modified if not null)

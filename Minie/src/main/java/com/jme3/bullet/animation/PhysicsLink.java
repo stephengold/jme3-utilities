@@ -266,6 +266,13 @@ abstract public class PhysicsLink
     }
 
     /**
+     * Unambiguously identify this link by name, within its DynamicAnimControl.
+     *
+     * @return a brief textual description (not null, not empty)
+     */
+    abstract public String name();
+
+    /**
      * Calculate a physics transform for the rigid body.
      *
      * @param storeResult storage for the result (modified if not null)

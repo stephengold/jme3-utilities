@@ -313,7 +313,7 @@ public class DynamicAnimControl
      * spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
-     * @return the pre-existing link, or null
+     * @return the pre-existing link, or null if not found
      */
     public AttachmentLink findAttachmentLink(String boneName) {
         Validate.nonEmpty(boneName, "bone name");
@@ -344,12 +344,36 @@ public class DynamicAnimControl
      * linked, or if the control is not added to a spatial.
      *
      * @param boneName the name of the bone (not null, not empty)
-     * @return the pre-existing BoneLink, or null
+     * @return the pre-existing BoneLink, or null if not found
      */
     public BoneLink findBoneLink(String boneName) {
         Validate.nonEmpty(boneName, "bone name");
         BoneLink boneLink = boneLinks.get(boneName);
         return boneLink;
+    }
+
+    /**
+     * Access the named link. Returns null if the name is invalid, or if the
+     * control is not added to a spatial.
+     *
+     * @param linkName the name of the link (not null, not empty)
+     * @return the pre-existing link, or null if not found
+     */
+    public PhysicsLink findLink(String linkName) {
+        Validate.nonEmpty(linkName, "link name");
+
+        PhysicsLink link;
+        if (linkName.startsWith("Bone:")) {
+            String boneName = MyString.remainder(linkName, "Bone:");
+            link = findBoneLink(boneName);
+        } else if (linkName.equals("Torso:")) {
+            link = torsoLink;
+        } else {
+            String boneName = MyString.remainder(linkName, "Attachment:");
+            link = findAttachmentLink(boneName);
+        }
+
+        return link;
     }
 
     /**

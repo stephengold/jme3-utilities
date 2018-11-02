@@ -366,6 +366,17 @@ public class BoneLink extends PhysicsLink {
     }
 
     /**
+     * Unambiguously identify this link by name, within its DynamicAnimControl.
+     *
+     * @return a brief textual description (not null, not empty)
+     */
+    @Override
+    public String name() {
+        String result = "Bone:" + boneName();
+        return result;
+    }
+
+    /**
      * Copy animation data from the specified link, which must have the same
      * name and the same managed bones.
      *

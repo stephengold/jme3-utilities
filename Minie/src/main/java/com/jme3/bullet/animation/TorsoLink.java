@@ -351,6 +351,16 @@ public class TorsoLink extends PhysicsLink {
     }
 
     /**
+     * Unambiguously identify this link by name, within its DynamicAnimControl.
+     *
+     * @return a brief textual description (not null, not empty)
+     */
+    @Override
+    public String name() {
+        return "Torso:";
+    }
+
+    /**
      * Copy animation data from the specified link, which must have the same
      * main bone.
      *
