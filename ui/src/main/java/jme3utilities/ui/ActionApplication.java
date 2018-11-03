@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -144,14 +144,12 @@ abstract public class ActionApplication
     /**
      * Read the filesystem path to the folder/directory for writing assets.
      *
-     * @return absolute pathname (not null, not empty)
+     * @return the absolute pathname (not null, not empty)
+     * @deprecated use {@link #writtenAssetPath()}
      */
+    @Deprecated
     public static String getWrittenAssetDirPath() {
-        String path = writtenAssetDir.getAbsolutePath();
-        path = path.replaceAll("\\\\", "/");
-
-        assert path != null;
-        assert !path.isEmpty();
+        String path = writtenAssetPath();
         return path;
     }
 
@@ -164,13 +162,37 @@ abstract public class ActionApplication
     }
 
     /**
-     * Alter the effective speeds of all animations.
+     * Alter the effective speeds of physics and all animations.
      *
      * @param newSpeed animation speed (&gt;0, standard speed &rarr; 1)
      */
     public void setSpeed(float newSpeed) {
         Validate.positive(newSpeed, "speed");
         speed = newSpeed;
+    }
+
+    /**
+     * Read the effective speed of physics and animations.
+     *
+     * @return the speed (&gt;0, standard speed &rarr; 1)
+     */
+    public float speed() {
+        assert speed > 0f : speed;
+        return speed;
+    }
+
+    /**
+     * Read the filesystem path to the folder/directory for writing assets.
+     *
+     * @return the absolute pathname (not null, not empty)
+     */
+    public static String writtenAssetPath() {
+        String path = writtenAssetDir.getAbsolutePath();
+        path = path.replaceAll("\\\\", "/");
+
+        assert path != null;
+        assert !path.isEmpty();
+        return path;
     }
     // *************************************************************************
     // ActionListener methods

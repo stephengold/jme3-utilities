@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -338,7 +338,7 @@ public class Locators {
      * "Written Assets" folder (if one exists) followed by the classpath.
      */
     private void configurationRegisterDefault() {
-        String wadPath = ActionApplication.getWrittenAssetDirPath();
+        String wadPath = ActionApplication.writtenAssetPath();
         File wadFile = new File(wadPath);
         if (wadFile.isDirectory()) {
             configurationRegister(wadPath, FileLocator.class);
