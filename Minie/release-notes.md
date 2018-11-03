@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.4.2 released on TBD
+## Version 0.4.2 released on 3 November 2018
 
 More changes to `DynamicAnimControl`:
 
