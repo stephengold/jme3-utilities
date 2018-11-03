@@ -1,8 +1,29 @@
 # release notes for the Minie library and related tests
 
+## Version 0.4.2 released on TBD
+
+More changes to `DynamicAnimControl`:
+
+ + Added the capability to release attachments.
+ + Gave each `PhysicsLink` a name that's distinct from its bone's name.
+ + Added `hasAttachmentLink()` and `unlinkAttachment()` methods.
+ + Removed the `isLinkName()` method.
+ + Renamed the `isBoneLinkName()` method to `hasBoneLink()`.
+ + Renamed the `unlink()` method to `unlinkBone()`.
+ + Changed the `attachmentBoneNames()` and `linkedBoneNames()` methods to return
+   arrays instead of collections.
+ + Added example tunings for the Ninja and Oto models.
+ + Detect and reject models with ignoreTransform geometries.
+
+Other noteworthy changes to Minie:
+
+ + In `RangeOfMotion`, set the joint's angular limits in addition
+   to its motor limits.
+ + In `SixDofJoint`, store rotational motors in an array, not a linked list.
+
 ## Version 0.4.1 released on 1 November 2018
 
-More design and implementation changes to `DynamicAnimControl`.
+More design and implementation changes to `DynamicAnimControl`:
 
  + Added support for attachments nodes.
  + The center of a linked rigid body can be offset from its joint.
