@@ -292,7 +292,8 @@ public class TuneDac extends ActionApplication {
     private void addModel() {
         //loadElephant();
         //loadJaime();
-        loadOto();
+        loadNinja();
+        //loadOto();
         //loadSinbad();
 
         rootNode.attachChild(model);
@@ -334,6 +335,15 @@ public class TuneDac extends ActionApplication {
     private void loadJaime() {
         model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
         dac = new JaimeControl();
+    }
+
+    /**
+     * Load the Ninja model.
+     */
+    private void loadNinja() {
+        model = (Node) assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
+        model.rotate(0f, 3f, 0f);
+        dac = new NinjaControl();
     }
 
     /**

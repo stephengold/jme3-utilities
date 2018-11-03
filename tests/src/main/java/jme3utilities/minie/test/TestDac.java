@@ -177,6 +177,7 @@ public class TestDac extends ActionApplication {
         dim.bind("load", KeyInput.KEY_L);
         dim.bind("load elephant", KeyInput.KEY_F3);
         dim.bind("load jaime", KeyInput.KEY_F2);
+        dim.bind("load ninja", KeyInput.KEY_F7);
         dim.bind("load oto", KeyInput.KEY_F6);
         dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
@@ -247,6 +248,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "load jaime":
                     addModel("Jaime");
+                    return;
+                case "load ninja":
+                    addModel("Ninja");
                     return;
                 case "load oto":
                     addModel("Oto");
@@ -417,6 +421,9 @@ public class TestDac extends ActionApplication {
             case "Jaime":
                 loadJaime();
                 break;
+            case "Ninja":
+                loadNinja();
+                break;
             case "Oto":
                 loadOto();
                 break;
@@ -553,11 +560,24 @@ public class TestDac extends ActionApplication {
     }
 
     /**
+     * Load the Ninja model.
+     */
+    private void loadNinja() {
+        cgModel = (Node) assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
+        cgModel.rotate(0f, 3f, 0f);
+        dac = new NinjaControl();
+        animationName = "Walk";
+        leftClavicleName = "Joint14";
+        leftUlnaName = "Joint16";
+        rightClavicleName = "Joint9";
+        upperBodyName = "Joint4";
+    }
+
+    /**
      * Load the Oto model.
      */
     private void loadOto() {
-        cgModel = (Node) assetManager.loadModel(
-                "Models/Oto/Oto.mesh.xml");
+        cgModel = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
         dac = new OtoControl();
         animationName = "Walk";
         leftClavicleName = "uparm.left";
@@ -586,8 +606,14 @@ public class TestDac extends ActionApplication {
     private void loadSinbadWithSwords() {
         cgModel = (Node) assetManager.loadModel(
                 "Models/Sinbad/Sinbad.mesh.xml");
+
         Node sword = (Node) assetManager.loadModel(
                 "Models/Sinbad/Sword.mesh.xml");
+        List<Spatial> list
+                = MySpatial.listSpatials(sword, Spatial.class, null);
+        for (Spatial spatial : list) {
+            spatial.setShadowMode(RenderQueue.ShadowMode.Cast);
+        }
 
         dac = new SinbadControl();
         dac.attach("Handle.L", 5f, sword);
