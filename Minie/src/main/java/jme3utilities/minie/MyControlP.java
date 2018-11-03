@@ -27,6 +27,7 @@
 package jme3utilities.minie;
 
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.animation.DynamicAnimControl;
 import com.jme3.bullet.control.AbstractPhysicsControl;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.PhysicsControl;
@@ -71,7 +72,7 @@ public class MyControlP {
     /**
      * Check whether a scene-graph control implements applyPhysicsLocal().
      *
-     * @param sgc control to test (may be null, unaffected)
+     * @param sgc the control to test (may be null, unaffected)
      * @return true if it's implemented, otherwise false
      */
     public static boolean canApplyPhysicsLocal(Control sgc) {
@@ -79,6 +80,9 @@ public class MyControlP {
                 || sgc instanceof GhostControl
                 || sgc instanceof RigidBodyControl
                 || sgc instanceof VehicleControl;
+        if (sgc instanceof DynamicAnimControl) {
+            result = false;
+        }
 
         return result;
     }
