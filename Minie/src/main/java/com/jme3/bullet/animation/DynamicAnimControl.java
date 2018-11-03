@@ -807,7 +807,6 @@ public class DynamicAnimControl
      */
     @Override
     protected void createSpatialData(Spatial spatial) {
-        Validate.nonNull(spatial, "controlled spatial");
         RagUtils.validate(spatial);
 
         SkeletonControl skeletonControl
@@ -822,7 +821,7 @@ public class DynamicAnimControl
          * Analyze the model's skeleton.
          */
         skeleton = skeletonControl.getSkeleton();
-        RagUtils.validate(skeleton); // TODO warn if any root bone is linked
+        validateSkeleton();
         String[] tempManagerMap = managerMap(skeleton);
         int numBones = skeleton.getBoneCount();
         /*
@@ -1535,6 +1534,34 @@ public class DynamicAnimControl
             scIndex = RagUtils.findIndex(spatial, skeletonControl);
             assert scIndex != -1;
             assert dacIndex < scIndex;
+        }
+    }
+
+    /**
+     * Validate the model's skeleton.
+     */
+    private void validateSkeleton() {
+        RagUtils.validate(skeleton);
+
+        for (String boneName : listLinkedBoneNames()) {
+            Bone bone = findBone(boneName);
+            if (bone == null) {
+                String msg = String.format("Linked bone %s does not exist.",
+                        MyString.quote(boneName));
+                throw new IllegalArgumentException(msg);
+            }
+            if (bone.getParent() == null) {
+                logger3.log(Level.WARNING, "Linked bone {0} is a root bone.",
+                        MyString.quote(boneName));
+            }
+        }
+        for (String boneName : listAttachmentBoneNames()) {
+            Bone bone = findBone(boneName);
+            if (bone == null) {
+                String msg = String.format("Attachment bone %s does not exist.",
+                        MyString.quote(boneName));
+                throw new IllegalArgumentException(msg);
+            }
         }
     }
 }
