@@ -1546,7 +1546,8 @@ public class DynamicAnimControl
         for (String boneName : listLinkedBoneNames()) {
             Bone bone = findBone(boneName);
             if (bone == null) {
-                String msg = String.format("Linked bone %s does not exist.",
+                String msg = String.format(
+                        "Linked bone %s not found in skeleton.",
                         MyString.quote(boneName));
                 throw new IllegalArgumentException(msg);
             }
@@ -1558,7 +1559,8 @@ public class DynamicAnimControl
         for (String boneName : listAttachmentBoneNames()) {
             Bone bone = findBone(boneName);
             if (bone == null) {
-                String msg = String.format("Attachment bone %s does not exist.",
+                String msg = String.format(
+                        "Attachment bone %s not found in skeleton.",
                         MyString.quote(boneName));
                 throw new IllegalArgumentException(msg);
             }
