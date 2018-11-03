@@ -51,37 +51,37 @@ public class OtoControl extends DynamicAnimControl {
         super();
         super.setMass(torsoName, 5f);
 
-        super.link("spinehigh", 20f,
-                new RangeOfMotion(0.3f, -0.3f, 1f, -1f, 1f, 0f));
+        super.link("spinehigh", 15f,
+                new RangeOfMotion(0.3f, -0.3f, 1f, -1f, 0.5f, -1f));
         super.link("head", 2f,
-                new RangeOfMotion(0f, -0f, 1f, -1f, 0.5f, -0.5f));
+                new RangeOfMotion(0f, 1f, 0.5f));
 
         super.link("hip.left", 2f,
                 new RangeOfMotion(0.2f, -1f, 0f, 0f, 1f, -0.2f));
         super.link("leg.left", 2f,
                 new RangeOfMotion(0f, 0f, 0f, 0f, 0f, -2f));
         super.link("foot.left", 2f,
-                new RangeOfMotion(0.5f, -0.5f, 0.7f, -0.7f, 0f, 0f));
+                new RangeOfMotion(0.5f, -0.5f, 0.3f, 0f, 0.5f, 0.5f));
 
         super.link("hip.right", 2f,
                 new RangeOfMotion(1f, -0.2f, 0f, 0f, 1f, -0.2f));
         super.link("leg.right", 2f,
                 new RangeOfMotion(0f, 0f, 0f, 0f, 0f, -2f));
         super.link("foot.right", 2f,
-                new RangeOfMotion(0.5f, -0.5f, 0.7f, -0.7f, 0f, 0f));
+                new RangeOfMotion(0.5f, -0.5f, 0f, -0.3f, 0.5f, 0.5f));
 
-        super.link("uparm.left", 2f,
-                new RangeOfMotion(1f, -1f, 1f, -1f, 1f, -1f));
+        super.link("uparm.left", 3f,
+                new RangeOfMotion(1f, -1f, 1f, -1f, 0.2f, -1f));
         super.link("arm.left", 2f,
                 new RangeOfMotion(0f, 0f, 0.5f, -0.5f, 1.2f, 0f));
         super.link("hand.left", 1f,
-                new RangeOfMotion(1f, -1f, 0f, 0f, 0.1f, -0.1f));
+                new RangeOfMotion(1f, -0.5f, 0f, 0f, 0.1f, -0.1f));
 
-        super.link("uparm.right", 2f,
-                new RangeOfMotion(1f, -1f, 1f, -1f, 1f, -1f));
+        super.link("uparm.right", 3f,
+                new RangeOfMotion(1f, -1f, 1f, -1f, 0.2f, -1f));
         super.link("arm.right", 2f,
-                new RangeOfMotion(0f, 0f, 0.5f, -0.5f, 1.2f, 0f));
+                new RangeOfMotion(0f, 0f, 0.5f, -0.5f, 0f, -1.2f));
         super.link("hand.right", 1f,
-                new RangeOfMotion(1f, -1f, 0f, 0f, 0.1f, -0.1f));
+                new RangeOfMotion(0.5f, -1f, 0f, 0f, 0.1f, -0.1f));
     }
 }
