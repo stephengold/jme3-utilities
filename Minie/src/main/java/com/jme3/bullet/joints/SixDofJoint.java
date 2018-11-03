@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.joints;
 
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.joints.motors.RotationalLimitMotor;
 import com.jme3.bullet.joints.motors.TranslationalLimitMotor;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -43,8 +44,6 @@ import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -89,7 +88,13 @@ public class SixDofJoint extends PhysicsJoint {
      * in frameB space
      */
     private boolean useLinearReferenceFrameA;
-    private List<RotationalLimitMotor> rotationalMotors = new LinkedList<>();
+    /**
+     * rotational motor for each axis
+     */
+    private RotationalLimitMotor[] rotationalMotors;
+    /**
+     * translational motor
+     */
     private TranslationalLimitMotor translationalMotor;
     /**
      * upper limits for rotation of all 3 axes
@@ -177,13 +182,17 @@ public class SixDofJoint extends PhysicsJoint {
     // *************************************************************************
 
     private void gatherMotors() {
+        assert rotationalMotors == null;
+        assert translationalMotor == null;
+
+        rotationalMotors = new RotationalLimitMotor[3];
         for (int axisIndex = 0; axisIndex < 3; axisIndex++) {
-            RotationalLimitMotor rmot = new RotationalLimitMotor(
-                    getRotationalLimitMotor(objectId, axisIndex));
-            rotationalMotors.add(rmot);
+            long motorId = getRotationalLimitMotor(objectId, axisIndex);
+            rotationalMotors[axisIndex] = new RotationalLimitMotor(motorId);
         }
-        translationalMotor = new TranslationalLimitMotor(
-                getTranslationalLimitMotor(objectId));
+
+        long motorId = getTranslationalLimitMotor(objectId);
+        translationalMotor = new TranslationalLimitMotor(motorId);
     }
 
     /**
@@ -287,12 +296,14 @@ public class SixDofJoint extends PhysicsJoint {
      * Access the indexed RotationalLimitMotor of this joint, the motor which
      * influences rotation around one axis.
      *
-     * @param index the axis index of the desired motor: 0&rarr;X, 1&rarr;Y,
+     * @param axisIndex the axis index of the desired motor: 0&rarr;X, 1&rarr;Y,
      * 2&rarr;Z
      * @return the pre-existing instance
      */
-    public RotationalLimitMotor getRotationalLimitMotor(int index) {
-        return rotationalMotors.get(index);
+    public RotationalLimitMotor getRotationalLimitMotor(int axisIndex) {
+        Validate.inRange(axisIndex, "index", PhysicsSpace.AXIS_X,
+                PhysicsSpace.AXIS_Z);
+        return rotationalMotors[axisIndex];
     }
 
     /**
@@ -386,7 +397,7 @@ public class SixDofJoint extends PhysicsJoint {
 
         rotA = cloner.clone(rotA);
         rotB = cloner.clone(rotB);
-        rotationalMotors = new LinkedList<>();
+        rotationalMotors = null;
         translationalMotor = null;
         createJoint();
 
