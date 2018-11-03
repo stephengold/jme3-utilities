@@ -71,6 +71,10 @@ public class TuneDac extends ActionApplication {
     // constants and loggers
 
     /**
+     * number of axes
+     */
+    final private static int numAxes = 3;
+    /**
      * message logger for this class
      */
     final public static Logger logger
@@ -286,8 +290,9 @@ public class TuneDac extends ActionApplication {
      * Add an animated model to the scene.
      */
     private void addModel() {
-        loadElephant();
+        //loadElephant();
         //loadJaime();
+        loadOto();
         //loadSinbad();
 
         rootNode.attachChild(model);
@@ -332,6 +337,14 @@ public class TuneDac extends ActionApplication {
     }
 
     /**
+     * Load the Oto model.
+     */
+    private void loadOto() {
+        model = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
+        dac = new OtoControl();
+    }
+
+    /**
      * Load the Sinbad model.
      */
     private void loadSinbad() {
@@ -359,7 +372,7 @@ public class TuneDac extends ActionApplication {
      */
     private void setWiggleAxis(int axisIndex) {
         assert axisIndex >= 0 : axisIndex;
-        assert axisIndex < 3 : axisIndex;
+        assert axisIndex < numAxes : axisIndex;
 
         SixDofJoint joint = (SixDofJoint) wiggleLink.getJoint();
         if (joint == null) {

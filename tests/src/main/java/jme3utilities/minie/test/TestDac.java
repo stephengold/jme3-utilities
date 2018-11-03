@@ -177,6 +177,7 @@ public class TestDac extends ActionApplication {
         dim.bind("load", KeyInput.KEY_L);
         dim.bind("load elephant", KeyInput.KEY_F3);
         dim.bind("load jaime", KeyInput.KEY_F2);
+        dim.bind("load oto", KeyInput.KEY_F6);
         dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
@@ -246,6 +247,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "load jaime":
                     addModel("Jaime");
+                    return;
+                case "load oto":
+                    addModel("Oto");
                     return;
                 case "load sinbad":
                     addModel("Sinbad");
@@ -413,6 +417,9 @@ public class TestDac extends ActionApplication {
             case "Jaime":
                 loadJaime();
                 break;
+            case "Oto":
+                loadOto();
+                break;
             case "Sinbad":
                 loadSinbad();
                 break;
@@ -543,6 +550,20 @@ public class TestDac extends ActionApplication {
         leftUlnaName = "forearm.L";
         rightClavicleName = "shoulder.R";
         upperBodyName = "ribs";
+    }
+
+    /**
+     * Load the Oto model.
+     */
+    private void loadOto() {
+        cgModel = (Node) assetManager.loadModel(
+                "Models/Oto/Oto.mesh.xml");
+        dac = new OtoControl();
+        animationName = "Walk";
+        leftClavicleName = "uparm.left";
+        leftUlnaName = "arm.left";
+        rightClavicleName = "uparm.right";
+        upperBodyName = "spinehigh";
     }
 
     /**
