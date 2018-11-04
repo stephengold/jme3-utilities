@@ -295,6 +295,7 @@ public class TuneDac extends ActionApplication {
     private void addModel() {
         //loadElephant();
         //loadJaime();
+        //loadMhGame();
         loadNinja();
         //loadOto();
         //loadPuppet();
@@ -346,6 +347,14 @@ public class TuneDac extends ActionApplication {
     private void loadJaime() {
         model = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
         dac = new JaimeControl();
+    }
+
+    /**
+     * Load the MhGame model.
+     */
+    private void loadMhGame() {
+        model = (Node) assetManager.loadModel("Models/MhGame/MhGame.j3o");
+        dac = new MhGameControl();
     }
 
     /**
@@ -434,6 +443,7 @@ public class TuneDac extends ActionApplication {
             wiggleLink = link;
             wiggleAxis = -1;
             motor = null;
+            motorVelocitySign = 0;
 
             TorsoLink torsoLink = dac.getTorsoLink();
             dac.bindSubtree(torsoLink, 0.5f);

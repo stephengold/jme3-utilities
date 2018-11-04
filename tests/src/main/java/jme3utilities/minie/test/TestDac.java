@@ -178,6 +178,7 @@ public class TestDac extends ActionApplication {
         dim.bind("load elephant", KeyInput.KEY_F3);
         dim.bind("load jaime", KeyInput.KEY_F2);
         dim.bind("load ninja", KeyInput.KEY_F7);
+        dim.bind("load mhgame", KeyInput.KEY_F9);
         dim.bind("load oto", KeyInput.KEY_F6);
         dim.bind("load puppet", KeyInput.KEY_F8);
         dim.bind("load sinbad", KeyInput.KEY_F1);
@@ -249,6 +250,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "load jaime":
                     addModel("Jaime");
+                    return;
+                case "load mhgame":
+                    addModel("MhGame");
                     return;
                 case "load ninja":
                     addModel("Ninja");
@@ -427,6 +431,9 @@ public class TestDac extends ActionApplication {
             case "Jaime":
                 loadJaime();
                 break;
+            case "MhGame":
+                loadMhGame();
+                break;
             case "Ninja":
                 loadNinja();
                 break;
@@ -570,6 +577,19 @@ public class TestDac extends ActionApplication {
         leftUlnaName = "forearm.L";
         rightClavicleName = "shoulder.R";
         upperBodyName = "ribs";
+    }
+
+    /**
+     * Load the MhGame model.
+     */
+    private void loadMhGame() {
+        cgModel = (Node) assetManager.loadModel("Models/MhGame/MhGame.j3o");
+        dac = new MhGameControl();
+        animationName = "expr-lib-pose";
+        leftClavicleName = "upperarm_r";
+        leftUlnaName = "lowerarm_r";
+        rightClavicleName = "upperarm_l";
+        upperBodyName = "spine_01";
     }
 
     /**
