@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
-import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.SkeletonVisualizer;
@@ -94,6 +93,7 @@ public class TuneDac extends ActionApplication {
     private Node model;
     private PhysicsLink wiggleLink;
     private RotationalLimitMotor motor = null;
+    private Skeleton skeleton;
     private SkeletonVisualizer sv;
     private Transform resetTransform;
     // *************************************************************************
@@ -148,7 +148,8 @@ public class TuneDac extends ActionApplication {
     public void moreDefaultBindings() {
         InputMode dim = getDefaultInputMode();
 
-        dim.bind("dump skeleton", KeyInput.KEY_P);
+        dim.bind("dump scene", KeyInput.KEY_P);
+        dim.bind("dump skeleton", KeyInput.KEY_LBRACKET);
         dim.bind("reset model transform", KeyInput.KEY_DOWN);
         dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
         dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
@@ -168,8 +169,10 @@ public class TuneDac extends ActionApplication {
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
             switch (actionString) {
+                case "dump scene":
+                    new PhysicsDumper().dump(renderManager);
+                    return;
                 case "dump skeleton":
-                    Skeleton skeleton = MySkeleton.findSkeleton(model);
                     new PhysicsDumper().dump(skeleton, "");
                     return;
                 case "reset model transform":
@@ -294,6 +297,7 @@ public class TuneDac extends ActionApplication {
         //loadJaime();
         loadNinja();
         //loadOto();
+        //loadPuppet();
         //loadSinbad();
 
         rootNode.attachChild(model);
@@ -301,7 +305,14 @@ public class TuneDac extends ActionApplication {
         center(model);
         resetTransform = model.getLocalTransform().clone();
 
-        model.addControl(dac);
+        List<SkeletonControl> scList
+                = MySpatial.listControls(model, SkeletonControl.class, null);
+        assert scList.size() == 1;
+        SkeletonControl sc = scList.get(0);
+        skeleton = sc.getSkeleton();
+
+        Spatial controlledSpatial = sc.getSpatial();
+        controlledSpatial.addControl(dac);
     }
 
     /**
@@ -352,6 +363,14 @@ public class TuneDac extends ActionApplication {
     private void loadOto() {
         model = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
         dac = new OtoControl();
+    }
+
+    /**
+     * Load the Puppet model.
+     */
+    private void loadPuppet() {
+        model = (Node) assetManager.loadModel("Models/Puppet/Puppet.j3o");
+        dac = new PuppetControl();
     }
 
     /**

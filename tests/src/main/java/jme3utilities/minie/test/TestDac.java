@@ -179,6 +179,7 @@ public class TestDac extends ActionApplication {
         dim.bind("load jaime", KeyInput.KEY_F2);
         dim.bind("load ninja", KeyInput.KEY_F7);
         dim.bind("load oto", KeyInput.KEY_F6);
+        dim.bind("load puppet", KeyInput.KEY_F8);
         dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
@@ -255,6 +256,9 @@ public class TestDac extends ActionApplication {
                 case "load oto":
                     addModel("Oto");
                     return;
+                case "load puppet":
+                    addModel("Puppet");
+                    return;
                 case "load sinbad":
                     addModel("Sinbad");
                     return;
@@ -263,11 +267,11 @@ public class TestDac extends ActionApplication {
                     return;
                 case "raise leftHand":
                     dac.setDynamicSubtree(leftClavicle,
-                            new Vector3f(0f, 30f, 0f), false);
+                            new Vector3f(0f, 20f, 0f), false);
                     return;
                 case "raise rightHand":
                     dac.setDynamicSubtree(rightClavicle,
-                            new Vector3f(0f, 30f, 0f), false);
+                            new Vector3f(0f, 20f, 0f), false);
                     return;
                 case "reset model transform":
                     cgModel.setLocalTransform(resetTransform);
@@ -404,7 +408,9 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Add an animated model to the scene.
+     * Add an animated model to the scene, removing any previously added model.
+     *
+     * @param modelName the name of the model to add (not null, not empty)
      */
     private void addModel(String modelName) {
         if (cgModel != null) {
@@ -427,6 +433,9 @@ public class TestDac extends ActionApplication {
             case "Oto":
                 loadOto();
                 break;
+            case "Puppet":
+                loadPuppet();
+                break;
             case "Sinbad":
                 loadSinbad();
                 break;
@@ -446,7 +455,12 @@ public class TestDac extends ActionApplication {
         center(cgModel);
         resetTransform = cgModel.getLocalTransform().clone();
 
-        cgModel.addControl(dac);
+        List<SkeletonControl> scList
+                = MySpatial.listControls(cgModel, SkeletonControl.class, null);
+        assert scList.size() == 1;
+        sc = scList.get(0);
+        Spatial controlledSpatial = sc.getSpatial();
+        controlledSpatial.addControl(dac);
         dac.setPhysicsSpace(physicsSpace);
 
         leftClavicle = dac.findBoneLink(leftClavicleName);
@@ -454,12 +468,11 @@ public class TestDac extends ActionApplication {
         rightClavicle = dac.findBoneLink(rightClavicleName);
         upperBody = dac.findBoneLink(upperBodyName);
 
-        AnimControl animControl = cgModel.getControl(AnimControl.class);
+        AnimControl animControl = controlledSpatial.getControl(AnimControl.class);
         animChannel = animControl.createChannel();
         animChannel.setAnim(animationName);
         animChannel.setSpeed(1f);
 
-        sc = cgModel.getControl(SkeletonControl.class);
         sv = new SkeletonVisualizer(assetManager, sc);
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
         rootNode.addControl(sv);
@@ -584,6 +597,19 @@ public class TestDac extends ActionApplication {
         leftUlnaName = "arm.left";
         rightClavicleName = "uparm.right";
         upperBodyName = "spinehigh";
+    }
+
+    /**
+     * Load the Puppet model.
+     */
+    private void loadPuppet() {
+        cgModel = (Node) assetManager.loadModel("Models/Puppet/Puppet.j3o");
+        dac = new PuppetControl();
+        animationName = "walk";
+        leftClavicleName = "upper_arm.1.L";
+        leftUlnaName = "forearm.1.L";
+        rightClavicleName = "upper_arm.1.R";
+        upperBodyName = "spine";
     }
 
     /**
