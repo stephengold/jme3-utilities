@@ -720,6 +720,28 @@ public class DynamicAnimControl
     }
 
     /**
+     * Alter the mass of the specified link.
+     *
+     * @param link the link to modify (not null)
+     * @param mass the desired mass (&gt;0)
+     */
+    public void setMass(PhysicsLink link, float mass) {
+        Validate.nonNull(link, "link");
+        Validate.positive(mass, "mass");
+
+        if (link instanceof BoneLink) {
+            String boneName = link.boneName();
+            setMass(boneName, mass);
+        } else if (link instanceof TorsoLink) {
+            setMass(torsoName, mass);
+        } else {
+            assert link instanceof AttachmentLink;
+            String boneName = link.boneName();
+            setAttachmentMass(boneName, mass);
+        }
+    }
+
+    /**
      * Immediately put all links into fully dynamic mode with gravity.
      * <p>
      * Allowed only when the control IS added to a spatial.
@@ -1081,25 +1103,25 @@ public class DynamicAnimControl
     }
 
     /**
-     * Alter the mass of the named bone/torso link.
+     * Alter the mass of the named bone/torso.
      *
-     * @param linkName the name of the bone/torso link (not null)
+     * @param boneName the name of the bone, or torsoName (not null)
      * @param mass the desired mass (&gt;0)
      */
     @Override
-    public void setMass(String linkName, float mass) {
+    public void setMass(String boneName, float mass) {
         Validate.positive(mass, "mass");
 
-        super.setMass(linkName, mass);
+        super.setMass(boneName, mass);
 
         if (getSpatial() != null) {
-            PhysicsLink link;
-            if (torsoName.equals(linkName)) {
-                link = torsoLink;
+            PhysicsRigidBody rigidBody;
+            if (torsoName.equals(boneName)) {
+                rigidBody = torsoLink.getRigidBody();
             } else {
-                link = findBoneLink(linkName);
+                BoneLink link = findBoneLink(boneName);
+                rigidBody = link.getRigidBody();
             }
-            PhysicsRigidBody rigidBody = link.getRigidBody();
             rigidBody.setMass(mass);
         }
     }
