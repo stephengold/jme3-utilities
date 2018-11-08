@@ -1,11 +1,11 @@
 # release notes for the Minie library and related tests
 
-## Version 0.4.3 released on TBD
+## Version 0.4.3 released on 8 November 2018
 
  + Changed `DynamicAnimControl.setMass()` to take a bone name or a physics link.
- + Make `MyControlP` aware that `DynamicAnimControl` does not support
+ + Made `MyControlP` aware that `DynamicAnimControl` does not support
    local physics.
- + Add `DynamicAnimControl` tunings for the MhGame and Puppet models.
+ + Added `DynamicAnimControl` tunings for the MhGame and Puppet models.
 
 ## Version 0.4.2 released on 3 November 2018
 
