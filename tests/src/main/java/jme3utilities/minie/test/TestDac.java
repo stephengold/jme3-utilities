@@ -478,7 +478,6 @@ public class TestDac extends ActionApplication {
         AnimControl animControl = controlledSpatial.getControl(AnimControl.class);
         animChannel = animControl.createChannel();
         animChannel.setAnim(animationName);
-        animChannel.setSpeed(1f);
 
         sv = new SkeletonVisualizer(assetManager, sc);
         sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
