@@ -429,7 +429,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     /**
      * Alter the mass of the named bone/torso.
      *
-     * @param boneName the name of the bone/torso (not null)
+     * @param boneName the name of the bone, or torsoName (not null)
      * @param mass the desired mass (&gt;0)
      */
     public void setMass(String boneName, float mass) {
