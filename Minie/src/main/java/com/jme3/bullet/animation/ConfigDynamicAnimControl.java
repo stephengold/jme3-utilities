@@ -512,9 +512,9 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * shallow-cloned control into a deep-cloned one, using the specified cloner
      * and original to resolve copied fields.
      *
-     * @param cloner the cloner that's cloning this control (not null)
+     * @param cloner the cloner that's cloning this control (not null, modified)
      * @param original the control from which this control was shallow-cloned
-     * (unused)
+     * (not null, unaffected)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
@@ -523,7 +523,18 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
         attachMassMap = cloner.clone(attachMassMap);
         massMap = cloner.clone(massMap);
         jointMap = cloner.clone(jointMap);
-        attachModelMap = cloner.clone(attachModelMap);
+
+        attachModelMap = new HashMap<>(5);
+        ConfigDynamicAnimControl originalCdac
+                = (ConfigDynamicAnimControl) original;
+        for (Map.Entry<String, Spatial> entry
+                : originalCdac.attachModelMap.entrySet()) {
+            String boneName = entry.getKey();
+            Spatial spat = entry.getValue();
+            Spatial copySpatial = cloner.clone(spat);
+            attachModelMap.put(boneName, copySpatial);
+        }
+
         gravityVector = cloner.clone(gravityVector);
     }
 

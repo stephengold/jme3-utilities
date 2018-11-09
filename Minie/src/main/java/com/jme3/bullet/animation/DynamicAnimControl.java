@@ -804,18 +804,36 @@ public class DynamicAnimControl
      * shallow-cloned control into a deep-cloned one, using the specified cloner
      * and original to resolve copied fields.
      *
-     * @param cloner the cloner that's cloning this control (not null)
+     * @param cloner the cloner that's cloning this control (not null, modified)
      * @param original the control from which this control was shallow-cloned
-     * (unused)
+     * (not null, unaffected)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
+        DynamicAnimControl originalDac = (DynamicAnimControl) original;
 
         boneLinkList = cloner.clone(boneLinkList);
         listeners = cloner.clone(listeners);
-        attachmentLinks = cloner.clone(attachmentLinks);
-        boneLinks = cloner.clone(boneLinks);
+
+        attachmentLinks = new HashMap<>(8);
+        for (Map.Entry<String, AttachmentLink> entry
+                : originalDac.attachmentLinks.entrySet()) {
+            String boneName = entry.getKey();
+            AttachmentLink link = entry.getValue();
+            AttachmentLink copyLink = cloner.clone(link);
+            attachmentLinks.put(boneName, copyLink);
+        }
+
+        boneLinks = new HashMap<>(32);
+        for (Map.Entry<String, BoneLink> entry
+                : originalDac.boneLinks.entrySet()) {
+            String boneName = entry.getKey();
+            BoneLink link = entry.getValue();
+            BoneLink copyLink = cloner.clone(link);
+            boneLinks.put(boneName, copyLink);
+        }
+
         skeleton = cloner.clone(skeleton);
         transformer = cloner.clone(transformer);
         torsoLink = cloner.clone(torsoLink);
