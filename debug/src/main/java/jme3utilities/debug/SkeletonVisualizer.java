@@ -391,14 +391,25 @@ public class SkeletonVisualizer extends SubtreeControl {
      * Convert this shallow-cloned control into a deep-cloned one, using the
      * specified cloner and original to resolve copied fields.
      *
-     * @param cloner the cloner currently cloning this control
+     * @param cloner the cloner currently cloning this control (not null,
+     * modified)
      * @param original the control from which this control was shallow-cloned
+     * (not null, unaffected)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
 
-        customColors = cloner.clone(customColors);
+        SkeletonVisualizer originalVisualizer = (SkeletonVisualizer) original;
+        customColors = new TreeMap<>();
+        for (Map.Entry<Integer, ColorRGBA> entry
+                : originalVisualizer.customColors.entrySet()) {
+            int boneIndex = entry.getKey();
+            ColorRGBA color = entry.getValue();
+            ColorRGBA copyColor = cloner.clone(color);
+            customColors.put(boneIndex, copyColor);
+        }
+
         headColor = cloner.clone(headColor);
         headMaterial = cloner.clone(headMaterial);
         lineMaterial = cloner.clone(lineMaterial);
