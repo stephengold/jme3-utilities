@@ -43,6 +43,7 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -76,7 +77,6 @@ public class Updater
      * shadow filters whose intensities are updated by the control - not
      * synchronized
      */
-    @SuppressWarnings("rawtypes")
     private ArrayList<AbstractShadowFilter> shadowFilters = new ArrayList<>(1);
     /**
      * shadow renderers whose intensities are updated by the control - not
