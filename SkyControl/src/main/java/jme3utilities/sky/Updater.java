@@ -74,26 +74,6 @@ public class Updater
      */
     private AmbientLight ambientLight = null;
     /**
-     * shadow filters whose intensities are updated by the control - not
-     * synchronized
-     */
-    private ArrayList<AbstractShadowFilter> shadowFilters = new ArrayList<>(1);
-    /**
-     * shadow renderers whose intensities are updated by the control - not
-     * synchronized
-     */
-    private ArrayList<AbstractShadowRenderer> shadowRenderers = new ArrayList<>(1);
-    /**
-     * bloom filters whose intensities are updated by the control - not
-     * synchronized
-     */
-    private ArrayList<BloomFilter> bloomFilters = new ArrayList<>(1);
-    /**
-     * viewports whose background colors are updated by the control - not
-     * serialized
-     */
-    private ArrayList<ViewPort> viewPorts = new ArrayList<>(3);
-    /**
      * most recent color for ambient light (or null if not updated yet)
      */
     private ColorRGBA ambientColor = null;
@@ -125,6 +105,26 @@ public class Updater
      * most recent shadow intensity
      */
     private float shadowIntensity = 0f;
+    /**
+     * shadow filters whose intensities are updated by the control - not
+     * synchronized
+     */
+    private List<AbstractShadowFilter> shadowFilters = new ArrayList<>(1);
+    /**
+     * shadow renderers whose intensities are updated by the control - not
+     * synchronized
+     */
+    private List<AbstractShadowRenderer> shadowRenderers = new ArrayList<>(1);
+    /**
+     * bloom filters whose intensities are updated by the control - not
+     * synchronized
+     */
+    private List<BloomFilter> bloomFilters = new ArrayList<>(1);
+    /**
+     * viewports whose background colors are updated by the control - not
+     * serialized
+     */
+    private List<ViewPort> viewPorts = new ArrayList<>(3);
     /**
      * most recent direction for main directional light (length=1, or null if
      * not updated yet)
