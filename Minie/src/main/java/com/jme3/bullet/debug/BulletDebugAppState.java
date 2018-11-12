@@ -63,29 +63,41 @@ import jme3utilities.Validate;
  * @author normenhansen
  */
 public class BulletDebugAppState extends AbstractAppState {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BulletDebugAppState.class.getName());
+    // *************************************************************************
+    // fields
+
     /**
      * limit which objects are visualized, or null to visualize all objects
      */
     private DebugAppStateFilter filter;
     /**
-     * physics space to visualize (not null)
+     * map physics characters to visualizations
      */
-    final private PhysicsSpace space;
+    private HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
     /**
-     * scene-graph node to parent the geometries
+     * map ghosts to visualizations
      */
-    final private Node physicsDebugRootNode
-            = new Node("Physics Debug Root Node");
+    private HashMap<PhysicsGhostObject, Spatial> ghosts = new HashMap<>();
     /**
-     * view ports in which to render (not null)
+     * map joints to visualizations
      */
-    private ViewPort[] viewPorts;
+    private HashMap<PhysicsJoint, Spatial> joints = new HashMap<>();
+    /**
+     * map rigid bodies to visualizations
+     */
+    private HashMap<PhysicsRigidBody, Spatial> bodies = new HashMap<>();
+    /**
+     * map vehicles to visualizations
+     */
+    private HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
     /**
      * material for inactive rigid bodies
      */
@@ -95,10 +107,6 @@ public class BulletDebugAppState extends AbstractAppState {
      */
     Material DEBUG_GREEN;
     /**
-     * material for ghosts
-     */
-    Material DEBUG_YELLOW;
-    /**
      * material for vehicles and active rigid bodies
      */
     Material DEBUG_MAGENTA;
@@ -107,25 +115,24 @@ public class BulletDebugAppState extends AbstractAppState {
      */
     Material DEBUG_PINK;
     /**
-     * map rigid bodies to visualizations
+     * material for ghosts
      */
-    private HashMap<PhysicsRigidBody, Spatial> bodies = new HashMap<>();
+    Material DEBUG_YELLOW;
     /**
-     * map joints to visualizations
+     * scene-graph node to parent the geometries
      */
-    private HashMap<PhysicsJoint, Spatial> joints = new HashMap<>();
+    final private Node physicsDebugRootNode
+            = new Node("Physics Debug Root Node");
     /**
-     * map ghosts to visualizations
+     * physics space to visualize (not null)
      */
-    private HashMap<PhysicsGhostObject, Spatial> ghosts = new HashMap<>();
+    final private PhysicsSpace space;
     /**
-     * map physics characters to visualizations
+     * view ports in which to render (not null)
      */
-    private HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
-    /**
-     * map vehicles to visualizations
-     */
-    private HashMap<PhysicsVehicle, Spatial> vehicles = new HashMap<>();
+    private ViewPort[] viewPorts;
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an app state to visualize the specified space using the
@@ -133,7 +140,7 @@ public class BulletDebugAppState extends AbstractAppState {
      * BulletAppState.
      *
      * @param space physics space to visualize (not null, alias created)
-     * @param viewPorts view ports in which to render (not null, alias created)
+     * @param viewPorts view ports in which to render (not null, unaffected)
      * @param filter filter to limit which objects are visualized, or null to
      * visualize all objects (may be null, alias created)
      */
@@ -143,7 +150,11 @@ public class BulletDebugAppState extends AbstractAppState {
         Validate.nonNull(viewPorts, "view ports");
 
         this.space = space;
-        this.viewPorts = viewPorts;
+
+        int numViewPorts = viewPorts.length;
+        this.viewPorts = new ViewPort[numViewPorts];
+        System.arraycopy(viewPorts, 0, this.viewPorts, 0, numViewPorts);
+
         this.filter = filter;
     }
 
