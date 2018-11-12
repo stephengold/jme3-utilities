@@ -85,22 +85,37 @@ public class BulletAppState
     // fields
 
     /**
+     * manager that manages this state, set during attach
+     */
+    private AppStateManager stateManager;
+    /**
+     * true if-and-only-if debug visualization is enabled
+     */
+    private boolean debugEnabled = false;
+    /**
+     * true if-and-only-if this state is enabled
+     */
+    private boolean isEnabled = true;
+    /**
      * true if-and-only-if the physics simulation is running (started but not
      * yet stopped)
      */
     private boolean isRunning = false;
     /**
-     * manager that manages this state, set during attach
+     * broadphase collision-detection algorithm for the physics space to use
+     * (not null)
      */
-    private AppStateManager stateManager;
+    private BroadphaseType broadphaseType = BroadphaseType.DBVT;
+    /**
+     * app state to manage the debug visualization, or null if none
+     */
+    private BulletDebugAppState debugAppState;
+    /**
+     * filter to limit which objects are visualized in the debug visualization,
+     * or null to visualize all objects
+     */
+    private BulletDebugAppState.DebugAppStateFilter filter = null;
 
-    private Callable<Boolean> parallelPhysicsUpdate = new Callable<Boolean>() {
-        @Override
-        public Boolean call() throws Exception {
-            pSpace.update(tpf * getSpeed());
-            return true;
-        }
-    };
     private Callable<Boolean> detachedPhysicsUpdate = new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
@@ -115,52 +130,18 @@ public class BulletAppState
             return true;
         }
     };
-
-    private long detachedPhysicsLastUpdate = 0L;
-    /**
-     * executor service for physics tasks, or null if parallel simulation is not
-     * running
-     */
-    private ScheduledThreadPoolExecutor executor;
-    /**
-     * physics space managed by this state, or null if no simulation running
-     */
-    private PhysicsSpace pSpace;
-    /**
-     * threading mode to use (not null)
-     */
-    private ThreadingType threadingType = ThreadingType.SEQUENTIAL;
-    /**
-     * broadphase collision-detection algorithm for the physics space to use
-     * (not null)
-     */
-    private BroadphaseType broadphaseType = BroadphaseType.DBVT;
-    /**
-     * minimum coordinate values for the physics space when using AXIS_SWEEP
-     * broadphase algorithms (not null)
-     */
-    final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
-    /**
-     * maximum coordinate values for the physics space when using AXIS_SWEEP
-     * broadphase algorithms (not null)
-     */
-    final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
+    final private Callable<Boolean> parallelPhysicsUpdate
+            = new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+            pSpace.update(tpf * getSpeed());
+            return true;
+        }
+    };
     /**
      * simulation speed multiplier (default=1, paused=0)
      */
     private float speed = 1f;
-    /**
-     * true if-and-only-if this state is enabled
-     */
-    private boolean isEnabled = true;
-    /**
-     * true if-and-only-if debug visualization is enabled
-     */
-    private boolean debugEnabled = false;
-    /**
-     * app state to manage the debug visualization, or null if none
-     */
-    private BulletDebugAppState debugAppState;
     /**
      * time interval between frames (in seconds) from the most recent update
      */
@@ -169,15 +150,35 @@ public class BulletAppState
      * current physics task, or null if none
      */
     private Future physicsFuture;
+
+    private long detachedPhysicsLastUpdate = 0L;
+    /**
+     * physics space managed by this state, or null if no simulation running
+     */
+    private PhysicsSpace pSpace;
+    /**
+     * executor service for physics tasks, or null if parallel simulation is not
+     * running
+     */
+    private ScheduledThreadPoolExecutor executor;
+    /**
+     * threading mode to use (not null)
+     */
+    private ThreadingType threadingType = ThreadingType.SEQUENTIAL;
+    /**
+     * maximum coordinate values for the physics space when using AXIS_SWEEP
+     * broadphase algorithms (not null)
+     */
+    final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
+    /**
+     * minimum coordinate values for the physics space when using AXIS_SWEEP
+     * broadphase algorithms (not null)
+     */
+    final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
     /**
      * view ports in which to render the debug visualization
      */
     private ViewPort[] debugViewPorts = null;
-    /**
-     * filter to limit which objects are visualized in the debug visualization,
-     * or null to visualize all objects
-     */
-    private BulletDebugAppState.DebugAppStateFilter filter = null;
     // *************************************************************************
     // constructors
 
