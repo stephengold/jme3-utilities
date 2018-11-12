@@ -1,6 +1,6 @@
 # release notes for the Minie library and related tests
 
-## Version 0.4.4 released on TBD
+## Version 0.4.4 released on 12 November 2018
 
  + Fixed map cloning bugs in `DynamicAnimControl` and
    `ConfigDynamicAnimControl`.
