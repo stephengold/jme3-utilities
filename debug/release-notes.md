@@ -1,9 +1,9 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.5 released on TBD
+## Version 0.9.5 released on 12 November 2018
 
  + Bugfix: `SkeletonVisualizer` custom colors not deeply cloned.
- + Added `dump()` and `describe()` methods for Bone and Skeleton.
+ + Added `dump()` and `describe()` methods for `Bone` and `Skeleton`.
  + Dump material parameters one-per-line and make dumping optional.
  + Based on version 2.12 of the jme3-utilities-heart library.
 
