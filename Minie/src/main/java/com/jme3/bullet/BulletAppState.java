@@ -638,7 +638,6 @@ public class BulletAppState
             executor = null;
         }
         pSpace.removeTickListener(this);
-        pSpace.destroy();
         pSpace = null;
         isRunning = false;
     }

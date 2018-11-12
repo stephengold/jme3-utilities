@@ -407,14 +407,6 @@ public class PhysicsSpace {
     }
 
     /**
-     * Destroy this space so that a new one can be instantiated.
-     */
-    public void destroy() {
-        physicsBodies.clear();
-        physicsJoints.clear();
-    }
-
-    /**
      * Distribute each collision event to all listeners.
      */
     void distributeEvents() {
