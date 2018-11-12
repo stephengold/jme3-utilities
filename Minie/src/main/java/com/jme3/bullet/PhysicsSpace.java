@@ -397,6 +397,16 @@ public class PhysicsSpace {
     }
 
     /**
+     * Count the joints in this physics space.
+     *
+     * @return count (&ge;0)
+     */
+    public int countJoints() {
+        int count = physicsJoints.size();
+        return count;
+    }
+
+    /**
      * Destroy this space so that a new one can be instantiated.
      */
     public void destroy() {
