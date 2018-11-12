@@ -162,9 +162,8 @@ public class MyControlP {
             if (!ghostControl.isApplyPhysicsLocal()) {
                 builder.append("NOT");
             }
-            builder.append("applyLocal,");
+            builder.append("applyLocal]");
 
-            builder.append(']');
             result = builder.toString();
 
         } else {
