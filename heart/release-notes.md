@@ -1,5 +1,14 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.12.0 released on TBD
+
+ + Added a `findIndex()` method for scene-graph controls to
+   the `MySpatial` class.
+ + Added a `mean()` method to the `MyVector3f` class.
+ + Added nonEmpty() methods for Object arrays and collections to
+   the `Validate` class
+ + Allow for negative bone weights in animated meshes.
+
 ## Version 2.11.0 released on 19 October 2018
 
  + Renamed 5 methods in the `MySpatial` class and deprecated the old names
