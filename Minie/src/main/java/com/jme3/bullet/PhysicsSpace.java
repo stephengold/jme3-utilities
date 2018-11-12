@@ -131,6 +131,11 @@ public class PhysicsSpace {
     // *************************************************************************
     // fields
 
+    /**
+     * copy of type of acceleration structure used
+     */
+    private BroadphaseType broadphaseType = BroadphaseType.DBVT;
+
     final private static Comparator<PhysicsRayTestResult> hitFractionComparator
             = new Comparator<PhysicsRayTestResult>() {
         @Override
@@ -139,76 +144,11 @@ public class PhysicsSpace {
             return comp > 0 ? 1 : -1;
         }
     };
-
-    /**
-     * Bullet identifier of the physics space. The constructor sets this to a
-     * non-zero value.
-     */
-    private long physicsSpaceId = 0L;
-    /**
-     * first-in/first-out (FIFO) queue of physics tasks for each thread
-     */
-    final private static ThreadLocal<Queue<AppTask<?>>> pQueueTL
-            = new ThreadLocal<Queue<AppTask<?>>>() {
-        @Override
-        protected ConcurrentLinkedQueue<AppTask<?>> initialValue() {
-            return new ConcurrentLinkedQueue<>();
-        }
-    };
-    /**
-     * first-in/first-out (FIFO) queue of physics tasks
-     */
-    final private Queue<AppTask<?>> pQueue
-            = new ConcurrentLinkedQueue<>();
-    /**
-     * physics space for each thread
-     */
-    final private static ThreadLocal<PhysicsSpace> physicsSpaceTL
-            = new ThreadLocal<PhysicsSpace>();
-    /**
-     * copy of type of acceleration structure used
-     */
-    private BroadphaseType broadphaseType = BroadphaseType.DBVT;
-    final private Map<Long, PhysicsGhostObject> physicsGhostObjects
-            = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsCharacter> physicsCharacters
-            = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsRigidBody> physicsBodies
-            = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsJoint> physicsJoints
-            = new ConcurrentHashMap<>();
-    final private Map<Long, PhysicsVehicle> physicsVehicles
-            = new ConcurrentHashMap<>();
-    /**
-     * list of registered collision listeners
-     */
-    final private List<PhysicsCollisionListener> collisionListeners
-            = new SafeArrayList<>(PhysicsCollisionListener.class);
     /**
      * queue of collision events not yet distributed to listeners
      */
     final private Deque<PhysicsCollisionEvent> collisionEvents
             = new ArrayDeque<>();
-    /**
-     * map from collision groups to registered group listeners
-     */
-    final private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners
-            = new ConcurrentHashMap<>();
-    /**
-     * list of registered tick listeners
-     */
-    final private List<PhysicsTickListener> tickListeners
-            = new SafeArrayList<>(PhysicsTickListener.class);
-    /**
-     * copy of minimum coordinate values when using AXIS_SWEEP broadphase
-     * algorithms
-     */
-    final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
-    /**
-     * copy of maximum coordinate values when using AXIS_SWEEP broadphase
-     * algorithms
-     */
-    final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
     /**
      * physics time step (in seconds, &gt;0)
      */
@@ -227,11 +167,85 @@ public class PhysicsSpace {
      */
     private int solverNumIterations = 10;
     /**
+     * list of registered collision listeners
+     */
+    final private List<PhysicsCollisionListener> collisionListeners
+            = new SafeArrayList<>(PhysicsCollisionListener.class);
+    /**
+     * list of registered tick listeners
+     */
+    final private List<PhysicsTickListener> tickListeners
+            = new SafeArrayList<>(PhysicsTickListener.class);
+    /**
+     * Bullet identifier of the physics space. The constructor sets this to a
+     * non-zero value.
+     */
+    private long physicsSpaceId = 0L;
+    /**
+     * map from collision groups to registered group listeners
+     */
+    final private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners
+            = new ConcurrentHashMap<>();
+    /**
+     * map character ids to objects
+     */
+    final private Map<Long, PhysicsCharacter> physicsCharacters
+            = new ConcurrentHashMap<>();
+    /**
+     * map ghost ids to objects
+     */
+    final private Map<Long, PhysicsGhostObject> physicsGhostObjects
+            = new ConcurrentHashMap<>();
+    /**
+     * map joint ids to objects
+     */
+    final private Map<Long, PhysicsJoint> physicsJoints
+            = new ConcurrentHashMap<>();
+    /**
+     * map rigid body ids to objects
+     */
+    final private Map<Long, PhysicsRigidBody> physicsBodies
+            = new ConcurrentHashMap<>();
+    /**
+     * map verhicle ids to objects
+     */
+    final private Map<Long, PhysicsVehicle> physicsVehicles
+            = new ConcurrentHashMap<>();
+    /**
+     * first-in/first-out (FIFO) queue of physics tasks
+     */
+    final private Queue<AppTask<?>> pQueue
+            = new ConcurrentLinkedQueue<>();
+    /**
+     * physics space for each thread
+     */
+    final private static ThreadLocal<PhysicsSpace> physicsSpaceTL
+            = new ThreadLocal<PhysicsSpace>();
+    /**
+     * first-in/first-out (FIFO) queue of physics tasks for each thread
+     */
+    final private static ThreadLocal<Queue<AppTask<?>>> pQueueTL
+            = new ThreadLocal<Queue<AppTask<?>>>() {
+        @Override
+        protected ConcurrentLinkedQueue<AppTask<?>> initialValue() {
+            return new ConcurrentLinkedQueue<>();
+        }
+    };
+    /**
      * copy of gravity-acceleration vector for newly-added bodies (default is
      * 9.81 in the -Y direction, corresponding to Earth-normal in MKS units)
-     * TODO sort fields
      */
     final private Vector3f gravity = new Vector3f(0, -9.81f, 0);
+    /**
+     * copy of maximum coordinate values when using AXIS_SWEEP broadphase
+     * algorithms
+     */
+    final private Vector3f worldMax = new Vector3f(10000f, 10000f, 10000f);
+    /**
+     * copy of minimum coordinate values when using AXIS_SWEEP broadphase
+     * algorithms
+     */
+    final private Vector3f worldMin = new Vector3f(-10000f, -10000f, -10000f);
     // *************************************************************************
     // constructors
 
