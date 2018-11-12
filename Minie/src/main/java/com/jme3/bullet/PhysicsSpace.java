@@ -148,7 +148,7 @@ public class PhysicsSpace {
     /**
      * first-in/first-out (FIFO) queue of physics tasks for each thread
      */
-    private static ThreadLocal<Queue<AppTask<?>>> pQueueTL
+    final private static ThreadLocal<Queue<AppTask<?>>> pQueueTL
             = new ThreadLocal<Queue<AppTask<?>>>() {
         @Override
         protected ConcurrentLinkedQueue<AppTask<?>> initialValue() {
@@ -163,7 +163,7 @@ public class PhysicsSpace {
     /**
      * physics space for each thread
      */
-    private static ThreadLocal<PhysicsSpace> physicsSpaceTL
+    final private static ThreadLocal<PhysicsSpace> physicsSpaceTL
             = new ThreadLocal<PhysicsSpace>();
     /**
      * copy of type of acceleration structure used
@@ -195,10 +195,10 @@ public class PhysicsSpace {
     final private Map<Integer, PhysicsCollisionGroupListener> collisionGroupListeners
             = new ConcurrentHashMap<>();
     /**
-     * queue of registered tick listeners
+     * list of registered tick listeners
      */
-    final private Queue<PhysicsTickListener> tickListeners
-            = new ConcurrentLinkedQueue<>();
+    final private List<PhysicsTickListener> tickListeners
+            = new SafeArrayList<>(PhysicsTickListener.class);
     /**
      * copy of minimum coordinate values when using AXIS_SWEEP broadphase
      * algorithms
@@ -332,7 +332,7 @@ public class PhysicsSpace {
      * Such a listener can disable collisions when they occur. There can be only
      * one listener per collision group per space.
      *
-     * @param listener the listener to register (not null)
+     * @param listener the listener to register (not null, alias created)
      * @param collisionGroup which group it should listen for (bit mask with
      * exactly one bit set)
      */
@@ -387,7 +387,7 @@ public class PhysicsSpace {
      *
      * @see #setAccuracy(float)
      *
-     * @param listener the listener to register (not null)
+     * @param listener the listener to register (not null, alias created)
      */
     public void addTickListener(PhysicsTickListener listener) {
         Validate.nonNull(listener, "listener");
