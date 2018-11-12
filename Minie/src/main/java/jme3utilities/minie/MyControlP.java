@@ -143,6 +143,21 @@ public class MyControlP {
                 builder.append("NOT");
             }
             builder.append("applyLocal]");
+
+            result = builder.toString();
+
+        } else if (sgc instanceof DynamicAnimControl) {
+            StringBuilder builder = new StringBuilder(60);
+
+            String type = MyControl.describeType(sgc);
+            builder.append(type);
+
+            DynamicAnimControl dac = (DynamicAnimControl) sgc;
+            builder.append('[');
+            int numLinks = dac.countLinks();
+            builder.append(numLinks);
+            builder.append(']');
+
             result = builder.toString();
 
         } else if (sgc instanceof GhostControl) {
