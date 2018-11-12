@@ -1282,7 +1282,7 @@ public class DynamicAnimControl
 
     /**
      * Callback from Bullet, invoked just after the physics has been stepped.
-     * Used to re-activate deactivated rigid bodies.
+     * Used to re-activate any deactivated rigid bodies.
      *
      * @param space the space that was just stepped (not null)
      * @param timeStep the time per physics step (in seconds, &ge;0)
@@ -1555,9 +1555,9 @@ public class DynamicAnimControl
         assert skeletonControl != null;
 
         Spatial spatial = getSpatial();
-        int dacIndex = RagUtils.findIndex(spatial, this);
+        int dacIndex = MySpatial.findIndex(spatial, this);
         assert dacIndex != -1;
-        int scIndex = RagUtils.findIndex(spatial, skeletonControl);
+        int scIndex = MySpatial.findIndex(spatial, skeletonControl);
         assert scIndex != -1;
         assert dacIndex != scIndex;
 
@@ -1569,9 +1569,9 @@ public class DynamicAnimControl
             spatial.removeControl(skeletonControl);
             spatial.addControl(skeletonControl);
 
-            dacIndex = RagUtils.findIndex(spatial, this);
+            dacIndex = MySpatial.findIndex(spatial, this);
             assert dacIndex != -1;
-            scIndex = RagUtils.findIndex(spatial, skeletonControl);
+            scIndex = MySpatial.findIndex(spatial, skeletonControl);
             assert scIndex != -1;
             assert dacIndex < scIndex;
         }

@@ -798,8 +798,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * @param location the desired location (not null, unaffected)
      */
     public void setPhysicsLocation(Vector3f location) {
-        Validate.nonNull(location, "location");
-        assert Vector3f.isValidVector(location); // TODO use Validate.finite()
+        Validate.finite(location, "location");
         if (collisionShape instanceof HeightfieldCollisionShape
                 && !MyVector3f.isZero(location)) {
             throw new IllegalArgumentException(

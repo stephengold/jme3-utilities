@@ -64,6 +64,7 @@ import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Utility methods used by DynamicAnimControl and associated classes.
@@ -102,17 +103,12 @@ public class RagUtils {
      */
     public static Vector3f center(Collection<Vector3f> locations,
             Vector3f storeResult) {
-        Validate.nonNull(locations, "locations"); // TODO nonEmpty()
-        assert !locations.isEmpty();
+        Validate.nonEmpty(locations, "locations");
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
         /*
          * For now, use the arithmentic mean of all vertex locations. TODO
          */
-        result.zero();
-        for (Vector3f location : locations) {
-            result.addLocal(location);
-        }
-        result.divideLocal(locations.size()); // TODO use MyVector3f.mean()
+        MyVector3f.mean(locations, result);
 
         return result;
     }
@@ -186,8 +182,7 @@ public class RagUtils {
             Vector3f center, Collection<Vector3f> vertexLocations) {
         Validate.nonNull(transform, "transform");
         Validate.finite(center, "center");
-        Validate.nonNull(vertexLocations, "vertex locations");
-        assert !vertexLocations.isEmpty(); // TODO nonEmpty()
+        Validate.nonEmpty(vertexLocations, "vertex locations");
 
         for (Vector3f location : vertexLocations) {
             /*
@@ -204,31 +199,6 @@ public class RagUtils {
         CollisionShape boneShape = new HullCollisionShape(vertexLocations);
 
         return boneShape;
-    }
-
-    /**
-     * Find the index of the specified scene-graph control in the specified
-     * spatial. TODO use MySpatial
-     *
-     * @param spatial (not null, unaffected)
-     * @param sgc (not null, unaffected)
-     * @return the index (&ge;0) or -1 if not found
-     */
-    public static int findIndex(Spatial spatial, Control sgc) {
-        Validate.nonNull(spatial, "spatial");
-        Validate.nonNull(sgc, "control");
-
-        int numControls = spatial.getNumControls();
-        int result = -1;
-        for (int i = 0; i < numControls; i++) {
-            Control ci = spatial.getControl(i);
-            if (ci == sgc) {
-                result = i;
-                break;
-            }
-        }
-
-        return result;
     }
 
     /**

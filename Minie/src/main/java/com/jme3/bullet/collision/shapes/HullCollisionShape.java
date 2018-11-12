@@ -124,9 +124,9 @@ public class HullCollisionShape extends CollisionShape {
      * shape (not null, not empty, unaffected)
      */
     public HullCollisionShape(Collection<Vector3f> locations) {
-        int numLocations = locations.size();
-        Validate.positive(numLocations, "number of locations"); // TODO nonEmpty()
+        Validate.nonEmpty(locations, "locations");
 
+        int numLocations = locations.size();
         points = new float[3 * numLocations];
         int j = 0;
         for (Vector3f location : locations) {
