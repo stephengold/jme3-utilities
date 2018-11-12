@@ -127,7 +127,7 @@ public class MyControlP {
             if (!rigidBodyControl.isInWorld()) {
                 builder.append("NOT");
             }
-            builder.append("inWorld");
+            builder.append("inWorld,");
 
             if (!rigidBodyControl.isActive()) {
                 builder.append("NOT");
@@ -142,9 +142,7 @@ public class MyControlP {
             if (!rigidBodyControl.isApplyPhysicsLocal()) {
                 builder.append("NOT");
             }
-            builder.append("applyLocal,");
-
-            builder.append(']');
+            builder.append("applyLocal]");
             result = builder.toString();
 
         } else if (sgc instanceof GhostControl) {
