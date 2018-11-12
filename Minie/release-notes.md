@@ -1,5 +1,13 @@
 # release notes for the Minie library and related tests
 
+## Version 0.4.4 released on TBD
+
+ + Fixed map cloning bugs in `DynamicAnimControl` and
+   `ConfigDynamicAnimControl`.
+ + Added a `countJoints()` method and removed the `destroy()` method of
+   the `PhysicsSpace` class.
+ + Reduce aliasing in the `BulletDebugAppState` constructor.
+
 ## Version 0.4.3 released on 8 November 2018
 
  + Changed `DynamicAnimControl.setMass()` to take a bone name or a physics link.
