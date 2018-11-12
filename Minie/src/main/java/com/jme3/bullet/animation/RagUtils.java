@@ -46,7 +46,6 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
-import com.jme3.scene.control.Control;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
