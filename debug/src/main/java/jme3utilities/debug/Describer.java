@@ -71,6 +71,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyControl;
+import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -108,6 +109,19 @@ public class Describer {
         StringBuilder builder = new StringBuilder(30);
         String nameText = MyString.quote(bone.getName());
         builder.append(nameText);
+
+        String flags = "";
+        if (MySkeleton.getAttachments(bone) != null) {
+            flags += 'A';
+        }
+        if (bone.hasUserControl()) {
+            flags += 'U';
+        }
+        if (!flags.isEmpty()) {
+            builder.append(' ');
+            builder.append(flags);
+        }
+
         List<Bone> children = bone.getChildren();
         if (!children.isEmpty()) {
             int numChildren = children.size();
