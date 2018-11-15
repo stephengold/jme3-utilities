@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.6 released on TBD
+## Version 0.2.6 released on 14 November 2018
 
  + Bugfix: assertion failure in `Population.size()`.
  + Based on version 2.12 of the jme3-utilities-heart library.
