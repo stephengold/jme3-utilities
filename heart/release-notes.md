@@ -5,7 +5,7 @@
  + Added a `findIndex()` method for scene-graph controls to
    the `MySpatial` class.
  + Added a `mean()` method to the `MyVector3f` class.
- + Added nonEmpty() methods for Object arrays and collections to
+ + Added `nonEmpty()` methods for Object arrays and collections to
    the `Validate` class
  + Allow for negative bone weights in animated meshes.
 

@@ -2,20 +2,20 @@
 
 ## Version 0.6.5 released on 23 September 2018
 
- + Renamed UiVersion.getVersionShort() to versionShort(). (API change)
- + Based on version 2.10 of the heart library.
+ + Renamed `UiVersion.getVersionShort()` to `versionShort()`. (API change)
+ + Based on version 2.10 of the jme3-utilities-heart library.
 
 ## Version 0.6.4 released on 17 August 2018
 
-Based on version 2.6 of the heart library.
+Based on version 2.6 of the jme3-utilities-heart library.
 
 ## Version 0.6.3 released on 24 July 2018
 
-Based on version 2.5 of the heart library.
+Based on version 2.5 of the jme3-utilities-heart library.
 
 ## Version 0.6.2 released on 2 February 2018
 
-Based on version 2.2 of the heart library.
+Based on version 2.2 of the jme3-utilities-heart library.
 
 ## Version 0.6.1 released on 25 January 2018
 
@@ -24,20 +24,20 @@ Based on heart library v2.0 to make this library physics-independent.
 ## Version 0.6.0for32 released on 5 December 2017
 
  + 1st release to target JME 3.2
- + Replaced PropertiesKey with UncachedKey.
- + Simplified InputMode by removing the unused "stream" variable.
+ + Replaced `PropertiesKey` with `UncachedKey`.
+ + Simplified `InputMode` by removing the unused `stream` variable.
 
 ## Version 0.5.9 released on 13 September 2017
 
- + Changed semantics of the Locators.register(List) method.
+ + Changed semantics of the` Locators.register(List)` method.
  + Tried to avoid registering duplicate locators.
  + Added support for HttpZip and Url locators.
  + Standardized the BSD license texts.
 
 ## Version 0.5.8 released on 11 August 2017
 
- + Refined the API of Locators class.
- + Implemented save/restore for Locators.
+ + Refined the API of `Locators` class.
+ + Implemented save/restore for `Locators`.
 
 ## Version 0.5.7 released on 9 August 2017
 
@@ -45,13 +45,13 @@ Based on heart library v2.0 to make this library physics-independent.
 
 ## Version 0.5.6 released on 7 August 2017
 
-+ Protected flycamNames from external modification.
++ Protected `flycamNames` from external modification.
 + Improved handling of filesystem exceptions.
 + Added several registration methods to the Locators class.
 
 ## Version 0.5.5 released on 16 July 2017
 
-Publicized InputMode.activate() and InputMode.deactivate() so they can be
+Publicized `InputMode.activate()` and `InputMode.deactivate()` so they can be
 overriden.
 
 ## Version 0.5.4 released on 15 July 2017
