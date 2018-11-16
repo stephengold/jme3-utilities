@@ -47,17 +47,32 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BulletVehicleDebugControl.class.getName());
+    // *************************************************************************
+    // fields
 
+    /**
+     * vehicle to visualize (not null)
+     */
     final private PhysicsVehicle vehicle;
     final private Node suspensionNode;
+    /**
+     * temporary storage for physics location
+     */
     final private Vector3f location = new Vector3f();
+    /**
+     * temporary storage for physics rotation
+     */
     final private Quaternion rotation = new Quaternion();
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an enabled control to visualize the specified vehicle.
@@ -72,6 +87,8 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
         suspensionNode = new Node("Suspension");
         createVehicle();
     }
+    // *************************************************************************
+    // AbstractPhysicsDebugControl methods
 
     /**
      * Alter which spatial is controlled. Invoked when the control is added to
