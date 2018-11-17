@@ -64,12 +64,12 @@ public class GImpactCollisionShape extends CollisionShape {
     // *************************************************************************
     // fields
 
+    private ByteBuffer triangleIndexBase;
+    private ByteBuffer vertexBase;
     private int numTriangles;
     private int numVertices;
     private int triangleIndexStride;
     private int vertexStride;
-    private ByteBuffer triangleIndexBase;
-    private ByteBuffer vertexBase;
     /**
      * Unique identifier of the Bullet mesh. The constructor sets this to a
      * non-zero value.
@@ -94,6 +94,94 @@ public class GImpactCollisionShape extends CollisionShape {
         createCollisionMesh(mesh);
     }
     // *************************************************************************
+    // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (not null, unaffected)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        // triangleIndexBase not cloned
+        // vertexBase not cloned
+        meshId = 0L;
+        createShape();
+    }
+
+    /**
+     * Finalize this shape just before it is destroyed. Should be invoked only
+     * by a subclass or by the garbage collector.
+     *
+     * @throws Throwable ignored by the garbage collector
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        logger2.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
+        finalizeNative(meshId);
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public GImpactCollisionShape jmeClone() {
+        try {
+            GImpactCollisionShape clone = (GImpactCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule capsule = im.getCapsule(this);
+        numVertices = capsule.readInt("numVertices", 0);
+        numTriangles = capsule.readInt("numTriangles", 0);
+        vertexStride = capsule.readInt("vertexStride", 0);
+        triangleIndexStride = capsule.readInt("triangleIndexStride", 0);
+
+        triangleIndexBase = ByteBuffer.wrap(capsule.readByteArray("triangleIndexBase", new byte[0]));
+        vertexBase = ByteBuffer.wrap(capsule.readByteArray("vertexBase", new byte[0]));
+        createShape();
+    }
+
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(numVertices, "numVertices", 0);
+        capsule.write(numTriangles, "numTriangles", 0);
+        capsule.write(vertexStride, "vertexStride", 0);
+        capsule.write(triangleIndexStride, "triangleIndexStride", 0);
+
+        capsule.write(triangleIndexBase.array(), "triangleIndexBase", new byte[0]);
+        capsule.write(vertexBase.array(), "vertexBase", new byte[0]);
+    }
+    // *************************************************************************
+    // private methods
 
     private void createCollisionMesh(Mesh mesh) {
         triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
@@ -122,85 +210,11 @@ public class GImpactCollisionShape extends CollisionShape {
 
         createShape();
     }
-    // *************************************************************************
-    // CollisionShape methods
-
-    /**
-     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
-     * shallow-cloned shape into a deep-cloned one, using the specified cloner
-     * and original to resolve copied fields.
-     *
-     * @param cloner the cloner that's cloning this shape (not null)
-     * @param original the instance from which this instance was shallow-cloned
-     * (not null, unaffected)
-     */
-    @Override
-    public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-        // triangleIndexBase not cloned
-        // vertexBase not cloned
-        meshId = 0L;
-        createShape();
-    }
-
-    /**
-     * Create a shallow clone for the JME cloner.
-     *
-     * @return a new instance
-     */
-    @Override
-    public GImpactCollisionShape jmeClone() {
-        try {
-            GImpactCollisionShape clone = (GImpactCollisionShape) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-
-    /**
-     * Serialize this shape, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(numVertices, "numVertices", 0);
-        capsule.write(numTriangles, "numTriangles", 0);
-        capsule.write(vertexStride, "vertexStride", 0);
-        capsule.write(triangleIndexStride, "triangleIndexStride", 0);
-
-        capsule.write(triangleIndexBase.array(), "triangleIndexBase", new byte[0]);
-        capsule.write(vertexBase.array(), "vertexBase", new byte[0]);
-    }
-
-    /**
-     * De-serialize this shape, for example when loading from a J3O file.
-     *
-     * @param im importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-        InputCapsule capsule = im.getCapsule(this);
-        numVertices = capsule.readInt("numVertices", 0);
-        numTriangles = capsule.readInt("numTriangles", 0);
-        vertexStride = capsule.readInt("vertexStride", 0);
-        triangleIndexStride = capsule.readInt("triangleIndexStride", 0);
-
-        triangleIndexBase = ByteBuffer.wrap(capsule.readByteArray("triangleIndexBase", new byte[0]));
-        vertexBase = ByteBuffer.wrap(capsule.readByteArray("vertexBase", new byte[0]));
-        createShape();
-    }
 
     /**
      * Instantiate the configured shape in Bullet.
      */
-    protected void createShape() {
+    private void createShape() {
         assert meshId == 0L;
         assert objectId == 0L;
 
@@ -217,23 +231,6 @@ public class GImpactCollisionShape extends CollisionShape {
         setScale(scale);
         setMargin(margin);
     }
-    // *************************************************************************
-    // Object methods
-
-    /**
-     * Finalize this shape just before it is destroyed. Should be invoked only
-     * by a subclass or by the garbage collector.
-     *
-     * @throws Throwable ignored by the garbage collector
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        logger2.log(Level.FINE, "Finalizing Mesh {0}", Long.toHexString(meshId));
-        finalizeNative(meshId);
-    }
-    // *************************************************************************
-    // private methods
 
     private native long createShape(long meshId);
 
