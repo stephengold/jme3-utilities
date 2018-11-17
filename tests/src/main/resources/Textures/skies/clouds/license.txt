@@ -1,4 +1,4 @@
-Licensing history for assets in Textures/skies/clouds
+Licensing history for assets in tests/src/main/resources/Textures/skies/clouds
 
 The file "cyclone.jpg" is derived from an image downloaded from
 http://eoimages.gsfc.nasa.gov/images/imagerecords/68000/68479/Isabel.A2003257.1445.250m.jpg
