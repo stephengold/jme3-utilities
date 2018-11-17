@@ -38,18 +38,58 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
+ * Temporary objects used to return debug meshes from native Bullet.
  *
  * @author normenhansen
  */
-public class DebugMeshCallback {
+class DebugMeshCallback {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(DebugMeshCallback.class.getName());
+    // *************************************************************************
+    // fields
 
-    final private ArrayList<Vector3f> list = new ArrayList<>();
+    /**
+     * list of vertex locations
+     */
+    final private ArrayList<Vector3f> list = new ArrayList<>(100);
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Count the number of vertices.
+     *
+     * @return the count (&ge;0)
+     */
+    int countVertices() {
+        int count = list.size();
+        assert count >= 0 : count;
+        return count;
+    }
+
+    /**
+     * Copy the vertex locations to a FloatBuffer.
+     *
+     * @return a new buffer (not null)
+     */
+    FloatBuffer getVertices() {
+        int numFloats = 3 * countVertices();
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(numFloats);
+        for (Vector3f location : list) {
+            buffer.put(location.x);
+            buffer.put(location.y);
+            buffer.put(location.z);
+        }
+
+        return buffer;
+    }
+    // *************************************************************************
+    // private methods
 
     /**
      * Add a vertex to the mesh under construction.
@@ -64,17 +104,5 @@ public class DebugMeshCallback {
      */
     private void addVector(float x, float y, float z, int part, int index) {
         list.add(new Vector3f(x, y, z));
-    }
-
-    FloatBuffer getVertices() {
-        FloatBuffer buf = BufferUtils.createFloatBuffer(list.size() * 3);
-        for (int i = 0; i < list.size(); i++) {
-            Vector3f vector3f = list.get(i);
-            buf.put(vector3f.x);
-            buf.put(vector3f.y);
-            buf.put(vector3f.z);
-        }
-
-        return buf;
     }
 }
