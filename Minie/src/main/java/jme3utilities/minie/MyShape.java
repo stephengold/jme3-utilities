@@ -198,7 +198,7 @@ public class MyShape {
             float radius = sphere.getRadius();
             storeResult.set(radius, radius, radius);
 
-        } else {
+        } else { // TODO handle HullCollisionShape
             String typeName = shape.getClass().getCanonicalName();
             String msg = String.format("%s does not have half extents.",
                     typeName);
@@ -253,6 +253,25 @@ public class MyShape {
         }
 
         assert Float.isNaN(result) || result >= 0f : result;
+        return result;
+    }
+
+    /**
+     * Parse the id of a shape from its description.
+     *
+     * @param description input text (not null, not empty)
+     * @return the shape's id
+     *
+     * @see #describe(com.jme3.bullet.collision.shapes.CollisionShape)
+     */
+    public static long parseShapeId(String description) {
+        Validate.nonEmpty(description, "description");
+
+        String[] parts = description.split(":");
+        assert parts.length == 2 : parts.length;
+        String hexadecimal = parts[1];
+        long result = Long.parseLong(hexadecimal, 16);
+
         return result;
     }
 
