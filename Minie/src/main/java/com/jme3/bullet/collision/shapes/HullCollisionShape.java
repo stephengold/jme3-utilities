@@ -64,16 +64,16 @@ public class HullCollisionShape extends CollisionShape {
     // fields
 
     /**
-     * array of mesh coordinates (not null, not empty length a multiple of 3)
-     */
-    private float[] points;
-    /**
      * buffer for passing vertices to Bullet
      * <p>
      * A Java reference must persist after createShape() completes, or else the
      * buffer might get garbage collected.
      */
     private ByteBuffer bbuf;
+    /**
+     * array of mesh coordinates (not null, not empty length a multiple of 3)
+     */
+    private float[] points;
     // *************************************************************************
     // constructors
 
@@ -82,38 +82,6 @@ public class HullCollisionShape extends CollisionShape {
      * directly!
      */
     public HullCollisionShape() {
-    }
-
-    /**
-     * Instantiate a collision shape based on the specified JME mesh. For best
-     * performance and stability, use the mesh should have no more than 100
-     * vertices.
-     *
-     * @param mesh a mesh on which to base the shape (not null, at least one
-     * vertex, unaffected)
-     */
-    public HullCollisionShape(Mesh mesh) {
-        Validate.nonNull(mesh, "mesh");
-        assert mesh.getVertexCount() > 0;
-
-        points = getPoints(mesh);
-        createShape();
-    }
-
-    /**
-     * Instantiate a collision shape based on the specified array of
-     * coordinates.
-     *
-     * @param points an array of coordinates on which to base the shape (not
-     * null, not empty, length a multiple of 3, unaffected)
-     */
-    public HullCollisionShape(float[] points) {
-        int length = points.length;
-        Validate.positive(length, "length of points");
-        assert (length % 3 == 0) : length;
-
-        this.points = points.clone();
-        createShape();
     }
 
     /**
@@ -136,6 +104,38 @@ public class HullCollisionShape extends CollisionShape {
             j += 3;
         }
 
+        createShape();
+    }
+
+    /**
+     * Instantiate a collision shape based on the specified array of
+     * coordinates.
+     *
+     * @param points an array of coordinates on which to base the shape (not
+     * null, not empty, length a multiple of 3, unaffected)
+     */
+    public HullCollisionShape(float[] points) {
+        int length = points.length;
+        Validate.positive(length, "length of points");
+        assert (length % 3 == 0) : length;
+
+        this.points = points.clone();
+        createShape();
+    }
+
+    /**
+     * Instantiate a collision shape based on the specified JME mesh. For best
+     * performance and stability, use the mesh should have no more than 100
+     * vertices.
+     *
+     * @param mesh a mesh on which to base the shape (not null, at least one
+     * vertex, unaffected)
+     */
+    public HullCollisionShape(Mesh mesh) {
+        Validate.nonNull(mesh, "mesh");
+        assert mesh.getVertexCount() > 0;
+
+        points = getPoints(mesh);
         createShape();
     }
     // *************************************************************************
@@ -174,20 +174,6 @@ public class HullCollisionShape extends CollisionShape {
     }
 
     /**
-     * Serialize this shape, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(points, "points", null);
-    }
-
-    /**
      * De-serialize this shape, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -206,6 +192,20 @@ public class HullCollisionShape extends CollisionShape {
             points = capsule.readFloatArray("points", null);
         }
         createShape();
+    }
+
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(points, "points", null);
     }
     // *************************************************************************
     // private methods
