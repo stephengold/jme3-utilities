@@ -50,17 +50,39 @@ import java.util.logging.Logger;
  * @author CJ Hare, normenhansen
  */
 public class DebugShapeFactory {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(DebugShapeFactory.class.getName());
+    // *************************************************************************
+    // constructors
 
     /**
      * A private constructor to inhibit instantiation of this class.
      */
     private DebugShapeFactory() {
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Count vertices in the debug mesh of the specified shape.
+     *
+     * @param shape (not null, unaffected)
+     * @return the number of vertices (&ge;0)
+     */
+    public static int countDebugVertices(CollisionShape shape) {
+        DebugMeshCallback callback = new DebugMeshCallback();
+        long id = shape.getObjectId();
+        getVertices(id, callback);
+        int count = callback.countVertices();
+
+        assert count >= 0f : count;
+        return count;
     }
 
     /**
@@ -112,6 +134,8 @@ public class DebugShapeFactory {
 
         return debugShape;
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Create a geometry for visualizing the specified shape.
