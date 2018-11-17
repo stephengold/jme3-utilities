@@ -115,8 +115,8 @@ public class HullCollisionShape extends CollisionShape {
      * null, not empty, length a multiple of 3, unaffected)
      */
     public HullCollisionShape(float[] points) {
+        Validate.nonEmpty(points, "points");
         int length = points.length;
-        Validate.positive(length, "length of points");
         assert (length % 3 == 0) : length;
 
         this.points = points.clone();
@@ -137,6 +137,22 @@ public class HullCollisionShape extends CollisionShape {
 
         points = getPoints(mesh);
         createShape();
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Count how many vertices were used to generate the hull.
+     *
+     * @return the count (&gt;0)
+     */
+    public int countMeshVertices() {
+        int length = points.length;
+        assert (length % 3 == 0) : length;
+        int result = length / 3;
+
+        assert result > 0 : result;
+        return result;
     }
     // *************************************************************************
     // CollisionShape methods
