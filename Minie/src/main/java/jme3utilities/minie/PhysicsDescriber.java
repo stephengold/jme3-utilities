@@ -119,7 +119,7 @@ public class PhysicsDescriber extends Describer {
             result += "[r=";
             for (int sphereIndex = 0; sphereIndex < numSpheres; ++sphereIndex) {
                 float radius = multiSphere.getRadius(sphereIndex);
-                if (sphereIndex > 1) {
+                if (sphereIndex > 0) {
                     result += ",";
                 }
                 result += Float.toString(radius);
