@@ -38,6 +38,7 @@ import com.jme3.bullet.collision.shapes.GImpactCollisionShape;
 import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.collision.shapes.MultiSphere;
 import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.collision.shapes.SimplexCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
@@ -50,6 +51,8 @@ import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import java.util.ArrayList;
+import java.util.List;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 
@@ -147,6 +150,22 @@ public class TestCloneShapes extends SimpleApplication {
         assert mcsClone.getMargin() == 0.04f;
         mcs.setMargin(0.19f);
         assert mcsClone.getMargin() == 0.04f;
+
+        List<Float> radii = new ArrayList<>(3);
+        List<Vector3f> centers = new ArrayList<>(3);
+        radii.add(0.5f);
+        centers.add(new Vector3f(0f, 1f, 0f));
+        radii.add(1f);
+        centers.add(new Vector3f(0f, 0f, 0f));
+        radii.add(0.5f);
+        centers.add(new Vector3f(1f, 0f, 0f));
+        CollisionShape multiSphere = new MultiSphere(centers, radii);
+        CollisionShape multiSphereClone
+                = (CollisionShape) Misc.deepCopy(multiSphere);
+        assert multiSphereClone.getObjectId() != multiSphere.getObjectId();
+        assert multiSphereClone.getMargin() == 0.04f;
+        multiSphere.setMargin(0.20f);
+        assert multiSphereClone.getMargin() == 0.04f;
 
         Plane plane = new Plane(new Vector3f(0f, 1f, 0f), 0f);
         CollisionShape pcs = new PlaneCollisionShape(plane);

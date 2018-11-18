@@ -34,6 +34,7 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.ConeCollisionShape;
 import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
+import com.jme3.bullet.collision.shapes.MultiSphere;
 import com.jme3.bullet.collision.shapes.SimplexCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
@@ -45,7 +46,6 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
-import static jme3utilities.math.MyVector3f.dot;
 import jme3utilities.math.MyVolume;
 
 /**
@@ -222,6 +222,13 @@ public class MyShape {
             HullCollisionShape hull = (HullCollisionShape) shape;
             hull.getHalfExtents(storeResult);
 
+        } else if (shape instanceof MultiSphere) {
+            MultiSphere multiSphere = (MultiSphere) shape;
+            if (multiSphere.countSpheres() == 1) {
+                float radius = multiSphere.getRadius(0);
+                storeResult.set(radius, radius, radius);
+            }
+
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
             float radius = sphere.getRadius();
@@ -273,6 +280,12 @@ public class MyShape {
                 default:
                     String msg = Integer.toString(axisIndex);
                     throw new IllegalStateException(msg);
+            }
+
+        } else if (shape instanceof MultiSphere) {
+            MultiSphere multiSphere = (MultiSphere) shape;
+            if (multiSphere.countSpheres() == 1) {
+                result = 2f * multiSphere.getRadius(0);
             }
 
         } else if (shape instanceof SphereCollisionShape) {
@@ -345,6 +358,12 @@ public class MyShape {
             }
             if (r1 == r2) {
                 result = r1;
+            }
+
+        } else if (shape instanceof MultiSphere) {
+            MultiSphere multiSphere = (MultiSphere) shape;
+            if (multiSphere.countSpheres() == 1) {
+                result = multiSphere.getRadius(0);
             }
 
         } else if (shape instanceof SphereCollisionShape) {
@@ -573,15 +592,15 @@ public class MyShape {
      */
     public static double tetrahedronVolume(Vector3f v1, Vector3f v2,
             Vector3f v3, Vector3f v4) {
-        Validate.nonNull(v1, "1st vertex");
-        Validate.nonNull(v2, "2nd vertex");
-        Validate.nonNull(v3, "3rd vertex");
-        Validate.nonNull(v4, "4th vertex");
+        Validate.finite(v1, "1st vertex");
+        Validate.finite(v2, "2nd vertex");
+        Validate.finite(v3, "3rd vertex");
+        Validate.finite(v4, "4th vertex");
 
         Triangle baseTriangle = new Triangle(v1, v2, v3);
         Vector3f offset = v4.subtract(v1);
         Vector3f normal = baseTriangle.getNormal();
-        double altitude = dot(offset, normal);
+        double altitude = MyVector3f.dot(offset, normal);
         altitude = Math.abs(altitude);
 
         double baseArea = area(baseTriangle);

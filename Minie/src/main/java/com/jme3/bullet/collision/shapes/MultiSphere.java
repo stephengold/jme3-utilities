@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 jMonkeyEngine
+ * Copyright (c) 2018 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,19 +38,18 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
-import jme3utilities.math.MyVector3f;
 
 /**
- * A spherical collision shape based on Bullet's btSphereShape. These shapes
- * have no margin and can only be scaled uniformly.
+ * A convex collision shape based on Bullet's btMultiSphereShape. Unlike a
+ * SphereCollisionShape, these shapes can be scaled non-uniformly.
  *
- * @author normenhansen
- * @see MultiSphere
+ * @author Stephen Gold sgold@sonic.net
  */
-public class SphereCollisionShape extends CollisionShape {
+public class MultiSphere extends CollisionShape {
     // *************************************************************************
     // constants and loggers
 
@@ -58,14 +57,18 @@ public class SphereCollisionShape extends CollisionShape {
      * message logger for this class
      */
     final public static Logger logger2
-            = Logger.getLogger(SphereCollisionShape.class.getName());
+            = Logger.getLogger(MultiSphere.class.getName());
     // *************************************************************************
     // fields
 
     /**
-     * copy of radius (in unscaled units, &ge;0)
+     * copies of radii (in unscaled units, each &ge;0)
      */
-    private float radius;
+    private float[] radii;
+    /**
+     * copies of center locations
+     */
+    private Vector3f[] centers;
     // *************************************************************************
     // constructors
 
@@ -73,58 +76,99 @@ public class SphereCollisionShape extends CollisionShape {
      * No-argument constructor needed by SavableClassUtil. Do not invoke
      * directly!
      */
-    public SphereCollisionShape() {
+    public MultiSphere() {
     }
 
     /**
-     * Instantiate a sphere shape with the specified radius.
+     * Instantiate a centered sphere shape with the specified radius.
      *
      * @param radius the desired radius (in unscaled units, &ge;0)
      */
-    public SphereCollisionShape(float radius) {
+    public MultiSphere(float radius) {
         Validate.nonNegative(radius, "radius");
 
-        this.radius = radius;
+        centers = new Vector3f[1];
+        centers[0] = new Vector3f(0f, 0f, 0f);
+
+        radii = new float[1];
+        radii[0] = radius;
+
+        createShape();
+    }
+
+    /**
+     * Instantiate an eccentric sphere shape with the specified center and
+     * radius.
+     *
+     * @param center the offset of the center (not null, unaffected)
+     * @param radius the desired radius (in unscaled units, &ge;0)
+     */
+    public MultiSphere(Vector3f center, float radius) {
+        Validate.finite(center, "center");
+        Validate.nonNegative(radius, "radius");
+
+        centers = new Vector3f[1];
+        centers[0] = center.clone();
+
+        radii = new float[1];
+        radii[0] = radius;
+
+        createShape();
+    }
+
+    /**
+     * Instantiate a multi-sphere shape with the specified centers and radii.
+     *
+     * @param centers the list of center offsets (not null, not empty)
+     * @param radii the list of radii (not null, not empty, each &ge;0)
+     */
+    public MultiSphere(List<Vector3f> centers, List<Float> radii) {
+        Validate.nonEmpty(centers, "centers");
+        Validate.nonEmpty(radii, "radii");
+
+        int numSpheres = radii.size();
+        assert centers.size() == numSpheres : numSpheres;
+
+        this.centers = new Vector3f[numSpheres];
+        this.radii = new float[numSpheres];
+        for (int i = 0; i < numSpheres; ++i) {
+            this.centers[i] = centers.get(i).clone();
+            float radius = radii.get(i);
+            assert radius >= 0f : radius;
+            this.radii[i] = radius;
+        }
+
         createShape();
     }
     // *************************************************************************
+    // new methods exposed
 
     /**
-     * Read the collision margin for this shape.
+     * Count the spheres in this shape.
      *
-     * @return the margin distance (in physics-space units, &ge;0)
+     * @return the count (&gt;0)
      */
-    @Override
-    public float getMargin() {
-        return 0f;
+    public int countSpheres() {
+        int count = radii.length;
+        assert count > 0 : count;
+        return count;
     }
 
     /**
-     * Read the radius of the sphere.
+     * Read the radius of the indexed sphere.
      *
+     * @param sphereIndex which sphere to read (&ge;0)
      * @return the radius (in unscaled units, &ge;0)
      */
-    public float getRadius() {
+    public float getRadius(int sphereIndex) {
+        Validate.inRange(sphereIndex, "sphere index", 0, radii.length - 1);
+        float radius = radii[sphereIndex];
+
         assert radius >= 0f : radius;
         return radius;
     }
     // *************************************************************************
     // CollisionShape methods
-
-    /**
-     * Test whether the specified scaling factors can be applied to this shape.
-     * For sphere shapes, scaling must be uniform.
-     *
-     * @param scale the desired scaling factor for each local axis (may be null,
-     * unaffected)
-     * @return true if applicable, otherwise false
-     */
-    @Override
-    public boolean canScale(Vector3f scale) {
-        boolean canScale
-                = super.canScale(scale) && MyVector3f.isScaleUniform(scale);
-        return canScale;
-    }
 
     /**
      * Callback from {@link com.jme3.util.clone.Cloner} to convert this
@@ -138,6 +182,8 @@ public class SphereCollisionShape extends CollisionShape {
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
+        radii = cloner.clone(radii);
+        centers = cloner.clone(centers);
         createShape();
     }
 
@@ -147,38 +193,13 @@ public class SphereCollisionShape extends CollisionShape {
      * @return a new instance
      */
     @Override
-    public SphereCollisionShape jmeClone() {
+    public MultiSphere jmeClone() {
         try {
-            SphereCollisionShape clone = (SphereCollisionShape) super.clone();
+            MultiSphere clone = (MultiSphere) super.clone();
             return clone;
         } catch (CloneNotSupportedException exception) {
             throw new RuntimeException(exception);
         }
-    }
-
-    /**
-     * Alter the collision margin of this shape. This feature is disabled for
-     * sphere shapes.
-     *
-     * @param margin the desired margin distance (in physics-space units)
-     */
-    @Override
-    public void setMargin(float margin) {
-        logger2.log(Level.SEVERE,
-                "Cannot alter the margin of a SphereCollisionShape.");
-    }
-
-    /**
-     * Serialize this shape, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(radius, "radius", 0.5f);
     }
 
     /**
@@ -191,8 +212,24 @@ public class SphereCollisionShape extends CollisionShape {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        radius = capsule.readFloat("radius", 0.5f);
+        centers = (Vector3f[]) capsule.readSavableArray("centers",
+                new Vector3f[0]);
+        radii = capsule.readFloatArray("radii", new float[0]);
         createShape();
+    }
+
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(centers, "centers", new Vector3f[0]);
+        capsule.write(radii, "radii", new float[0]);
     }
     // *************************************************************************
     // private methods
@@ -201,15 +238,17 @@ public class SphereCollisionShape extends CollisionShape {
      * Instantiate the configured shape in Bullet.
      */
     private void createShape() {
-        assert radius >= 0f : radius;
-
-        objectId = createShape(radius);
+        int numSpheres = radii.length;
+        assert centers.length == numSpheres : numSpheres;
+        objectId = createShape(centers, radii, numSpheres);
         assert objectId != 0L;
-        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}",
+                Long.toHexString(objectId));
 
         setScale(scale);
-        margin = 0f;
+        setMargin(margin);
     }
 
-    native private long createShape(float radius);
+    native private long createShape(Vector3f[] centers, float[] radii,
+            int numSpheres);
 }

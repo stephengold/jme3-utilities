@@ -32,6 +32,7 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.ConeCollisionShape;
 import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
+import com.jme3.bullet.collision.shapes.MultiSphere;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.math.Quaternion;
@@ -111,6 +112,19 @@ public class PhysicsDescriber extends Describer {
             Vector3f halfExtents = cylinder.getHalfExtents(null);
             result += String.format("[hx=%f,hy=%f,hz=%f]",
                     halfExtents.x, halfExtents.y, halfExtents.z);
+
+        } else if (shape instanceof MultiSphere) {
+            MultiSphere multiSphere = (MultiSphere) shape;
+            int numSpheres = multiSphere.countSpheres();
+            result += "[r=";
+            for (int sphereIndex = 0; sphereIndex < numSpheres; ++sphereIndex) {
+                float radius = multiSphere.getRadius(sphereIndex);
+                if (sphereIndex > 1) {
+                    result += ",";
+                }
+                result += Float.toString(radius);
+            }
+            result += "]";
 
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
