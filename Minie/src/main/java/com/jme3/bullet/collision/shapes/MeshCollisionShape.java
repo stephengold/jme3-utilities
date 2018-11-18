@@ -98,7 +98,7 @@ public class MeshCollisionShape extends CollisionShape {
 
     /**
      * An advanced constructor. Passing false values can lead to a crash.
-     * Usually you don’t want to use this. Use at own risk.
+     * Usually you don't want to use this. Use at own risk.
      * <p>
      * This constructor bypasses all copy logic normally used, this allows for
      * faster Bullet shape generation when using procedurally generated Meshes.
@@ -147,6 +147,18 @@ public class MeshCollisionShape extends CollisionShape {
     public MeshCollisionShape(final Mesh mesh, final boolean memoryOptimized) {
         this.memoryOptimized = memoryOptimized;
         createCollisionMesh(mesh);
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Count how many vertices are in the mesh.
+     *
+     * @return the count (&gt;0)
+     */
+    public int countMeshVertices() {
+        assert numVertices > 0 : numVertices;
+        return numVertices;
     }
     // *************************************************************************
     // CollisionShape methods
@@ -210,7 +222,7 @@ public class MeshCollisionShape extends CollisionShape {
      * @throws IOException from importer
      */
     @Override
-    public void read(final JmeImporter im) throws IOException {
+    public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
         numVertices = capsule.readInt(NUM_VERTICES, 0);
@@ -235,7 +247,7 @@ public class MeshCollisionShape extends CollisionShape {
      * @throws IOException from exporter
      */
     @Override
-    public void write(final JmeExporter ex) throws IOException {
+    public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
         capsule.write(numVertices, NUM_VERTICES, 0);

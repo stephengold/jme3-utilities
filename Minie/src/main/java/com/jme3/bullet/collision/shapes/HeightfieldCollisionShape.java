@@ -117,7 +117,7 @@ public class HeightfieldCollisionShape extends CollisionShape {
      * unaffected)
      */
     public HeightfieldCollisionShape(float[] heightmap) {
-        Validate.nonNull(heightmap, "heightmap");
+        Validate.nonEmpty(heightmap, "heightmap");
         assert heightmap.length >= 4 : heightmap.length;
 
         createCollisionHeightfield(heightmap, Vector3f.UNIT_XYZ);
@@ -131,10 +131,24 @@ public class HeightfieldCollisionShape extends CollisionShape {
      * @param scale (not null, no negative component, unaffected, default=1,1,1)
      */
     public HeightfieldCollisionShape(float[] heightmap, Vector3f scale) {
-        Validate.nonNull(heightmap, "heightmap");
+        Validate.nonEmpty(heightmap, "heightmap");
         assert heightmap.length >= 4 : heightmap.length;
 
         createCollisionHeightfield(heightmap, scale);
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Count how many data points are in the heightfield.
+     *
+     * @return the count (&gt;0)
+     */
+    public int countMeshVertices() {
+        int count = heightfieldData.length;
+
+        assert count > 0 : count;
+        return count;
     }
     // *************************************************************************
     // CollisionShape methods

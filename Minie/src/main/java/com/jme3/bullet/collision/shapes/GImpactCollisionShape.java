@@ -94,6 +94,18 @@ public class GImpactCollisionShape extends CollisionShape {
         createCollisionMesh(mesh);
     }
     // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Count how many vertices are in the mesh.
+     *
+     * @return the count (&gt;0)
+     */
+    public int countMeshVertices() {
+        assert numVertices > 0 : numVertices;
+        return numVertices;
+    }
+    // *************************************************************************
     // CollisionShape methods
 
     /**
@@ -103,7 +115,7 @@ public class GImpactCollisionShape extends CollisionShape {
      *
      * @param cloner the cloner that's cloning this shape (not null)
      * @param original the instance from which this instance was shallow-cloned
-     * (not null, unaffected)
+     * (unused)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
@@ -187,9 +199,9 @@ public class GImpactCollisionShape extends CollisionShape {
         triangleIndexBase = BufferUtils.createByteBuffer(mesh.getTriangleCount() * 3 * 4);
         vertexBase = BufferUtils.createByteBuffer(mesh.getVertexCount() * 3 * 4);
         numVertices = mesh.getVertexCount();
-        vertexStride = 12; //3 verts * 4 bytes each.
+        vertexStride = 12; // 3 verts * 4 bytes per.
         numTriangles = mesh.getTriangleCount();
-        triangleIndexStride = 12; //3 index entries * 4 bytes each.
+        triangleIndexStride = 12; // 3 index entries * 4 bytes each.
 
         IndexBuffer indices = mesh.getIndicesAsList();
         FloatBuffer vertices = mesh.getFloatBuffer(Type.Position);
