@@ -40,6 +40,7 @@ import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.minie.MyShape;
 
 /**
  * A simple point, line-segment, triangle, or tetrahedron collision shape based
@@ -125,6 +126,46 @@ public class SimplexCollisionShape extends CollisionShape {
         vector3 = point3.clone();
         vector4 = point4.clone();
         createShape();
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Count the points used to generate the simplex.
+     *
+     * @return the count (&ge;1, &le;4)
+     */
+    public int countMeshVertices() {
+        int result;
+        if (vector4 != null) {
+            result = 4;
+        } else if (vector3 != null) {
+            result = 3;
+        } else if (vector2 != null) {
+            result = 2;
+        } else {
+            result = 1;
+        }
+
+        assert result >= 1 : result;
+        assert result <= 4 : result;
+        return result;
+    }
+
+    /**
+     * Calculate the unscaled volume of the simplex.
+     *
+     * @return the volume (in shape-space units cubed, &ge;0)
+     */
+    public float unscaledVolume() {
+        float volume = 0f;
+        if (vector4 != null) {
+            volume = (float) MyShape.tetrahedronVolume(vector1, vector2,
+                    vector3, vector4);
+        }
+
+        assert volume >= 0f : volume;
+        return volume;
     }
     // *************************************************************************
     // CollisionShape methods

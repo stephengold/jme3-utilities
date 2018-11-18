@@ -34,8 +34,10 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.ConeCollisionShape;
 import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
+import com.jme3.bullet.collision.shapes.SimplexCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
+import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -43,6 +45,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
+import static jme3utilities.math.MyVector3f.dot;
 import jme3utilities.math.MyVolume;
 
 /**
@@ -69,6 +72,27 @@ public class MyShape {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Calculate the area of the specified triangle. TODO move this to MyMath
+     *
+     * @param triangle (not null, unaffected)
+     * @return the area (&ge;0)
+     */
+    public static double area(Triangle triangle) {
+        Vector3f a = triangle.get1();
+        Vector3f b = triangle.get2();
+        Vector3f c = triangle.get3();
+
+        Vector3f ab = b.subtract(a);
+        Vector3f ac = c.subtract(a);
+
+        Vector3f cross = ab.cross(ac);
+        double areaSquared = MyVector3f.lengthSquared(cross) / 4.0;
+        double area = Math.sqrt(areaSquared);
+
+        return area;
+    }
 
     /**
      * Determine the main axis of the specified shape, provided it's a capsule,
@@ -538,6 +562,36 @@ public class MyShape {
     }
 
     /**
+     * Calculate the volume of the specified tetrahedron. TODO move this to
+     * MyVolume
+     *
+     * @param v1 location of the 1st vertex (not null, unaffected)
+     * @param v2 location of the 2nd vertex (not null, unaffected)
+     * @param v3 location of the 3rd vertex (not null, unaffected)
+     * @param v4 location of the 4th vertex (not null, unaffected)
+     * @return the volume (&ge;0)
+     */
+    public static double tetrahedronVolume(Vector3f v1, Vector3f v2,
+            Vector3f v3, Vector3f v4) {
+        Validate.nonNull(v1, "1st vertex");
+        Validate.nonNull(v2, "2nd vertex");
+        Validate.nonNull(v3, "3rd vertex");
+        Validate.nonNull(v4, "4th vertex");
+
+        Triangle baseTriangle = new Triangle(v1, v2, v3);
+        Vector3f offset = v4.subtract(v1);
+        Vector3f normal = baseTriangle.getNormal();
+        double altitude = dot(offset, normal);
+        altitude = Math.abs(altitude);
+
+        double baseArea = area(baseTriangle);
+        assert baseArea >= 0.0 : baseArea;
+        double volume = baseArea * altitude / 3.0;
+
+        return volume;
+    }
+
+    /**
      * Compute the volume of a closed collision shape.
      *
      * @param shape (not null, unaffected)
@@ -561,7 +615,7 @@ public class MyShape {
         } else if (shape instanceof CompoundCollisionShape) {
             /*
              * CompoundCollisionShape ignores scaling.  This calculation
-             * also ignores any overlaps between the children.
+             * also ignores any overlaps between the children. TODO test this
              */
             CompoundCollisionShape compound = (CompoundCollisionShape) shape;
             volume = 0f;
@@ -580,6 +634,10 @@ public class MyShape {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
             Vector3f halfExtents = cylinder.getHalfExtents(null);
             volume *= MyVolume.cylinderVolume(halfExtents);
+
+        } else if (shape instanceof SimplexCollisionShape) {
+            SimplexCollisionShape simplex = (SimplexCollisionShape) shape;
+            volume *= simplex.unscaledVolume();
 
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
