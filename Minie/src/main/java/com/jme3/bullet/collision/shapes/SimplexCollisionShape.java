@@ -60,7 +60,7 @@ public class SimplexCollisionShape extends CollisionShape {
     // fields
 
     /**
-     * vertex positions
+     * vertex positions (may be null)
      */
     private Vector3f vector1, vector2, vector3, vector4;
     // *************************************************************************
@@ -74,19 +74,24 @@ public class SimplexCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a tetrahedral collision shape based on the specified points.
+     * Instantiate a point collision shape based on the specified points.
+     *
+     * @param point1 the coordinates of 1st point (not null, unaffected)
+     */
+    public SimplexCollisionShape(Vector3f point1) {
+        vector1 = point1.clone();
+        createShape();
+    }
+
+    /**
+     * Instantiate a line-segment collision shape based on the specified points.
      *
      * @param point1 the coordinates of 1st point (not null, unaffected)
      * @param point2 the coordinates of 2nd point (not null, unaffected)
-     * @param point3 the coordinates of 3rd point (not null, unaffected)
-     * @param point4 the coordinates of 4th point (not null, unaffected)
      */
-    public SimplexCollisionShape(Vector3f point1, Vector3f point2,
-            Vector3f point3, Vector3f point4) {
+    public SimplexCollisionShape(Vector3f point1, Vector3f point2) {
         vector1 = point1.clone();
         vector2 = point2.clone();
-        vector3 = point3.clone();
-        vector4 = point4.clone();
         createShape();
     }
 
@@ -106,24 +111,19 @@ public class SimplexCollisionShape extends CollisionShape {
     }
 
     /**
-     * Instantiate a line-segment collision shape based on the specified points.
+     * Instantiate a tetrahedral collision shape based on the specified points.
      *
      * @param point1 the coordinates of 1st point (not null, unaffected)
      * @param point2 the coordinates of 2nd point (not null, unaffected)
+     * @param point3 the coordinates of 3rd point (not null, unaffected)
+     * @param point4 the coordinates of 4th point (not null, unaffected)
      */
-    public SimplexCollisionShape(Vector3f point1, Vector3f point2) {
+    public SimplexCollisionShape(Vector3f point1, Vector3f point2,
+            Vector3f point3, Vector3f point4) {
         vector1 = point1.clone();
         vector2 = point2.clone();
-        createShape();
-    }
-
-    /**
-     * Instantiate a point collision shape based on the specified points.
-     *
-     * @param point1 the coordinates of 1st point (not null, unaffected)
-     */
-    public SimplexCollisionShape(Vector3f point1) {
-        vector1 = point1.clone();
+        vector3 = point3.clone();
+        vector4 = point4.clone();
         createShape();
     }
     // *************************************************************************
@@ -164,22 +164,6 @@ public class SimplexCollisionShape extends CollisionShape {
     }
 
     /**
-     * Serialize this shape, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(vector1, "simplexPoint1", null);
-        capsule.write(vector2, "simplexPoint2", null);
-        capsule.write(vector3, "simplexPoint3", null);
-        capsule.write(vector4, "simplexPoint4", null);
-    }
-
-    /**
      * De-serialize this shape, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -194,6 +178,22 @@ public class SimplexCollisionShape extends CollisionShape {
         vector3 = (Vector3f) capsule.readSavable("simplexPoint3", null);
         vector4 = (Vector3f) capsule.readSavable("simplexPoint4", null);
         createShape();
+    }
+
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(vector1, "simplexPoint1", null);
+        capsule.write(vector2, "simplexPoint2", null);
+        capsule.write(vector3, "simplexPoint3", null);
+        capsule.write(vector4, "simplexPoint4", null);
     }
     // *************************************************************************
     // private methods
