@@ -35,6 +35,7 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
@@ -47,6 +48,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * A convex-hull collision shape based on Bullet's btConvexHullShape.
@@ -142,7 +144,7 @@ public class HullCollisionShape extends CollisionShape {
     // new methods exposed
 
     /**
-     * Count how many vertices were used to generate the hull.
+     * Count the vertices used to generate the hull.
      *
      * @return the count (&gt;0)
      */
@@ -152,6 +154,36 @@ public class HullCollisionShape extends CollisionShape {
         int result = length / 3;
 
         assert result > 0 : result;
+        return result;
+    }
+
+    /**
+     * Calculate the unscaled half extents of the hull.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the unscaled half extent for each local axis (either storeResult
+     * or a new vector, not null, no negative component)
+     */
+    public final Vector3f getHalfExtents(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.zero();
+        for (int i = 0; i < points.length; i += 3) {
+            float x = FastMath.abs(points[i]);
+            if (x > result.x) {
+                result.x = x;
+            }
+            float y = FastMath.abs(points[i + 1]);
+            if (y > result.y) {
+                result.y = y;
+            }
+            float z = FastMath.abs(points[i + 2]);
+            if (z > result.z) {
+                result.z = z;
+            }
+        }
+
+        assert MyVector3f.isAllNonNegative(result) : result;
         return result;
     }
     // *************************************************************************
@@ -233,7 +265,7 @@ public class HullCollisionShape extends CollisionShape {
         assert objectId == 0L;
 
         bbuf = BufferUtils.createByteBuffer(points.length * 4);
-        for (int i = 0; i < points.length; i++) {
+        for (int i = 0; i < points.length; ++i) {
             float f = points[i];
             bbuf.putFloat(f);
         }
@@ -241,7 +273,8 @@ public class HullCollisionShape extends CollisionShape {
 
         objectId = createShape(bbuf);
         assert objectId != 0L;
-        logger2.log(Level.FINE, "Created Shape {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Shape {0}",
+                Long.toHexString(objectId));
 
         setScale(scale);
         setMargin(margin);

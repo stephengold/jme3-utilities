@@ -33,6 +33,7 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.ConeCollisionShape;
 import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
+import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.math.Vector3f;
@@ -193,15 +194,18 @@ public class MyShape {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
             cylinder.getHalfExtents(storeResult);
 
+        } else if (shape instanceof HullCollisionShape) {
+            HullCollisionShape hull = (HullCollisionShape) shape;
+            hull.getHalfExtents(storeResult);
+
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
             float radius = sphere.getRadius();
             storeResult.set(radius, radius, radius);
 
-        } else { // TODO handle HullCollisionShape
+        } else { // TODO handle more shapes
             String typeName = shape.getClass().getCanonicalName();
-            String msg = String.format("%s does not have half extents.",
-                    typeName);
+            String msg = String.format("%s lacks half extents.", typeName);
             throw new IllegalArgumentException(msg);
         }
 
