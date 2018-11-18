@@ -161,6 +161,16 @@ abstract public class CollisionShape
     }
 
     /**
+     * Test whether this shape is concave.
+     *
+     * @return true if concave, false if convex
+     */
+    public boolean isConcave() {
+        boolean result = isConcave(objectId);
+        return result;
+    }
+
+    /**
      * Alter the default margin for new shapes that are neither capsules nor
      * spheres.
      *
@@ -303,13 +313,15 @@ abstract public class CollisionShape
     // *************************************************************************
     // private methods
 
-    private native void finalizeNative(long objectId);
+    native private void finalizeNative(long objectId);
 
-    private native void getLocalScaling(long objectId, Vector3f scale);
+    native private void getLocalScaling(long objectId, Vector3f scale);
 
-    private native float getMargin(long objectId);
+    native private float getMargin(long objectId);
 
-    private native void setLocalScaling(long objectId, Vector3f scale);
+    native private boolean isConcave(long objectId);
 
-    private native void setMargin(long objectId, float margin);
+    native private void setLocalScaling(long objectId, Vector3f scale);
+
+    native private void setMargin(long objectId, float margin);
 }
