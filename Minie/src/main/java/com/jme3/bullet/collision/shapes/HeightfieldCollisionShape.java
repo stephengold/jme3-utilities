@@ -137,6 +137,84 @@ public class HeightfieldCollisionShape extends CollisionShape {
         createCollisionHeightfield(heightmap, scale);
     }
     // *************************************************************************
+    // CollisionShape methods
+
+    /**
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned shape into a deep-cloned one, using the specified cloner
+     * and original to resolve copied fields.
+     *
+     * @param cloner the cloner that's cloning this shape (not null)
+     * @param original the instance from which this instance was shallow-cloned
+     * (not null, unaffected)
+     */
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
+        super.cloneFields(cloner, original);
+        // bbuf not cloned
+        // heightfieldData not cloned
+        createShape();
+    }
+
+    /**
+     * Create a shallow clone for the JME cloner.
+     *
+     * @return a new instance
+     */
+    @Override
+    public HeightfieldCollisionShape jmeClone() {
+        try {
+            HeightfieldCollisionShape clone
+                    = (HeightfieldCollisionShape) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * De-serialize this shape, for example when loading from a J3O file.
+     *
+     * @param im importer (not null)
+     * @throws IOException from importer
+     */
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule capsule = im.getCapsule(this);
+        heightStickWidth = capsule.readInt("heightStickWidth", 0);
+        heightStickLength = capsule.readInt("heightStickLength", 0);
+        heightScale = capsule.readFloat("heightScale", 0f);
+        minHeight = capsule.readFloat("minHeight", 0f);
+        maxHeight = capsule.readFloat("maxHeight", 0f);
+        upAxis = capsule.readInt("upAxis", PhysicsSpace.AXIS_Y);
+        heightfieldData = capsule.readFloatArray("heightfieldData",
+                new float[0]);
+        flipQuadEdges = capsule.readBoolean("flipQuadEdges", false);
+        createShape();
+    }
+
+    /**
+     * Serialize this shape, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule capsule = ex.getCapsule(this);
+        capsule.write(heightStickWidth, "heightStickWidth", 0);
+        capsule.write(heightStickLength, "heightStickLength", 0);
+        capsule.write(heightScale, "heightScale", 0f);
+        capsule.write(minHeight, "minHeight", 0f);
+        capsule.write(maxHeight, "maxHeight", 0f);
+        capsule.write(upAxis, "upAxis", PhysicsSpace.AXIS_Y);
+        capsule.write(heightfieldData, "heightfieldData", new float[0]);
+        capsule.write(flipQuadEdges, "flipQuadEdges", false);
+    }
+    // *************************************************************************
+    // private methods
 
     private void createCollisionHeightfield(float[] heightmap,
             Vector3f worldScale) {
@@ -200,85 +278,6 @@ public class HeightfieldCollisionShape extends CollisionShape {
         setScale(scale);
         setMargin(margin);
     }
-    // *************************************************************************
-    // CollisionShape methods
-
-    /**
-     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
-     * shallow-cloned shape into a deep-cloned one, using the specified cloner
-     * and original to resolve copied fields.
-     *
-     * @param cloner the cloner that's cloning this shape (not null)
-     * @param original the instance from which this instance was shallow-cloned
-     * (not null, unaffected)
-     */
-    @Override
-    public void cloneFields(Cloner cloner, Object original) {
-        super.cloneFields(cloner, original);
-        // bbuf not cloned
-        // heightfieldData not cloned
-        createShape();
-    }
-
-    /**
-     * Create a shallow clone for the JME cloner.
-     *
-     * @return a new instance
-     */
-    @Override
-    public HeightfieldCollisionShape jmeClone() {
-        try {
-            HeightfieldCollisionShape clone
-                    = (HeightfieldCollisionShape) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-
-    /**
-     * Serialize this shape, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(heightStickWidth, "heightStickWidth", 0);
-        capsule.write(heightStickLength, "heightStickLength", 0);
-        capsule.write(heightScale, "heightScale", 0f);
-        capsule.write(minHeight, "minHeight", 0f);
-        capsule.write(maxHeight, "maxHeight", 0f);
-        capsule.write(upAxis, "upAxis", PhysicsSpace.AXIS_Y);
-        capsule.write(heightfieldData, "heightfieldData", new float[0]);
-        capsule.write(flipQuadEdges, "flipQuadEdges", false);
-    }
-
-    /**
-     * De-serialize this shape, for example when loading from a J3O file.
-     *
-     * @param im importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-        InputCapsule capsule = im.getCapsule(this);
-        heightStickWidth = capsule.readInt("heightStickWidth", 0);
-        heightStickLength = capsule.readInt("heightStickLength", 0);
-        heightScale = capsule.readFloat("heightScale", 0f);
-        minHeight = capsule.readFloat("minHeight", 0f);
-        maxHeight = capsule.readFloat("maxHeight", 0f);
-        upAxis = capsule.readInt("upAxis", PhysicsSpace.AXIS_Y);
-        heightfieldData = capsule.readFloatArray("heightfieldData",
-                new float[0]);
-        flipQuadEdges = capsule.readBoolean("flipQuadEdges", false);
-        createShape();
-    }
-    // *************************************************************************
-    // private methods
 
     private native long createShape(int heightStickWidth, int heightStickLength,
             ByteBuffer heightfieldData, float heightScale, float minHeight,
