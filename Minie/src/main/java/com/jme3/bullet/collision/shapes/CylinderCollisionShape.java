@@ -252,5 +252,5 @@ public class CylinderCollisionShape extends CollisionShape {
         setMargin(margin);
     }
 
-    private native long createShape(int axis, Vector3f halfExtents);
+    native private long createShape(int axis, Vector3f halfExtents);
 }

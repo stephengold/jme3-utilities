@@ -360,49 +360,49 @@ public class PhysicsCollisionEvent extends EventObject {
     // *************************************************************************
     // private methods
 
-    private native float getAppliedImpulse(long manifoldPointObjectId);
+    native private float getAppliedImpulse(long manifoldPointObjectId);
 
-    private native float getAppliedImpulseLateral1(long manifoldPointObjectId);
+    native private float getAppliedImpulseLateral1(long manifoldPointObjectId);
 
-    private native float getAppliedImpulseLateral2(long manifoldPointObjectId);
+    native private float getAppliedImpulseLateral2(long manifoldPointObjectId);
 
-    private native float getCombinedFriction(long manifoldPointObjectId);
+    native private float getCombinedFriction(long manifoldPointObjectId);
 
-    private native float getCombinedRestitution(long manifoldPointObjectId);
+    native private float getCombinedRestitution(long manifoldPointObjectId);
 
-    private native float getDistance1(long manifoldPointObjectId);
+    native private float getDistance1(long manifoldPointObjectId);
 
-    private native int getIndex0(long manifoldPointObjectId);
+    native private int getIndex0(long manifoldPointObjectId);
 
-    private native int getIndex1(long manifoldPointObjectId);
+    native private int getIndex1(long manifoldPointObjectId);
 
-    private native void getLateralFrictionDir1(long manifoldPointObjectId,
+    native private void getLateralFrictionDir1(long manifoldPointObjectId,
             Vector3f lateralFrictionDir1);
 
-    private native void getLateralFrictionDir2(long manifoldPointObjectId,
+    native private void getLateralFrictionDir2(long manifoldPointObjectId,
             Vector3f lateralFrictionDir2);
 
-    private native boolean isLateralFrictionInitialized(
+    native private boolean isLateralFrictionInitialized(
             long manifoldPointObjectId);
 
-    private native int getLifeTime(long manifoldPointObjectId);
+    native private int getLifeTime(long manifoldPointObjectId);
 
-    private native void getLocalPointA(long manifoldPointObjectId,
+    native private void getLocalPointA(long manifoldPointObjectId,
             Vector3f localPointA);
 
-    private native void getLocalPointB(long manifoldPointObjectId,
+    native private void getLocalPointB(long manifoldPointObjectId,
             Vector3f localPointB);
 
-    private native void getNormalWorldOnB(long manifoldPointObjectId,
+    native private void getNormalWorldOnB(long manifoldPointObjectId,
             Vector3f normalWorldOnB);
 
-    private native int getPartId0(long manifoldPointObjectId);
+    native private int getPartId0(long manifoldPointObjectId);
 
-    private native int getPartId1(long manifoldPointObjectId);
+    native private int getPartId1(long manifoldPointObjectId);
 
-    private native void getPositionWorldOnA(long manifoldPointObjectId,
+    native private void getPositionWorldOnA(long manifoldPointObjectId,
             Vector3f positionWorldOnA);
 
-    private native void getPositionWorldOnB(long manifoldPointObjectId,
+    native private void getPositionWorldOnB(long manifoldPointObjectId,
             Vector3f positionWorldOnB);
 }

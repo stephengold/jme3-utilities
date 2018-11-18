@@ -1254,7 +1254,7 @@ public class PhysicsSpace {
         stepSimulation(physicsSpaceId, time, maxSteps, accuracy);
     }
     // *************************************************************************
-    // private native methods
+    // native private methods
 
     native private void addAction(long space, long id);
 

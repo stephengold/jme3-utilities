@@ -244,7 +244,7 @@ public class GImpactCollisionShape extends CollisionShape {
         setMargin(margin);
     }
 
-    private native long createShape(long meshId);
+    native private long createShape(long meshId);
 
-    private native void finalizeNative(long objectId);
+    native private void finalizeNative(long objectId);
 }

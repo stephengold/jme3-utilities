@@ -170,5 +170,5 @@ public class PlaneCollisionShape extends CollisionShape {
         setMargin(margin);
     }
 
-    private native long createShape(Vector3f normal, float constant);
+    native private long createShape(Vector3f normal, float constant);
 }

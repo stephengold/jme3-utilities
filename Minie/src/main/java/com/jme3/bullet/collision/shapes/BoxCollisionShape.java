@@ -186,5 +186,5 @@ public class BoxCollisionShape extends CollisionShape {
         setMargin(margin);
     }
 
-    private native long createShape(Vector3f halfExtents);
+    native private long createShape(Vector3f halfExtents);
 }

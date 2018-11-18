@@ -59,11 +59,11 @@ public class ConeCollisionShape extends CollisionShape {
             = Logger.getLogger(ConeCollisionShape.class.getName());
 
     /**
-     * copy of radius (&ge;0)
+     * copy of radius (in unscaled units, &ge;0)
      */
     private float radius;
     /**
-     * copy of height (&ge;0)
+     * copy of height (in unscaled units, &ge;0)
      */
     private float height;
     /**
@@ -81,8 +81,8 @@ public class ConeCollisionShape extends CollisionShape {
     /**
      * Instantiate a cone shape around the specified main (height) axis.
      *
-     * @param radius the desired radius (&ge;0)
-     * @param height the desired height (&ge;0)
+     * @param radius the desired radius (in unscaled units, &ge;0)
+     * @param height the desired height (in unscaled units, &ge;0)
      * @param axis which local axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      */
     public ConeCollisionShape(float radius, float height, int axis) {
@@ -99,8 +99,8 @@ public class ConeCollisionShape extends CollisionShape {
     /**
      * Instantiate a cone shape oriented along the Y axis.
      *
-     * @param radius the desired radius (&ge;0)
-     * @param height the desired height (&ge;0)
+     * @param radius the desired radius (in unscaled units, &ge;0)
+     * @param height the desired height (in unscaled units, &ge;0)
      */
     public ConeCollisionShape(float radius, float height) {
         Validate.nonNegative(radius, "radius");
@@ -244,5 +244,5 @@ public class ConeCollisionShape extends CollisionShape {
         setMargin(margin);
     }
 
-    private native long createShape(int axis, float radius, float height);
+    native private long createShape(int axis, float radius, float height);
 }
