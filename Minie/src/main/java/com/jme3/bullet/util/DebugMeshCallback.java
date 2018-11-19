@@ -36,7 +36,10 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
+import jme3utilities.minie.MyShape;
 
 /**
  * Temporary objects used to return debug meshes from native Bullet.
@@ -60,21 +63,28 @@ class DebugMeshCallback {
     // fields
 
     /**
-     * list of vertex locations
+     * list of vertex locations (typically includes many duplicates)
      */
     final private ArrayList<Vector3f> list = new ArrayList<>(250);
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Count the number of vertices.
+     * Count the number of distinct vertices in the mesh, distinguishing 0 from
+     * -0.
      *
      * @return the count (&ge;0)
      */
-    int countVertices() {
-        int count = list.size();
-        assert count >= 0 : count;
-        return count;
+    int countDistinctVertices() {
+        int length = list.size();
+        Set<Vector3f> distinct = new HashSet<>(length);
+        for (Vector3f vector : list) {
+            distinct.add(vector);
+        }
+
+        int result = distinct.size();
+        assert result >= 0 : result;
+        return result;
     }
 
     /**
@@ -83,7 +93,7 @@ class DebugMeshCallback {
      * @return a new buffer (not null)
      */
     FloatBuffer getFaceNormals() {
-        int numVertices = countVertices();
+        int numVertices = list.size();
         int numTriangles = numVertices / 3;
         assert numTriangles * vpt == numVertices : numVertices;
 
@@ -115,7 +125,7 @@ class DebugMeshCallback {
      * @return a new buffer (not null)
      */
     FloatBuffer getVertices() {
-        int numFloats = 3 * countVertices();
+        int numFloats = 3 * list.size();
         FloatBuffer buffer = BufferUtils.createFloatBuffer(numFloats);
         for (Vector3f location : list) {
             buffer.put(location.x);
@@ -124,6 +134,32 @@ class DebugMeshCallback {
         }
 
         return buffer;
+    }
+
+    /**
+     * Calculate volume of the mesh, assuming it's closed and convex.
+     *
+     * @return the volume (in cubic mesh units)
+     */
+    float volumeConvex() {
+        int numVertices = list.size();
+        int numTriangles = numVertices / 3;
+        assert numTriangles * vpt == numVertices : numVertices;
+
+        double total = 0.0;
+        Vector3f fixed = list.get(0);
+        for (int triIndex = 0; triIndex < numTriangles; ++triIndex) {
+            int firstVertex = vpt * triIndex;
+            Vector3f pos1 = list.get(firstVertex);
+            Vector3f pos2 = list.get(firstVertex + 1);
+            Vector3f pos3 = list.get(firstVertex + 2);
+            double tVol = MyShape.tetrahedronVolume(pos1, pos2, pos3, fixed);
+            total += tVol;
+        }
+        float volume = (float) total;
+
+        assert volume >= 0f : volume;
+        return volume;
     }
     // *************************************************************************
     // private methods

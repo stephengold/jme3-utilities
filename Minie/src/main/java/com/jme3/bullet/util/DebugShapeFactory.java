@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * A utility class to generate debug spatials from Bullet collision shapes.
+ * A utility class to generate debug meshes for Bullet collision shapes.
  *
  * @author CJ Hare, normenhansen
  */
@@ -53,6 +53,14 @@ public class DebugShapeFactory {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * specify high-resolution debug meshes for convex shapes (256 vertices)
+     */
+    public static final int highResolution = 1;
+    /**
+     * specify low-resolution debug meshes for convex shapes (42 vertices)
+     */
+    public static final int lowResolution = 0;
     /**
      * message logger for this class
      */
@@ -70,18 +78,18 @@ public class DebugShapeFactory {
     // new methods exposed
 
     /**
-     * Count vertices in the debug mesh of the specified shape.
+     * Count distinct vertices in the debug mesh for the specified shape.
      *
      * @param shape (not null, unaffected)
-     * @return the number of vertices (&ge;0)
+     * @return the number of unique vertices (&ge;0)
      */
     public static int countDebugVertices(CollisionShape shape) {
         DebugMeshCallback callback = new DebugMeshCallback();
         long id = shape.getObjectId();
-        getVertices(id, callback);
-        int count = callback.countVertices();
+        getVertices2(id, lowResolution, callback);
+        int count = callback.countDistinctVertices();
 
-        assert count >= 0f : count;
+        assert count >= 0 : count;
         return count;
     }
 
@@ -134,6 +142,22 @@ public class DebugShapeFactory {
 
         return debugShape;
     }
+
+    /**
+     * Calculate the scaled volume of the debug mesh for the specified shape.
+     *
+     * @param shape (not null, unaffected)
+     * @return the volume (in physics-space units cubed, &ge;0)
+     */
+    public static float volumeConvex(CollisionShape shape) {
+        DebugMeshCallback callback = new DebugMeshCallback();
+        long id = shape.getObjectId();
+        getVertices2(id, lowResolution, callback);
+        float volume = callback.volumeConvex();
+
+        assert volume >= 0f : volume;
+        return volume;
+    }
     // *************************************************************************
     // private methods
 
@@ -152,8 +176,7 @@ public class DebugShapeFactory {
     }
 
     /**
-     * Create a mesh for visualizing the specified shape. TODO special cases for
-     * Box, Sphere, etcetera
+     * Create a mesh for visualizing the specified shape.
      *
      * @param shape (not null, unaffected)
      * @return a new mesh (not null)
@@ -161,7 +184,7 @@ public class DebugShapeFactory {
     public static Mesh getDebugMesh(CollisionShape shape) {
         DebugMeshCallback callback = new DebugMeshCallback();
         long id = shape.getObjectId();
-        getVertices(id, callback);
+        getVertices2(id, lowResolution, callback);
 
         Mesh mesh = new Mesh();
         mesh.setBuffer(Type.Position, 3, callback.getVertices());
@@ -173,6 +196,6 @@ public class DebugShapeFactory {
         return mesh;
     }
 
-    private static native void getVertices(long shapeId,
+    private static native void getVertices2(long shapeId, int resolution,
             DebugMeshCallback buffer);
 }
