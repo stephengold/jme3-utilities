@@ -36,6 +36,7 @@ import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.bullet.PhysicsSpace.BroadphaseType;
 import com.jme3.bullet.debug.BulletDebugAppState;
+import com.jme3.bullet.debug.DebugInitListener;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -138,6 +139,10 @@ public class BulletAppState
             return true;
         }
     };
+    /**
+     * registered debug init listener, or null if none
+     */
+    private DebugInitListener debugInitListener = null;
     /**
      * simulation speed multiplier (default=1, paused=0)
      */
@@ -318,13 +323,22 @@ public class BulletAppState
     /**
      * Alter which objects are included in the debug visualization.
      *
-     * @param filter the desired filter, or or null to visualize all objects
+     * @param filter the desired filter, or null to visualize all objects
      */
     public void setDebugFilter(BulletDebugAppState.DebugAppStateFilter filter) {
         if (debugAppState != null) {
             debugAppState.setFilter(filter);
         }
         this.filter = filter;
+    }
+
+    /**
+     * Register the init listener for the BulletDebugAppState.
+     *
+     * @param listener the listener to register, or null to de-register
+     */
+    public void setDebugInitListener(DebugInitListener listener) {
+        debugInitListener = listener;
     }
 
     /**
@@ -560,8 +574,8 @@ public class BulletAppState
         if (debugEnabled && debugAppState == null) {
             assert pSpace != null;
             assert debugViewPorts != null;
-            debugAppState
-                    = new BulletDebugAppState(pSpace, debugViewPorts, filter);
+            debugAppState = new BulletDebugAppState(pSpace, debugViewPorts,
+                    filter, debugInitListener);
             stateManager.attach(debugAppState);
 
         } else if (!debugEnabled && debugAppState != null) {

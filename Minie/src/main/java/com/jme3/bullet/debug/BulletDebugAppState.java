@@ -79,6 +79,10 @@ public class BulletDebugAppState extends AbstractAppState {
      */
     private DebugAppStateFilter filter;
     /**
+     * registered init listener, or null if none
+     */
+    final private DebugInitListener initListener;
+    /**
      * map physics characters to visualizations
      */
     private HashMap<PhysicsCharacter, Spatial> characters = new HashMap<>();
@@ -139,13 +143,15 @@ public class BulletDebugAppState extends AbstractAppState {
      * specified view ports. This constructor should be invoked only by
      * BulletAppState.
      *
-     * @param space physics space to visualize (not null, alias created)
-     * @param viewPorts view ports in which to render (not null, unaffected)
-     * @param filter filter to limit which objects are visualized, or null to
-     * visualize all objects (may be null, alias created)
+     * @param space the physics space to visualize (not null, alias created)
+     * @param viewPorts the view ports in which to render (not null, unaffected)
+     * @param filter the filter to limit which objects are visualized, or null
+     * to visualize all objects (may be null, alias created)
+     * @param initListener the init listener, or null if none (may be null,
+     * alias created)
      */
     public BulletDebugAppState(PhysicsSpace space, ViewPort[] viewPorts,
-            DebugAppStateFilter filter) {
+            DebugAppStateFilter filter, DebugInitListener initListener) {
         Validate.nonNull(space, "space");
         Validate.nonNull(viewPorts, "view ports");
 
@@ -156,12 +162,13 @@ public class BulletDebugAppState extends AbstractAppState {
         System.arraycopy(viewPorts, 0, this.viewPorts, 0, numViewPorts);
 
         this.filter = filter;
+        this.initListener = initListener;
     }
 
     /**
      * Alter which objects are visualized.
      *
-     * @param filter the desired filter, or or null to visualize all objects
+     * @param filter the desired filter, or null to visualize all objects
      */
     public void setFilter(DebugAppStateFilter filter) {
         this.filter = filter;
@@ -190,7 +197,11 @@ public class BulletDebugAppState extends AbstractAppState {
         super.initialize(stateManager, app);
 
         setupMaterials(app);
-        physicsDebugRootNode.setCullHint(Spatial.CullHint.Never); // TODO why?
+
+        if (initListener != null) {
+            initListener.bulletDebugInit(physicsDebugRootNode);
+        }
+
         for (ViewPort viewPort : viewPorts) {
             viewPort.attachScene(physicsDebugRootNode);
         }
@@ -420,7 +431,6 @@ public class BulletDebugAppState extends AbstractAppState {
      * Interface to restrict which physics objects are visualized.
      */
     public static interface DebugAppStateFilter {
-
         /**
          * Test whether the specified physics object should be displayed.
          *
