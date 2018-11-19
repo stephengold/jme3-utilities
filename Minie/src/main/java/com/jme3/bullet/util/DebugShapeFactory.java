@@ -144,7 +144,7 @@ public class DebugShapeFactory {
             for (ChildCollisionShape childCollisionShape : children) {
                 CollisionShape ccollisionShape = childCollisionShape.getShape();
                 Geometry geometry
-                        = createDebugShape(ccollisionShape, lowResolution);
+                        = createGeometry(ccollisionShape, lowResolution);
 
                 // apply translation
                 geometry.setLocalTranslation(
@@ -164,7 +164,7 @@ public class DebugShapeFactory {
             }
             debugShape = node;
         } else {
-            debugShape = createDebugShape(collisionShape, lowResolution);
+            debugShape = createGeometry(collisionShape, lowResolution);
         }
         if (debugShape != null) {
             debugShape.updateGeometricState();
@@ -203,13 +203,13 @@ public class DebugShapeFactory {
      * @param meshResolution for convex shapes (0=low, 1=high)
      * @return a new geometry (not null)
      */
-    private static Geometry createDebugShape(CollisionShape shape,
+    private static Geometry createGeometry(CollisionShape shape,
             int meshResolution) {
         Mesh mesh = getDebugMesh(shape, meshResolution);
-        Geometry geom = new Geometry("debug shape", mesh);
-        geom.updateModelBound();
+        Geometry geometry = new Geometry("debug shape", mesh);
+        geometry.updateModelBound();
 
-        return geom;
+        return geometry;
     }
 
     private static native void getVertices2(long shapeId, int resolution,
