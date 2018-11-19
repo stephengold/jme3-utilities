@@ -37,7 +37,6 @@ package com.jme3.bullet;
  * @author normenhansen
  */
 public interface PhysicsTickListener {
-
     /**
      * Callback from Bullet, invoked just before the physics is stepped. A good
      * time to clear/apply forces and reposition kinematic objects.
