@@ -31,10 +31,12 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.MultiSphere;
+import com.jme3.bullet.collision.shapes.infos.DebugMeshNormals;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.debug.BulletDebugAppState;
 import com.jme3.bullet.debug.DebugInitListener;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.bullet.util.DebugShapeFactory;
 import com.jme3.export.Savable;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
@@ -234,7 +236,8 @@ public class MultiSphereDemo
         }
 
         CollisionShape shape = new MultiSphere(centers, radii);
-        shape.setGenerateDebugNormals(true);
+        shape.setDebugMeshNormals(DebugMeshNormals.Smooth);
+        shape.setDebugMeshResolution(DebugShapeFactory.highResolution);
 
         Vector3f startLocation = random.nextVector3f();
         startLocation.multLocal(0.5f, 1f, 0.5f);
