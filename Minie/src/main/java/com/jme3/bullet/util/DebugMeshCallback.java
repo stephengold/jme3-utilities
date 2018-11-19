@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.util;
 
+import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
@@ -47,6 +48,10 @@ class DebugMeshCallback {
     // constants and loggers
 
     /**
+     * number of vertices per triangle
+     */
+    final private static int vpt = 3;
+    /**
      * message logger for this class
      */
     final public static Logger logger
@@ -57,7 +62,7 @@ class DebugMeshCallback {
     /**
      * list of vertex locations
      */
-    final private ArrayList<Vector3f> list = new ArrayList<>(100);
+    final private ArrayList<Vector3f> list = new ArrayList<>(250);
     // *************************************************************************
     // new methods exposed
 
@@ -70,6 +75,38 @@ class DebugMeshCallback {
         int count = list.size();
         assert count >= 0 : count;
         return count;
+    }
+
+    /**
+     * Calculate face normals and store them in a FloatBuffer.
+     *
+     * @return a new buffer (not null)
+     */
+    FloatBuffer getFaceNormals() {
+        int numVertices = countVertices();
+        int numTriangles = numVertices / 3;
+        assert numTriangles * vpt == numVertices : numVertices;
+
+        int numFloats = 3 * numVertices;
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(numFloats);
+
+        Triangle triangle = new Triangle();
+        for (int triIndex = 0; triIndex < numTriangles; ++triIndex) {
+            int firstVertex = vpt * triIndex;
+            Vector3f pos1 = list.get(firstVertex);
+            Vector3f pos2 = list.get(firstVertex + 1);
+            Vector3f pos3 = list.get(firstVertex + 2);
+            triangle.set(pos1, pos2, pos3);
+            triangle.setNormal(null);
+            Vector3f normal = triangle.getNormal();
+            for (int j = 0; j < vpt; j++) {
+                buffer.put(normal.x);
+                buffer.put(normal.y);
+                buffer.put(normal.z);
+            }
+        }
+
+        return buffer;
     }
 
     /**

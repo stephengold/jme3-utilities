@@ -69,6 +69,10 @@ abstract public class CollisionShape
     // fields
 
     /**
+     * flag to generate normals for new debug shapes (default=false)
+     */
+    private boolean debugNormalsFlag = false;
+    /**
      * default margin for new non-sphere/non-capsule shapes (in physics-space
      * units, &gt;0, default=0.04)
      */
@@ -107,6 +111,15 @@ abstract public class CollisionShape
         }
 
         return result;
+    }
+
+    /**
+     * Test whether to generate normals for new debug shapes.
+     *
+     * @return true to generate normals, otherwise false
+     */
+    public boolean generatesDebugNormals() {
+        return debugNormalsFlag;
     }
 
     /**
@@ -180,6 +193,15 @@ abstract public class CollisionShape
     public static void setDefaultMargin(float margin) {
         Validate.positive(margin, "margin");
         defaultMargin = margin;
+    }
+
+    /**
+     * Alter whether to generate normals for new debug shapes.
+     *
+     * @param newSetting true to generate normals, false for positions only
+     */
+    public void setGenerateDebugNormals(boolean newSetting) {
+        debugNormalsFlag = newSetting;
     }
 
     /**

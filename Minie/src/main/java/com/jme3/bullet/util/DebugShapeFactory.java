@@ -144,7 +144,7 @@ public class DebugShapeFactory {
      * @return a new geometry (not null)
      */
     private static Geometry createDebugShape(CollisionShape shape) {
-        Mesh mesh = DebugShapeFactory.getDebugMesh(shape);
+        Mesh mesh = getDebugMesh(shape);
         Geometry geom = new Geometry("debug shape", mesh);
         geom.updateModelBound();
 
@@ -152,20 +152,23 @@ public class DebugShapeFactory {
     }
 
     /**
-     * Create a mesh for visualizing the specified shape. TODO special case for
-     * Box
+     * Create a mesh for visualizing the specified shape. TODO special cases for
+     * Box, Sphere, etcetera
      *
      * @param shape (not null, unaffected)
      * @return a new mesh (not null)
      */
     public static Mesh getDebugMesh(CollisionShape shape) {
-        Mesh mesh = new Mesh();
         DebugMeshCallback callback = new DebugMeshCallback();
         long id = shape.getObjectId();
         getVertices(id, callback);
 
+        Mesh mesh = new Mesh();
         mesh.setBuffer(Type.Position, 3, callback.getVertices());
-        mesh.getFloatBuffer(Type.Position).clear();
+
+        if (shape.generatesDebugNormals()) {
+            mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
+        }
 
         return mesh;
     }
