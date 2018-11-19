@@ -34,6 +34,7 @@ package com.jme3.bullet.util;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
+import com.jme3.bullet.collision.shapes.infos.DebugMeshNormals;
 import com.jme3.math.Matrix3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -114,9 +115,19 @@ public class DebugShapeFactory {
 
         Mesh mesh = new Mesh();
         mesh.setBuffer(Type.Position, 3, callback.getVertices());
-
-        if (shape.generatesDebugNormals()) {
-            mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
+        /*
+         * Add a normal buffer if requested for this shape.
+         */
+        DebugMeshNormals option = shape.debugMeshNormals();
+        switch (option) {
+            case Facet:
+                mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
+                break;
+            case None:
+                break;
+            case Smooth:
+                mesh.setBuffer(Type.Normal, 3, callback.getSmoothNormals());
+                break;
         }
 
         return mesh;

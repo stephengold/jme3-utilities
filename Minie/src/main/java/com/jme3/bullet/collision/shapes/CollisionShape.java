@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.collision.shapes;
 
+import com.jme3.bullet.collision.shapes.infos.DebugMeshNormals;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -69,9 +70,9 @@ abstract public class CollisionShape
     // fields
 
     /**
-     * flag to generate normals for new debug shapes (default=false)
+     * which normals to include in new debug shapes (default=None)
      */
-    private boolean debugNormalsFlag = false;
+    private DebugMeshNormals debugMeshNormals = DebugMeshNormals.None;
     /**
      * default margin for new non-sphere/non-capsule shapes (in physics-space
      * units, &gt;0, default=0.04)
@@ -114,12 +115,12 @@ abstract public class CollisionShape
     }
 
     /**
-     * Test whether to generate normals for new debug shapes.
+     * Read which normals to include in new debug shapes.
      *
-     * @return true to generate normals, otherwise false
+     * @return an enum value (not null)
      */
-    public boolean generatesDebugNormals() {
-        return debugNormalsFlag;
+    public DebugMeshNormals debugMeshNormals() {
+        return debugMeshNormals;
     }
 
     /**
@@ -184,6 +185,16 @@ abstract public class CollisionShape
     }
 
     /**
+     * Alter which normals to include in new debug shapes.
+     *
+     * @param newSetting an enum value (not null)
+     */
+    public void setDebugMeshNormals(DebugMeshNormals newSetting) {
+        Validate.nonNull(newSetting, "new setting");
+        debugMeshNormals = newSetting;
+    }
+
+    /**
      * Alter the default margin for new shapes that are neither capsules nor
      * spheres.
      *
@@ -193,15 +204,6 @@ abstract public class CollisionShape
     public static void setDefaultMargin(float margin) {
         Validate.positive(margin, "margin");
         defaultMargin = margin;
-    }
-
-    /**
-     * Alter whether to generate normals for new debug shapes.
-     *
-     * @param newSetting true to generate normals, false for positions only
-     */
-    public void setGenerateDebugNormals(boolean newSetting) {
-        debugNormalsFlag = newSetting;
     }
 
     /**
