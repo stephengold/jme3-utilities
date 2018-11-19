@@ -194,7 +194,8 @@ public class HullCollisionShape extends CollisionShape {
      * @return the volume (in physics-space units cubed, &ge;0)
      */
     public float scaledVolume() {
-        float volume = DebugShapeFactory.volumeConvex(this);
+        int meshResolution = DebugShapeFactory.highResolution;
+        float volume = DebugShapeFactory.volumeConvex(this, meshResolution);
         assert volume >= 0f : volume;
         return volume;
     }
