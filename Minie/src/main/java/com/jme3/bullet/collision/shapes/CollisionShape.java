@@ -32,6 +32,7 @@
 package com.jme3.bullet.collision.shapes;
 
 import com.jme3.bullet.collision.shapes.infos.DebugMeshNormals;
+import com.jme3.bullet.util.DebugShapeFactory;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -70,7 +71,7 @@ abstract public class CollisionShape
     // fields
 
     /**
-     * which normals to include in new debug shapes (default=None)
+     * which normals to include in new debug meshes (default=None)
      */
     private DebugMeshNormals debugMeshNormals = DebugMeshNormals.None;
     /**
@@ -78,6 +79,11 @@ abstract public class CollisionShape
      * units, &gt;0, default=0.04)
      */
     private static float defaultMargin = 0.04f;
+    /**
+     * resolution for new debug meshes (default=low, effective only for convex
+     * shapes)
+     */
+    private int debugMeshResolution = DebugShapeFactory.lowResolution;
     /**
      * unique identifier of the btCollisionShape
      * <p>
@@ -115,12 +121,24 @@ abstract public class CollisionShape
     }
 
     /**
-     * Read which normals to include in new debug shapes.
+     * Read which normals to include in new debug meshes.
      *
      * @return an enum value (not null)
      */
     public DebugMeshNormals debugMeshNormals() {
+        assert debugMeshNormals != null;
         return debugMeshNormals;
+    }
+
+    /**
+     * Read mesh resolution for new debug meshes.
+     *
+     * @return 0=low, 1=high
+     */
+    public int debugMeshResolution() {
+        assert debugMeshResolution >= 0 : debugMeshResolution;
+        assert debugMeshResolution <= 1 : debugMeshResolution;
+        return debugMeshResolution;
     }
 
     /**
@@ -185,13 +203,24 @@ abstract public class CollisionShape
     }
 
     /**
-     * Alter which normals to include in new debug shapes.
+     * Alter which normals to include in new debug meshes.
      *
      * @param newSetting an enum value (not null)
      */
     public void setDebugMeshNormals(DebugMeshNormals newSetting) {
         Validate.nonNull(newSetting, "new setting");
         debugMeshNormals = newSetting;
+    }
+
+    /**
+     * Alter the mesh resolution for new debug meshes. Effective only for convex
+     * shapes.
+     *
+     * @param newSetting 0=low, 1=high
+     */
+    public void setDebugMeshResolution(int newSetting) {
+        Validate.inRange(newSetting, "new setting", 0, 1);
+        debugMeshResolution = newSetting;
     }
 
     /**
@@ -300,6 +329,10 @@ abstract public class CollisionShape
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
+
+        debugMeshNormals = capsule.readEnum("debugMeshNormals",
+                DebugMeshNormals.class, DebugMeshNormals.None);
+        debugMeshResolution = capsule.readInt("debugMeshResolution", 0);
         Savable s = capsule.readSavable("scale", new Vector3f(1f, 1f, 1f));
         scale.set((Vector3f) s);
         margin = capsule.readFloat("margin", 0.04f);
@@ -315,6 +348,10 @@ abstract public class CollisionShape
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
+
+        capsule.write(debugMeshNormals, "debugMeshNormals",
+                DebugMeshNormals.None);
+        capsule.write(debugMeshResolution, "debugMeshResolution", 0);
         capsule.write(scale, "scale", new Vector3f(1f, 1f, 1f));
         capsule.write(margin, "margin", 0.04f);
     }
