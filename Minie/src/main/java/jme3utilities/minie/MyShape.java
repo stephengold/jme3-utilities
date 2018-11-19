@@ -229,6 +229,10 @@ public class MyShape {
                 storeResult.set(radius, radius, radius);
             }
 
+        } else if (shape instanceof SimplexCollisionShape) {
+            SimplexCollisionShape simplex = (SimplexCollisionShape) shape;
+            simplex.getHalfExtents(storeResult);
+
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
             float radius = sphere.getRadius();

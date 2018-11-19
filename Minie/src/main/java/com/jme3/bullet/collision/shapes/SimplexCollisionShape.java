@@ -35,11 +35,14 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 import jme3utilities.minie.MyShape;
 
 /**
@@ -131,6 +134,24 @@ public class SimplexCollisionShape extends CollisionShape {
     // new methods exposed
 
     /**
+     * Copy the indexed vertex.
+     *
+     * @param index (&ge;0, &lt;4)
+     * @param storeResult (modified if not null)
+     * @return the position of the vertex (either storeResult or a new instance)
+     */
+    public Vector3f copyVertex(int index, Vector3f storeResult) {
+        int numVertices = countMeshVertices();
+        Validate.inRange(index, "index", 0, numVertices - 1);
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        Vector3f vertex = getVertex(index);
+        result.set(vertex);
+
+        return result;
+    }
+
+    /**
      * Count the points used to generate the simplex.
      *
      * @return the count (&ge;1, &le;4)
@@ -149,6 +170,38 @@ public class SimplexCollisionShape extends CollisionShape {
 
         assert result >= 1 : result;
         assert result <= 4 : result;
+        return result;
+    }
+
+    /**
+     * Calculate the unscaled half extents of the simplex.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the unscaled half extent for each local axis (either storeResult
+     * or a new vector, not null, no negative component)
+     */
+    public Vector3f getHalfExtents(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.zero();
+        int numMeshVertices = countMeshVertices();
+        for (int i = 0; i < numMeshVertices; ++i) {
+            Vector3f location = getVertex(i);
+            float x = FastMath.abs(location.x);
+            if (x > result.x) {
+                result.x = x;
+            }
+            float y = FastMath.abs(location.y);
+            if (y > result.y) {
+                result.y = y;
+            }
+            float z = FastMath.abs(location.z);
+            if (z > result.z) {
+                result.z = z;
+            }
+        }
+
+        assert MyVector3f.isAllNonNegative(result) : result;
         return result;
     }
 
@@ -261,13 +314,41 @@ public class SimplexCollisionShape extends CollisionShape {
         setMargin(margin);
     }
 
-    private native long createShape(Vector3f vector1);
+    native private long createShape(Vector3f vector1);
 
-    private native long createShape(Vector3f vector1, Vector3f vector2);
+    native private long createShape(Vector3f vector1, Vector3f vector2);
 
-    private native long createShape(Vector3f vector1, Vector3f vector2,
+    native private long createShape(Vector3f vector1, Vector3f vector2,
             Vector3f vector3);
 
-    private native long createShape(Vector3f vector1, Vector3f vector2,
+    native private long createShape(Vector3f vector1, Vector3f vector2,
             Vector3f vector3, Vector3f vector4);
+
+    /**
+     * Access the indexed vertex.
+     *
+     * @param index (&ge;0, &lt;4)
+     * @return the pre-existing vector (may be null)
+     */
+    private Vector3f getVertex(int index) {
+        Vector3f result;
+        switch (index) {
+            case 0:
+                result = vector1;
+                break;
+            case 1:
+                result = vector2;
+                break;
+            case 2:
+                result = vector3;
+                break;
+            case 3:
+                result = vector4;
+                break;
+            default:
+                throw new IllegalArgumentException(Integer.toString(index));
+        }
+
+        return result;
+    }
 }
