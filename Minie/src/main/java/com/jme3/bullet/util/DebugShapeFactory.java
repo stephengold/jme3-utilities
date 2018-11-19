@@ -80,43 +80,21 @@ public class DebugShapeFactory {
     // new methods exposed
 
     /**
-     * Count distinct vertices in the debug mesh for the specified shape.
+     * Create a mesh for visualizing the specified collision shape.
      *
      * @param shape (not null, unaffected)
-     * @param meshResolution for convex shapes (0=low, 1=high)
-     * @return the number of unique vertices (&ge;0)
-     */
-    public static int countDebugVertices(CollisionShape shape,
-            int meshResolution) {
-        Validate.inRange(meshResolution, "mesh resolution", 0, 1);
-
-        long id = shape.getObjectId();
-        DebugMeshCallback callback = new DebugMeshCallback();
-        getVertices2(id, meshResolution, callback);
-        int count = callback.countDistinctVertices();
-
-        assert count >= 0 : count;
-        return count;
-    }
-
-    /**
-     * Create a mesh for visualizing the specified shape.
-     *
-     * @param shape (not null, unaffected)
-     * @param meshResolution for convex shapes (0=low, 1=high)
      * @return a new mesh (not null)
      */
-    public static Mesh getDebugMesh(CollisionShape shape, int meshResolution) {
-        Validate.inRange(meshResolution, "mesh resolution", 0, 1);
-
+    public static Mesh getDebugMesh(CollisionShape shape) {
         long id = shape.getObjectId();
+        int meshResolution = shape.debugMeshResolution();
         DebugMeshCallback callback = new DebugMeshCallback();
         getVertices2(id, meshResolution, callback);
 
         Mesh mesh = new Mesh();
         mesh.setBuffer(Type.Position, 3, callback.getVertices());
         /*
-         * Add a normal buffer if requested for this shape.
+         * Add a normal buffer, if requested for this shape.
          */
         DebugMeshNormals option = shape.debugMeshNormals();
         switch (option) {
@@ -134,7 +112,7 @@ public class DebugShapeFactory {
     }
 
     /**
-     * Create a debug spatial from the specified collision shape.
+     * Create a spatial for visualizing the specified collision shape.
      * <p>
      * This is mostly used internally. To attach a debug shape to a physics
      * object, call <code>attachDebugShape(AssetManager manager);</code> on it.
@@ -154,8 +132,7 @@ public class DebugShapeFactory {
             Node node = new Node("DebugShapeNode");
             for (ChildCollisionShape childCollisionShape : children) {
                 CollisionShape ccollisionShape = childCollisionShape.getShape();
-                Geometry geometry
-                        = createGeometry(ccollisionShape, lowResolution);
+                Geometry geometry = createGeometry(ccollisionShape);
 
                 // apply translation
                 geometry.setLocalTranslation(
@@ -175,7 +152,7 @@ public class DebugShapeFactory {
             }
             debugShape = node;
         } else {
-            debugShape = createGeometry(collisionShape, lowResolution);
+            debugShape = createGeometry(collisionShape);
         }
         if (debugShape != null) {
             debugShape.updateGeometricState();
@@ -185,12 +162,13 @@ public class DebugShapeFactory {
     }
 
     /**
-     * Calculate the scaled volume of the debug mesh for the specified convex
-     * shape.
+     * Calculate the volume of a debug mesh for the specified convex shape. The
+     * shape's current scale and margin are taken into account, but not its
+     * debug mesh resolution.
      *
      * @param shape (not null, unaffected, must be convex)
      * @param meshResolution (0=low, 1=high)
-     * @return the volume (in physics-space units cubed, &ge;0)
+     * @return the scaled volume (in physics-space units cubed, &ge;0)
      */
     public static float volumeConvex(CollisionShape shape, int meshResolution) {
         assert !shape.isConcave();
@@ -211,18 +189,16 @@ public class DebugShapeFactory {
      * Create a geometry for visualizing the specified shape.
      *
      * @param shape (not null, unaffected)
-     * @param meshResolution for convex shapes (0=low, 1=high)
      * @return a new geometry (not null)
      */
-    private static Geometry createGeometry(CollisionShape shape,
-            int meshResolution) {
-        Mesh mesh = getDebugMesh(shape, meshResolution);
+    private static Geometry createGeometry(CollisionShape shape) {
+        Mesh mesh = getDebugMesh(shape);
         Geometry geometry = new Geometry("debug shape", mesh);
         geometry.updateModelBound();
 
         return geometry;
     }
 
-    private static native void getVertices2(long shapeId, int resolution,
+    private static native void getVertices2(long shapeId, int meshResolution,
             DebugMeshCallback buffer);
 }
