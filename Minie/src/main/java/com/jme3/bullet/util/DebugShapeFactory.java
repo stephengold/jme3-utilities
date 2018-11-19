@@ -80,45 +80,13 @@ public class DebugShapeFactory {
     // new methods exposed
 
     /**
-     * Create a mesh for visualizing the specified collision shape.
-     *
-     * @param shape (not null, unaffected)
-     * @return a new mesh (not null)
-     */
-    public static Mesh getDebugMesh(CollisionShape shape) {
-        long id = shape.getObjectId();
-        int meshResolution = shape.debugMeshResolution();
-        DebugMeshCallback callback = new DebugMeshCallback();
-        getVertices2(id, meshResolution, callback);
-
-        Mesh mesh = new Mesh();
-        mesh.setBuffer(Type.Position, 3, callback.getVertices());
-        /*
-         * Add a normal buffer, if requested for this shape.
-         */
-        DebugMeshNormals option = shape.debugMeshNormals();
-        switch (option) {
-            case Facet:
-                mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
-                break;
-            case None:
-                break;
-            case Smooth:
-                mesh.setBuffer(Type.Normal, 3, callback.getSmoothNormals());
-                break;
-        }
-
-        return mesh;
-    }
-
-    /**
      * Create a spatial for visualizing the specified collision shape.
      * <p>
-     * This is mostly used internally. To attach a debug shape to a physics
-     * object, call <code>attachDebugShape(AssetManager manager);</code> on it.
+     * This is mostly used internally. To enable physics debug visualization,
+     * use {@link com.jme3.bullet.BulletAppState#setDebugEnabled(boolean)}.
      *
      * @param collisionShape the shape to visualize (may be null, unaffected)
-     * @return a new tree of geometries, or null
+     * @return a new tree of nodes and geometries, or null
      */
     public static Spatial getDebugShape(CollisionShape collisionShape) {
         if (collisionShape == null) {
@@ -128,8 +96,9 @@ public class DebugShapeFactory {
         Spatial debugShape;
         if (collisionShape instanceof CompoundCollisionShape) {
             CompoundCollisionShape shape = (CompoundCollisionShape) collisionShape;
+
+            Node node = new Node("bullet debug");
             List<ChildCollisionShape> children = shape.getChildren();
-            Node node = new Node("DebugShapeNode");
             for (ChildCollisionShape childCollisionShape : children) {
                 CollisionShape ccollisionShape = childCollisionShape.getShape();
                 Geometry geometry = createGeometry(ccollisionShape);
@@ -151,12 +120,12 @@ public class DebugShapeFactory {
                 node.attachChild(geometry);
             }
             debugShape = node;
+
         } else {
             debugShape = createGeometry(collisionShape);
         }
-        if (debugShape != null) {
-            debugShape.updateGeometricState();
-        }
+
+        debugShape.updateGeometricState();
 
         return debugShape;
     }
@@ -164,7 +133,7 @@ public class DebugShapeFactory {
     /**
      * Calculate the volume of a debug mesh for the specified convex shape. The
      * shape's current scale and margin are taken into account, but not its
-     * debug mesh resolution.
+     * debug-mesh resolution.
      *
      * @param shape (not null, unaffected, must be convex)
      * @param meshResolution (0=low, 1=high)
@@ -192,11 +161,48 @@ public class DebugShapeFactory {
      * @return a new geometry (not null)
      */
     private static Geometry createGeometry(CollisionShape shape) {
-        Mesh mesh = getDebugMesh(shape);
-        Geometry geometry = new Geometry("debug shape", mesh);
+        assert shape != null;
+
+        Mesh mesh = createMesh(shape);
+        Geometry geometry = new Geometry("bullet debug", mesh);
         geometry.updateModelBound();
 
         return geometry;
+    }
+
+    /**
+     * Create a mesh for visualizing the specified (non-compound) collision
+     * shape.
+     *
+     * @param shape (not null, unaffected)
+     * @return a new mesh (not null)
+     */
+    private static Mesh createMesh(CollisionShape shape) {
+        assert !(shape instanceof CompoundCollisionShape);
+
+        long id = shape.getObjectId();
+        int meshResolution = shape.debugMeshResolution();
+        DebugMeshCallback callback = new DebugMeshCallback();
+        getVertices2(id, meshResolution, callback);
+
+        Mesh mesh = new Mesh();
+        mesh.setBuffer(Type.Position, 3, callback.getVertices());
+        /*
+         * Add a normal buffer, if requested for this shape.
+         */
+        DebugMeshNormals option = shape.debugMeshNormals();
+        switch (option) {
+            case Facet:
+                mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
+                break;
+            case None:
+                break;
+            case Smooth:
+                mesh.setBuffer(Type.Normal, 3, callback.getSmoothNormals());
+                break;
+        }
+
+        return mesh;
     }
 
     private static native void getVertices2(long shapeId, int meshResolution,
