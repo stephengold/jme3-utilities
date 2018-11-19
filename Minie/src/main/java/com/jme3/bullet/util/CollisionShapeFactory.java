@@ -69,33 +69,98 @@ public class CollisionShapeFactory {
     }
 
     /**
-     * Calculate the correct transform for a collision shape relative to the
-     * ancestor for which the shape was generated.
+     * Create a box shape for the given Spatial.
      *
-     * @param spat
-     * @param parent
-     * @return a new instance (not null)
+     * @param spatial the spatial on which to base the shape (not null)
+     * @return a BoxCollisionShape (if spatial is a Geometry) or a
+     * CompoundCollisionShape with BoxCollisionShapes as children (if spatial is
+     * a Node)
      */
-    private static Transform getTransform(Spatial spat, Spatial parent) {
-        Transform shapeTransform = new Transform();
-        Spatial parentNode = spat.getParent() != null ? spat.getParent() : spat;
-        Spatial currentSpatial = spat;
-        //if we have parents combine their transforms
-        while (parentNode != null) {
-            if (parent == currentSpatial) {
-                //real parent -> only apply scale, not transform
-                Transform trans = new Transform();
-                trans.setScale(currentSpatial.getLocalScale());
-                shapeTransform.combineWithParent(trans);
-                parentNode = null;
-            } else {
-                shapeTransform.combineWithParent(currentSpatial.getLocalTransform());
-                parentNode = currentSpatial.getParent();
-                currentSpatial = parentNode;
-            }
+    public static CollisionShape createBoxShape(Spatial spatial) {
+        if (spatial instanceof Geometry) {
+            return createSingleBoxShape((Geometry) spatial);
+        } else if (spatial instanceof Node) {
+            return createBoxCompoundShape((Node) spatial);
+        } else {
+            throw new IllegalArgumentException(
+                    "Supplied spatial must either be Node or Geometry!");
         }
+    }
 
-        return shapeTransform;
+    /**
+     * Create a hull shape for the given Spatial.
+     * <p>
+     * For mesh-accurate animated meshes (CPU intense!) use GImpact shapes.
+     *
+     * @param spatial the spatial on which to base the shape (not null)
+     * @return a HullCollisionShape (if spatial is a Geometry) or a
+     * CompoundCollisionShape with HullCollisionShapes as children (if spatial
+     * is a Node)
+     */
+    public static CollisionShape createDynamicMeshShape(Spatial spatial) {
+        if (spatial instanceof Geometry) {
+            return createSingleDynamicMeshShape((Geometry) spatial, spatial);
+        } else if (spatial instanceof Node) {
+            return createCompoundShape((Node) spatial, (Node) spatial,
+                    new CompoundCollisionShape(), true, true);
+        } else {
+            throw new IllegalArgumentException(
+                    "Supplied spatial must either be Node or Geometry!");
+        }
+    }
+
+    /**
+     * Create a mesh shape for the given Spatial.
+     * <p>
+     * This type of collision shape is mesh-accurate and meant for immovable
+     * "world objects". Examples include terrain, houses or whole shooter
+     * levels.
+     * <p>
+     * Objects with "mesh" type collision shape will not collide with each
+     * other.
+     * <p>
+     * Creates a HeightfieldCollisionShape if the supplied spatial is a
+     * TerrainQuad.
+     *
+     * @param spatial the spatial on which to base the shape (not null)
+     * @return A MeshCollisionShape or a CompoundCollisionShape with
+     * MeshCollisionShapes as children if the supplied spatial is a Node. A
+     * HeightieldCollisionShape if a TerrainQuad was supplied.
+     */
+    public static CollisionShape createMeshShape(Spatial spatial) {
+        if (spatial instanceof TerrainQuad) {
+            TerrainQuad terrain = (TerrainQuad) spatial;
+            return new HeightfieldCollisionShape(terrain.getHeightMap(), terrain.getLocalScale());
+        } else if (spatial instanceof TerrainPatch) {
+            TerrainPatch terrain = (TerrainPatch) spatial;
+            return new HeightfieldCollisionShape(terrain.getHeightMap(), terrain.getLocalScale());
+        } else if (spatial instanceof Geometry) {
+            return createSingleMeshShape((Geometry) spatial, spatial);
+        } else if (spatial instanceof Node) {
+            return createMeshCompoundShape((Node) spatial);
+        } else {
+            throw new IllegalArgumentException(
+                    "Supplied spatial must either be Node or Geometry!");
+        }
+    }
+
+    /**
+     * This type of collision shape creates a CompoundShape made out of boxes
+     * that are based on the bounds of the Geometries in the tree.
+     *
+     * @param rootNode the node on which to base the shape (not null)
+     * @return a new shape (not null)
+     */
+    private static CompoundCollisionShape createBoxCompoundShape(
+            Node rootNode) {
+        return createCompoundShape(rootNode, new CompoundCollisionShape(),
+                false);
+    }
+
+    private static CompoundCollisionShape createCompoundShape(
+            Node rootNode, CompoundCollisionShape shape, boolean meshAccurate) {
+        return createCompoundShape(rootNode, rootNode, shape, meshAccurate,
+                false);
     }
 
     private static CompoundCollisionShape createCompoundShape(Node realRootNode,
@@ -158,12 +223,6 @@ public class CollisionShapeFactory {
         return shape;
     }
 
-    private static CompoundCollisionShape createCompoundShape(
-            Node rootNode, CompoundCollisionShape shape, boolean meshAccurate) {
-        return createCompoundShape(rootNode, rootNode, shape, meshAccurate,
-                false);
-    }
-
     /**
      * This type of collision shape is mesh-accurate and meant for immovable
      * "world objects". Examples include terrain, houses or whole shooter
@@ -179,117 +238,6 @@ public class CollisionShapeFactory {
             Node rootNode) {
         return createCompoundShape(rootNode, new CompoundCollisionShape(),
                 true);
-    }
-
-    /**
-     * This type of collision shape creates a CompoundShape made out of boxes
-     * that are based on the bounds of the Geometries in the tree.
-     *
-     * @param rootNode the node on which to base the shape (not null)
-     * @return a new shape (not null)
-     */
-    private static CompoundCollisionShape createBoxCompoundShape(
-            Node rootNode) {
-        return createCompoundShape(rootNode, new CompoundCollisionShape(),
-                false);
-    }
-
-    /**
-     * Create a mesh shape for the given Spatial.
-     * <p>
-     * This type of collision shape is mesh-accurate and meant for immovable
-     * "world objects". Examples include terrain, houses or whole shooter
-     * levels.
-     * <p>
-     * Objects with "mesh" type collision shape will not collide with each
-     * other.
-     * <p>
-     * Creates a HeightfieldCollisionShape if the supplied spatial is a
-     * TerrainQuad.
-     *
-     * @param spatial the spatial on which to base the shape (not null)
-     * @return A MeshCollisionShape or a CompoundCollisionShape with
-     * MeshCollisionShapes as children if the supplied spatial is a Node. A
-     * HeightieldCollisionShape if a TerrainQuad was supplied.
-     */
-    public static CollisionShape createMeshShape(Spatial spatial) {
-        if (spatial instanceof TerrainQuad) {
-            TerrainQuad terrain = (TerrainQuad) spatial;
-            return new HeightfieldCollisionShape(terrain.getHeightMap(), terrain.getLocalScale());
-        } else if (spatial instanceof TerrainPatch) {
-            TerrainPatch terrain = (TerrainPatch) spatial;
-            return new HeightfieldCollisionShape(terrain.getHeightMap(), terrain.getLocalScale());
-        } else if (spatial instanceof Geometry) {
-            return createSingleMeshShape((Geometry) spatial, spatial);
-        } else if (spatial instanceof Node) {
-            return createMeshCompoundShape((Node) spatial);
-        } else {
-            throw new IllegalArgumentException(
-                    "Supplied spatial must either be Node or Geometry!");
-        }
-    }
-
-    /**
-     * Create a hull shape for the given Spatial.
-     * <p>
-     * For mesh-accurate animated meshes (CPU intense!) use GImpact shapes.
-     *
-     * @param spatial the spatial on which to base the shape (not null)
-     * @return a HullCollisionShape (if spatial is a Geometry) or a
-     * CompoundCollisionShape with HullCollisionShapes as children (if spatial
-     * is a Node)
-     */
-    public static CollisionShape createDynamicMeshShape(Spatial spatial) {
-        if (spatial instanceof Geometry) {
-            return createSingleDynamicMeshShape((Geometry) spatial, spatial);
-        } else if (spatial instanceof Node) {
-            return createCompoundShape((Node) spatial, (Node) spatial,
-                    new CompoundCollisionShape(), true, true);
-        } else {
-            throw new IllegalArgumentException(
-                    "Supplied spatial must either be Node or Geometry!");
-        }
-
-    }
-
-    /**
-     * Create a box shape for the given Spatial.
-     *
-     * @param spatial the spatial on which to base the shape (not null)
-     * @return a BoxCollisionShape (if spatial is a Geometry) or a
-     * CompoundCollisionShape with BoxCollisionShapes as children (if spatial is
-     * a Node)
-     */
-    public static CollisionShape createBoxShape(Spatial spatial) {
-        if (spatial instanceof Geometry) {
-            return createSingleBoxShape((Geometry) spatial);
-        } else if (spatial instanceof Node) {
-            return createBoxCompoundShape((Node) spatial);
-        } else {
-            throw new IllegalArgumentException(
-                    "Supplied spatial must either be Node or Geometry!");
-        }
-    }
-
-    /**
-     * This type of collision shape is mesh-accurate and meant for immovable
-     * "world objects". Examples include terrain, houses or whole shooter
-     * levels.
-     * <p>
-     * Objects with "mesh" type collision shape will not collide with each
-     * other.
-     */
-    private static MeshCollisionShape createSingleMeshShape(Geometry geom,
-            Spatial parent) {
-        Mesh mesh = geom.getMesh();
-        Transform trans = getTransform(geom, parent);
-        if (mesh != null && mesh.getMode() == Mesh.Mode.Triangles) {
-            MeshCollisionShape mColl = new MeshCollisionShape(mesh);
-            mColl.setScale(trans.getScale());
-            return mColl;
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -324,5 +272,56 @@ public class CollisionShapeFactory {
         } else {
             return null;
         }
+    }
+
+    /**
+     * This type of collision shape is mesh-accurate and meant for immovable
+     * "world objects". Examples include terrain, houses or whole shooter
+     * levels.
+     * <p>
+     * Objects with "mesh" type collision shape will not collide with each
+     * other.
+     */
+    private static MeshCollisionShape createSingleMeshShape(Geometry geom,
+            Spatial parent) {
+        Mesh mesh = geom.getMesh();
+        Transform trans = getTransform(geom, parent);
+        if (mesh != null && mesh.getMode() == Mesh.Mode.Triangles) {
+            MeshCollisionShape mColl = new MeshCollisionShape(mesh);
+            mColl.setScale(trans.getScale());
+            return mColl;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Calculate the correct transform for a collision shape relative to the
+     * ancestor for which the shape was generated.
+     *
+     * @param spat
+     * @param parent
+     * @return a new instance (not null)
+     */
+    private static Transform getTransform(Spatial spat, Spatial parent) {
+        Transform shapeTransform = new Transform();
+        Spatial parentNode = spat.getParent() != null ? spat.getParent() : spat;
+        Spatial currentSpatial = spat;
+        //if we have parents combine their transforms
+        while (parentNode != null) {
+            if (parent == currentSpatial) {
+                //real parent -> only apply scale, not transform
+                Transform trans = new Transform();
+                trans.setScale(currentSpatial.getLocalScale());
+                shapeTransform.combineWithParent(trans);
+                parentNode = null;
+            } else {
+                shapeTransform.combineWithParent(currentSpatial.getLocalTransform());
+                parentNode = currentSpatial.getParent();
+                currentSpatial = parentNode;
+            }
+        }
+
+        return shapeTransform;
     }
 }

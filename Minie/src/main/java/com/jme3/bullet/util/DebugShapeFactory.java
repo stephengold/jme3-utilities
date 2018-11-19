@@ -99,6 +99,30 @@ public class DebugShapeFactory {
     }
 
     /**
+     * Create a mesh for visualizing the specified shape.
+     *
+     * @param shape (not null, unaffected)
+     * @param meshResolution for convex shapes (0=low, 1=high)
+     * @return a new mesh (not null)
+     */
+    public static Mesh getDebugMesh(CollisionShape shape, int meshResolution) {
+        Validate.inRange(meshResolution, "mesh resolution", 0, 1);
+
+        long id = shape.getObjectId();
+        DebugMeshCallback callback = new DebugMeshCallback();
+        getVertices2(id, meshResolution, callback);
+
+        Mesh mesh = new Mesh();
+        mesh.setBuffer(Type.Position, 3, callback.getVertices());
+
+        if (shape.generatesDebugNormals()) {
+            mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
+        }
+
+        return mesh;
+    }
+
+    /**
      * Create a debug spatial from the specified collision shape.
      * <p>
      * This is mostly used internally. To attach a debug shape to a physics
@@ -186,30 +210,6 @@ public class DebugShapeFactory {
         geom.updateModelBound();
 
         return geom;
-    }
-
-    /**
-     * Create a mesh for visualizing the specified shape.
-     *
-     * @param shape (not null, unaffected)
-     * @param meshResolution for convex shapes (0=low, 1=high)
-     * @return a new mesh (not null)
-     */
-    public static Mesh getDebugMesh(CollisionShape shape, int meshResolution) {
-        Validate.inRange(meshResolution, "mesh resolution", 0, 1);
-
-        long id = shape.getObjectId();
-        DebugMeshCallback callback = new DebugMeshCallback();
-        getVertices2(id, meshResolution, callback);
-
-        Mesh mesh = new Mesh();
-        mesh.setBuffer(Type.Position, 3, callback.getVertices());
-
-        if (shape.generatesDebugNormals()) {
-            mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
-        }
-
-        return mesh;
     }
 
     private static native void getVertices2(long shapeId, int resolution,
