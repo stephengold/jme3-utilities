@@ -96,8 +96,10 @@ public class TestDac extends ActionApplication {
 
     private AnimChannel animChannel = null;
     private BoneLink leftClavicle;
+    private BoneLink leftFemur;
     private BoneLink leftUlna;
     private BoneLink rightClavicle;
+    private BoneLink rightFemur;
     private BoneLink upperBody;
     private BulletAppState bulletAppState;
     private CollisionShape ballShape;
@@ -113,8 +115,10 @@ public class TestDac extends ActionApplication {
     private SkeletonVisualizer sv;
     private String animationName = null;
     private String leftClavicleName;
+    private String leftFemurName;
     private String leftUlnaName;
     private String rightClavicleName;
+    private String rightFemurName;
     private String upperBodyName;
     private Transform resetTransform;
     // *************************************************************************
@@ -183,7 +187,9 @@ public class TestDac extends ActionApplication {
         dim.bind("load puppet", KeyInput.KEY_F8);
         dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
+        dim.bind("raise leftFoot", KeyInput.KEY_LCONTROL);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
+        dim.bind("raise rightFoot", KeyInput.KEY_RCONTROL);
         dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
         dim.bind("reset model transform", KeyInput.KEY_DOWN);
         dim.bind("save", KeyInput.KEY_SEMICOLON);
@@ -269,8 +275,16 @@ public class TestDac extends ActionApplication {
                 case "load sinbadWithSwords":
                     addModel("SinbadWithSwords");
                     return;
+                case "raise leftFoot":
+                    dac.setDynamicSubtree(leftFemur,
+                            new Vector3f(0f, 20f, 0f), false);
+                    return;
                 case "raise leftHand":
                     dac.setDynamicSubtree(leftClavicle,
+                            new Vector3f(0f, 20f, 0f), false);
+                    return;
+                case "raise rightFoot":
+                    dac.setDynamicSubtree(rightFemur,
                             new Vector3f(0f, 20f, 0f), false);
                     return;
                 case "raise rightHand":
@@ -471,8 +485,10 @@ public class TestDac extends ActionApplication {
         dac.setPhysicsSpace(physicsSpace);
 
         leftClavicle = dac.findBoneLink(leftClavicleName);
+        leftFemur = dac.findBoneLink(leftFemurName);
         leftUlna = dac.findBoneLink(leftUlnaName);
         rightClavicle = dac.findBoneLink(rightClavicleName);
+        rightFemur = dac.findBoneLink(rightFemurName);
         upperBody = dac.findBoneLink(upperBodyName);
 
         AnimControl animControl = controlledSpatial.getControl(AnimControl.class);
@@ -557,8 +573,10 @@ public class TestDac extends ActionApplication {
         dac = new ElephantControl();
         animationName = "legUp";
         leftClavicleName = "Oberschenkel_F_L";
+        leftFemurName = "Oberschenkel_B_L";
         leftUlnaName = "Knee_F_L";
         rightClavicleName = "Oberschenkel_F_R";
+        rightFemurName = "Oberschenkel_B_R";
         upperBodyName = "joint5";
     }
 
@@ -573,8 +591,10 @@ public class TestDac extends ActionApplication {
         dac = new JaimeControl();
         animationName = "Punches";
         leftClavicleName = "shoulder.L";
+        leftFemurName = "thigh.L";
         leftUlnaName = "forearm.L";
         rightClavicleName = "shoulder.R";
+        rightFemurName = "thigh.R";
         upperBodyName = "ribs";
     }
 
@@ -585,9 +605,11 @@ public class TestDac extends ActionApplication {
         cgModel = (Node) assetManager.loadModel("Models/MhGame/MhGame.j3o");
         dac = new MhGameControl();
         animationName = "expr-lib-pose";
-        leftClavicleName = "upperarm_r";
-        leftUlnaName = "lowerarm_r";
-        rightClavicleName = "upperarm_l";
+        leftClavicleName = "upperarm_l";
+        leftFemurName = "thigh_l";
+        leftUlnaName = "lowerarm_l";
+        rightClavicleName = "upperarm_r";
+        rightFemurName = "thigh_r";
         upperBodyName = "spine_01";
     }
 
@@ -600,8 +622,10 @@ public class TestDac extends ActionApplication {
         dac = new NinjaControl();
         animationName = "Walk";
         leftClavicleName = "Joint14";
+        leftFemurName = "Joint23";
         leftUlnaName = "Joint16";
         rightClavicleName = "Joint9";
+        rightFemurName = "Joint18";
         upperBodyName = "Joint4";
     }
 
@@ -613,8 +637,10 @@ public class TestDac extends ActionApplication {
         dac = new OtoControl();
         animationName = "Walk";
         leftClavicleName = "uparm.left";
+        leftFemurName = "hip.left";
         leftUlnaName = "arm.left";
         rightClavicleName = "uparm.right";
+        rightFemurName = "hip.right";
         upperBodyName = "spinehigh";
     }
 
@@ -626,8 +652,10 @@ public class TestDac extends ActionApplication {
         dac = new PuppetControl();
         animationName = "walk";
         leftClavicleName = "upper_arm.1.L";
+        leftFemurName = "thigh.L";
         leftUlnaName = "forearm.1.L";
         rightClavicleName = "upper_arm.1.R";
+        rightFemurName = "thigh.R";
         upperBodyName = "spine";
     }
 
@@ -640,8 +668,10 @@ public class TestDac extends ActionApplication {
         dac = new SinbadControl();
         animationName = "Dance";
         leftClavicleName = "Clavicle.L";
+        leftFemurName = "Thigh.L";
         leftUlnaName = "Ulna.L";
         rightClavicleName = "Clavicle.R";
+        rightFemurName = "Thigh.R";
         upperBodyName = "Chest";
     }
 
@@ -666,8 +696,10 @@ public class TestDac extends ActionApplication {
 
         animationName = "Dance";
         leftClavicleName = "Clavicle.L";
+        leftFemurName = "Thigh.L";
         leftUlnaName = "Ulna.L";
         rightClavicleName = "Clavicle.R";
+        rightFemurName = "Thigh.R";
         upperBodyName = "Chest";
     }
 
