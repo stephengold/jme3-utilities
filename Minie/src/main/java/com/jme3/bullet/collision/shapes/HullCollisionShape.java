@@ -311,7 +311,11 @@ public class HullCollisionShape extends CollisionShape {
 
         bbuf = BufferUtils.createByteBuffer(points.length * 4);
         for (int i = 0; i < points.length; ++i) {
-            float f = points[i]; // TODO check validity here
+            float f = points[i];
+            if (!Float.isFinite(f)) {
+                String msg = "illegal coordinate: " + Float.toString(f);
+                throw new IllegalArgumentException(msg);
+            }
             bbuf.putFloat(f);
         }
         bbuf.rewind();
