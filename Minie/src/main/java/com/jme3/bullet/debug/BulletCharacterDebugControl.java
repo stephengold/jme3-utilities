@@ -59,6 +59,10 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
     // fields
 
     /**
+     * collision-shape margin for which geom was generated
+     */
+    private float oldMargin;
+    /**
      * character to visualize (not null)
      */
     final private PhysicsCharacter character;
@@ -93,6 +97,7 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
         character = ch;
 
         myShape = character.getCollisionShape();
+        oldMargin = myShape.getMargin();
         myShape.getScale(oldScale);
 
         geom = DebugShapeFactory.getDebugShape(myShape);
@@ -131,9 +136,12 @@ public class BulletCharacterDebugControl extends AbstractPhysicsDebugControl {
     @Override
     protected void controlUpdate(float tpf) {
         CollisionShape newShape = character.getCollisionShape();
+        float newMargin = newShape.getMargin();
         Vector3f newScale = newShape.getScale(null);
-        if (myShape != newShape || !oldScale.equals(newScale)) {
+        if (myShape != newShape || oldMargin != newMargin
+                || !oldScale.equals(newScale)) {
             myShape = newShape;
+            oldMargin = newMargin;
             oldScale.set(newScale);
 
             Node node = (Node) spatial;
