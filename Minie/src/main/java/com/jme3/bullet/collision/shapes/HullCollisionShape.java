@@ -74,7 +74,7 @@ public class HullCollisionShape extends CollisionShape {
      */
     private ByteBuffer bbuf;
     /**
-     * array of mesh coordinates (not null, not empty length a multiple of 3)
+     * array of mesh coordinates (not null, not empty, length a multiple of 3)
      */
     private float[] points;
     // *************************************************************************
@@ -143,6 +143,38 @@ public class HullCollisionShape extends CollisionShape {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Calculate a quick upper bound for the unscaled volume of the hull, based
+     * on its axis-aligned bounding box.
+     *
+     * @return the volume (in unscaled shape units cubed, &ge;0)
+     */
+    public float aabbVolume() {
+        Vector3f maxima = new Vector3f(Float.NEGATIVE_INFINITY,
+                Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+        Vector3f minima = new Vector3f(Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+
+        Vector3f location = new Vector3f();
+        for (int floatIndex = 0; floatIndex < points.length; floatIndex += 3) {
+            float x = points[floatIndex];
+            float y = points[floatIndex + 1];
+            float z = points[floatIndex + 2];
+            location.set(x, y, z);
+            MyVector3f.accumulateMinima(minima, location);
+            MyVector3f.accumulateMaxima(maxima, location);
+        }
+
+        float dx = maxima.x - minima.x;
+        float dy = maxima.y - minima.y;
+        float dz = maxima.z - minima.z;
+        float volume = dx * dy * dz;
+
+        assert volume >= 0f : volume;
+        assert Float.isFinite(volume) : volume;
+        return volume;
+    }
 
     /**
      * Count the vertices used to generate the hull.
@@ -279,7 +311,7 @@ public class HullCollisionShape extends CollisionShape {
 
         bbuf = BufferUtils.createByteBuffer(points.length * 4);
         for (int i = 0; i < points.length; ++i) {
-            float f = points[i];
+            float f = points[i]; // TODO check validity here
             bbuf.putFloat(f);
         }
         bbuf.rewind();
