@@ -658,6 +658,10 @@ public class MyShape {
             Vector3f halfExtents = cylinder.getHalfExtents(null);
             volume *= MyVolume.cylinderVolume(halfExtents);
 
+        } else if (shape instanceof HullCollisionShape) {
+            HullCollisionShape hull = (HullCollisionShape) shape;
+            volume = hull.scaledVolume();
+
         } else if (shape instanceof SimplexCollisionShape) {
             SimplexCollisionShape simplex = (SimplexCollisionShape) shape;
             volume *= simplex.unscaledVolume();

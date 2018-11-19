@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.collision.shapes;
 
+import com.jme3.bullet.util.DebugShapeFactory;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -186,6 +187,17 @@ public class HullCollisionShape extends CollisionShape {
         assert MyVector3f.isAllNonNegative(result) : result;
         return result;
     }
+
+    /**
+     * Estimate the scaled volume of the hull, based on its debug mesh.
+     *
+     * @return the volume (in physics-space units cubed, &ge;0)
+     */
+    public float scaledVolume() {
+        float volume = DebugShapeFactory.volumeConvex(this);
+        assert volume >= 0f : volume;
+        return volume;
+    }
     // *************************************************************************
     // CollisionShape methods
 
@@ -280,7 +292,7 @@ public class HullCollisionShape extends CollisionShape {
         setMargin(margin);
     }
 
-    private native long createShape(ByteBuffer points);
+    native private long createShape(ByteBuffer points);
 
     /**
      * Copy the vertex positions from a JME mesh.
