@@ -1,5 +1,42 @@
 # release notes for the Minie library and related tests
 
+## Version 0.4.5 released on TBD
+
+Main features added:
+
+ + New `MultiSphere` collision shape and `MultiSphereDemo` app.
+ + Configure normals and resolution of the debug mesh for each collision shape.
+ + Register an init listener for a `BulletDebugAppState`.
+ + The Puppet model with its licensing history (for the `TestDac` app).
+ + Test whether a collision shape is convex.
+ + Vertex counts and volume calculations for various collision shapes.
+ + Calculate half extents for simplex and hull collision shapes.
+ + Copy the vertices of a `SimplexCollisionShape`.
+
+Bugs fixed:
+
+ + Incorrect default limits for `SixDofJoint`.
+ + Crash in `PhysicsSpace.stepSimulation()` after reading a hull shape
+   from a model asset.
+ + Debug mesh is not updated after the shape's margin changes.
+ + `MyShape.volume()` ignores scaling of capsule shapes.
+
+Incompatible changes to the library API:
+
+ + Renamed `PhysicsRigidBody.getJoints()` to `listJoints()` and changed its
+   semantics to reduce aliasing.
+ + Privatized the joint list in `PhysicsRigidBody`.
+ + Removed 3 inverse-kinematics stub methods from `DynamicAnimControl`.
+ + Standardized the `getLowerLimit()` and `getUpperLimit()` methods
+   in the `TranslationalLimitMotor` class.
+ + Removed the `getTriangleIndexVertexArray()` method
+   from the `NativeMeshUtil` class.
+
+Other details:
+
+ + Updated shared libraries to version 1.0.15 of `jme3-bullet-native`.
+ + Based on version 2.13 of the `jme3-utilities-heart` library.
+
 ## Version 0.4.4 released on 12 November 2018
 
  + Fixed map cloning bugs in `DynamicAnimControl` and
