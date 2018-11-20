@@ -93,10 +93,10 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     private boolean kinematic = false;
     /**
-     * list of joints that connect to this body. The list isn't filled until the
-     * body is added to a PhysicsSpace. TODO make private
+     * list of joints that connect to this body: The list isn't filled until the
+     * body is added to a PhysicsSpace.
      */
-    protected ArrayList<PhysicsJoint> joints = new ArrayList<>(4);
+    private ArrayList<PhysicsJoint> joints = new ArrayList<>(4);
     // *************************************************************************
     // constructors
 

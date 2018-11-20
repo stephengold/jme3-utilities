@@ -53,7 +53,7 @@ public class SimpleSolidControl
     /**
      * message logger for this class
      */
-    final public static Logger logger2
+    final public static Logger logger3
             = Logger.getLogger(SimpleSolidControl.class.getName());
     // *************************************************************************
     // constructors
@@ -176,7 +176,7 @@ public class SimpleSolidControl
             setPhysicsRotation(spatial.getWorldRotation());
         }
 
-        for (PhysicsJoint j : joints) {
+        for (PhysicsJoint j : listJoints()) {
             if (!space.getJointList().contains(j)) {
                 space.add(j);
             }
@@ -191,7 +191,7 @@ public class SimpleSolidControl
      * Meant to be overridden.
      */
     protected void onRemove() {
-        for (PhysicsJoint j : joints) {
+        for (PhysicsJoint j : listJoints()) {
             if (space.getJointList().contains(j)) {
                 space.remove(j);
             }
