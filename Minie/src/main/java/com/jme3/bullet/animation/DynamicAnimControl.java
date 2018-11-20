@@ -597,22 +597,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Remove all inverse-kinematics targets.
-     */
-    public void removeAllIKTargets() {
-        // TODO
-    }
-
-    /**
-     * Remove any inverse-kinematics target for the specified bone.
-     *
-     * @param bone which bone has the target (not null)
-     */
-    public void removeIKTarget(Bone bone) {
-        // TODO
-    }
-
-    /**
      * Alter whether physics-space coordinates should match the spatial's local
      * coordinates.
      *
@@ -692,16 +676,6 @@ public class DynamicAnimControl
     public void setEventDispatchImpulseThreshold(float threshold) {
         Validate.nonNegative(threshold, "threshold");
         eventDispatchImpulseThreshold = threshold;
-    }
-
-    /**
-     * Add a target for inverse kinematics.
-     *
-     * @param bone which bone the target applies to (not null)
-     * @param worldGoal the world coordinates of the goal (not null)
-     */
-    public void setIKTarget(Bone bone, Vector3f worldGoal) {
-        // TODO
     }
 
     /**
