@@ -45,7 +45,8 @@ import jme3utilities.Validate;
 
 /**
  * A convex collision shape based on Bullet's btMultiSphereShape. Unlike a
- * SphereCollisionShape, these shapes can be scaled non-uniformly.
+ * CapsuleCollisionShape or a SphereCollisionShape, these shapes have margins
+ * and can be scaled non-uniformly.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -92,6 +93,30 @@ public class MultiSphere extends CollisionShape {
 
         radii = new float[1];
         radii[0] = radius;
+
+        createShape();
+    }
+
+    /**
+     * Instantiate a Y-axis capsule shape with the specified radius and height.
+     *
+     * @param radius the desired radius (in unscaled units, &ge;0)
+     * @param height the desired height (of the cylindrical portion) (in
+     * unscaled units, &ge;0)
+     */
+    public MultiSphere(float radius, float height) {
+        Validate.nonNegative(radius, "radius");
+        Validate.nonNegative(height, "height");
+
+        float halfHeight = height / 2f;
+
+        centers = new Vector3f[2];
+        centers[0] = new Vector3f(0f, halfHeight, 0f);
+        centers[1] = new Vector3f(0f, -halfHeight, 0f);
+
+        radii = new float[2];
+        radii[0] = radius;
+        radii[1] = radius;
 
         createShape();
     }
