@@ -80,6 +80,10 @@ abstract public class CollisionShape
      */
     private static float defaultMargin = 0.04f;
     /**
+     * copy of collision margin (in physics-space units, &gt;0, default=0.04)
+     */
+    protected float margin = defaultMargin;
+    /**
      * resolution for new debug meshes (default=low, effective only for convex
      * shapes)
      */
@@ -95,10 +99,6 @@ abstract public class CollisionShape
      * copy of scaling factors: one for each local axis (default=1,1,1)
      */
     protected Vector3f scale = new Vector3f(1f, 1f, 1f);
-    /**
-     * copy of collision margin (in physics-space units, &gt;0, default=0.04)
-     */
-    protected float margin = defaultMargin;
     // *************************************************************************
     // new methods exposed
 
@@ -159,12 +159,8 @@ abstract public class CollisionShape
      * new vector, not null)
      */
     public Vector3f getScale(Vector3f storeResult) {
-        assert objectId != 0L;
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-
-        getLocalScaling(objectId, result);
-
-        assert result.equals(scale);
+        result.set(scale);
         return result;
     }
 
@@ -185,9 +181,6 @@ abstract public class CollisionShape
      * @return the margin distance (in physics-space units, &ge;0)
      */
     public float getMargin() {
-        assert objectId != 0L;
-
-        assert getMargin(objectId) == margin : getMargin(objectId);
         assert margin > 0f : margin;
         return margin;
     }
@@ -254,8 +247,6 @@ abstract public class CollisionShape
         setMargin(objectId, margin);
         logger.log(Level.FINE, "Margining Shape {0}",
                 Long.toHexString(objectId));
-
-        assert getMargin(objectId) == margin : getMargin(objectId);
         this.margin = margin;
     }
 
@@ -281,9 +272,7 @@ abstract public class CollisionShape
 
         setLocalScaling(objectId, scale);
         logger.log(Level.FINE, "Scaling Shape {0}", Long.toHexString(objectId));
-
-        getLocalScaling(objectId, this.scale);
-        assert this.scale.equals(scale) : scale;
+        this.scale.set(scale);
     }
     // *************************************************************************
     // JmeCloneable methods
@@ -375,10 +364,6 @@ abstract public class CollisionShape
     // private methods
 
     native private void finalizeNative(long objectId);
-
-    native private void getLocalScaling(long objectId, Vector3f scale);
-
-    native private float getMargin(long objectId);
 
     native private boolean isConcave(long objectId);
 
