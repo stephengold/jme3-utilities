@@ -50,7 +50,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -94,7 +93,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     private boolean kinematic = false;
     /**
-     * list of joints that connect to this body
+     * list of joints that connect to this body. The list isn't filled until the
+     * body is added to a PhysicsSpace. TODO make private
      */
     protected ArrayList<PhysicsJoint> joints = new ArrayList<>(4);
     // *************************************************************************
@@ -358,18 +358,6 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     /**
-     * Access the list of joints connected with this body.
-     * <p>
-     * This list is only filled when the PhysicsRigidBody is added to a physics
-     * space.
-     *
-     * @return the pre-existing list (not null) TODO
-     */
-    public List<PhysicsJoint> getJoints() {
-        return joints;
-    }
-
-    /**
      * Read this body's linear damping.
      *
      * @return damping value
@@ -560,6 +548,25 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     }
 
     // TODO add isDynamic() and isStatic()
+    /**
+     * Enumerate the joints connected to this body.
+     *
+     * @return a new array of pre-existing objects, or null if this body is not
+     * added to any space
+     */
+    public PhysicsJoint[] listJoints() {
+        PhysicsJoint[] result;
+        if (isInWorld(objectId)) {
+            int numJoints = joints.size();
+            result = new PhysicsJoint[numJoints];
+            joints.toArray(result);
+        } else {
+            result = null;
+        }
+
+        return result;
+    }
+
     /**
      * Do not invoke directly! Joints are removed automatically when destroyed.
      *

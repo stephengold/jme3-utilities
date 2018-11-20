@@ -58,7 +58,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -322,7 +321,7 @@ public class PhysicsSpace {
                 RigidBodyControl rbc = (RigidBodyControl) sgc;
                 // To avoid duplication, add only the joints that have the
                 // control as BodyA.
-                List<PhysicsJoint> joints = rbc.getJoints();
+                PhysicsJoint[] joints = rbc.listJoints();
                 for (PhysicsJoint physicsJoint : joints) {
                     if (rbc == physicsJoint.getBodyA()) {
                         add(physicsJoint);
@@ -752,10 +751,9 @@ public class PhysicsSpace {
                 = spatial.getControl(RigidBodyControl.class);
         if (control != null) {
             // Remove only the joints with the RigidBodyControl as BodyA.
-            List<PhysicsJoint> joints = control.getJoints();
-            for (Iterator<PhysicsJoint> it1 = joints.iterator(); it1.hasNext();) {
-                PhysicsJoint physicsJoint = it1.next();
-                if (control.equals(physicsJoint.getBodyA())) {
+            PhysicsJoint[] joints = control.listJoints();
+            for (PhysicsJoint physicsJoint : joints) {
+                if (control == physicsJoint.getBodyA()) {
                     removeJoint(physicsJoint);
                 }
             }

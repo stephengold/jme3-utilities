@@ -38,7 +38,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.debug.Describer;
@@ -207,9 +206,9 @@ public class PhysicsDumper extends Dumper {
             stream.print(" " + desc);
         }
 
-        List<PhysicsJoint> joints = body.getJoints();
-        stream.printf(" joints=%d", joints.size());
-        if (!joints.isEmpty()) {
+        PhysicsJoint[] joints = body.listJoints();
+        stream.printf(" joints=%d", joints.length);
+        if (joints.length > 0) {
             stream.print(":");
         }
         stream.println();
