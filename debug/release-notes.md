@@ -1,8 +1,8 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.6 released on TBD
+## Version 0.9.6 released on 19 November 2018
 
- + Based on version 2.13 of the jme3-utilities-heart library.
+Based on version 2.13 of the jme3-utilities-heart library.
 
 ## Version 0.9.5 released on 12 November 2018
 
