@@ -26,13 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-import jme3utilities.minie.test.tunings.SinbadControl;
-import jme3utilities.minie.test.tunings.PuppetControl;
-import jme3utilities.minie.test.tunings.OtoControl;
-import jme3utilities.minie.test.tunings.NinjaControl;
-import jme3utilities.minie.test.tunings.JaimeControl;
-import jme3utilities.minie.test.tunings.ElephantControl;
-import jme3utilities.minie.test.tunings.MhGameControl;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.SkeletonControl;
@@ -47,7 +40,9 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.export.JmeExporter;
 import com.jme3.export.binary.BinaryExporter;
+import com.jme3.export.xml.XMLExporter;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -78,6 +73,13 @@ import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.noise.Generator;
 import jme3utilities.minie.PhysicsDumper;
+import jme3utilities.minie.test.tunings.ElephantControl;
+import jme3utilities.minie.test.tunings.JaimeControl;
+import jme3utilities.minie.test.tunings.MhGameControl;
+import jme3utilities.minie.test.tunings.NinjaControl;
+import jme3utilities.minie.test.tunings.OtoControl;
+import jme3utilities.minie.test.tunings.PuppetControl;
+import jme3utilities.minie.test.tunings.SinbadControl;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.Signals;
@@ -95,9 +97,17 @@ public class TestDac extends ActionApplication {
     final public static Logger logger
             = Logger.getLogger(TestDac.class.getName());
     /**
-     * asset path for loading and saving
+     * asset path for saving j3O
      */
-    final private static String saveAssetPath = "Models/TestDac.j3o";
+    final private static String saveAssetPath = "TestDac.j3o";
+    /**
+     * 1st asset path for saving XML
+     */
+    final private static String saveAssetPath1 = "TestDac_1.xml";
+    /**
+     * 2nd asset path for saving XML
+     */
+    final private static String saveAssetPath2 = "TestDac_2.xml";
     // *************************************************************************
     // fields
 
@@ -302,7 +312,8 @@ public class TestDac extends ActionApplication {
                     cgModel.setLocalTransform(resetTransform);
                     return;
                 case "save":
-                    save();
+                    save(cgModel, saveAssetPath);
+                    save(cgModel, saveAssetPath1);
                     return;
                 case "set height 1":
                     setHeight(1f);
@@ -565,8 +576,8 @@ public class TestDac extends ActionApplication {
             MyString.quote(loadedScene.getName()),
             MyString.quote(saveAssetPath)
         });
-        Node loadedNode = (Node) loadedScene;
-        // TODO
+
+        save(loadedScene, saveAssetPath2);
     }
 
     /**
@@ -728,26 +739,34 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Save the model to a J3O file.
+     * Save the specified model to a J3O file.
      */
-    private void save() {
-        String filePath = ActionApplication.filePath(saveAssetPath);
+    private void save(Spatial model, String assetPath) {
+        String filePath = ActionApplication.filePath(assetPath);
         File file = new File(filePath);
-        BinaryExporter exporter = BinaryExporter.getInstance();
+
+        JmeExporter exporter;
+        if (assetPath.endsWith(".j3o")) {
+            exporter = BinaryExporter.getInstance();
+        } else {
+            assert assetPath.endsWith(".xml");
+            exporter = XMLExporter.getInstance();
+        }
 
         try {
-            exporter.save(cgModel, file);
+            exporter.save(model, file);
         } catch (IOException exception) {
+            System.out.println("Caught IOException: " + exception.getMessage());
             logger.log(Level.SEVERE,
                     "Output exception while saving {0} to file {1}",
                     new Object[]{
-                        MyString.quote(cgModel.getName()),
+                        MyString.quote(model.getName()),
                         MyString.quote(filePath)
                     });
             return;
         }
         logger.log(Level.INFO, "Saved {0} to file {1}", new Object[]{
-            MyString.quote(cgModel.getName()),
+            MyString.quote(model.getName()),
             MyString.quote(filePath)
         });
     }
