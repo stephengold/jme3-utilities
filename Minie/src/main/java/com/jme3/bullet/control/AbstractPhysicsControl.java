@@ -74,6 +74,23 @@ abstract public class AbstractPhysicsControl
     // fields
 
     /**
+     * true &rarr; physics coordinates match local transform, false &rarr;
+     * physics coordinates match world transform
+     */
+    private boolean applyLocal = false;
+    /**
+     * true&rarr;body is added to the physics space, false&rarr;not added
+     */
+    protected boolean added = false;
+    /**
+     * true&rarr;control is enabled, false&rarr;control is disabled
+     */
+    private boolean enabled = true;
+    /**
+     * space to which the physics object is (or would be) added
+     */
+    private PhysicsSpace space = null;
+    /**
      * temporary storage during calculations
      */
     private Quaternion tmp_inverseWorldRotation = new Quaternion();
@@ -81,23 +98,6 @@ abstract public class AbstractPhysicsControl
      * spatial to which this control is added, or null if none
      */
     private Spatial spatial;
-    /**
-     * true&rarr;control is enabled, false&rarr;control is disabled
-     */
-    private boolean enabled = true;
-    /**
-     * true&rarr;body is added to the physics space, false&rarr;not added
-     */
-    protected boolean added = false;
-    /**
-     * space to which the physics object is (or would be) added
-     */
-    private PhysicsSpace space = null;
-    /**
-     * true &rarr; physics coordinates match local transform, false &rarr;
-     * physics coordinates match world transform
-     */
-    private boolean applyLocal = false;
     // *************************************************************************
     // new methods exposed
 
@@ -397,7 +397,7 @@ abstract public class AbstractPhysicsControl
     }
 
     /**
-     * Serialize this object, for example when saving to a J3O file.
+     * Serialize this control, for example when saving to a J3O file.
      *
      * @param ex exporter (not null)
      * @throws IOException from exporter
