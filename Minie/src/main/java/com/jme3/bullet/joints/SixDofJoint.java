@@ -99,23 +99,19 @@ public class SixDofJoint extends PhysicsJoint {
     /**
      * upper limits for rotation of all 3 axes
      */
-    private Vector3f angularUpperLimit
-            = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    private Vector3f angularUpperLimit = new Vector3f(0f, 0f, 0f);
     /**
      * lower limits for rotation of all 3 axes
      */
-    private Vector3f angularLowerLimit
-            = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    private Vector3f angularLowerLimit = new Vector3f(0f, 0f, 0f);
     /**
      * upper limit for translation of all 3 axes
      */
-    private Vector3f linearUpperLimit
-            = new Vector3f(Vector3f.POSITIVE_INFINITY);
+    private Vector3f linearUpperLimit = new Vector3f(0f, 0f, 0f);
     /**
      * lower limits for translation of all 3 axes
      */
-    private Vector3f linearLowerLimit
-            = new Vector3f(Vector3f.NEGATIVE_INFINITY);
+    private Vector3f linearLowerLimit = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // constructors
 
@@ -479,10 +475,10 @@ public class SixDofJoint extends PhysicsJoint {
 
         createJoint();
 
-        setAngularUpperLimit((Vector3f) capsule.readSavable("angularUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY)));
-        setAngularLowerLimit((Vector3f) capsule.readSavable("angularLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY)));
-        setLinearUpperLimit((Vector3f) capsule.readSavable("linearUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY)));
-        setLinearLowerLimit((Vector3f) capsule.readSavable("linearLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY)));
+        setAngularUpperLimit((Vector3f) capsule.readSavable("angularUpperLimit", new Vector3f()));
+        setAngularLowerLimit((Vector3f) capsule.readSavable("angularLowerLimit", new Vector3f()));
+        setLinearUpperLimit((Vector3f) capsule.readSavable("linearUpperLimit", new Vector3f()));
+        setLinearLowerLimit((Vector3f) capsule.readSavable("linearLowerLimit", new Vector3f()));
 
         for (int i = 0; i < 3; i++) {
             RotationalLimitMotor rotationalLimitMotor = getRotationalLimitMotor(i);
@@ -521,10 +517,11 @@ public class SixDofJoint extends PhysicsJoint {
         capsule.write(useLinearReferenceFrameA, "useLinearReferenceFrameA",
                 false);
 
-        capsule.write(angularUpperLimit, "angularUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY));
-        capsule.write(angularLowerLimit, "angularLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY));
-        capsule.write(linearUpperLimit, "linearUpperLimit", new Vector3f(Vector3f.POSITIVE_INFINITY));
-        capsule.write(linearLowerLimit, "linearLowerLimit", new Vector3f(Vector3f.NEGATIVE_INFINITY));
+        capsule.write(angularUpperLimit, "angularUpperLimit", new Vector3f());
+        capsule.write(angularLowerLimit, "angularLowerLimit", new Vector3f());
+        capsule.write(linearUpperLimit, "linearUpperLimit", new Vector3f());
+        capsule.write(linearLowerLimit, "linearLowerLimit", new Vector3f());
+
         int i = 0;
         for (RotationalLimitMotor rotationalLimitMotor : rotationalMotors) {
             capsule.write(rotationalLimitMotor.getRestitution(), "rotMotor" + i + "_Bounce", 0.0f);
