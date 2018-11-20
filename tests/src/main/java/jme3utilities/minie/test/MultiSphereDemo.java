@@ -249,7 +249,7 @@ public class MultiSphereDemo
         PhysicsRigidBody body = new PhysicsRigidBody(shape, mass);
         body.setDamping(0.6f, 0.6f);
         body.setDebugMaterial(debugMaterial);
-        body.setFriction(0f);
+        body.setFriction(1f);
         body.setKinematic(false);
         body.setPhysicsLocation(startLocation);
 
