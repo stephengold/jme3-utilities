@@ -419,13 +419,13 @@ public class SixDofJoint extends PhysicsJoint {
         tlm.setDamping(oldTlm.getDamping());
         tlm.setERP(oldTlm.getERP(null));
         tlm.setLimitSoftness(oldTlm.getLimitSoftness());
-        tlm.setLowerLimit(oldTlm.getLowerLimit());
+        tlm.setLowerLimit(oldTlm.getLowerLimit(null));
         tlm.setMaxMotorForce(oldTlm.getMaxMotorForce(null));
         tlm.setNormalCFM(oldTlm.getNormalCFM(null));
         tlm.setRestitution(oldTlm.getRestitution());
         tlm.setStopCFM(oldTlm.getStopCFM(null));
         tlm.setTargetVelocity(oldTlm.getTargetVelocity(null));
-        tlm.setUpperLimit(oldTlm.getUpperLimit());
+        tlm.setUpperLimit(oldTlm.getUpperLimit(null));
 
         for (int i = 0; i < 3; i++) {
             RotationalLimitMotor rlm = getRotationalLimitMotor(i);
@@ -542,9 +542,9 @@ public class SixDofJoint extends PhysicsJoint {
         capsule.write(getTranslationalLimitMotor().getAccumulatedImpulse(), "transMotor_AccumulatedImpulse", Vector3f.ZERO);
         capsule.write(getTranslationalLimitMotor().getDamping(), "transMotor_Damping", 1.0f);
         capsule.write(getTranslationalLimitMotor().getLimitSoftness(), "transMotor_LimitSoftness", 0.7f);
-        capsule.write(getTranslationalLimitMotor().getLowerLimit(), "transMotor_LowerLimit", Vector3f.ZERO);
+        capsule.write(getTranslationalLimitMotor().getLowerLimit(null), "transMotor_LowerLimit", Vector3f.ZERO);
         capsule.write(getTranslationalLimitMotor().getRestitution(), "transMotor_Restitution", 0.5f);
-        capsule.write(getTranslationalLimitMotor().getUpperLimit(), "transMotor_UpperLimit", Vector3f.ZERO);
+        capsule.write(getTranslationalLimitMotor().getUpperLimit(null), "transMotor_UpperLimit", Vector3f.ZERO);
     }
     // *************************************************************************
     // private methods

@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 
 /**
  * A motor based on Bullet's btTranslationalLimitMotor. Motors are used to drive
- * joints. TODO add getTargetVelocity()
+ * joints.
  *
  * @author normenhansen
  */
@@ -120,13 +120,15 @@ public class TranslationalLimitMotor {
     /**
      * Copy this motor's constraint lower limits (m_lowerLimit).
      *
-     * @return a new vector (not null)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the lower limit for each axis (either storeResult or a new
+     * instance)
      */
-    public Vector3f getLowerLimit() {
-        Vector3f vec = new Vector3f();
-        getLowerLimit(motorId, vec);
+    public Vector3f getLowerLimit(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getLowerLimit(motorId, result);
 
-        return vec;
+        return result;
     }
 
     /**
@@ -220,16 +222,17 @@ public class TranslationalLimitMotor {
     }
 
     /**
-     * Copy this motor's constraint upper limits (m_upperLimit). TODO
-     * standardize
+     * Copy this motor's constraint upper limits (m_upperLimit).
      *
-     * @return a new vector (not null, default=0,0,0)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the upper limit for each axis (either storeResult or a new
+     * instance)
      */
-    public Vector3f getUpperLimit() {
-        Vector3f vec = new Vector3f();
-        getUpperLimit(motorId, vec);
+    public Vector3f getUpperLimit(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getUpperLimit(motorId, result);
 
-        return vec;
+        return result;
     }
 
     /**
@@ -312,7 +315,7 @@ public class TranslationalLimitMotor {
 
     /**
      * Alter this motor's constraint-force mixing parameters at the limits
-     * (m_stopCFM). TODO standardize
+     * (m_stopCFM).
      *
      * @param cfm the desired mixing parameter for each axis (not null,
      * unaffected)
@@ -334,7 +337,7 @@ public class TranslationalLimitMotor {
      * Alter this motor's constraint upper limits (m_upperLimit).
      *
      * @param upperLimit the desired limit value for each axis (unaffected, not
-     * null)
+     * null, default=0,0,0)
      */
     public void setUpperLimit(Vector3f upperLimit) {
         setUpperLimit(motorId, upperLimit);
