@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.13.0 released on TBD
+## Version 2.13.0 released on 19 November 2018
 
  + Added an `area()` method for `Triangle` to the `MyMath` class
  + Added a `tetrahedronVolume()` method to the `MyVolume` class
@@ -8,11 +8,11 @@
 ## Version 2.12.0 released on 12 November 2018
 
  + Added a `findIndex()` method for scene-graph controls to
-   the `MySpatial` class.
- + Added a `mean()` method to the `MyVector3f` class.
+   the `MySpatial` class
+ + Added a `mean()` method to the `MyVector3f` class
  + Added `nonEmpty()` methods for Object arrays and collections to
    the `Validate` class
- + Allow for negative bone weights in animated meshes.
+ + Allow for negative bone weights in animated meshes
 
 ## Version 2.11.0 released on 19 October 2018
 
