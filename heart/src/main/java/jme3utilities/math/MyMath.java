@@ -30,6 +30,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Transform;
+import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
@@ -68,6 +69,27 @@ public class MyMath {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Calculate the area of the specified triangle.
+     *
+     * @param triangle (not null, unaffected)
+     * @return the area (&ge;0)
+     */
+    public static double area(Triangle triangle) {
+        Vector3f a = triangle.get1();
+        Vector3f b = triangle.get2();
+        Vector3f c = triangle.get3();
+
+        Vector3f ab = b.subtract(a);
+        Vector3f ac = c.subtract(a);
+
+        Vector3f cross = ab.cross(ac);
+        double areaSquared = MyVector3f.lengthSquared(cross) / 4.0;
+        double area = Math.sqrt(areaSquared);
+
+        return area;
+    }
 
     /**
      * Compute the circle function sqrt(1 - x^2) for a double-precision value.
