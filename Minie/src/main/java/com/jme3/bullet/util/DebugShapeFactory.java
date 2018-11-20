@@ -36,12 +36,12 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.DebugMeshNormals;
 import com.jme3.math.Matrix3f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.util.TempVars;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -110,15 +110,12 @@ public class DebugShapeFactory {
                         = createGeometry(simpleShape, normals, resolution);
 
                 // apply translation
-                geometry.setLocalTranslation(child.getLocation(null));
+                Vector3f translation = child.getLocation(null);
+                geometry.setLocalTranslation(translation);
 
                 // apply rotation
-                TempVars vars = TempVars.get();
-                Matrix3f tempRot = vars.tempMat3;
-                tempRot.set(geometry.getLocalRotation());
-                child.getRotation(null).mult(tempRot, tempRot);
-                geometry.setLocalRotation(tempRot);
-                vars.release();
+                Matrix3f rotation = child.getRotation(null);
+                geometry.setLocalRotation(rotation);
 
                 node.attachChild(geometry);
             }
