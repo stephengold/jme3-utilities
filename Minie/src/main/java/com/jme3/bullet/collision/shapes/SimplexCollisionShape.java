@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
-import jme3utilities.minie.MyShape;
+import jme3utilities.math.MyVolume;
 
 /**
  * A simple point, line-segment, triangle, or tetrahedron collision shape based
@@ -213,7 +213,7 @@ public class SimplexCollisionShape extends CollisionShape {
     public float unscaledVolume() {
         float volume = 0f;
         if (vector4 != null) {
-            volume = (float) MyShape.tetrahedronVolume(vector1, vector2,
+            volume = (float) MyVolume.tetrahedronVolume(vector1, vector2,
                     vector3, vector4);
         }
 

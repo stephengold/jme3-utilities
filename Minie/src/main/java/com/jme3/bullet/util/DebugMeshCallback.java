@@ -41,7 +41,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import jme3utilities.minie.MyShape;
+import jme3utilities.math.MyVolume;
 
 /**
  * Temporary objects used to return debug meshes from native Bullet.
@@ -229,7 +229,7 @@ class DebugMeshCallback {
             Vector3f pos1 = list.get(firstVertex);
             Vector3f pos2 = list.get(firstVertex + 1);
             Vector3f pos3 = list.get(firstVertex + 2);
-            double tVol = MyShape.tetrahedronVolume(pos1, pos2, pos3, fixed);
+            double tVol = MyVolume.tetrahedronVolume(pos1, pos2, pos3, fixed);
             total += tVol;
         }
         float volume = (float) total;

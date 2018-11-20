@@ -38,7 +38,6 @@ import com.jme3.bullet.collision.shapes.MultiSphere;
 import com.jme3.bullet.collision.shapes.SimplexCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
-import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -72,27 +71,6 @@ public class MyShape {
     }
     // *************************************************************************
     // new methods exposed
-
-    /**
-     * Calculate the area of the specified triangle. TODO move this to MyMath
-     *
-     * @param triangle (not null, unaffected)
-     * @return the area (&ge;0)
-     */
-    public static double area(Triangle triangle) {
-        Vector3f a = triangle.get1();
-        Vector3f b = triangle.get2();
-        Vector3f c = triangle.get3();
-
-        Vector3f ab = b.subtract(a);
-        Vector3f ac = c.subtract(a);
-
-        Vector3f cross = ab.cross(ac);
-        double areaSquared = MyVector3f.lengthSquared(cross) / 4.0;
-        double area = Math.sqrt(areaSquared);
-
-        return area;
-    }
 
     /**
      * Determine the main axis of the specified shape, provided it's a capsule,
@@ -582,36 +560,6 @@ public class MyShape {
         }
 
         return result;
-    }
-
-    /**
-     * Calculate the volume of the specified tetrahedron. TODO move this to
-     * MyVolume
-     *
-     * @param v1 location of the 1st vertex (not null, unaffected)
-     * @param v2 location of the 2nd vertex (not null, unaffected)
-     * @param v3 location of the 3rd vertex (not null, unaffected)
-     * @param v4 location of the 4th vertex (not null, unaffected)
-     * @return the volume (&ge;0)
-     */
-    public static double tetrahedronVolume(Vector3f v1, Vector3f v2,
-            Vector3f v3, Vector3f v4) {
-        Validate.finite(v1, "1st vertex");
-        Validate.finite(v2, "2nd vertex");
-        Validate.finite(v3, "3rd vertex");
-        Validate.finite(v4, "4th vertex");
-
-        Triangle baseTriangle = new Triangle(v1, v2, v3);
-        Vector3f offset = v4.subtract(v1);
-        Vector3f normal = baseTriangle.getNormal();
-        double altitude = MyVector3f.dot(offset, normal);
-        altitude = Math.abs(altitude);
-
-        double baseArea = area(baseTriangle);
-        assert baseArea >= 0.0 : baseArea;
-        double volume = baseArea * altitude / 3.0;
-
-        return volume;
     }
 
     /**
