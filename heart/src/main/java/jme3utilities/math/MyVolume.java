@@ -27,6 +27,7 @@
 package jme3utilities.math;
 
 import com.jme3.math.FastMath;
+import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -74,7 +75,7 @@ public class MyVolume {
      *
      * @param radius (&ge;0)
      * @param height (&ge;0)
-     * @return volume (&ge;0)
+     * @return the volume (&ge;0)
      */
     public static float capsuleVolume(float radius, float height) {
         Validate.nonNegative(radius, "radius");
@@ -93,7 +94,7 @@ public class MyVolume {
      *
      * @param radius (&ge;0)
      * @param height (&ge;0)
-     * @return volume (&ge;0)
+     * @return the volume (&ge;0)
      */
     public static float coneVolume(float radius, float height) {
         Validate.nonNegative(radius, "radius");
@@ -109,7 +110,7 @@ public class MyVolume {
      * half-extents.
      *
      * @param halfExtents (not null, all components &ge;0, unaffected)
-     * @return volume (&ge;0)
+     * @return the volume (&ge;0)
      */
     public static float cylinderVolume(Vector3f halfExtents) {
         Validate.nonNegative(halfExtents, "half extents");
@@ -122,12 +123,41 @@ public class MyVolume {
      * Compute the volume of a sphere with the specified radius.
      *
      * @param radius (&ge;0)
-     * @return volume (&ge;0)
+     * @return the volume (&ge;0)
      */
     public static float sphereVolume(float radius) {
         Validate.nonNegative(radius, "radius");
         float volume
                 = 4f * FastMath.ONE_THIRD * FastMath.PI * MyMath.cube(radius);
+        return volume;
+    }
+
+    /**
+     * Calculate the volume of the specified tetrahedron.
+     *
+     * @param v1 location of the 1st vertex (not null, unaffected)
+     * @param v2 location of the 2nd vertex (not null, unaffected)
+     * @param v3 location of the 3rd vertex (not null, unaffected)
+     * @param v4 location of the 4th vertex (not null, unaffected)
+     * @return the volume (&ge;0)
+     */
+    public static double tetrahedronVolume(Vector3f v1, Vector3f v2,
+            Vector3f v3, Vector3f v4) {
+        Validate.finite(v1, "1st vertex");
+        Validate.finite(v2, "2nd vertex");
+        Validate.finite(v3, "3rd vertex");
+        Validate.finite(v4, "4th vertex");
+
+        Triangle baseTriangle = new Triangle(v1, v2, v3);
+        Vector3f offset = v4.subtract(v1);
+        Vector3f normal = baseTriangle.getNormal();
+        double altitude = MyVector3f.dot(offset, normal);
+        altitude = Math.abs(altitude);
+
+        double baseArea = MyMath.area(baseTriangle);
+        assert baseArea >= 0.0 : baseArea;
+        double volume = baseArea * altitude / 3.0;
+
         return volume;
     }
 }
