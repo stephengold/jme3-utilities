@@ -93,41 +93,44 @@ public class DebugShapeFactory {
             return null;
         }
 
-        Spatial debugShape;
-        if (collisionShape instanceof CompoundCollisionShape) {
-            CompoundCollisionShape shape = (CompoundCollisionShape) collisionShape;
+        DebugMeshNormals normals = collisionShape.debugMeshNormals();
+        int resolution = collisionShape.debugMeshResolution();
 
-            Node node = new Node("bullet debug");
-            List<ChildCollisionShape> children = shape.getChildren();
-            for (ChildCollisionShape childCollisionShape : children) {
-                CollisionShape ccollisionShape = childCollisionShape.getShape();
-                Geometry geometry = createGeometry(ccollisionShape);
+        Spatial result;
+        if (collisionShape instanceof CompoundCollisionShape) {
+            CompoundCollisionShape parent
+                    = (CompoundCollisionShape) collisionShape;
+
+            Node node = new Node("Bullet debug");
+
+            List<ChildCollisionShape> children = parent.getChildren();
+            for (ChildCollisionShape child : children) {
+                CollisionShape simpleShape = child.getShape();
+                Geometry geometry
+                        = createGeometry(simpleShape, normals, resolution);
 
                 // apply translation
-                geometry.setLocalTranslation(
-                        childCollisionShape.getLocation(null));
+                geometry.setLocalTranslation(child.getLocation(null));
 
                 // apply rotation
                 TempVars vars = TempVars.get();
                 Matrix3f tempRot = vars.tempMat3;
-
                 tempRot.set(geometry.getLocalRotation());
-                childCollisionShape.getRotation(null).mult(tempRot, tempRot);
+                child.getRotation(null).mult(tempRot, tempRot);
                 geometry.setLocalRotation(tempRot);
-
                 vars.release();
 
                 node.attachChild(geometry);
             }
-            debugShape = node;
+            result = node;
 
-        } else {
-            debugShape = createGeometry(collisionShape);
+        } else {  // not a compound shape
+            result = createGeometry(collisionShape, normals, resolution);
         }
 
-        debugShape.updateGeometricState();
+        result.updateGeometricState();
 
-        return debugShape;
+        return result;
     }
 
     /**
@@ -155,16 +158,24 @@ public class DebugShapeFactory {
     // private methods
 
     /**
-     * Create a geometry for visualizing the specified shape.
+     * Create a geometry for visualizing the specified (non-compound) collision
+     * shape.
      *
      * @param shape (not null, unaffected)
+     * @param normals which normals to generate (not null)
+     * @param resolution how much detail for convex shapes (0=low, 1=high)
      * @return a new geometry (not null)
      */
-    private static Geometry createGeometry(CollisionShape shape) {
+    private static Geometry createGeometry(CollisionShape shape,
+            DebugMeshNormals normals, int resolution) {
         assert shape != null;
+        assert !(shape instanceof CompoundCollisionShape);
+        assert normals != null;
+        assert resolution >= 0 : resolution;
+        assert resolution <= 1 : resolution;
 
-        Mesh mesh = createMesh(shape);
-        Geometry geometry = new Geometry("bullet debug", mesh);
+        Mesh mesh = createMesh(shape, normals, resolution);
+        Geometry geometry = new Geometry("Bullet debug", mesh);
         geometry.updateModelBound();
 
         return geometry;
@@ -175,23 +186,22 @@ public class DebugShapeFactory {
      * shape.
      *
      * @param shape (not null, unaffected)
+     * @param normals which normals to generate (not null)
+     * @param resolution how much detail for convex shapes (0=low, 1=high)
      * @return a new mesh (not null)
      */
-    private static Mesh createMesh(CollisionShape shape) {
-        assert !(shape instanceof CompoundCollisionShape);
-
+    private static Mesh createMesh(CollisionShape shape,
+            DebugMeshNormals normals, int resolution) {
         long id = shape.getObjectId();
-        int meshResolution = shape.debugMeshResolution();
         DebugMeshCallback callback = new DebugMeshCallback();
-        getVertices2(id, meshResolution, callback);
+        getVertices2(id, resolution, callback);
 
         Mesh mesh = new Mesh();
         mesh.setBuffer(Type.Position, 3, callback.getVertices());
         /*
-         * Add a normal buffer, if requested for this shape.
+         * Add a normal buffer, if requested.
          */
-        DebugMeshNormals option = shape.debugMeshNormals();
-        switch (option) {
+        switch (normals) {
             case Facet:
                 mesh.setBuffer(Type.Normal, 3, callback.getFaceNormals());
                 break;
