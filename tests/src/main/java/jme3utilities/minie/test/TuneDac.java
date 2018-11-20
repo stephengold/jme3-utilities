@@ -26,6 +26,13 @@
  */
 package jme3utilities.minie.test;
 
+import jme3utilities.minie.test.tunings.SinbadControl;
+import jme3utilities.minie.test.tunings.PuppetControl;
+import jme3utilities.minie.test.tunings.OtoControl;
+import jme3utilities.minie.test.tunings.NinjaControl;
+import jme3utilities.minie.test.tunings.JaimeControl;
+import jme3utilities.minie.test.tunings.ElephantControl;
+import jme3utilities.minie.test.tunings.MhGameControl;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.bullet.BulletAppState;
