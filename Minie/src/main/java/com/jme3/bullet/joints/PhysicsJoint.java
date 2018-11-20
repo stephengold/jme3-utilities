@@ -46,10 +46,12 @@ import java.util.logging.Logger;
 
 /**
  * The abstract base class for physics joints based on Bullet's
- * btTypedConstraint, used to connect 2 dynamic rigid bodies in the same physics
- * space. TODO make this work for static bodies
+ * btTypedConstraint. A physics joint is a double-ended constraint that connects
+ * 2 dynamic rigid bodies in the same physics space.
  * <p>
  * Subclasses include: ConeJoint, HingeJoint, Point2PointJoint, and SixDofJoint.
+ * <p>
+ * TODO also implement single-ended constraints
  *
  * @author normenhansen
  */
