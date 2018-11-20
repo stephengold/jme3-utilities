@@ -662,6 +662,10 @@ public class MyShape {
             HullCollisionShape hull = (HullCollisionShape) shape;
             volume = hull.scaledVolume();
 
+        } else if (shape instanceof MultiSphere) {
+            MultiSphere multiSphere = (MultiSphere) shape;
+            volume = multiSphere.scaledVolume();
+
         } else if (shape instanceof SimplexCollisionShape) {
             SimplexCollisionShape simplex = (SimplexCollisionShape) shape;
             volume *= simplex.unscaledVolume();
