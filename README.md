@@ -488,7 +488,8 @@ on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 ## Acknowledgments
 
 Like most projects, the Jme3-utilities Project builds on the work of many who
-have gone before.  I therefore acknowledge the following software developers:
+have gone before.  I therefore acknowledge the following
+artists and software developers:
 
 + Cris (aka "t0neg0d") for creating SkyDome (which provided both an inspiration
   and a starting point for SkyControl) and also for encouraging me to run with
@@ -502,6 +503,7 @@ have gone before.  I therefore acknowledge the following software developers:
  (on which Minie is based) and also for helpful insights
 + Alexandr Brui (aka "javasabr") for a solving a problem with the
   de-serialization of SkyControl
++ Nathan Vegdahl, for creating the Puppet model
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
     + Davis Rollman
     + "Lockhead"
