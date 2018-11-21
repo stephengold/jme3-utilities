@@ -54,6 +54,7 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 
 /**
@@ -62,6 +63,14 @@ import jme3utilities.MyAsset;
  * @author Stephen Gold sgold@sonic.net
  */
 public class TestSetMargin extends SimpleApplication {
+    // *************************************************************************
+    // constants and loggers
+
+    /**
+     * message logger for this class
+     */
+    final public static Logger logger
+            = Logger.getLogger(TestSetMargin.class.getName());
     // *************************************************************************
     // new methods exposed
 
@@ -108,10 +117,10 @@ public class TestSetMargin extends SimpleApplication {
         Node model = (Node) assetManager.loadModel(key);
         Geometry geo = (Geometry) model.getChild(0);
         Mesh mesh = geo.getMesh();
-        CollisionShape gimpoact = new GImpactCollisionShape(mesh);
-        assert gimpoact.getMargin() == 0.04f;
-        gimpoact.setMargin(0.16f);
-        assert gimpoact.getMargin() == 0.16f;
+        CollisionShape gimpact = new GImpactCollisionShape(mesh);
+        assert gimpact.getMargin() == 0.04f;
+        gimpact.setMargin(0.16f);
+        assert gimpact.getMargin() == 0.16f;
 
         Texture heightTexture = MyAsset.loadTexture(assetManager,
                 "Textures/terrain/height/basin.png");
