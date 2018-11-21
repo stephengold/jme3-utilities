@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.util;
 
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
@@ -80,21 +81,20 @@ public class DebugShapeFactory {
     // new methods exposed
 
     /**
-     * Create a spatial for visualizing the specified collision shape.
+     * Create a spatial for visualizing the specified collision object.
      * <p>
      * This is mostly used internally. To enable physics debug visualization,
      * use {@link com.jme3.bullet.BulletAppState#setDebugEnabled(boolean)}.
      *
-     * @param collisionShape the shape to visualize (may be null, unaffected)
+     * @param pco the object to visualize (not null, unaffected)
      * @return a new tree of nodes and geometries, or null
      */
-    public static Spatial getDebugShape(CollisionShape collisionShape) {
-        if (collisionShape == null) {
-            return null;
-        }
+    public static Spatial getDebugShape(PhysicsCollisionObject pco) {
+        Validate.nonNull(pco, "collision object");
 
-        DebugMeshNormals normals = collisionShape.debugMeshNormals();
-        int resolution = collisionShape.debugMeshResolution();
+        CollisionShape collisionShape = pco.getCollisionShape();
+        DebugMeshNormals normals = pco.debugMeshNormals();
+        int resolution = pco.debugMeshResolution();
 
         Spatial result;
         if (collisionShape instanceof CompoundCollisionShape) {

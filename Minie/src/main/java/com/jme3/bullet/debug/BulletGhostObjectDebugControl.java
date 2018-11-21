@@ -104,7 +104,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
         oldMargin = myShape.getMargin();
         myShape.getScale(oldScale);
 
-        geom = DebugShapeFactory.getDebugShape(myShape);
+        geom = DebugShapeFactory.getDebugShape(ghost);
         geom.setName(ghost.toString());
         updateMaterial();
     }
@@ -151,7 +151,7 @@ public class BulletGhostObjectDebugControl extends AbstractPhysicsDebugControl {
             Node node = (Node) spatial;
             node.detachChild(geom);
 
-            geom = DebugShapeFactory.getDebugShape(myShape);
+            geom = DebugShapeFactory.getDebugShape(ghost);
             geom.setName(ghost.toString());
 
             node.attachChild(geom);

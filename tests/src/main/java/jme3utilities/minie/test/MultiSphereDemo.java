@@ -234,10 +234,7 @@ public class MultiSphereDemo
             float radius = mainRadius * (0.2f + 0.8f * random.nextFloat());
             radii.add(radius);
         }
-
         CollisionShape shape = new MultiSphere(centers, radii);
-        shape.setDebugMeshNormals(DebugMeshNormals.Smooth);
-        shape.setDebugMeshResolution(DebugShapeFactory.highResolution);
 
         Vector3f startLocation = random.nextVector3f();
         startLocation.multLocal(0.5f, 1f, 0.5f);
@@ -249,6 +246,8 @@ public class MultiSphereDemo
         PhysicsRigidBody body = new PhysicsRigidBody(shape, mass);
         body.setDamping(0.6f, 0.6f);
         body.setDebugMaterial(debugMaterial);
+        body.setDebugMeshNormals(DebugMeshNormals.Smooth);
+        body.setDebugMeshResolution(DebugShapeFactory.highResolution);
         body.setFriction(1f);
         body.setKinematic(false);
         body.setPhysicsLocation(startLocation);

@@ -32,6 +32,8 @@
 package com.jme3.bullet.collision;
 
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.infos.DebugMeshNormals;
+import com.jme3.bullet.util.DebugShapeFactory;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -64,19 +66,6 @@ abstract public class PhysicsCollisionObject
      */
     final public static Logger logger
             = Logger.getLogger(PhysicsCollisionObject.class.getName());
-    // *************************************************************************
-    // fields
-
-    /**
-     * Unique identifier of the btCollisionObject. Constructors are responsible
-     * for setting this to a non-zero value. The id might change if the object
-     * gets rebuilt.
-     */
-    protected long objectId = 0L;
-    /**
-     * shape associated with this object (not null)
-     */
-    protected CollisionShape collisionShape;
     /**
      * collideWithGroups bitmask that represents "no groups"
      */
@@ -145,7 +134,23 @@ abstract public class PhysicsCollisionObject
      * collisionGroup/collideWithGroups bitmask that represents group #16
      */
     public static final int COLLISION_GROUP_16 = 0x00008000;
+    // *************************************************************************
+    // fields
 
+    /**
+     * Unique identifier of the btCollisionObject. Constructors are responsible
+     * for setting this to a non-zero value. The id might change if the object
+     * gets rebuilt.
+     */
+    protected long objectId = 0L;
+    /**
+     * shape associated with this object (not null)
+     */
+    protected CollisionShape collisionShape;
+    /**
+     * which normals to include in new debug meshes (default=None)
+     */
+    private DebugMeshNormals debugMeshNormals = DebugMeshNormals.None;
     /**
      * custom material for debug shape, or null to use the default material
      */
@@ -159,6 +164,11 @@ abstract public class PhysicsCollisionObject
      * #1)
      */
     private int collideWithGroups = COLLISION_GROUP_01;
+    /**
+     * resolution for new debug meshes (default=low, effective only for convex
+     * shapes)
+     */
+    private int debugMeshResolution = DebugShapeFactory.lowResolution;
     private Object userObject;
     // *************************************************************************
     // new methods exposed
@@ -170,6 +180,27 @@ abstract public class PhysicsCollisionObject
      */
     public void activate(boolean forceFlag) {
         activate(objectId, forceFlag);
+    }
+
+    /**
+     * Read which normals to include in new debug meshes.
+     *
+     * @return an enum value (not null)
+     */
+    public DebugMeshNormals debugMeshNormals() {
+        assert debugMeshNormals != null;
+        return debugMeshNormals;
+    }
+
+    /**
+     * Read mesh resolution for new debug meshes.
+     *
+     * @return 0=low, 1=high
+     */
+    public int debugMeshResolution() {
+        assert debugMeshResolution >= 0 : debugMeshResolution;
+        assert debugMeshResolution <= 1 : debugMeshResolution;
+        return debugMeshResolution;
     }
 
     /**
@@ -313,6 +344,27 @@ abstract public class PhysicsCollisionObject
     }
 
     /**
+     * Alter which normals to include in new debug meshes.
+     *
+     * @param newSetting an enum value (not null)
+     */
+    public void setDebugMeshNormals(DebugMeshNormals newSetting) {
+        Validate.nonNull(newSetting, "new setting");
+        debugMeshNormals = newSetting;
+    }
+
+    /**
+     * Alter the mesh resolution for new debug meshes. Effective only for convex
+     * shapes.
+     *
+     * @param newSetting 0=low, 1=high
+     */
+    public void setDebugMeshResolution(int newSetting) {
+        Validate.inRange(newSetting, "new setting", 0, 1);
+        debugMeshResolution = newSetting;
+    }
+
+    /**
      * Associate a user object (such as a Spatial) with this collision object.
      *
      * @param userObject the object to associate with this collision object
@@ -398,9 +450,13 @@ abstract public class PhysicsCollisionObject
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
+
         capsule.write(collisionGroup, "collisionGroup", COLLISION_GROUP_01);
         capsule.write(collideWithGroups, "collisionGroupsMask",
                 COLLISION_GROUP_01);
+        capsule.write(debugMeshNormals, "debugMeshNormals",
+                DebugMeshNormals.None);
+        capsule.write(debugMeshResolution, "debugMeshResolution", 0);
         capsule.write(debugMaterial, "debugMaterial", null);
         capsule.write(collisionShape, "collisionShape", null);
     }
@@ -414,14 +470,17 @@ abstract public class PhysicsCollisionObject
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
+
         collisionGroup = capsule.readInt("collisionGroup", COLLISION_GROUP_01);
         collideWithGroups = capsule.readInt("collisionGroupsMask",
                 COLLISION_GROUP_01);
+        debugMeshNormals = capsule.readEnum("debugMeshNormals",
+                DebugMeshNormals.class, DebugMeshNormals.None);
+        debugMeshResolution = capsule.readInt("debugMeshResolution", 0);
         debugMaterial = (Material) capsule.readSavable("debugMaterial", null);
 
-        CollisionShape shape
-                = (CollisionShape) capsule.readSavable("collisionShape", null);
-        collisionShape = shape;
+        Savable shape = capsule.readSavable("collisionShape", null);
+        collisionShape = (CollisionShape) shape;
     }
     // *************************************************************************
     // Object methods
@@ -446,8 +505,8 @@ abstract public class PhysicsCollisionObject
 
     native private void initUserPointer(long objectId, int group, int groups);
 
-    native private void setCollisionGroup(long objectId, int collisionGroup);
-
     native private void setCollideWithGroups(long objectId,
             int collisionGroups);
+
+    native private void setCollisionGroup(long objectId, int collisionGroup);
 }

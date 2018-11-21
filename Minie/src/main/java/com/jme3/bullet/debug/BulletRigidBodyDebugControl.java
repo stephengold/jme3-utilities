@@ -104,7 +104,7 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
         oldMargin = myShape.getMargin();
         myShape.getScale(oldScale);
 
-        geom = DebugShapeFactory.getDebugShape(myShape);
+        geom = DebugShapeFactory.getDebugShape(body);
         geom.setName(body.toString());
         updateMaterial();
     }
@@ -151,7 +151,7 @@ public class BulletRigidBodyDebugControl extends AbstractPhysicsDebugControl {
             Node node = (Node) spatial;
             node.detachChild(geom);
 
-            geom = DebugShapeFactory.getDebugShape(myShape);
+            geom = DebugShapeFactory.getDebugShape(body);
             geom.setName(body.toString());
 
             node.attachChild(geom);
