@@ -243,26 +243,24 @@ public class MyVector3f {
             Vector3f storeResult) {
         Validate.inRange(axisIndex, "axis index", firstAxis, lastAxis);
         Validate.nonNegative(length, "length");
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO standardize
-        }
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
-        storeResult.zero();
+        result.zero();
         switch (axisIndex) {
             case xAxis:
-                storeResult.x = length;
+                result.x = length;
                 break;
             case yAxis:
-                storeResult.y = length;
+                result.y = length;
                 break;
             case zAxis:
-                storeResult.z = length;
+                result.z = length;
                 break;
             default:
                 throw new IllegalArgumentException();
         }
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -818,15 +816,13 @@ public class MyVector3f {
             Vector3f storeResult) {
         Validate.nonNull(v0, "v0");
         Validate.nonNull(v1, "v1");
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO standardize
-        }
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
-        storeResult.x = MyMath.lerp(t, v0.x, v1.x);
-        storeResult.y = MyMath.lerp(t, v0.y, v1.y);
-        storeResult.z = MyMath.lerp(t, v0.z, v1.z);
+        result.x = MyMath.lerp(t, v0.x, v1.x);
+        result.y = MyMath.lerp(t, v0.y, v1.y);
+        result.z = MyMath.lerp(t, v0.z, v1.z);
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -928,22 +924,20 @@ public class MyVector3f {
     public static Vector3f localizeDirection(Vector3f worldDirection,
             Spatial spatial, Vector3f storeResult) {
         Validate.nonZero(worldDirection, "direction");
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO standardize
-        }
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
         if (MySpatial.isIgnoringTransforms(spatial)) {
-            storeResult.set(worldDirection);
+            result.set(worldDirection);
         } else {
-            spatial.worldToLocal(worldDirection, storeResult);
+            spatial.worldToLocal(worldDirection, result);
         }
 
-        double lengthSquared = MyVector3f.lengthSquared(storeResult);
+        double lengthSquared = MyVector3f.lengthSquared(result);
         double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
-        storeResult.multLocal((float) scaleFactor);
+        result.multLocal((float) scaleFactor);
 
-        assert storeResult.isUnitVector();
-        return storeResult;
+        assert result.isUnitVector();
+        return result;
     }
 
     /**
@@ -1124,15 +1118,13 @@ public class MyVector3f {
      */
     public static Vector3f standardize(Vector3f input, Vector3f storeResult) {
         Validate.nonNull(input, "input vector");
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO standardize
-        }
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
-        storeResult.x = MyMath.standardize(input.x);
-        storeResult.y = MyMath.standardize(input.y);
-        storeResult.z = MyMath.standardize(input.z);
+        result.x = MyMath.standardize(input.x);
+        result.y = MyMath.standardize(input.y);
+        result.z = MyMath.standardize(input.z);
 
-        return storeResult;
+        return result;
     }
 
     /**
