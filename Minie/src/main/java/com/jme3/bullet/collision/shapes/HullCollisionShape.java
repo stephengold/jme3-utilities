@@ -45,11 +45,13 @@ import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.RectangularSolid;
 
 /**
  * A convex-hull collision shape based on Bullet's btConvexHullShape.
@@ -131,7 +133,7 @@ public class HullCollisionShape extends CollisionShape {
      * performance and stability, use the mesh should have no more than 100
      * vertices.
      *
-     * @param mesh a mesh on which to base the shape (not null, at least one
+     * @param mesh the mesh on which to base the shape (not null, at least one
      * vertex, unaffected)
      */
     public HullCollisionShape(Mesh mesh) {
@@ -139,6 +141,45 @@ public class HullCollisionShape extends CollisionShape {
         assert mesh.getVertexCount() > 0;
 
         points = getPoints(mesh);
+        createShape();
+    }
+
+    /**
+     * Instantiate an 8-vertex collision shape to match the specified
+     * rectangular solid.
+     *
+     * @param rectangularSolid the solid on which to base the shape (not null)
+     */
+    public HullCollisionShape(RectangularSolid rectangularSolid) {
+        Vector3f maxima = rectangularSolid.maxima(null);
+        Vector3f minima = rectangularSolid.minima(null);
+        /*
+         * Enumerate the local coordinates of the 8 corners of the box.
+         */
+        Collection<Vector3f> cornerLocations = new ArrayList<>(8);
+        cornerLocations.add(new Vector3f(maxima.x, maxima.y, maxima.z));
+        cornerLocations.add(new Vector3f(maxima.x, maxima.y, minima.z));
+        cornerLocations.add(new Vector3f(maxima.x, minima.y, maxima.z));
+        cornerLocations.add(new Vector3f(maxima.x, minima.y, minima.z));
+        cornerLocations.add(new Vector3f(minima.x, maxima.y, maxima.z));
+        cornerLocations.add(new Vector3f(minima.x, maxima.y, minima.z));
+        cornerLocations.add(new Vector3f(minima.x, minima.y, maxima.z));
+        cornerLocations.add(new Vector3f(minima.x, minima.y, minima.z));
+        /*
+         * Transform corner locations to shape coordinates.
+         */
+        int numFloats = 3 * cornerLocations.size();
+        points = new float[numFloats];
+        int floatIndex = 0;
+        Vector3f tempVector = new Vector3f();
+        for (Vector3f location : cornerLocations) {
+            rectangularSolid.localToWorld(location, tempVector);
+            points[floatIndex] = tempVector.x;
+            points[floatIndex + 1] = tempVector.y;
+            points[floatIndex + 2] = tempVector.z;
+            floatIndex += 3;
+        }
+
         createShape();
     }
     // *************************************************************************
