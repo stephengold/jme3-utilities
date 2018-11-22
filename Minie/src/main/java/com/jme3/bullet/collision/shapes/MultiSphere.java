@@ -31,6 +31,7 @@
  */
 package com.jme3.bullet.collision.shapes;
 
+import com.jme3.bounding.BoundingSphere;
 import com.jme3.bullet.util.DebugShapeFactory;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -39,10 +40,13 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyMath;
+import jme3utilities.math.RectangularSolid;
 
 /**
  * A convex collision shape based on Bullet's btMultiSphereShape. Unlike a
@@ -123,8 +127,24 @@ public class MultiSphere extends CollisionShape {
     }
 
     /**
+     * Instantiate an eccentric sphere shape to match the specified
+     * BoundingSphere.
+     *
+     * @param boundingSphere (not null, unaffected)
+     */
+    public MultiSphere(BoundingSphere boundingSphere) {
+        centers = new Vector3f[1];
+        centers[0] = boundingSphere.getCenter().clone();
+
+        radii = new float[1];
+        radii[0] = boundingSphere.getRadius();
+
+        createShape();
+    }
+
+    /**
      * Instantiate an eccentric sphere shape with the specified center and
-     * radius.
+     * radius. TODO sort methods
      *
      * @param center the offset of the center (not null, unaffected)
      * @param radius the desired radius (in unscaled units, &ge;0)
@@ -162,6 +182,56 @@ public class MultiSphere extends CollisionShape {
             float radius = radii.get(i);
             assert radius >= 0f : radius;
             this.radii[i] = radius;
+        }
+
+        createShape();
+    }
+
+    /**
+     * Instantiate a 4-sphere shape to match the specified rectangular solid.
+     *
+     * @param rectangularSolid the solid on which to base the shape (not null)
+     */
+    public MultiSphere(RectangularSolid rectangularSolid) {
+        Vector3f halfExtents = rectangularSolid.halfExtents(null);
+        float radius = MyMath.min(halfExtents.x, halfExtents.y, halfExtents.z);
+        /*
+         * Enumerate the local coordinates of the centers of the 4 spheres.
+         */
+        Vector3f max = rectangularSolid.maxima(null);
+        max.subtractLocal(radius, radius, radius);
+        Vector3f min = rectangularSolid.minima(null);
+        min.addLocal(radius, radius, radius);
+        List<Vector3f> centerLocations = new ArrayList<>(4);
+        if (radius == halfExtents.x) {
+            float x = max.x;
+            centerLocations.add(new Vector3f(x, max.y, max.z));
+            centerLocations.add(new Vector3f(x, max.y, min.z));
+            centerLocations.add(new Vector3f(x, min.y, max.z));
+            centerLocations.add(new Vector3f(x, min.y, min.z));
+        } else if (radius == halfExtents.y) {
+            float y = max.y;
+            centerLocations.add(new Vector3f(max.x, y, max.z));
+            centerLocations.add(new Vector3f(max.x, y, min.z));
+            centerLocations.add(new Vector3f(min.x, y, max.z));
+            centerLocations.add(new Vector3f(min.x, y, min.z));
+        } else {
+            assert radius == halfExtents.z;
+            float z = max.z;
+            centerLocations.add(new Vector3f(max.x, max.y, z));
+            centerLocations.add(new Vector3f(max.x, min.y, z));
+            centerLocations.add(new Vector3f(min.x, max.y, z));
+            centerLocations.add(new Vector3f(min.x, min.y, z));
+        }
+        /*
+         * Transform centers to shape coordinates.
+         */
+        centers = new Vector3f[4];
+        radii = new float[4];
+        for (int sphereI = 0; sphereI < centerLocations.size(); sphereI++) {
+            Vector3f localCenter = centerLocations.get(sphereI);
+            centers[sphereI] = rectangularSolid.localToWorld(localCenter, null);
+            radii[sphereI] = radius;
         }
 
         createShape();
@@ -250,6 +320,7 @@ public class MultiSphere extends CollisionShape {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
+
         centers = (Vector3f[]) capsule.readSavableArray("centers",
                 new Vector3f[0]);
         radii = capsule.readFloatArray("radii", new float[0]);
@@ -266,6 +337,7 @@ public class MultiSphere extends CollisionShape {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
+
         capsule.write(centers, "centers", new Vector3f[0]);
         capsule.write(radii, "radii", new float[0]);
     }
