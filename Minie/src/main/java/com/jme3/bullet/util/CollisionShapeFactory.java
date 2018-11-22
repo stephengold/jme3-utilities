@@ -47,7 +47,9 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.UserData;
 import com.jme3.terrain.geomipmap.TerrainPatch;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import java.util.Collection;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * A utility class for generating collision shapes from Spatials.
@@ -55,18 +57,24 @@ import java.util.logging.Logger;
  * @author normenhansen, tim8dev
  */
 public class CollisionShapeFactory {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(CollisionShapeFactory.class.getName());
+    // *************************************************************************
+    // constructors
 
     /**
      * A private constructor to inhibit instantiation of this class.
      */
     private CollisionShapeFactory() {
     }
+    // *************************************************************************
+    // new methods exposed
 
     /**
      * Create a box shape for the given Spatial.
@@ -110,6 +118,41 @@ public class CollisionShapeFactory {
     }
 
     /**
+     * Create a hull collision shape using the specified inverse transform,
+     * center, and list of vertex locations.
+     *
+     * @param transform from vertex coordinates to de-scaled shape coordinates
+     * (not null, unaffected)
+     * @param center the location of the shape's center, in vertex coordinates
+     * (not null, unaffected)
+     * @param vertexLocations the collection of vertex locations (not null, not
+     * empty, MODIFIED)
+     * @return a new shape
+     */
+    public static HullCollisionShape createHullShape(Transform transform,
+            Vector3f center, Collection<Vector3f> vertexLocations) {
+        Validate.nonNull(transform, "transform");
+        Validate.finite(center, "center");
+        Validate.nonEmpty(vertexLocations, "vertex locations");
+
+        for (Vector3f location : vertexLocations) {
+            /*
+             * Translate so that vertex coordinates are relative to
+             * the shape's center.
+             */
+            location.subtractLocal(center);
+            /*
+             * Transform vertex coordinates to de-scaled shape coordinates.
+             */
+            transform.transformVector(location, location);
+        }
+
+        HullCollisionShape hullShape = new HullCollisionShape(vertexLocations);
+
+        return hullShape;
+    }
+
+    /**
      * Create a mesh shape for the given Spatial.
      * <p>
      * This type of collision shape is mesh-accurate and meant for immovable
@@ -143,6 +186,8 @@ public class CollisionShapeFactory {
                     "Supplied spatial must either be Node or Geometry!");
         }
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * This type of collision shape creates a CompoundShape made out of boxes

@@ -33,8 +33,6 @@ package com.jme3.bullet.animation;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.Savable;
 import com.jme3.math.FastMath;
@@ -162,42 +160,6 @@ public class RagUtils {
         }
 
         return coordsMap;
-    }
-
-    /**
-     * Create a hull collision shape using the specified inverse transform,
-     * center, and list of vertex locations. The skeleton is assumed to be in
-     * bind pose.
-     *
-     * @param transform from vertex coordinates to de-scaled shape coordinates
-     * (not null, unaffected)
-     * @param center the location of the shape's center, in vertex coordinates
-     * (not null, unaffected)
-     * @param vertexLocations the collection of vertex locations (not null, not
-     * empty, MODIFIED)
-     * @return a new shape
-     */
-    public static CollisionShape createShape(Transform transform,
-            Vector3f center, Collection<Vector3f> vertexLocations) {
-        Validate.nonNull(transform, "transform");
-        Validate.finite(center, "center");
-        Validate.nonEmpty(vertexLocations, "vertex locations");
-
-        for (Vector3f location : vertexLocations) {
-            /*
-             * Translate so that mesh coordinates are relative to
-             * the shape's center.
-             */
-            location.subtractLocal(center);
-            /*
-             * Transform mesh coordinates to de-scaled shape coordinates.
-             */
-            transform.transformVector(location, location);
-        }
-
-        CollisionShape boneShape = new HullCollisionShape(vertexLocations);
-
-        return boneShape;
     }
 
     /**

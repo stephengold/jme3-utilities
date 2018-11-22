@@ -43,6 +43,7 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
@@ -1415,8 +1416,8 @@ public class DynamicAnimControl
          * Create the collision shape.
          */
         Vector3f center = RagUtils.center(vertexLocations, null);
-        CollisionShape shape = RagUtils.createShape(transformIdentity, center,
-                vertexLocations);
+        CollisionShape shape = CollisionShapeFactory.createHullShape(
+                transformIdentity, center, vertexLocations);
 
         float mass = attachmentMass(boneName);
         PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
@@ -1431,7 +1432,8 @@ public class DynamicAnimControl
      * boneLinks map.
      *
      * @param boneName the name of the bone to be linked (not null)
-     * @param vertexLocations the collection of vertices (not null, not empty)
+     * @param vertexLocations the collection of vertex locations (not null, not
+     * empty)
      */
     private void createBoneLink(String boneName,
             List<Vector3f> vertexLocations) {
@@ -1449,8 +1451,8 @@ public class DynamicAnimControl
         meshToBone.setScale(1f);
         Vector3f center = RagUtils.center(vertexLocations, null);
         center.subtractLocal(bone.getModelSpacePosition());
-        CollisionShape shape
-                = RagUtils.createShape(meshToBone, center, vertexLocations);
+        CollisionShape shape = CollisionShapeFactory.createHullShape(
+                meshToBone, center, vertexLocations);
 
         float mass = mass(boneName);
         PhysicsRigidBody rigidBody = createRigidBody(shape, mass);
@@ -1483,7 +1485,8 @@ public class DynamicAnimControl
     /**
      * Create the TorsoLink.
      *
-     * @param vertexLocations the collection of vertices (not null, not empty)
+     * @param vertexLocations the collection of vertex locations (not null, not
+     * empty)
      * @param meshes array of animated meshes to use (not null, unaffected)
      */
     private void createTorsoLink(Collection<Vector3f> vertexLocations,
@@ -1502,8 +1505,8 @@ public class DynamicAnimControl
         Transform meshToBone = boneToMesh.invert();
         Vector3f center = RagUtils.center(vertexLocations, null);
         center.subtractLocal(bone.getModelSpacePosition());
-        CollisionShape shape
-                = RagUtils.createShape(meshToBone, center, vertexLocations);
+        CollisionShape shape = CollisionShapeFactory.createHullShape(
+                meshToBone, center, vertexLocations);
 
         meshToBone.getTranslation().zero();
         Vector3f offset = meshToBone.transformVector(center, null);
