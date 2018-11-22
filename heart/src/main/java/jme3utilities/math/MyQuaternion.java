@@ -137,17 +137,16 @@ public class MyQuaternion {
      * @return a conjugate quaternion (either storeResult or a new instance)
      */
     public static Quaternion conjugate(Quaternion q, Quaternion storeResult) {
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         float qx = q.getX();
         float qy = q.getY();
         float qz = q.getZ();
         float qw = q.getW();
-        storeResult.set(-qx, -qy, -qz, qw);
+        result.set(-qx, -qy, -qz, qw);
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -159,26 +158,25 @@ public class MyQuaternion {
      */
     public static Quaternion exp(Quaternion q, Quaternion storeResult) {
         assert q.getW() == 0f : q;
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         double qx = q.getX();
         double qy = q.getY();
         double qz = q.getZ();
         double theta = MyMath.hypotenuse(qx, qy, qz);
         if (theta == 0.0) {
-            storeResult.loadIdentity();
+            result.loadIdentity();
         } else {
             float w = (float) Math.cos(theta);
             double scale = Math.sin(theta) / theta;
             float x = (float) (scale * qx);
             float y = (float) (scale * qy);
             float z = (float) (scale * qz);
-            storeResult.set(x, y, z, w);
+            result.set(x, y, z, w);
         }
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -212,13 +210,12 @@ public class MyQuaternion {
      * @return a pure quaternion (either storeResult or a new instance)
      */
     public static Quaternion log(Quaternion q, Quaternion storeResult) {
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         float qw = q.getW();
         if (qw >= 1f || qw <= -1f) {
-            storeResult.set(0f, 0f, 0f, 0f);
+            result.set(0f, 0f, 0f, 0f);
         } else {
             double qx = q.getX();
             double qy = q.getY();
@@ -226,18 +223,18 @@ public class MyQuaternion {
             double sineTheta = MyMath.hypotenuse(qx, qy, qz);
             sineTheta = MyMath.clamp(sineTheta, 0.0, 1.0);
             if (sineTheta == 0.0) {
-                storeResult.set(0f, 0f, 0f, 0f);
+                result.set(0f, 0f, 0f, 0f);
             } else {
                 double theta = Math.asin(sineTheta);
                 double scale = theta / sineTheta;
                 float x = (float) (scale * qx);
                 float y = (float) (scale * qy);
                 float z = (float) (scale * qz);
-                storeResult.set(x, y, z, 0f);
+                result.set(x, y, z, 0f);
             }
         }
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -269,13 +266,12 @@ public class MyQuaternion {
      */
     public static Quaternion pow(Quaternion base, float exponent,
             Quaternion storeResult) {
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         float baseW = base.getW();
         if (baseW >= 1f || baseW <= -1f || exponent == 0f) {
-            storeResult.loadIdentity();
+            result.loadIdentity();
         } else {
             double baseX = base.getX();
             double baseY = base.getY();
@@ -283,7 +279,7 @@ public class MyQuaternion {
             double sineTheta = MyMath.hypotenuse(baseX, baseY, baseZ);
             sineTheta = MyMath.clamp(sineTheta, 0.0, 1.0);
             if (sineTheta == 0.0) {
-                storeResult.loadIdentity();
+                result.loadIdentity();
             } else {
                 double theta = Math.asin(sineTheta);
                 float w = (float) Math.cos(exponent * theta);
@@ -291,11 +287,11 @@ public class MyQuaternion {
                 float x = (float) (scale * baseX);
                 float y = (float) (scale * baseY);
                 float z = (float) (scale * baseZ);
-                storeResult.set(x, y, z, w);
+                result.set(x, y, z, w);
             }
         }
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -319,17 +315,16 @@ public class MyQuaternion {
         Validate.inRange(t, "t", 0f, 1f);
         MyQuaternion.validateUnit(q0, "q0", 0.0001f);
         MyQuaternion.validateUnit(q1, "q1", 0.0001f);
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         Quaternion q0inverse = MyQuaternion.conjugate(q0, null);
         Quaternion ratio = q0inverse.multLocal(q1);
         Quaternion power = MyQuaternion.pow(ratio, t, ratio);
-        storeResult.set(q0);
-        storeResult.multLocal(power);
+        result.set(q0);
+        result.multLocal(power);
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -370,15 +365,14 @@ public class MyQuaternion {
         MyQuaternion.validateUnit(a, "a", 0.0001f);
         MyQuaternion.validateUnit(b, "b", 0.0001f);
         MyQuaternion.validateUnit(q, "q", 0.0001f);
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         Quaternion qSlerp = slerp(t, p, q, null);
         Quaternion aSlerp = slerp(t, a, b, null);
-        slerp(2f * t * (1f - t), qSlerp, aSlerp, storeResult);
+        slerp(2f * t * (1f - t), qSlerp, aSlerp, result);
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -397,9 +391,8 @@ public class MyQuaternion {
         MyQuaternion.validateUnit(q0, "q0", 0.0001f);
         MyQuaternion.validateUnit(q1, "q1", 0.0001f);
         MyQuaternion.validateUnit(q2, "q2", 0.0001f);
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         Quaternion q1c = MyQuaternion.conjugate(q1, null);
         Quaternion turn0 = q1c.mult(q0);
@@ -409,10 +402,10 @@ public class MyQuaternion {
         Quaternion sum = logTurn2.addLocal(logTurn0);
         sum.multLocal(-0.25f);
         Quaternion exp = MyQuaternion.exp(sum, sum);
-        storeResult.set(q1);
-        storeResult.multLocal(exp);
+        result.set(q1);
+        result.multLocal(exp);
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -426,9 +419,8 @@ public class MyQuaternion {
     public static Quaternion standardize(Quaternion input,
             Quaternion storeResult) {
         Validate.nonNull(input, "input quaternion");
-        if (storeResult == null) {
-            storeResult = new Quaternion();
-        }
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
 
         float w = input.getW();
         float x = input.getX();
@@ -438,9 +430,9 @@ public class MyQuaternion {
         x = MyMath.standardize(x);
         y = MyMath.standardize(y);
         z = MyMath.standardize(z);
-        storeResult.set(x, y, z, w);
+        result.set(x, y, z, w);
 
-        return storeResult;
+        return result;
     }
 
     /**
