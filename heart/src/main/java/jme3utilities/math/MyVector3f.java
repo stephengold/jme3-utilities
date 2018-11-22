@@ -28,6 +28,7 @@ package jme3utilities.math;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Line;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -243,7 +244,7 @@ public class MyVector3f {
         Validate.inRange(axisIndex, "axis index", firstAxis, lastAxis);
         Validate.nonNegative(length, "length");
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO standardize
         }
 
         storeResult.zero();
@@ -359,6 +360,55 @@ public class MyVector3f {
         int count = distinct.size();
 
         return count;
+    }
+
+    /**
+     * Calculate the sample covariance of a collection of sample vectors.
+     *
+     * @param collection the sample vectors (not null, at least 2, unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the unbiased sample covariance (either storeResult or a new
+     * matrix, not null)
+     */
+    public static Matrix3f covariance(Collection<Vector3f> collection,
+            Matrix3f storeResult) {
+        Validate.nonEmpty(collection, "collection");
+        int numSamples = collection.size();
+        assert numSamples > 1 : numSamples;
+        Matrix3f result = (storeResult == null) ? new Matrix3f() : storeResult;
+
+        Vector3f sampleMean = MyVector3f.mean(collection, null);
+        /*
+         * Accumulate sums in the upper triangle of the matrix.
+         */
+        result.zero();
+        float[] aboveMean = new float[3];
+        for (Vector3f location : collection) {
+            aboveMean[0] = location.x - sampleMean.x;
+            aboveMean[1] = location.y - sampleMean.y;
+            aboveMean[2] = location.z - sampleMean.z;
+            for (int rowIndex = 0; rowIndex < 3; ++rowIndex) {
+                for (int columnIndex = rowIndex; columnIndex < 3; ++columnIndex) {
+                    float sum = result.get(rowIndex, columnIndex);
+                    sum += aboveMean[rowIndex] * aboveMean[columnIndex];
+                    result.set(rowIndex, columnIndex, sum);
+                }
+            }
+        }
+        /*
+         * Multiply sums by 1/(N-1) and fill in the lower triangle.
+         */
+        float nMinus1 = numSamples - 1;
+        for (int rowIndex = 0; rowIndex < 3; ++rowIndex) {
+            for (int columnIndex = rowIndex; columnIndex < 3; ++columnIndex) {
+                float sum = result.get(rowIndex, columnIndex);
+                float element = sum / nMinus1;
+                result.set(rowIndex, columnIndex, element);
+                result.set(columnIndex, rowIndex, element);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -769,7 +819,7 @@ public class MyVector3f {
         Validate.nonNull(v0, "v0");
         Validate.nonNull(v1, "v1");
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO standardize
         }
 
         storeResult.x = MyMath.lerp(t, v0.x, v1.x);
@@ -879,7 +929,7 @@ public class MyVector3f {
             Spatial spatial, Vector3f storeResult) {
         Validate.nonZero(worldDirection, "direction");
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO standardize
         }
 
         if (MySpatial.isIgnoringTransforms(spatial)) {
@@ -1075,7 +1125,7 @@ public class MyVector3f {
     public static Vector3f standardize(Vector3f input, Vector3f storeResult) {
         Validate.nonNull(input, "input vector");
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO standardize
         }
 
         storeResult.x = MyMath.standardize(input.x);
