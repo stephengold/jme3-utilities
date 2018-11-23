@@ -143,26 +143,6 @@ public class MultiSphere extends CollisionShape {
     }
 
     /**
-     * Instantiate an eccentric sphere shape with the specified center and
-     * radius. TODO sort methods
-     *
-     * @param center the offset of the center (not null, unaffected)
-     * @param radius the desired radius (in unscaled units, &ge;0)
-     */
-    public MultiSphere(Vector3f center, float radius) {
-        Validate.finite(center, "center");
-        Validate.nonNegative(radius, "radius");
-
-        centers = new Vector3f[1];
-        centers[0] = center.clone();
-
-        radii = new float[1];
-        radii[0] = radius;
-
-        createShape();
-    }
-
-    /**
      * Instantiate a multi-sphere shape with the specified centers and radii.
      *
      * @param centers the list of center offsets (not null, not empty)
@@ -233,6 +213,26 @@ public class MultiSphere extends CollisionShape {
             centers[sphereI] = rectangularSolid.localToWorld(localCenter, null);
             radii[sphereI] = radius;
         }
+
+        createShape();
+    }
+
+    /**
+     * Instantiate an eccentric sphere shape with the specified center and
+     * radius.
+     *
+     * @param center the offset of the center (not null, unaffected)
+     * @param radius the desired radius (in unscaled units, &ge;0)
+     */
+    public MultiSphere(Vector3f center, float radius) {
+        Validate.finite(center, "center");
+        Validate.nonNegative(radius, "radius");
+
+        centers = new Vector3f[1];
+        centers[0] = center.clone();
+
+        radii = new float[1];
+        radii[0] = radius;
 
         createShape();
     }
