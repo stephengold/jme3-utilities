@@ -450,7 +450,7 @@ public class TestDac extends ActionApplication {
      */
     private void addModel(String modelName) {
         if (cgModel != null) {
-            cgModel.removeControl(dac);
+            dac.getSpatial().removeControl(dac);
             rootNode.detachChild(cgModel);
             rootNode.removeControl(sv);
             removeAllBalls();
