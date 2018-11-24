@@ -650,21 +650,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Alter whether physics-space coordinates should match the spatial's local
-     * coordinates.
-     *
-     * @param applyPhysicsLocal true&rarr;match local coordinates,
-     * false&rarr;match world coordinates (default=false)
-     */
-    @Override
-    public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
-        if (applyPhysicsLocal) {
-            throw new UnsupportedOperationException(
-                    "DynamicAnimControl does not support local physics.");
-        }
-    }
-
-    /**
      * Alter the viscous damping ratio for all rigid bodies, including new ones.
      *
      * @param dampingRatio the desired damping ratio (0&rarr;no damping,

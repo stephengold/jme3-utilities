@@ -721,6 +721,21 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
+     * Alter whether physics-space coordinates should match the spatial's local
+     * coordinates.
+     *
+     * @param applyPhysicsLocal true&rarr;match local coordinates,
+     * false&rarr;match world coordinates (default=false)
+     */
+    @Override
+    public void setApplyPhysicsLocal(boolean applyPhysicsLocal) {
+        if (applyPhysicsLocal) {
+            throw new UnsupportedOperationException(
+                    "DynamicAnimControl does not support local physics.");
+        }
+    }
+
+    /**
      * Serialize this control, for example when saving to a J3O file.
      *
      * @param ex exporter (not null)
