@@ -670,6 +670,72 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
         blConfigMap.remove(boneName);
     }
     // *************************************************************************
+    // new protected methods
+
+    /**
+     * Add unlinked descendants of the specified bone to the specified
+     * collection. Note: recursive.
+     *
+     * @param startBone the starting bone (not null, unaffected)
+     * @param addResult the collection of bone names to append to (not null,
+     * modified)
+     */
+    protected void addUnlinkedDescendants(Bone startBone,
+            Collection<Bone> addResult) {
+        for (Bone childBone : startBone.getChildren()) {
+            String childName = childBone.getName();
+            if (!hasBoneLink(childName)) {
+                addResult.add(childBone);
+                addUnlinkedDescendants(childBone, addResult);
+            }
+        }
+    }
+
+    /**
+     * Find the manager of the specified bone.
+     *
+     * @param bone the bone (not null, unaffected)
+     * @return a bone/torso name (not null)
+     */
+    protected String findManager(Bone bone) {
+        Validate.nonNull(bone, "bone");
+
+        String managerName;
+        while (true) {
+            String boneName = bone.getName();
+            if (hasBoneLink(boneName)) {
+                managerName = boneName;
+                break;
+            }
+            bone = bone.getParent(); // TODO don't assign parameter
+            if (bone == null) {
+                managerName = torsoName;
+                break;
+            }
+        }
+
+        assert managerName != null;
+        return managerName;
+    }
+
+    /**
+     * Create a map from bone indices to the names of the bones that manage
+     * them.
+     *
+     * @param skeleton (not null, unaffected)
+     * @return a new array of bone/torso names (not null)
+     */
+    protected String[] managerMap(Skeleton skeleton) {
+        int numBones = skeleton.getBoneCount();
+        String[] managerMap = new String[numBones];
+        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            managerMap[boneIndex] = findManager(bone);
+        }
+
+        return managerMap;
+    }
+    // *************************************************************************
     // AbstractPhysicsControl methods
 
     /**
@@ -838,71 +904,5 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
 
         oc.write(torsoConfig, "torsoConfig", null);
         oc.write(gravityVector, "gravity", null);
-    }
-    // *************************************************************************
-    // new protected methods TODO reorder methods
-
-    /**
-     * Add unlinked descendants of the specified bone to the specified
-     * collection. Note: recursive.
-     *
-     * @param startBone the starting bone (not null, unaffected)
-     * @param addResult the collection of bone names to append to (not null,
-     * modified)
-     */
-    protected void addUnlinkedDescendants(Bone startBone,
-            Collection<Bone> addResult) {
-        for (Bone childBone : startBone.getChildren()) {
-            String childName = childBone.getName();
-            if (!hasBoneLink(childName)) {
-                addResult.add(childBone);
-                addUnlinkedDescendants(childBone, addResult);
-            }
-        }
-    }
-
-    /**
-     * Find the manager of the specified bone.
-     *
-     * @param bone the bone (not null, unaffected)
-     * @return a bone/torso name (not null)
-     */
-    protected String findManager(Bone bone) {
-        Validate.nonNull(bone, "bone");
-
-        String managerName;
-        while (true) {
-            String boneName = bone.getName();
-            if (hasBoneLink(boneName)) {
-                managerName = boneName;
-                break;
-            }
-            bone = bone.getParent(); // TODO don't assign parameter
-            if (bone == null) {
-                managerName = torsoName;
-                break;
-            }
-        }
-
-        assert managerName != null;
-        return managerName;
-    }
-
-    /**
-     * Create a map from bone indices to the names of the bones that manage
-     * them.
-     *
-     * @param skeleton (not null, unaffected)
-     * @return a new array of bone/torso names (not null)
-     */
-    protected String[] managerMap(Skeleton skeleton) {
-        int numBones = skeleton.getBoneCount();
-        String[] managerMap = new String[numBones];
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
-            Bone bone = skeleton.getBone(boneIndex);
-            managerMap[boneIndex] = findManager(bone);
-        }
-
-        return managerMap;
     }
 }
