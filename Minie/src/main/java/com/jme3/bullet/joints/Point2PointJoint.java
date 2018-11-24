@@ -72,17 +72,31 @@ public class Point2PointJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a Point2PointJoint. To be effective, the joint must be added
-     * to a physics space.
+     * Instantiate a single-ended PhysicsJoint. To be effective, the joint must
+     * be added to the physics space of the body. Also, the body must be
+     * dynamic.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
+     * @param nodeA the dynamic rigid body to constrain (not null, alias
      * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the local offset of the connection point in node A (not
-     * null, unaffected)
-     * @param pivotB the local offset of the connection point in node B (not
-     * null, unaffected)
+     * @param pivotA the offset of the constraint point in node A (in scaled
+     * local coordinates, not null, unaffected)
+     */
+    public Point2PointJoint(PhysicsRigidBody nodeA, Vector3f pivotA) {
+        super(nodeA, pivotA);
+        createJoint();
+    }
+
+    /**
+     * Instantiate a double-ended Point2PointJoint. To be effective, the joint
+     * must be added to the physics space of the 2 bodies. Also, the bodies must
+     * be dynamic and distinct.
+     *
+     * @param nodeA the 1st body to connect (not null, alias created)
+     * @param nodeB the 2nd body to connect (not null, alias created)
+     * @param pivotA the offset of the connection point in node A (in scaled
+     * local coordinates, not null, unaffected)
+     * @param pivotB the offset of the connection point in node B (in scaled
+     * local coordinates, not null, unaffected)
      */
     public Point2PointJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
@@ -196,6 +210,7 @@ public class Point2PointJoint extends PhysicsJoint {
         super.read(im);
         createJoint();
         InputCapsule cap = im.getCapsule(this);
+
         setDamping(cap.readFloat("damping", 1f));
         setDamping(cap.readFloat("tau", 0.3f));
         setDamping(cap.readFloat("impulseClamp", 0f));
@@ -211,6 +226,7 @@ public class Point2PointJoint extends PhysicsJoint {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule cap = ex.getCapsule(this);
+
         cap.write(getDamping(), "damping", 1f);
         cap.write(getTau(), "tau", 0.3f);
         cap.write(getImpulseClamp(), "impulseClamp", 0f);
@@ -223,14 +239,20 @@ public class Point2PointJoint extends PhysicsJoint {
      */
     private void createJoint() {
         assert objectId == 0L;
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
-                pivotB);
+        if (nodeB == null) {
+            objectId = createJoint1(nodeA.getObjectId(), pivotA);
+        } else {
+            objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
+                    pivotA, pivotB);
+        }
         assert objectId != 0L;
         logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
     native private long createJoint(long objectIdA, long objectIdB,
             Vector3f pivotA, Vector3f pivotB);
+
+    native private long createJoint1(long objectIdA, Vector3f pivotA);
 
     native private float getDamping(long objectId);
 

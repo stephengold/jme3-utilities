@@ -59,7 +59,7 @@ public class TestCloneJoints extends SimpleApplication {
         app.start();
     }
     // *************************************************************************
-    // SimpleApplication methods
+    // SimpleApplication methods - TODO no need for SimpleApplication
 
     @Override
     public void simpleInitApp() {
@@ -87,6 +87,12 @@ public class TestCloneJoints extends SimpleApplication {
         verifyP2P(p2p, 0f);
         Point2PointJoint p2pClone = (Point2PointJoint) Misc.deepCopy(p2p);
         cloneTest(p2p, p2pClone);
+
+        Point2PointJoint sep2p = new Point2PointJoint(bodyA, new Vector3f());
+        setP2P(sep2p, 0f);
+        verifyP2P(sep2p, 0f);
+        Point2PointJoint sep2pClone = (Point2PointJoint) Misc.deepCopy(sep2p);
+        cloneTest(sep2p, sep2pClone);
 
         SixDofJoint six = new SixDofJoint(bodyA, bodyB, new Vector3f(),
                 new Vector3f(), new Matrix3f(), new Matrix3f(), false);
@@ -127,7 +133,11 @@ public class TestCloneJoints extends SimpleApplication {
 
         PhysicsRigidBody b = joint.getBodyB();
         PhysicsRigidBody bClone = jointClone.getBodyB();
-        assert b.getObjectId() != bClone.getObjectId();
+        if (b == null) {
+            assert bClone == null;
+        } else {
+            assert b.getObjectId() != bClone.getObjectId();
+        }
 
         verify(joint, 0f);
         verify(jointClone, 0f);
