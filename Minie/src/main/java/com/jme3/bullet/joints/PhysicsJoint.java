@@ -46,12 +46,14 @@ import java.util.logging.Logger;
 
 /**
  * The abstract base class for physics joints based on Bullet's
- * btTypedConstraint. A physics joint is a double-ended constraint that connects
- * 2 dynamic rigid bodies in the same physics space.
- * <p>
+ * btTypedConstraint. A physics joint can be single-ended or double-ended:
+ * <ul>
+ * <li>A single-ended joint constrains the motion of a dynamic rigid body in
+ * physics space.</li>
+ * <li>A double-ended joint connects 2 rigid bodies together in the same physics
+ * space. One of the bodies must be dynamic.</li>
+ * </ul>
  * Subclasses include: ConeJoint, HingeJoint, Point2PointJoint, and SixDofJoint.
- * <p>
- * TODO also implement single-ended constraints
  *
  * @author normenhansen
  */
@@ -78,15 +80,17 @@ abstract public class PhysicsJoint
      */
     protected PhysicsRigidBody nodeA;
     /**
-     * 2nd body specified in the constructor
+     * 2nd body specified in the constructor, or null for a single-ended joint
      */
     protected PhysicsRigidBody nodeB;
     /**
-     * copy of local offset of this joint's connection point in body A
+     * copy of offset of this joint's connection point in body A (in scaled
+     * local coordinates)
      */
     protected Vector3f pivotA;
     /**
-     * copy of local offset of this joint's connection point in body B
+     * copy of offset of this joint's connection point in body B (in scaled
+     * local coordinates) or null for a single-ended joint
      */
     protected Vector3f pivotB;
     /**
@@ -104,22 +108,40 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Instantiate a PhysicsJoint. To be effective, the joint must be added to
-     * the physics space of the two bodies. Also, the bodies must be dynamic and
-     * distinct.
+     * Instantiate a single-ended PhysicsJoint. To be effective, the joint must
+     * be added to the physics space of the body. Also, the body must be
+     * dynamic.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
+     * @param nodeA the dynamic rigid body to constrain (not null, alias
      * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA local offset of the joint connection point in node A (not
-     * null, unaffected)
-     * @param pivotB local offset of the joint connection point in node B (not
-     * null, unaffected)
+     * @param pivotA the offset of the constraint point in node A (in scaled
+     * local coordinates, not null, unaffected)
+     */
+    protected PhysicsJoint(PhysicsRigidBody nodeA, Vector3f pivotA) {
+        this.nodeA = nodeA;
+        this.nodeB = null;
+        this.pivotA = pivotA.clone();
+        this.pivotB = null;
+        nodeA.addJoint(this);
+    }
+
+    /**
+     * Instantiate a double-ended PhysicsJoint. To be effective, the joint must
+     * be added to the physics space of the 2 bodies. Also, the bodies must be
+     * dynamic and distinct.
+     *
+     * @param nodeA the 1st body to connect (not null, alias created)
+     * @param nodeB the 2nd body to connect (not null, alias created)
+     * @param pivotA the offset of the connection point in node A (in scaled
+     * local coordinates, not null, unaffected)
+     * @param pivotB the offset of the connection point in node B (in scaled
+     * local coordinates, not null, unaffected)
      */
     protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
-        assert nodeA != nodeB;
+        if (nodeA == nodeB) {
+            throw new IllegalArgumentException("The bodies must be distinct.");
+        }
 
         this.nodeA = nodeA;
         this.nodeB = nodeB;
@@ -135,32 +157,37 @@ abstract public class PhysicsJoint
      * Remove this joint from the joint lists of both connected bodies.
      */
     public void destroy() {
-        getBodyA().removeJoint(this);
-        getBodyB().removeJoint(this);
+        nodeA.removeJoint(this);
+        if (nodeB != null) {
+            nodeB.removeJoint(this);
+        }
     }
 
     /**
      * Read the magnitude of the applied impulse.
      *
-     * @return impulse
+     * @return impulse magnitude (&ge;0)
      */
     public float getAppliedImpulse() {
-        return getAppliedImpulse(objectId);
+        float result = getAppliedImpulse(objectId);
+        assert result >= 0f : result;
+        return result;
     }
 
     /**
      * Access the 1st body specified in the constructor.
      *
-     * @return the pre-existing body
+     * @return the pre-existing body (not null)
      */
     public PhysicsRigidBody getBodyA() {
+        assert nodeA != null;
         return nodeA;
     }
 
     /**
      * Access the 2nd body specified in the constructor.
      *
-     * @return the pre-existing body
+     * @return the pre-existing body, or null if this joint is single-ended
      */
     public PhysicsRigidBody getBodyB() {
         return nodeB;
@@ -197,7 +224,11 @@ abstract public class PhysicsJoint
      * storeResult or a new instance)
      */
     public Vector3f getPivotB(Vector3f storeResult) {
+        if (pivotB == null) {
+            throw new IllegalStateException("Joint is single-ended.");
+        }
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
         result.set(pivotB);
         return result;
     }
@@ -267,12 +298,10 @@ abstract public class PhysicsJoint
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
-        nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA",
-                new PhysicsRigidBody());
-        nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB",
-                new PhysicsRigidBody());
+        nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA", null);
+        nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB", null);
         pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
-        pivotB = (Vector3f) capsule.readSavable("pivotB", new Vector3f());
+        pivotB = (Vector3f) capsule.readSavable("pivotB", null);
     }
 
     /**

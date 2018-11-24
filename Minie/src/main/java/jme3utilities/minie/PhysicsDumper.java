@@ -158,15 +158,20 @@ public class PhysicsDumper extends Dumper {
      * @param joint the joint to dump (not null, unaffected)
      */
     public void dump(PhysicsJoint joint) {
-        long objectId = joint.getObjectId();
-        long aId = joint.getBodyA().getObjectId();
-        long bId = joint.getBodyB().getObjectId();
         String type = joint.getClass().getSimpleName();
         if (type.endsWith("Joint")) {
             type = MyString.removeSuffix(type, "Joint");
         }
-        stream.printf("  %s #%s a=%s,b=%s", type, Long.toHexString(objectId),
-                Long.toHexString(aId), Long.toHexString(bId));
+        long objectId = joint.getObjectId();
+        long aId = joint.getBodyA().getObjectId();
+        stream.printf("  %s #%s a=%s", type, Long.toHexString(objectId),
+                Long.toHexString(aId));
+
+        PhysicsRigidBody bodyB = joint.getBodyB();
+        if (bodyB != null) {
+            long bId = bodyB.getObjectId();
+            stream.printf(",b=%s", type, Long.toHexString(bId));
+        }
 
         stream.println();
     }
@@ -219,17 +224,26 @@ public class PhysicsDumper extends Dumper {
                 type = MyString.removeSuffix(type, "Joint");
             }
             stream.printf("    %s #%s ", type, Long.toHexString(objectId));
-            long otherId;
+
+            long otherId = 0L;
             Vector3f pivot;
             if (joint.getBodyA() == body) {
-                otherId = joint.getBodyB().getObjectId();
+                PhysicsRigidBody bodyB = joint.getBodyB();
+                if (bodyB != null) {
+                    otherId = bodyB.getObjectId();
+                }
                 pivot = joint.getPivotA(null);
             } else {
                 assert joint.getBodyB() == body;
                 otherId = joint.getBodyA().getObjectId();
                 pivot = joint.getPivotB(null);
             }
-            stream.printf("to=#%s piv=%s%n", Long.toHexString(otherId), pivot);
+            if (otherId == 0L) {
+                stream.print("single-ended");
+            } else {
+                stream.printf("to=#%s", Long.toHexString(otherId));
+            }
+            stream.printf(" piv=%s%n", pivot);
         }
     }
 

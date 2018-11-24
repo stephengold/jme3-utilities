@@ -32,6 +32,7 @@
 package com.jme3.bullet.debug;
 
 import com.jme3.bullet.joints.PhysicsJoint;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -46,12 +47,20 @@ import java.util.logging.Logger;
  * @author normenhansen
  */
 public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
+    // *************************************************************************
+    // constants and loggers
 
     /**
      * message logger for this class
      */
     final public static Logger logger
             = Logger.getLogger(BulletJointDebugControl.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
+    // *************************************************************************
+    // fields
 
     final private PhysicsJoint joint;
     final private Geometry geomA;
@@ -60,6 +69,8 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     final private Arrow arrowB;
     final private Transform a = new Transform();
     final private Transform b = new Transform();
+    // *************************************************************************
+    // constructors
 
     /**
      * Instantiate an enabled control to visualize the specified joint.
@@ -80,6 +91,8 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
         geomB.setMesh(arrowB);
         geomB.setMaterial(debugAppState.DEBUG_GREEN);
     }
+    // *************************************************************************
+    // AbstractPhysicsDebugControl methods
 
     /**
      * Alter which spatial is controlled. Invoked when the control is added to
@@ -111,16 +124,20 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlUpdate(float tpf) {
-        joint.getBodyA().getPhysicsLocation(a.getTranslation());
-        joint.getBodyA().getPhysicsRotation(a.getRotation());
-
-        joint.getBodyB().getPhysicsLocation(b.getTranslation());
-        joint.getBodyB().getPhysicsRotation(b.getRotation());
-
+        PhysicsRigidBody bodyA = joint.getBodyA();
+        bodyA.getPhysicsLocation(a.getTranslation());
+        bodyA.getPhysicsRotation(a.getRotation());
         geomA.setLocalTransform(a);
-        geomB.setLocalTransform(b);
-
         arrowA.setArrowExtent(joint.getPivotA(null));
-        arrowB.setArrowExtent(joint.getPivotB(null));
+
+        PhysicsRigidBody bodyB = joint.getBodyB();
+        if (bodyB == null) {
+            arrowB.setArrowExtent(translateIdentity);
+        } else {
+            bodyB.getPhysicsLocation(b.getTranslation());
+            bodyB.getPhysicsRotation(b.getRotation());
+            geomB.setLocalTransform(b);
+            arrowB.setArrowExtent(joint.getPivotB(null));
+        }
     }
 }
