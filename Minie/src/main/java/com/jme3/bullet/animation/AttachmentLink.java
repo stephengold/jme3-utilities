@@ -123,7 +123,7 @@ public class AttachmentLink extends PhysicsLink {
      * @param localOffset the location of the body's center (in the attached
      * model's local coordinates, not null, unaffected)
      */
-    AttachmentLink(DynamicAnimControl control, Bone associatedBone,
+    AttachmentLink(DacPhysicsLinks control, Bone associatedBone,
             PhysicsLink manager, Spatial attachModel,
             PhysicsRigidBody rigidBody, Vector3f localOffset) {
         super(control, associatedBone, rigidBody, localOffset);

@@ -81,7 +81,7 @@ abstract public class PhysicsLink
     /**
      * back pointer to the control that manages this link
      */
-    private DynamicAnimControl control;
+    private DacPhysicsLinks control;
     /**
      * duration of the most recent blend interval (in seconds, &ge;0)
      */
@@ -133,7 +133,7 @@ abstract public class PhysicsLink
      * @param localOffset the location of the body's center (in the bone's local
      * coordinates, not null, unaffected)
      */
-    PhysicsLink(DynamicAnimControl control, Bone bone,
+    PhysicsLink(DacPhysicsLinks control, Bone bone,
             PhysicsRigidBody rigidBody, Vector3f localOffset) {
         assert control != null;
         assert bone != null;
@@ -202,7 +202,7 @@ abstract public class PhysicsLink
      *
      * @return the pre-existing instance (not null)
      */
-    public DynamicAnimControl getControl() {
+    public DacPhysicsLinks getControl() {
         assert control != null;
         return control;
     }
@@ -494,7 +494,7 @@ abstract public class PhysicsLink
         InputCapsule ic = im.getCapsule(this);
 
         bone = (Bone) ic.readSavable("bone", null);
-        control = (DynamicAnimControl) ic.readSavable("control", null);
+        control = (DacPhysicsLinks) ic.readSavable("control", null);
         blendInterval = ic.readFloat("blendInterval", 1f);
         kinematicWeight = ic.readFloat("kinematicWeight", 1f);
         joint = (PhysicsJoint) ic.readSavable("joint", null);

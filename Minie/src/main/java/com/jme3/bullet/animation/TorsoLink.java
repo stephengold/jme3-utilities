@@ -126,7 +126,7 @@ public class TorsoLink extends PhysicsLink {
      * @param localOffset the location of the body's center (in the bone's local
      * coordinates, not null, unaffected)
      */
-    TorsoLink(DynamicAnimControl control, Bone mainRootBone,
+    TorsoLink(DacPhysicsLinks control, Bone mainRootBone,
             PhysicsRigidBody rigidBody, Transform meshToModel,
             Vector3f localOffset) {
         super(control, mainRootBone, rigidBody, localOffset);
