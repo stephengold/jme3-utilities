@@ -202,6 +202,24 @@ public class MyQuaternion {
     }
 
     /**
+     * Calculate the squared length of a quaternion. Unlike
+     * {@link com.jme3.math.Quaternion#norm()}, this method returns a
+     * double-precision value for precise comparison of lengths.
+     *
+     * @param q input (not null, unaffected)
+     * @return the squared length (&ge;0)
+     */
+    public static double lengthSquared(Quaternion q) {
+        double xx = q.getX();
+        double yy = q.getY();
+        double zz = q.getZ();
+        double ww = q.getW();
+        double result = xx * xx + yy * yy + zz * zz + ww * ww;
+
+        return result;
+    }
+
+    /**
      * Calculate the natural logarithm of a unit quaternion. Generally the
      * logarithm isn't itself a unit.
      *
@@ -448,8 +466,8 @@ public class MyQuaternion {
             float tolerance) {
         Validate.nonNull(q, description);
 
-        float norm = q.norm();
-        float delta = FastMath.abs(1f - norm);
+        double norm = lengthSquared(q);
+        double delta = Math.abs(1.0 - norm);
         if (!(delta <= tolerance)) {
             String what;
             if (description == null) {
