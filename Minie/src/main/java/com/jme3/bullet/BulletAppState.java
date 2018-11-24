@@ -125,7 +125,7 @@ public class BulletAppState
             long update = System.currentTimeMillis() - detachedPhysicsLastUpdate;
             detachedPhysicsLastUpdate = System.currentTimeMillis();
             executor.schedule(detachedPhysicsUpdate,
-                    Math.round(getPhysicsSpace().getAccuracy() * 1000000.0f) - (update * 1000),
+                    Math.round(getPhysicsSpace().getAccuracy() * 1_000_000.0f) - (update * 1000),
                     TimeUnit.MICROSECONDS);
 
             return true;

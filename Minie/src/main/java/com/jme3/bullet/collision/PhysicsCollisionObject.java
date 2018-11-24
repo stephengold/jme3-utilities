@@ -69,71 +69,71 @@ abstract public class PhysicsCollisionObject
     /**
      * collideWithGroups bitmask that represents "no groups"
      */
-    public static final int COLLISION_GROUP_NONE = 0x00000000;
+    public static final int COLLISION_GROUP_NONE = 0x0;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #1
      */
-    public static final int COLLISION_GROUP_01 = 0x00000001;
+    public static final int COLLISION_GROUP_01 = 0x0001;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #2
      */
-    public static final int COLLISION_GROUP_02 = 0x00000002;
+    public static final int COLLISION_GROUP_02 = 0x0002;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #3
      */
-    public static final int COLLISION_GROUP_03 = 0x00000004;
+    public static final int COLLISION_GROUP_03 = 0x0004;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #4
      */
-    public static final int COLLISION_GROUP_04 = 0x00000008;
+    public static final int COLLISION_GROUP_04 = 0x0008;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #5
      */
-    public static final int COLLISION_GROUP_05 = 0x00000010;
+    public static final int COLLISION_GROUP_05 = 0x0010;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #6
      */
-    public static final int COLLISION_GROUP_06 = 0x00000020;
+    public static final int COLLISION_GROUP_06 = 0x0020;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #7
      */
-    public static final int COLLISION_GROUP_07 = 0x00000040;
+    public static final int COLLISION_GROUP_07 = 0x0040;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #8
      */
-    public static final int COLLISION_GROUP_08 = 0x00000080;
+    public static final int COLLISION_GROUP_08 = 0x0080;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #9
      */
-    public static final int COLLISION_GROUP_09 = 0x00000100;
+    public static final int COLLISION_GROUP_09 = 0x0100;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #10
      */
-    public static final int COLLISION_GROUP_10 = 0x00000200;
+    public static final int COLLISION_GROUP_10 = 0x0200;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #11
      */
-    public static final int COLLISION_GROUP_11 = 0x00000400;
+    public static final int COLLISION_GROUP_11 = 0x0400;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #12
      */
-    public static final int COLLISION_GROUP_12 = 0x00000800;
+    public static final int COLLISION_GROUP_12 = 0x0800;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #13
      */
-    public static final int COLLISION_GROUP_13 = 0x00001000;
+    public static final int COLLISION_GROUP_13 = 0x1000;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #14
      */
-    public static final int COLLISION_GROUP_14 = 0x00002000;
+    public static final int COLLISION_GROUP_14 = 0x2000;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #15
      */
-    public static final int COLLISION_GROUP_15 = 0x00004000;
+    public static final int COLLISION_GROUP_15 = 0x4000;
     /**
      * collisionGroup/collideWithGroups bitmask that represents group #16
      */
-    public static final int COLLISION_GROUP_16 = 0x00008000;
+    public static final int COLLISION_GROUP_16 = 0x8000;
     // *************************************************************************
     // fields
 

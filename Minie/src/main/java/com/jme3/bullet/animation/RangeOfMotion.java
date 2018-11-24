@@ -47,7 +47,8 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Range of motion for a ragdoll joint. Note: immutable.
+ * Range of motion for a ragdoll joint. Immutable except for
+ * {@link #read(com.jme3.export.JmeImporter)}.
  *
  * @author Stephen Gold sgold@sonic.net
  *

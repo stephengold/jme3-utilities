@@ -164,7 +164,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      */
     public Vector3f getPhysicsLocation(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getPhysicsLocation(objectId, storeResult);
 
@@ -180,7 +180,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      */
     public Quaternion getPhysicsRotation(Quaternion storeResult) {
         if (storeResult == null) {
-            storeResult = new Quaternion();
+            storeResult = new Quaternion(); // TODO don't assign parameter
         }
         getPhysicsRotation(objectId, storeResult);
 
@@ -196,7 +196,7 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      */
     public Matrix3f getPhysicsRotationMatrix(Matrix3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Matrix3f();
+            storeResult = new Matrix3f(); // TODO don't assign parameter
         }
         getPhysicsRotationMatrix(objectId, storeResult);
 

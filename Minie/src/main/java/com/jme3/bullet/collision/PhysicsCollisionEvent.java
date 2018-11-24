@@ -220,7 +220,7 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     public Vector3f getLateralFrictionDir1(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
 
         getLateralFrictionDir1(manifoldPointObjectId, storeResult);
@@ -235,7 +235,7 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     public Vector3f getLateralFrictionDir2(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
 
         getLateralFrictionDir2(manifoldPointObjectId, storeResult);
@@ -269,7 +269,7 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     public Vector3f getLocalPointA(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
 
         getLocalPointA(manifoldPointObjectId, storeResult);
@@ -285,7 +285,7 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     public Vector3f getLocalPointB(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
 
         getLocalPointB(manifoldPointObjectId, storeResult);
@@ -301,7 +301,7 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     public Vector3f getNormalWorldOnB(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
 
         getNormalWorldOnB(manifoldPointObjectId, storeResult);
@@ -335,7 +335,7 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     public Vector3f getPositionWorldOnA(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
 
         getPositionWorldOnA(manifoldPointObjectId, storeResult);
@@ -351,7 +351,7 @@ public class PhysicsCollisionEvent extends EventObject {
      */
     public Vector3f getPositionWorldOnB(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
 
         getPositionWorldOnB(manifoldPointObjectId, storeResult);

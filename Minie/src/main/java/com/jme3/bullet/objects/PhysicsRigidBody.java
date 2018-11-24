@@ -254,7 +254,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Vector3f getAngularFactor(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getAngularFactor(objectId, storeResult);
 
@@ -334,7 +334,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Vector3f getGravity(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getGravity(objectId, storeResult);
 
@@ -350,7 +350,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Vector3f getInverseInertiaLocal(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getInverseInertiaLocal(objectId, storeResult);
 
@@ -375,7 +375,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Vector3f getLinearFactor(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getLinearFactor(objectId, storeResult);
 
@@ -400,7 +400,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Vector3f getLinearVelocity(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getLinearVelocity(objectId, storeResult);
 
@@ -434,7 +434,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Vector3f getPhysicsLocation(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getPhysicsLocation(objectId, storeResult);
 
@@ -451,7 +451,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Quaternion getPhysicsRotation(Quaternion storeResult) {
         if (storeResult == null) {
-            storeResult = new Quaternion();
+            storeResult = new Quaternion(); // TODO don't assign parameter
         }
         getPhysicsRotation(objectId, storeResult);
 
@@ -467,7 +467,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      */
     public Matrix3f getPhysicsRotationMatrix(Matrix3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Matrix3f();
+            storeResult = new Matrix3f(); // TODO don't assign parameter
         }
         getPhysicsRotationMatrix(objectId, storeResult);
 

@@ -103,7 +103,8 @@ public class MultiSphere extends CollisionShape {
     }
 
     /**
-     * Instantiate a Y-axis capsule shape with the specified radius and height.
+     * Instantiate a centered Y-axis capsule shape with the specified radius and
+     * height.
      *
      * @param radius the desired radius (in unscaled units, &ge;0)
      * @param height the desired height (of the cylindrical portion) (in
@@ -168,7 +169,8 @@ public class MultiSphere extends CollisionShape {
     }
 
     /**
-     * Instantiate a 4-sphere shape to match the specified rectangular solid.
+     * Instantiate a 4-sphere shape to fill the specified rectangular solid. The
+     * spheres will be of equal size, arranged in a rectangle.
      *
      * @param rectangularSolid the solid on which to base the shape (not null)
      */

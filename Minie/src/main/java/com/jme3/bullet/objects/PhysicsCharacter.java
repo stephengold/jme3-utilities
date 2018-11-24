@@ -180,7 +180,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      */
     public Vector3f getAngularVelocity(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getAngularVelocity(characterId, storeResult);
 
@@ -204,7 +204,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      */
     public Vector3f getLinearVelocity(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getLinearVelocity(characterId, storeResult);
 
@@ -267,7 +267,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      */
     public Vector3f getGravity(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            storeResult = new Vector3f(); // TODO don't assign parameter
         }
         getGravity(characterId, storeResult);
 
@@ -422,7 +422,7 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      */
     public Vector3f getPhysicsLocation(Vector3f trans) {
         if (trans == null) {
-            trans = new Vector3f();
+            trans = new Vector3f(); // TODO don't assign parameter
         }
         getPhysicsLocation(objectId, trans);
         return trans;

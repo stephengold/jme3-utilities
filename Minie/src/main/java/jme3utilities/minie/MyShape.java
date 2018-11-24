@@ -361,7 +361,7 @@ public class MyShape {
      * Copy a shape, altering only its half extents.
      *
      * @param oldShape input shape (not null, unaffected)
-     * @param newHalfExtents (not null, all non-negative, unaffected)
+     * @param newHalfExtents (not null, no negative component, unaffected)
      * @return a new shape, or null if not possible
      */
     public static CollisionShape setHalfExtents(CollisionShape oldShape,

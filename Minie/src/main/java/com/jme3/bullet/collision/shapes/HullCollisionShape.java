@@ -91,7 +91,8 @@ public class HullCollisionShape extends CollisionShape {
 
     /**
      * Instantiate a collision shape based on the specified collection of
-     * locations.
+     * locations. For best performance and stability, the collection should have
+     * no more than 100 locations.
      *
      * @param locations a collection of location vectors on which to base the
      * shape (not null, not empty, unaffected)
@@ -114,7 +115,8 @@ public class HullCollisionShape extends CollisionShape {
 
     /**
      * Instantiate a collision shape based on the specified array of
-     * coordinates.
+     * coordinates. For best performance and stability, the array should have no
+     * more than 300 coordinates.
      *
      * @param points an array of coordinates on which to base the shape (not
      * null, not empty, length a multiple of 3, unaffected)
@@ -130,7 +132,7 @@ public class HullCollisionShape extends CollisionShape {
 
     /**
      * Instantiate a collision shape based on the specified JME mesh. For best
-     * performance and stability, use the mesh should have no more than 100
+     * performance and stability, the mesh should have no more than 100
      * vertices.
      *
      * @param mesh the mesh on which to base the shape (not null, at least one
