@@ -269,7 +269,7 @@ public class Polygon3f extends CornerSet3f {
         }
         assert newNumCorners >= 2 : newNumCorners;
         assert newNumCorners <= numCorners : newNumCorners;
-        /*        
+        /*
          * Allocate and fill the array of corner locations.
          */
         Vector3f[] newCornerLocations = new Vector3f[newNumCorners];
@@ -532,7 +532,7 @@ public class Polygon3f extends CornerSet3f {
         return result;
     }
     // *************************************************************************
-    // protected methods
+    // new protected methods
 
     /**
      * Verify that this polygon is non-degenerate.

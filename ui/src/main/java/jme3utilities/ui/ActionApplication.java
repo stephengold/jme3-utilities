@@ -198,7 +198,7 @@ abstract public class ActionApplication
     // ActionListener methods
 
     /**
-     * Process an action which wasn't handled by the active input mode.
+     * Process an action that wasn't handled by the active input mode.
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false

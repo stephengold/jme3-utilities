@@ -731,7 +731,7 @@ public class SkyMaterialCore extends Material {
         setVector2(transformVParameterName, transformV);
     }
     // *************************************************************************
-    // protected methods
+    // new protected methods
 
     /**
      * Validate a cloud layer index used as a method argument.

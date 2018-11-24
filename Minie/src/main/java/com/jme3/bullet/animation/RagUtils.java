@@ -314,7 +314,7 @@ public class RagUtils {
     }
 
     /**
-     * Validate a model for use with DynamicAnimControl. TODO check for parent
+     * Validate a model for use with DynamicAnimControl.
      *
      * @param model the model to validate (not null, unaffected)
      */

@@ -118,7 +118,7 @@ public class GenericPolygon3f extends Polygon3f {
         return isSelfIntersecting;
     }
     // *************************************************************************
-    // protected methods
+    // new protected methods
 
     /**
      * Test whether 2 line segments (each connecting 2 distinct corners)
@@ -143,7 +143,7 @@ public class GenericPolygon3f extends Polygon3f {
             throw new IllegalArgumentException("2nd segment is trivial.");
         }
         /*
-         * Check for any corners shared between the 2 segments. 
+         * Check for any corners shared between the 2 segments.
          */
         BitSet corners = new BitSet(numCorners);
         corners.set(corner1);
@@ -175,7 +175,7 @@ public class GenericPolygon3f extends Polygon3f {
 
         if (MyVector3f.lengthSquared(n) < tolerance2) {
             /*
-             * The segments are parallel. Are they also collinear? 
+             * The segments are parallel. Are they also collinear?
              * Find the most distant pair of corners.
              */
             int[] longest = mostDistant(corners);
@@ -216,8 +216,8 @@ public class GenericPolygon3f extends Polygon3f {
         assert numUnique == 4 : numUnique;
         /*
          * Segments not parallel and no shared corners.
-         * Extend the segments into straight lines and find the 
-         * locations of closest approach (c1 and c2) on each line. 
+         * Extend the segments into straight lines and find the
+         * locations of closest approach (c1 and c2) on each line.
          * The segments intersect if and only if c1 and c2 not only
          * lie on their respective segments but also coincide.
          */
@@ -330,7 +330,7 @@ public class GenericPolygon3f extends Polygon3f {
          */
         Vector3f segmentOffset = end.subtract(start);
         /*
-         * If the segment has zero length, test its stert for coincidence 
+         * If the segment has zero length, test its stert for coincidence
          * with the corner.
          */
         double segmentDS = MyVector3f.lengthSquared(segmentOffset);

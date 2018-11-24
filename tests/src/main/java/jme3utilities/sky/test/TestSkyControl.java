@@ -192,7 +192,7 @@ public class TestSkyControl extends GuiApplication {
     }
 
     /**
-     * Process an action (from the GUI or keyboard) which wasn't handled by the
+     * Process an action (from the GUI or keyboard) that wasn't handled by the
      * default input mode or the HUD.
      *
      * @param actionString textual description of the action (not null)

@@ -383,7 +383,7 @@ public class CornerSet3f {
         return result;
     }
     // *************************************************************************
-    // protected methods
+    // new protected methods
 
     /**
      * Test whether all the corners in a specified subset lie on the line
