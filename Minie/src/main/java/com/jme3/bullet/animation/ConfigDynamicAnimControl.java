@@ -119,7 +119,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
      * Instantiate an enabled control without any attachments or linked bones
      * (torso only).
      */
-    public ConfigDynamicAnimControl() {
+    ConfigDynamicAnimControl() {
     }
     // *************************************************************************
     // new methods exposed
@@ -840,7 +840,7 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
         oc.write(gravityVector, "gravity", null);
     }
     // *************************************************************************
-    // protected methods
+    // new protected methods TODO reorder methods
 
     /**
      * Add unlinked descendants of the specified bone to the specified
