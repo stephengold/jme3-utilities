@@ -170,31 +170,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Read the mass of the attachment associated with the named bone.
-     *
-     * @param boneName the name of the associated bone (not null, not empty)
-     * @return the mass (&gt;0) or NaN if undetermined
-     */
-    @Override
-    public float attachmentMass(String boneName) {
-        Validate.nonEmpty(boneName, "bone name");
-
-        float mass;
-        if (getSpatial() == null) {
-            mass = super.attachmentMass(boneName);
-        } else if (attachmentLinks.containsKey(boneName)) {
-            AttachmentLink link = attachmentLinks.get(boneName);
-            PhysicsRigidBody rigidBody = link.getRigidBody();
-            mass = rigidBody.getMass();
-        } else {
-            String msg = "No attachment link for " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        return mass;
-    }
-
-    /**
      * Begin blending the specified BoneLink and all its descendants into an
      * amputated state. This has the effect of hiding those links.
      *
@@ -509,34 +484,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Read the mass of the named bone/torso.
-     *
-     * @param boneName the name of the bone/torso (not null)
-     * @return the mass (&gt;0) or NaN if undetermined
-     */
-    @Override
-    public float mass(String boneName) {
-        Validate.nonNull(boneName, "bone name");
-
-        float mass;
-        if (getSpatial() == null) {
-            mass = super.mass(boneName);
-        } else if (torsoName.equals(boneName)) {
-            PhysicsRigidBody rigidBody = torsoLink.getRigidBody();
-            mass = rigidBody.getMass();
-        } else if (boneLinks.containsKey(boneName)) {
-            BoneLink link = boneLinks.get(boneName);
-            PhysicsRigidBody rigidBody = link.getRigidBody();
-            mass = rigidBody.getMass();
-        } else {
-            String msg = "No bone/torso named " + MyString.quote(boneName);
-            throw new IllegalArgumentException(msg);
-        }
-
-        return mass;
-    }
-
-    /**
      * Copy the model's mesh-to-world transform.
      *
      * @param storeResult storage for the result (modified if not null)
@@ -772,6 +719,31 @@ public class DynamicAnimControl
     }
 
     /**
+     * Read the mass of the attachment associated with the named bone.
+     *
+     * @param boneName the name of the associated bone (not null, not empty)
+     * @return the mass (&gt;0) or NaN if undetermined
+     */
+    @Override
+    public float attachmentMass(String boneName) {
+        Validate.nonEmpty(boneName, "bone name");
+
+        float mass;
+        if (getSpatial() == null) {
+            mass = super.attachmentMass(boneName);
+        } else if (attachmentLinks.containsKey(boneName)) {
+            AttachmentLink link = attachmentLinks.get(boneName);
+            PhysicsRigidBody rigidBody = link.getRigidBody();
+            mass = rigidBody.getMass();
+        } else {
+            String msg = "No attachment link for " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return mass;
+    }
+
+    /**
      * Callback from {@link com.jme3.util.clone.Cloner} to convert this
      * shallow-cloned control into a deep-cloned one, using the specified cloner
      * and original to resolve copied fields.
@@ -929,6 +901,34 @@ public class DynamicAnimControl
         } catch (CloneNotSupportedException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    /**
+     * Read the mass of the named bone/torso.
+     *
+     * @param boneName the name of the bone/torso (not null)
+     * @return the mass (&gt;0) or NaN if undetermined
+     */
+    @Override
+    public float mass(String boneName) {
+        Validate.nonNull(boneName, "bone name");
+
+        float mass;
+        if (getSpatial() == null) {
+            mass = super.mass(boneName);
+        } else if (torsoName.equals(boneName)) {
+            PhysicsRigidBody rigidBody = torsoLink.getRigidBody();
+            mass = rigidBody.getMass();
+        } else if (boneLinks.containsKey(boneName)) {
+            BoneLink link = boneLinks.get(boneName);
+            PhysicsRigidBody rigidBody = link.getRigidBody();
+            mass = rigidBody.getMass();
+        } else {
+            String msg = "No bone/torso named " + MyString.quote(boneName);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return mass;
     }
 
     /**
