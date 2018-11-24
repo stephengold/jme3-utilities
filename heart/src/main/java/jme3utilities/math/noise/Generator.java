@@ -26,12 +26,14 @@
  */
 package jme3utilities.math.noise;
 
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -72,6 +74,26 @@ public class Generator extends Random {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Generate a uniformly distributed, pseudo-random unit quaternion.
+     *
+     * @return a new unit quaternion
+     */
+    public Quaternion nextQuaternion() {
+        Quaternion result = new Quaternion();
+        double lengthSquared = 2.0;
+        while (lengthSquared > 1.0) {
+            float x = 2f * nextFloat() - 1f;
+            float y = 2f * nextFloat() - 1f;
+            float z = 2f * nextFloat() - 1f;
+            float w = 2f * nextFloat() - 1f;
+            result.set(x, y, z, w);
+            lengthSquared = MyQuaternion.lengthSquared(result);
+        }
+
+        return result;
+    }
 
     /**
      * Generate a uniformly distributed, pseudo-random unit vector.
