@@ -31,6 +31,7 @@ import com.jme3.animation.AnimControl;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.ModelKey;
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.animation.BoneLink;
@@ -60,11 +61,13 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
+import com.jme3.system.AppSettings;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
@@ -86,6 +89,8 @@ import jme3utilities.ui.Signals;
 
 /**
  * Test scaling and load/save of a DynamicAnimControl.
+ *
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestDac extends ActionApplication {
     // *************************************************************************
@@ -108,6 +113,10 @@ public class TestDac extends ActionApplication {
      * 2nd asset path for saving XML
      */
     final private static String saveAssetPath2 = "TestDac_2.xml";
+    /**
+     * application name for its window's title bar
+     */
+    final private static String applicationName = "TestDac";
     // *************************************************************************
     // fields
 
@@ -141,9 +150,29 @@ public class TestDac extends ActionApplication {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
-        TestDac app = new TestDac();
-        app.start();
+    /**
+     * Main entry point.
+     *
+     * @param arguments array of command-line arguments (not null)
+     */
+    public static void main(String[] arguments) {
+        /*
+         * Mute the chatty loggers found in some imported packages.
+         */
+        Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger(ALAudioRenderer.class.getName())
+                .setLevel(Level.SEVERE);
+
+        TestDac application = new TestDac();
+        /*
+         * Customize the window's title bar.
+         */
+        AppSettings settings = new AppSettings(true);
+        String title = applicationName + " " + MyString.join(arguments);
+        settings.setTitle(title);
+        application.setSettings(settings);
+
+        application.start();
     }
     // *************************************************************************
     // ActionApplication methods
@@ -222,6 +251,13 @@ public class TestDac extends ActionApplication {
         dim.bind("toggle skeleton", KeyInput.KEY_V);
     }
 
+    /**
+     * Process an action that wasn't handled by the active input mode.
+     *
+     * @param actionString textual description of the action (not null)
+     * @param ongoing true if the action is ongoing, otherwise false
+     * @param tpf time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
@@ -437,7 +473,7 @@ public class TestDac extends ActionApplication {
         rootNode.addLight(sun);
 
         DirectionalLightShadowRenderer dlsr
-                = new DirectionalLightShadowRenderer(assetManager, 4096, 3);
+                = new DirectionalLightShadowRenderer(assetManager, 4_096, 3);
         dlsr.setLight(sun);
         dlsr.setShadowIntensity(0.5f);
         viewPort.addProcessor(dlsr);
