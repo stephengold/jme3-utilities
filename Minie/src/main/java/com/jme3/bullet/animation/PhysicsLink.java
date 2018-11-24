@@ -46,7 +46,9 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -137,6 +139,11 @@ abstract public class PhysicsLink
         assert bone != null;
         assert rigidBody != null;
         assert localOffset != null;
+
+        logger.log(Level.FINE, "Creating link for bone {0} with mass={1}",
+                new Object[]{
+                    MyString.quote(bone.getName()), rigidBody.getMass()
+                });
 
         this.control = control;
         this.bone = bone;
