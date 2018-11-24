@@ -192,7 +192,6 @@ public class BulletVehicleDebugControl extends AbstractPhysicsDebugControl {
             dirGeom.setLocalTranslation(wLocation);
             axleGeom.setLocalTranslation(wLocation.addLocal(wDirection));
             wheelGeom.setLocalTranslation(wLocation);
-            i++;
         }
         applyPhysicsTransform(vehicle.getPhysicsLocation(location),
                 vehicle.getPhysicsRotation(rotation));
