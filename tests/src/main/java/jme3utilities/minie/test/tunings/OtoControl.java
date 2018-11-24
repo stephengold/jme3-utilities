@@ -26,8 +26,14 @@
  */
 package jme3utilities.minie.test.tunings;
 
+import com.jme3.bullet.animation.CenterHeuristic;
+import static com.jme3.bullet.animation.ConfigDynamicAnimControl.torsoName;
 import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.LinkConfig;
+import com.jme3.bullet.animation.MassHeuristic;
 import com.jme3.bullet.animation.RangeOfMotion;
+import com.jme3.bullet.animation.ShapeHeuristic;
+import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
@@ -49,39 +55,43 @@ public class OtoControl extends DynamicAnimControl {
 
     public OtoControl() {
         super();
-        super.setMass(torsoName, 5f);
+        LinkConfig hull = new LinkConfig(1f, MassHeuristic.Density,
+                ShapeHeuristic.VertexHull, new Vector3f(1f, 1f, 1f),
+                CenterHeuristic.Mean);
 
-        super.link("spinehigh", 15f,
+        super.setConfig(torsoName, hull);
+
+        super.link("spinehigh", hull,
                 new RangeOfMotion(0.3f, -0.3f, 1f, -1f, 0.5f, -1f));
-        super.link("head", 2f,
+        super.link("head", hull,
                 new RangeOfMotion(0f, 1f, 0.5f));
 
-        super.link("hip.left", 2f,
+        super.link("hip.left", hull,
                 new RangeOfMotion(0.2f, -1f, 0f, 0f, 1f, -0.2f));
-        super.link("leg.left", 2f,
+        super.link("leg.left", hull,
                 new RangeOfMotion(0f, 0f, 0f, 0f, 0f, -2f));
-        super.link("foot.left", 2f,
+        super.link("foot.left", hull,
                 new RangeOfMotion(0.5f, -0.5f, 0.3f, 0f, 0.5f, 0.5f));
 
-        super.link("hip.right", 2f,
+        super.link("hip.right", hull,
                 new RangeOfMotion(1f, -0.2f, 0f, 0f, 1f, -0.2f));
-        super.link("leg.right", 2f,
+        super.link("leg.right", hull,
                 new RangeOfMotion(0f, 0f, 0f, 0f, 0f, -2f));
-        super.link("foot.right", 2f,
+        super.link("foot.right", hull,
                 new RangeOfMotion(0.5f, -0.5f, 0f, -0.3f, 0.5f, 0.5f));
 
-        super.link("uparm.left", 3f,
+        super.link("uparm.left", hull,
                 new RangeOfMotion(1f, -1f, 1f, -1f, 0.2f, -1f));
-        super.link("arm.left", 2f,
+        super.link("arm.left", hull,
                 new RangeOfMotion(0f, 0f, 0.5f, -0.5f, 1.2f, 0f));
-        super.link("hand.left", 1f,
+        super.link("hand.left", hull,
                 new RangeOfMotion(1f, -0.5f, 0f, 0f, 0.1f, -0.1f));
 
-        super.link("uparm.right", 3f,
+        super.link("uparm.right", hull,
                 new RangeOfMotion(1f, -1f, 1f, -1f, 0.2f, -1f));
-        super.link("arm.right", 2f,
+        super.link("arm.right", hull,
                 new RangeOfMotion(0f, 0f, 0.5f, -0.5f, 0f, -1.2f));
-        super.link("hand.right", 1f,
+        super.link("hand.right", hull,
                 new RangeOfMotion(0.5f, -1f, 0f, 0f, 0.1f, -0.1f));
     }
 }

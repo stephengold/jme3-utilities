@@ -26,8 +26,13 @@
  */
 package jme3utilities.minie.test.tunings;
 
+import com.jme3.bullet.animation.CenterHeuristic;
 import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.LinkConfig;
+import com.jme3.bullet.animation.MassHeuristic;
 import com.jme3.bullet.animation.RangeOfMotion;
+import com.jme3.bullet.animation.ShapeHeuristic;
+import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
@@ -49,45 +54,49 @@ public class SinbadControl extends DynamicAnimControl {
 
     public SinbadControl() {
         super();
-        super.setMass(torsoName, 5f);
+        LinkConfig hull = new LinkConfig(1f, MassHeuristic.Density,
+                ShapeHeuristic.VertexHull, new Vector3f(1f, 1f, 1f),
+                CenterHeuristic.Mean);
 
-        super.link("Waist", 5f,
+        super.setConfig(torsoName, hull);
+
+        super.link("Waist", hull,
                 new RangeOfMotion(1f, -0.4f, 0.8f, -0.8f, 0.4f, -0.4f));
-        super.link("Chest", 5f,
+        super.link("Chest", hull,
                 new RangeOfMotion(0.4f, 0f, 0.4f));
-        super.link("Neck", 2f,
+        super.link("Neck", hull,
                 new RangeOfMotion(1f, -0.5f, 1f, -1f, 1f, -1f));
 
-        super.link("Clavicle.R", 2f,
+        super.link("Clavicle.R", hull,
                 new RangeOfMotion(0.3f, -0.6f, 0f, 0f, 0.4f, -0.4f));
-        super.link("Humerus.R", 3f,
+        super.link("Humerus.R", hull,
                 new RangeOfMotion(1.6f, -0.8f, 1f, -1f, 1.6f, -1f));
-        super.link("Ulna.R", 2f,
+        super.link("Ulna.R", hull,
                 new RangeOfMotion(0f, 0f, 1f, -1f, 0f, -2f));
-        super.link("Hand.R", 1f,
+        super.link("Hand.R", hull,
                 new RangeOfMotion(0.8f, 0f, 0.2f));
 
-        super.link("Clavicle.L", 2f,
+        super.link("Clavicle.L", hull,
                 new RangeOfMotion(0.6f, -0.3f, 0f, 0f, 0.4f, -0.4f));
-        super.link("Humerus.L", 3f,
+        super.link("Humerus.L", hull,
                 new RangeOfMotion(0.8f, -1.6f, 1f, -1f, 1f, -1.6f));
-        super.link("Ulna.L", 2f,
+        super.link("Ulna.L", hull,
                 new RangeOfMotion(0f, 0f, 1f, -1f, 2f, 0f));
-        super.link("Hand.L", 1f,
+        super.link("Hand.L", hull,
                 new RangeOfMotion(0.8f, 0f, 0.2f));
 
-        super.link("Thigh.R", 3f,
+        super.link("Thigh.R", hull,
                 new RangeOfMotion(0.4f, -1f, 0.4f, -0.4f, 0.5f, -0.5f));
-        super.link("Calf.R", 2f,
+        super.link("Calf.R", hull,
                 new RangeOfMotion(2f, 0f, 0f, 0f, 0f, 0f));
-        super.link("Foot.R", 1f,
+        super.link("Foot.R", hull,
                 new RangeOfMotion(0.3f, 0.5f, 0f));
 
-        super.link("Thigh.L", 3f,
+        super.link("Thigh.L", hull,
                 new RangeOfMotion(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
-        super.link("Calf.L", 2f,
+        super.link("Calf.L", hull,
                 new RangeOfMotion(2f, 0f, 0f, 0f, 0f, 0f));
-        super.link("Foot.L", 1f,
+        super.link("Foot.L", hull,
                 new RangeOfMotion(0.3f, 0.5f, 0f));
     }
 }

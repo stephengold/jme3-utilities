@@ -26,8 +26,13 @@
  */
 package jme3utilities.minie.test.tunings;
 
+import com.jme3.bullet.animation.CenterHeuristic;
 import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.LinkConfig;
+import com.jme3.bullet.animation.MassHeuristic;
 import com.jme3.bullet.animation.RangeOfMotion;
+import com.jme3.bullet.animation.ShapeHeuristic;
+import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
@@ -49,48 +54,52 @@ public class NinjaControl extends DynamicAnimControl {
 
     public NinjaControl() {
         super();
-        super.setMass(torsoName, 5f);
+        LinkConfig hull = new LinkConfig(1f, MassHeuristic.Density,
+                ShapeHeuristic.VertexHull, new Vector3f(1f, 1f, 1f),
+                CenterHeuristic.Mean);
+
+        super.setConfig(torsoName, hull);
 
         // chest
-        super.link("Joint4", 9f,
+        super.link("Joint4", hull,
                 new RangeOfMotion(1f, -0.5f, 0.8f, -0.8f, 0.3f, -0.3f));
-        super.link("Joint6", 9f,
+        super.link("Joint6", hull,
                 new RangeOfMotion(0.5f, 0.8f, 0f));
 
         // head
-        super.link("Joint7", 4f,
+        super.link("Joint7", hull,
                 new RangeOfMotion(0.8f, -0.5f, 1f, -1f, 0.8f, -0.8f));
 
         // right arm and katana
-        super.link("Joint9", 2f,
+        super.link("Joint9", hull,
                 new RangeOfMotion(0.3f, -1f, 1f, -1f, 0.3f, -1f));
-        super.link("Joint11", 2f,
+        super.link("Joint11", hull,
                 new RangeOfMotion(0f, -1.4f, 0.8f, -0.8f, 0f, -0f));
-        super.link("Joint12", 5f,
+        super.link("Joint12", hull,
                 new RangeOfMotion(0.5f, 1f, 0f));
 
         // left arm
-        super.link("Joint14", 2f,
+        super.link("Joint14", hull,
                 new RangeOfMotion(0.3f, -1f, 1f, -1f, 1f, -0.3f));
-        super.link("Joint16", 2f,
+        super.link("Joint16", hull,
                 new RangeOfMotion(0f, -1.4f, 0.8f, -0.8f, 0f, -0f));
-        super.link("Joint17", 1f,
+        super.link("Joint17", hull,
                 new RangeOfMotion(0.5f, 1f, 0f));
 
         // right leg
-        super.link("Joint18", 3f,
+        super.link("Joint18", hull,
                 new RangeOfMotion(0.3f, -1f, 0.3f, -0.3f, 0.2f, -0.5f));
-        super.link("Joint19", 2f,
+        super.link("Joint19", hull,
                 new RangeOfMotion(1.2f, 0f, 0.2f, -0.2f, 0f, 0f));
-        super.link("Joint21", 1f,
+        super.link("Joint21", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.1f));
 
         // left leg
-        super.link("Joint23", 3f,
+        super.link("Joint23", hull,
                 new RangeOfMotion(0.3f, -1f, 0.3f, -0.3f, 0.5f, -0.2f));
-        super.link("Joint24", 2f,
+        super.link("Joint24", hull,
                 new RangeOfMotion(1.2f, 0f, 0.2f, -0.2f, 0f, 0f));
-        super.link("Joint26", 1f,
+        super.link("Joint26", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.1f));
     }
 }

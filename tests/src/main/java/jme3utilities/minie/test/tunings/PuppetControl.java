@@ -26,8 +26,14 @@
  */
 package jme3utilities.minie.test.tunings;
 
+import com.jme3.bullet.animation.CenterHeuristic;
+import static com.jme3.bullet.animation.ConfigDynamicAnimControl.torsoName;
 import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.LinkConfig;
+import com.jme3.bullet.animation.MassHeuristic;
 import com.jme3.bullet.animation.RangeOfMotion;
+import com.jme3.bullet.animation.ShapeHeuristic;
+import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
@@ -49,51 +55,55 @@ public class PuppetControl extends DynamicAnimControl {
 
     public PuppetControl() {
         super();
-        super.setMass(torsoName, 5f);
+        LinkConfig hull = new LinkConfig(1f, MassHeuristic.Density,
+                ShapeHeuristic.VertexHull, new Vector3f(1f, 1f, 1f),
+                CenterHeuristic.Mean);
 
-        super.link("spine", 10f,
+        super.setConfig(torsoName, hull);
+
+        super.link("spine", hull,
                 new RangeOfMotion(0.5f, -1f, 0.7f, -0.7f, 0.7f, -0.7f));
-        super.link("upper_chest", 1f,
+        super.link("upper_chest", hull,
                 new RangeOfMotion(0.3f, -0.6f, 0.2f, -0.2f, 0.2f, -0.2f));
-        super.link("neck", 1f,
+        super.link("neck", hull,
                 new RangeOfMotion(0.2f, -0.5f, 0.5f, -0.5f, 0.5f, -0.5f));
-        super.link("head", 5f,
+        super.link("head", hull,
                 new RangeOfMotion(0.5f, 0.5f, 0.5f));
 
-        super.link("shoulder.R", 2f,
+        super.link("shoulder.R", hull,
                 new RangeOfMotion(0.1f, 0.2f, 0f));
-        super.link("upper_arm.1.R", 3f,
+        super.link("upper_arm.1.R", hull,
                 new RangeOfMotion(1.5f, -0.5f, 1.5f, -0.5f, 1f, -1f));
-        super.link("forearm.1.R", 3f,
+        super.link("forearm.1.R", hull,
                 new RangeOfMotion(0f, 0f, 2f, 0f, 1f, -1f));
-        super.link("hand.R", 2f,
+        super.link("hand.R", hull,
                 new RangeOfMotion(0.8f, 0.1f, 0f));
 
-        super.link("shoulder.L", 2f,
+        super.link("shoulder.L", hull,
                 new RangeOfMotion(0.1f, 0.2f, 0f));
-        super.link("upper_arm.1.L", 3f,
+        super.link("upper_arm.1.L", hull,
                 new RangeOfMotion(0.5f, -1.5f, 1.5f, -0.5f, 1f, -1f));
-        super.link("forearm.1.L", 3f,
+        super.link("forearm.1.L", hull,
                 new RangeOfMotion(0f, 0f, 2f, 0f, 1f, -1f));
-        super.link("hand.L", 2f,
+        super.link("hand.L", hull,
                 new RangeOfMotion(0.8f, 0.1f, 0f));
 
-        super.link("thigh.R", 5f,
+        super.link("thigh.R", hull,
                 new RangeOfMotion(1f, -0.5f, 0.3f, -0.8f, 0.2f, -0.2f));
-        super.link("shin.R", 5f,
+        super.link("shin.R", hull,
                 new RangeOfMotion(0f, -1.6f, 0f, 0f, 0f, 0f));
-        super.link("foot.R", 1f,
+        super.link("foot.R", hull,
                 new RangeOfMotion(0.5f, 0.4f, 0.2f));
-        super.link("toe.R", 1f,
+        super.link("toe.R", hull,
                 new RangeOfMotion(0.5f, 0f, 0f));
 
-        super.link("thigh.L", 5f,
+        super.link("thigh.L", hull,
                 new RangeOfMotion(1f, -0.5f, 0.8f, -0.3f, 0.2f, -0.2f));
-        super.link("shin.L", 5f,
+        super.link("shin.L", hull,
                 new RangeOfMotion(0f, -1.6f, 0f, 0f, 0f, 0f));
-        super.link("foot.L", 1f,
+        super.link("foot.L", hull,
                 new RangeOfMotion(0.5f, 0.4f, 0.2f));
-        super.link("toe.L", 1f,
+        super.link("toe.L", hull,
                 new RangeOfMotion(0.5f, 0f, 0f));
     }
 }

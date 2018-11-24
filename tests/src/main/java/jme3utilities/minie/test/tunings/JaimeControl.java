@@ -26,8 +26,14 @@
  */
 package jme3utilities.minie.test.tunings;
 
+import com.jme3.bullet.animation.CenterHeuristic;
+import static com.jme3.bullet.animation.ConfigDynamicAnimControl.torsoName;
 import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.animation.LinkConfig;
+import com.jme3.bullet.animation.MassHeuristic;
 import com.jme3.bullet.animation.RangeOfMotion;
+import com.jme3.bullet.animation.ShapeHeuristic;
+import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 
 /**
@@ -49,102 +55,106 @@ public class JaimeControl extends DynamicAnimControl {
 
     public JaimeControl() {
         super();
-        super.setMass(torsoName, 2f);
+        LinkConfig hull = new LinkConfig(1f, MassHeuristic.Density,
+                ShapeHeuristic.VertexHull, new Vector3f(1f, 1f, 1f),
+                CenterHeuristic.Mean);
 
-        super.link("spine", 3f,
+        super.setConfig(torsoName, hull);
+
+        super.link("spine", hull,
                 new RangeOfMotion(1f, 1f, 1f));
-        super.link("ribs", 3f,
+        super.link("ribs", hull,
                 new RangeOfMotion(0.6f, 0.4f, 0.4f));
-        super.link("neck", 1f,
+        super.link("neck", hull,
                 new RangeOfMotion(0.3f, -0.6f, 0.5f, -0.5f, 0.5f, -0.5f));
-        super.link("head", 6f,
+        super.link("head", hull,
                 new RangeOfMotion(0.3f, -0.6f, 0.5f, -0.5f, 0.5f, -0.5f));
 
-        super.link("tail.001", 1f,
+        super.link("tail.001", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.5f));
-        super.link("tail.002", 0.5f,
+        super.link("tail.002", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.5f));
-        super.link("tail.003", 0.5f,
+        super.link("tail.003", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.5f));
-        super.link("tail.004", 0.5f,
+        super.link("tail.004", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.5f));
-        super.link("tail.005", 0.5f,
+        super.link("tail.005", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.5f));
-        super.link("tail.007", 0.5f,
+        super.link("tail.007", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.5f));
-        super.link("tail.009", 0.5f,
+        super.link("tail.009", hull,
                 new RangeOfMotion(0.5f, 0.2f, 0.5f));
 
-        super.link("shoulder.R", 3f,
+        super.link("shoulder.R", hull,
                 new RangeOfMotion(0.8f, -1.6f, 0f, 0f, 0.3f, -0.6f));
-        super.link("upper_arm.R", 1f,
+        super.link("upper_arm.R", hull,
                 new RangeOfMotion(0.8f, -1.6f, 1f, -1f, 1.6f, -1.8f));
-        super.link("forearm.R", 1f,
+        super.link("forearm.R", hull,
                 new RangeOfMotion(0f, -2f, 1f, -1f, 0f, 0f));
-        super.link("hand.R", 2f,
+        super.link("hand.R", hull,
                 new RangeOfMotion(0.3f, -0.8f, 0f, 0f, 0.2f, -0.2f));
-        super.link("thumb.01.R", 0.1f,
+        super.link("thumb.01.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 1f, -1f));
-        super.link("finger_index.01.R", 0.1f,
+        super.link("finger_index.01.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.1f, -0.3f));
-        super.link("finger_middle.01.R", 0.1f,
+        super.link("finger_middle.01.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
-        super.link("finger_ring.01.R", 0.1f,
+        super.link("finger_ring.01.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
-        super.link("finger_pinky.01.R", 0.1f,
+        super.link("finger_pinky.01.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.3f, -0.1f));
-        super.link("thumb.02.R", 0.1f,
+        super.link("thumb.02.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_index.02.R", 0.1f,
+        super.link("finger_index.02.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_middle.02.R", 0.1f,
+        super.link("finger_middle.02.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_ring.02.R", 0.1f,
+        super.link("finger_ring.02.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_pinky.02.R", 0.1f,
+        super.link("finger_pinky.02.R", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
 
-        super.link("shoulder.L", 3f,
+        super.link("shoulder.L", hull,
                 new RangeOfMotion(1.6f, -0.8f, 0f, 0f, 0.6f, -0.3f));
-        super.link("upper_arm.L", 1f,
+        super.link("upper_arm.L", hull,
                 new RangeOfMotion(0.8f, -1.6f, 1f, -1f, 1.6f, -1.8f));
-        super.link("forearm.L", 1f,
+        super.link("forearm.L", hull,
                 new RangeOfMotion(0f, -2f, 1f, -1f, 0f, 0f));
-        super.link("hand.L", 2f,
+        super.link("hand.L", hull,
                 new RangeOfMotion(0.8f, -0.3f, 0f, 0f, 0.2f, -0.2f));
-        super.link("thumb.01.L", 0.1f,
+        super.link("thumb.01.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 1f, -1f));
-        super.link("finger_index.01.L", 0.1f,
+        super.link("finger_index.01.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.3f, -0.1f));
-        super.link("finger_middle.01.L", 0.1f,
+        super.link("finger_middle.01.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
-        super.link("finger_ring.01.L", 0.1f,
+        super.link("finger_ring.01.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.2f, -0.2f));
-        super.link("finger_pinky.01.L", 0.1f,
+        super.link("finger_pinky.01.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0.1f, -0.3f));
-        super.link("thumb.02.L", 0.1f,
+        super.link("thumb.02.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_index.02.L", 0.1f,
+        super.link("finger_index.02.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_middle.02.L", 0.1f,
+        super.link("finger_middle.02.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_ring.02.L", 0.1f,
+        super.link("finger_ring.02.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
-        super.link("finger_pinky.02.L", 0.1f,
+        super.link("finger_pinky.02.L", hull,
                 new RangeOfMotion(0.5f, -0.2f, 0f, 0f, 0f, 0f));
 
-        super.link("thigh.R", 2f,
+        super.link("thigh.R", hull,
                 new RangeOfMotion(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
-        super.link("shin.R", 1f,
+        super.link("shin.R", hull,
                 new RangeOfMotion(0f, 0f, 0f, 0f, 2f, 0f));
-        super.link("foot.R", 2f,
+        super.link("foot.R", hull,
                 new RangeOfMotion(0.6f, 0.2f, 0f));
 
-        super.link("thigh.L", 2f,
+        super.link("thigh.L", hull,
                 new RangeOfMotion(1f, -0.4f, 0.4f, -0.4f, 0.5f, -0.5f));
-        super.link("shin.L", 1f,
+        super.link("shin.L", hull,
                 new RangeOfMotion(0f, 0f, 0f, 0f, 0f, -2f));
-        super.link("foot.L", 2f,
+        super.link("foot.L", hull,
                 new RangeOfMotion(0.6f, 0.2f, 0f));
     }
 }
