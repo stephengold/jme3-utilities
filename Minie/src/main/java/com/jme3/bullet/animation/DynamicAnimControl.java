@@ -119,16 +119,6 @@ public class DynamicAnimControl
     // fields
 
     /**
-     * viscous damping ratio for new rigid bodies (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.6)
-     */
-    private float damping = 0.6f;
-    /**
-     * minimum applied impulse for a collision event to be dispatched to
-     * listeners (default=0)
-     */
-    private float eventDispatchImpulseThreshold = 0f;
-    /**
      * bone links in a pre-order, depth-first traversal of the link hierarchy
      */
     private List<BoneLink> boneLinkList = null;
@@ -289,17 +279,6 @@ public class DynamicAnimControl
     }
 
     /**
-     * Read the damping ratio for new rigid bodies.
-     *
-     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
-     * damped)
-     */
-    public float damping() {
-        assert damping >= 0f : damping;
-        return damping;
-    }
-
-    /**
      * Release all unreleased attachments to gravity.
      */
     public void dropAttachments() {
@@ -310,16 +289,6 @@ public class DynamicAnimControl
                 link.release();
             }
         }
-    }
-
-    /**
-     * Read the event-dispatch impulse threshold of this control.
-     *
-     * @return the threshold value (&ge;0)
-     */
-    public float eventDispatchImpulseThreshold() {
-        assert eventDispatchImpulseThreshold >= 0f;
-        return eventDispatchImpulseThreshold;
     }
 
     /**
@@ -652,18 +621,19 @@ public class DynamicAnimControl
     /**
      * Alter the viscous damping ratio for all rigid bodies, including new ones.
      *
-     * @param dampingRatio the desired damping ratio (0&rarr;no damping,
-     * 1&rarr;critically damped, default=0.6)
+     * @param dampingRatio the desired damping ratio (non-negative, 0&rarr;no
+     * damping, 1&rarr;critically damped, default=0.6)
      */
+    @Override
     public void setDamping(float dampingRatio) {
         Validate.nonNegative(dampingRatio, "damping ratio");
 
-        damping = dampingRatio;
+        super.setDamping(dampingRatio);
 
         if (getSpatial() != null) {
             PhysicsRigidBody[] bodies = listRigidBodies();
             for (PhysicsRigidBody rigidBody : bodies) {
-                rigidBody.setDamping(damping, damping);
+                rigidBody.setDamping(dampingRatio, dampingRatio);
             }
         }
     }
@@ -704,16 +674,6 @@ public class DynamicAnimControl
         for (PhysicsLink child : children) {
             setDynamicSubtree(child, uniformAcceleration, lockAll);
         }
-    }
-
-    /**
-     * Alter the the event-dispatch impulse threshold of this control.
-     *
-     * @param threshold the desired threshold (&ge;0)
-     */
-    public void setEventDispatchImpulseThreshold(float threshold) {
-        Validate.nonNegative(threshold, "threshold");
-        eventDispatchImpulseThreshold = threshold;
     }
 
     /**
@@ -983,10 +943,6 @@ public class DynamicAnimControl
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
 
-        damping = ic.readFloat("damping", 0.6f);
-        eventDispatchImpulseThreshold
-                = ic.readFloat("eventDispatchImpulseThreshold", 0f);
-
         boneLinkList
                 = ic.readSavableArrayList("boneLinkList", null);
         for (BoneLink link : boneLinkList) {
@@ -1210,10 +1166,6 @@ public class DynamicAnimControl
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
 
-        oc.write(damping, "damping", 0.6f);
-        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
-                0f);
-
         int count = countLinkedBones();
         Savable[] savableArray = new Savable[count];
         boneLinkList.toArray(savableArray);
@@ -1279,7 +1231,8 @@ public class DynamicAnimControl
         /*
          * Discard low-impulse collisions.
          */
-        if (event.getAppliedImpulse() < eventDispatchImpulseThreshold) {
+        float impulseThreshold = eventDispatchImpulseThreshold();
+        if (event.getAppliedImpulse() < impulseThreshold) {
             return;
         }
         /*

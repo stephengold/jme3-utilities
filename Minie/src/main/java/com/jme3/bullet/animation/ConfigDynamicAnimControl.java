@@ -78,6 +78,16 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     // fields
 
     /**
+     * viscous damping ratio for new rigid bodies (0&rarr;no damping,
+     * 1&rarr;critically damped, default=0.6)
+     */
+    private float damping = 0.6f;
+    /**
+     * minimum applied impulse for a collision event to be dispatched to
+     * listeners (default=0)
+     */
+    private float eventDispatchImpulseThreshold = 0f;
+    /**
      * configuration data for the torso
      */
     private LinkConfig torsoConfig = new LinkConfig();
@@ -260,6 +270,17 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
+     * Read the damping ratio for new rigid bodies.
+     *
+     * @return the viscous damping ratio (0&rarr;no damping, 1&rarr;critically
+     * damped)
+     */
+    public float damping() {
+        assert damping >= 0f : damping;
+        return damping;
+    }
+
+    /**
      * Cancel the attachment associated with the named bone.
      * <p>
      * Allowed only when the control is NOT added to a spatial.
@@ -280,6 +301,16 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
 
         jointMap.remove(boneName);
         blConfigMap.remove(boneName);
+    }
+
+    /**
+     * Read the event-dispatch impulse threshold of this control.
+     *
+     * @return the threshold value (&ge;0)
+     */
+    public float eventDispatchImpulseThreshold() {
+        assert eventDispatchImpulseThreshold >= 0f;
+        return eventDispatchImpulseThreshold;
     }
 
     /**
@@ -509,6 +540,27 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     }
 
     /**
+     * Alter the viscous damping ratio for new rigid bodies.
+     *
+     * @param dampingRatio the desired damping ratio (non-negative, 0&rarr;no
+     * damping, 1&rarr;critically damped, default=0.6)
+     */
+    public void setDamping(float dampingRatio) {
+        Validate.nonNegative(dampingRatio, "damping ratio");
+        damping = dampingRatio;
+    }
+
+    /**
+     * Alter the the event-dispatch impulse threshold of this control.
+     *
+     * @param threshold the desired threshold (&ge;0)
+     */
+    public void setEventDispatchImpulseThreshold(float threshold) {
+        Validate.nonNegative(threshold, "threshold");
+        eventDispatchImpulseThreshold = threshold;
+    }
+
+    /**
      * Alter this control's gravitational acceleration for Ragdoll mode.
      *
      * @param gravity the desired acceleration vector (in physics-space
@@ -678,6 +730,10 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
         super.read(im);
         InputCapsule ic = im.getCapsule(this);
 
+        damping = ic.readFloat("damping", 0.6f);
+        eventDispatchImpulseThreshold
+                = ic.readFloat("eventDispatchImpulseThreshold", 0f);
+
         jointMap.clear();
         blConfigMap.clear();
         String[] linkedBoneNames = ic.readStringArray("linkedBoneNames", null);
@@ -745,6 +801,10 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule oc = ex.getCapsule(this);
+
+        oc.write(damping, "damping", 0.6f);
+        oc.write(eventDispatchImpulseThreshold, "eventDispatchImpulseThreshold",
+                0f);
 
         int count = countLinkedBones();
         String[] linkedBoneNames = new String[count];
