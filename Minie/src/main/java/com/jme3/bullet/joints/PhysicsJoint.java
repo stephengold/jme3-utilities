@@ -90,7 +90,8 @@ abstract public class PhysicsJoint
     protected Vector3f pivotA;
     /**
      * copy of offset of this joint's connection point in body B (in scaled
-     * local coordinates) or null for a single-ended joint
+     * local coordinates) for a double-ended joint, or in physics space for a
+     * single-ended joint
      */
     protected Vector3f pivotB;
     /**
@@ -114,14 +115,17 @@ abstract public class PhysicsJoint
      *
      * @param nodeA the dynamic rigid body to constrain (not null, alias
      * created)
-     * @param pivotA the offset of the constraint point in node A (in scaled
-     * local coordinates, not null, unaffected)
+     * @param pivotA the offset of the joint in node A (in scaled local
+     * coordinates, not null, unaffected)
+     * @param pivotWorld the location of the joint (in physics-space
+     * coordinates, not null, unaffected)
      */
-    protected PhysicsJoint(PhysicsRigidBody nodeA, Vector3f pivotA) {
+    protected PhysicsJoint(PhysicsRigidBody nodeA, Vector3f pivotA,
+            Vector3f pivotWorld) {
         this.nodeA = nodeA;
         this.nodeB = null;
         this.pivotA = pivotA.clone();
-        this.pivotB = null;
+        this.pivotB = pivotWorld.clone();
         nodeA.addJoint(this);
     }
 
@@ -132,10 +136,10 @@ abstract public class PhysicsJoint
      *
      * @param nodeA the 1st body to connect (not null, alias created)
      * @param nodeB the 2nd body to connect (not null, alias created)
-     * @param pivotA the offset of the connection point in node A (in scaled
-     * local coordinates, not null, unaffected)
-     * @param pivotB the offset of the connection point in node B (in scaled
-     * local coordinates, not null, unaffected)
+     * @param pivotA the offset of the joint in node A (in scaled local
+     * coordinates, not null, unaffected)
+     * @param pivotB the offset of the joint in node B (in scaled local
+     * coordinates, not null, unaffected)
      */
     protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
@@ -234,7 +238,7 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Read the id of the Bullet constraint.
+     * Read the id of the btTypedConstraint.
      *
      * @return the unique identifier (not zero)
      */
@@ -277,7 +281,8 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Copy the location of the connection point in body B.
+     * Copy the location of the connection point in body B (for a double-ended
+     * joint).
      *
      * @param storeResult storage for the result (modified if not null)
      * @return a location vector (in scaled local coordinates, either
@@ -286,6 +291,24 @@ abstract public class PhysicsJoint
     public Vector3f getPivotB(Vector3f storeResult) {
         if (pivotB == null) {
             throw new IllegalStateException("Joint is single-ended.");
+        }
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.set(pivotB);
+        return result;
+    }
+
+    /**
+     * Copy the location of the connection point in physics space (for a
+     * single-ended joint).
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a location vector (in scaled local coordinates, either
+     * storeResult or a new instance)
+     */
+    public Vector3f getPivotWorld(Vector3f storeResult) {
+        if (pivotB != null) {
+            throw new IllegalStateException("Joint is double-ended.");
         }
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
@@ -315,7 +338,7 @@ abstract public class PhysicsJoint
     /**
      * Read the breaking impulse threshold.
      *
-     * @param desiredThreshold the desired value
+     * @param desiredThreshold the desired value (default=MAX_VALUE)
      */
     public void setBreakingImpulseThreshold(float desiredThreshold) {
         setBreakingImpulseThreshold(objectId, desiredThreshold);
@@ -334,7 +357,7 @@ abstract public class PhysicsJoint
     /**
      * Enable or disable this joint.
      *
-     * @param enable true to enable, false to disable
+     * @param enable true to enable, false to disable (default=true)
      */
     public void setEnabled(boolean enable) {
         setEnabled(objectId, enable);

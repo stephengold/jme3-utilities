@@ -82,7 +82,8 @@ public class TestCloneJoints {
         Point2PointJoint p2pClone = (Point2PointJoint) Misc.deepCopy(p2p);
         cloneTest(p2p, p2pClone);
 
-        Point2PointJoint sep2p = new Point2PointJoint(bodyA, new Vector3f());
+        Point2PointJoint sep2p
+                = new Point2PointJoint(bodyA, new Vector3f(), new Vector3f());
         set(sep2p, 0f);
         verify(sep2p, 0f);
         Point2PointJoint sep2pClone = (Point2PointJoint) Misc.deepCopy(sep2p);
