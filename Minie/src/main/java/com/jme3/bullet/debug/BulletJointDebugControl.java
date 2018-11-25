@@ -126,20 +126,28 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
      */
     @Override
     protected void controlUpdate(float tpf) {
-        PhysicsRigidBody bodyA = joint.getBodyA();
-        bodyA.getPhysicsLocation(a.getTranslation());
-        bodyA.getPhysicsRotation(a.getRotation());
-        geomA.setLocalTransform(a);
-        arrowA.setArrowExtent(joint.getPivotA(null));
+        if (joint.isEnabled()) {
+            PhysicsRigidBody bodyA = joint.getBodyA();
+            bodyA.getPhysicsLocation(a.getTranslation());
+            bodyA.getPhysicsRotation(a.getRotation());
+            geomA.setLocalTransform(a);
+            geomA.setCullHint(Spatial.CullHint.Never);
+            arrowA.setArrowExtent(joint.getPivotA(null));
 
-        PhysicsRigidBody bodyB = joint.getBodyB();
-        if (bodyB == null) {
-            arrowB.setArrowExtent(translateIdentity);
+            PhysicsRigidBody bodyB = joint.getBodyB();
+            if (bodyB == null) {
+                geomB.setCullHint(Spatial.CullHint.Always);
+            } else {
+                bodyB.getPhysicsLocation(b.getTranslation());
+                bodyB.getPhysicsRotation(b.getRotation());
+                geomB.setLocalTransform(b);
+                geomB.setCullHint(Spatial.CullHint.Never);
+                arrowB.setArrowExtent(joint.getPivotB(null));
+            }
+
         } else {
-            bodyB.getPhysicsLocation(b.getTranslation());
-            bodyB.getPhysicsRotation(b.getRotation());
-            geomB.setLocalTransform(b);
-            arrowB.setArrowExtent(joint.getPivotB(null));
+            geomA.setCullHint(Spatial.CullHint.Always);
+            geomB.setCullHint(Spatial.CullHint.Always);
         }
     }
 }
