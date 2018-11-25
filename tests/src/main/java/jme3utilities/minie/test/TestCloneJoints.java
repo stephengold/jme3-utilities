@@ -26,7 +26,6 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -43,6 +42,7 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.system.NativeLibraryLoader;
 import jme3utilities.Misc;
 
 /**
@@ -50,19 +50,13 @@ import jme3utilities.Misc;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestCloneJoints extends SimpleApplication {
+public class TestCloneJoints {
     // *************************************************************************
     // new methods exposed
 
     public static void main(String[] args) {
-        TestCloneJoints app = new TestCloneJoints();
-        app.start();
-    }
-    // *************************************************************************
-    // SimpleApplication methods - TODO no need for SimpleApplication
+        NativeLibraryLoader.loadNativeLibrary("bulletjme", true);
 
-    @Override
-    public void simpleInitApp() {
         CollisionShape box = new BoxCollisionShape(new Vector3f(1f, 1f, 1f));
         PhysicsRigidBody bodyA = new PhysicsRigidBody(box, 1f);
         PhysicsRigidBody bodyB = new PhysicsRigidBody(box, 1f);
@@ -118,13 +112,11 @@ public class TestCloneJoints extends SimpleApplication {
         verifySlide(slide, 0f);
         SliderJoint slideClone = (SliderJoint) Misc.deepCopy(slide);
         cloneTest(slide, slideClone);
-
-        stop();
     }
     // *************************************************************************
     // private methods
 
-    private void cloneTest(PhysicsJoint joint, PhysicsJoint jointClone) {
+    private static void cloneTest(PhysicsJoint joint, PhysicsJoint jointClone) {
         assert jointClone.getObjectId() != joint.getObjectId();
 
         PhysicsRigidBody a = joint.getBodyA();
@@ -151,7 +143,7 @@ public class TestCloneJoints extends SimpleApplication {
         verify(jointClone, 0.6f);
     }
 
-    private void set(PhysicsJoint joint, float b) {
+    private static void set(PhysicsJoint joint, float b) {
         if (joint instanceof ConeJoint) {
             setCone((ConeJoint) joint, b);
         } else if (joint instanceof HingeJoint) {
@@ -167,7 +159,7 @@ public class TestCloneJoints extends SimpleApplication {
         }
     }
 
-    private void setCone(ConeJoint cone, float b) {
+    private static void setCone(ConeJoint cone, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         cone.setCollisionBetweenLinkedBodies(flag);
         cone.setAngularOnly(!flag);
@@ -175,7 +167,7 @@ public class TestCloneJoints extends SimpleApplication {
         cone.setLimit(b + 0.01f, b + 0.02f, b + 0.03f);
     }
 
-    private void setHinge(HingeJoint hinge, float b) {
+    private static void setHinge(HingeJoint hinge, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         hinge.setCollisionBetweenLinkedBodies(flag);
         hinge.setAngularOnly(!flag);
@@ -184,7 +176,7 @@ public class TestCloneJoints extends SimpleApplication {
         hinge.setLimit(b + 0.03f, b + 0.04f, b + 0.05f, b + 0.06f, b + 0.07f);
     }
 
-    private void setP2P(Point2PointJoint p2p, float b) {
+    private static void setP2P(Point2PointJoint p2p, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         p2p.setCollisionBetweenLinkedBodies(flag);
 
@@ -193,7 +185,7 @@ public class TestCloneJoints extends SimpleApplication {
         p2p.setTau(b + 0.03f);
     }
 
-    private void setSix(SixDofJoint six, float b) {
+    private static void setSix(SixDofJoint six, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         six.setCollisionBetweenLinkedBodies(flag);
 
@@ -225,7 +217,7 @@ public class TestCloneJoints extends SimpleApplication {
         tra.setTargetVelocity(new Vector3f(0f, 0f, b + 0.24f));
     }
 
-    private void setSlide(SliderJoint slide, float b) {
+    private static void setSlide(SliderJoint slide, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         slide.setCollisionBetweenLinkedBodies(flag);
 
@@ -266,7 +258,7 @@ public class TestCloneJoints extends SimpleApplication {
         slide.setUpperLinLimit(b + 0.26f);
     }
 
-    private void verify(PhysicsJoint joint, float b) {
+    private static void verify(PhysicsJoint joint, float b) {
         if (joint instanceof ConeJoint) {
             verifyCone((ConeJoint) joint, b);
         } else if (joint instanceof HingeJoint) {
@@ -282,7 +274,7 @@ public class TestCloneJoints extends SimpleApplication {
         }
     }
 
-    private void verifyCone(ConeJoint cone, float b) {
+    private static void verifyCone(ConeJoint cone, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         assert cone.isCollisionBetweenLinkedBodies() == flag;
         assert cone.isAngularOnly() == !flag;
@@ -292,7 +284,7 @@ public class TestCloneJoints extends SimpleApplication {
         assert cone.getTwistSpan() == b + 0.03f;
     }
 
-    private void verifyHinge(HingeJoint hinge, float b) {
+    private static void verifyHinge(HingeJoint hinge, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         assert hinge.isCollisionBetweenLinkedBodies() == flag;
         assert hinge.isAngularOnly() == !flag;
@@ -314,7 +306,7 @@ public class TestCloneJoints extends SimpleApplication {
                 hinge.getRelaxationFactor(), b + 0.07f);
     }
 
-    private void verifyP2P(Point2PointJoint p2p, float b) {
+    private static void verifyP2P(Point2PointJoint p2p, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         assert p2p.isCollisionBetweenLinkedBodies() == flag;
 
@@ -323,7 +315,7 @@ public class TestCloneJoints extends SimpleApplication {
         assert p2p.getTau() == b + 0.03f;
     }
 
-    private void verifySix(SixDofJoint six, float b) {
+    private static void verifySix(SixDofJoint six, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         assert six.isCollisionBetweenLinkedBodies() == flag;
 
@@ -359,7 +351,7 @@ public class TestCloneJoints extends SimpleApplication {
         assert tra.getTargetVelocity(null).z == b + 0.24f;
     }
 
-    private void verifySlide(SliderJoint slide, float b) {
+    private static void verifySlide(SliderJoint slide, float b) {
         boolean flag = (b > 0.15f && b < 0.45f);
         assert slide.isCollisionBetweenLinkedBodies() == flag;
 
