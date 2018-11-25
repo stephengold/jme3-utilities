@@ -82,14 +82,16 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
             PhysicsJoint jo) {
         super(debugAppState);
         joint = jo;
+
         geomA = new Geometry(jo.toString());
         arrowA = new Arrow(Vector3f.ZERO);
         geomA.setMesh(arrowA);
         geomA.setMaterial(debugAppState.DEBUG_GREEN);
+
         geomB = new Geometry(jo.toString());
         arrowB = new Arrow(Vector3f.ZERO);
         geomB.setMesh(arrowB);
-        geomB.setMaterial(debugAppState.DEBUG_GREEN);
+        geomB.setMaterial(debugAppState.DEBUG_RED);
     }
     // *************************************************************************
     // AbstractPhysicsDebugControl methods

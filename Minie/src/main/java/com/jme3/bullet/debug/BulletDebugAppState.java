@@ -107,7 +107,7 @@ public class BulletDebugAppState extends AbstractAppState {
      */
     Material DEBUG_BLUE;
     /**
-     * material for joints
+     * material for joints (the A ends)
      */
     Material DEBUG_GREEN;
     /**
@@ -118,6 +118,10 @@ public class BulletDebugAppState extends AbstractAppState {
      * material for physics characters
      */
     Material DEBUG_PINK;
+    /**
+     * material for joints (the B ends)
+     */
+    Material DEBUG_RED;
     /**
      * material for ghosts
      */
@@ -268,16 +272,19 @@ public class BulletDebugAppState extends AbstractAppState {
      */
     private void setupMaterials(Application app) {
         AssetManager am = app.getAssetManager();
+
         DEBUG_BLUE = MyAsset.createWireframeMaterial(am, ColorRGBA.Blue);
         DEBUG_BLUE.setName("DEBUG_BLUE");
         DEBUG_GREEN = MyAsset.createWireframeMaterial(am, ColorRGBA.Green);
         DEBUG_GREEN.setName("DEBUG_GREEN");
-        DEBUG_YELLOW = MyAsset.createWireframeMaterial(am, ColorRGBA.Yellow);
-        DEBUG_YELLOW.setName("DEBUG_YELLOW");
         DEBUG_MAGENTA = MyAsset.createWireframeMaterial(am, ColorRGBA.Magenta);
         DEBUG_MAGENTA.setName("DEBUG_MAGENTA");
         DEBUG_PINK = MyAsset.createWireframeMaterial(am, ColorRGBA.Pink);
         DEBUG_PINK.setName("DEBUG_PINK");
+        DEBUG_RED = MyAsset.createWireframeMaterial(am, ColorRGBA.Red);
+        DEBUG_RED.setName("DEBUG_RED");
+        DEBUG_YELLOW = MyAsset.createWireframeMaterial(am, ColorRGBA.Yellow);
+        DEBUG_YELLOW.setName("DEBUG_YELLOW");
     }
 
     private void updateRigidBodies() {
