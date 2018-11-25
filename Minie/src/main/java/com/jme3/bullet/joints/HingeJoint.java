@@ -50,6 +50,8 @@ import java.util.logging.Logger;
  * of freedom, so the body can only rotate around one axis, the hinge axis. This
  * can be useful to represent doors or wheels rotating around one axis. The user
  * can specify limits and motor for the hinge.
+ * <p>
+ * TODO add single-ended versions
  *
  * @author normenhansen
  */
@@ -105,10 +107,10 @@ public class HingeJoint extends PhysicsJoint {
      * created)
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
-     * @param pivotA the local offset of the connection point in node A (not
-     * null, unaffected)
-     * @param pivotB the local offset of the connection point in node B (not
-     * null, unaffected)
+     * @param pivotA the offset of the joint in node A (in scaled local
+     * coordinates, not null, unaffected)
+     * @param pivotB the offset of the joint in node B (in scaled local
+     * coordinates, not null, unaffected)
      * @param axisA the local axis of the connection to node A (not null,
      * unaffected)
      * @param axisB the local axis of the connection to node B (not null,

@@ -60,7 +60,7 @@ import jme3utilities.Validate;
  * Each link is either dynamic (driven by forces and collisions) or kinematic
  * (unperturbed by forces and collisions). Transitions from dynamic to kinematic
  * can be immediate or gradual.
- *
+ * <p>
  * TODO ghost mode
  *
  * @author Stephen Gold sgold@sonic.net

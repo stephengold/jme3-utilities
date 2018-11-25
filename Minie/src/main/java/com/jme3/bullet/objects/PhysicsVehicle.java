@@ -159,8 +159,8 @@ public class PhysicsVehicle extends PhysicsRigidBody {
     }
 
     /**
-     * Used internally, creates the actual vehicle constraint when vehicle is
-     * added to physics space.
+     * Used internally, creates the btRaycastVehicle when vehicle is added to a
+     * physics space.
      *
      * @param space which physics space
      */

@@ -50,6 +50,8 @@ import java.util.logging.Logger;
  * To create ragdolls, the cone twist constraint is very useful for limbs like
  * the upper arm. It is a special point to point constraint that adds cone and
  * twist axis limits. The x-axis serves as twist axis.
+ * <p>
+ * TODO add single-ended versions
  *
  * @author normenhansen
  */
@@ -105,10 +107,10 @@ public class ConeJoint extends PhysicsJoint {
      *
      * @param nodeA the 1st body connected by the joint (not null, unaffected)
      * @param nodeB the 2nd body connected by the joint (not null, unaffected)
-     * @param pivotA the local offset of the connection point in node A (not
-     * null, unaffected)
-     * @param pivotB the local offset of the connection point in node B (not
-     * null, unaffected)
+     * @param pivotA the offset of the joint in node A (in scaled local
+     * coordinates, not null, unaffected)
+     * @param pivotB the offset of the joint in node B (in scaled local
+     * coordinates, not null, unaffected)
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
@@ -126,10 +128,10 @@ public class ConeJoint extends PhysicsJoint {
      * created)
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
-     * @param pivotA local translation of the joint connection point in node A
-     * (not null, unaffected)
-     * @param pivotB local translation of the joint connection point in node B
-     * (not null, unaffected)
+     * @param pivotA the offset of the joint in node A (in scaled local
+     * coordinates, not null, unaffected)
+     * @param pivotB the offset of the joint in node B (in scaled local
+     * coordinates, not null, unaffected)
      * @param rotA the local orientation of the connection to node A (not null,
      * unaffected)
      * @param rotB the local orientation of the connection to node B (not null,

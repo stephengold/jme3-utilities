@@ -189,7 +189,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
      * Apply an impulse to the body on the next physics update.
      *
      * @param impulse applied impulse (not null, unaffected)
-     * @param rel_pos location relative to object (not null, unaffected)
+     * @param rel_pos the location (in local coordinates, not null, unaffected)
      */
     public void applyImpulse(Vector3f impulse, Vector3f rel_pos) {
         applyImpulse(objectId, impulse, rel_pos);
@@ -767,7 +767,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Alter the linear velocity of this body's center of mass.
      *
-     * @param vec the desired velocity vector (not null)
+     * @param vec the desired velocity vector (in physics-space coordinates, not
+     * null, unaffected)
      */
     public void setLinearVelocity(Vector3f vec) {
         setLinearVelocity(objectId, vec);
@@ -802,7 +803,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Directly alter the location of this body's center of mass.
      *
-     * @param location the desired location (not null, unaffected)
+     * @param location the desired location (in physics-space coordinates, not
+     * null, unaffected)
      */
     public void setPhysicsLocation(Vector3f location) {
         Validate.finite(location, "location");
@@ -818,8 +820,8 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Directly alter this body's orientation.
      *
-     * @param rotation the desired orientation (rotation matrix, not null,
-     * unaffected)
+     * @param rotation the desired orientation (rotation matrix in physics-space
+     * coordinates, not null, unaffected)
      */
     public void setPhysicsRotation(Matrix3f rotation) {
         Validate.nonNull(rotation, "rotation");
@@ -834,7 +836,7 @@ public class PhysicsRigidBody extends PhysicsCollisionObject {
     /**
      * Directly alter this body's orientation.
      *
-     * @param rotation the desired orientation (quaternion, in physics-space
+     * @param rotation the desired orientation (unit quaternion in physics-space
      * coordinates, not null, unaffected)
      */
     public void setPhysicsRotation(Quaternion rotation) {

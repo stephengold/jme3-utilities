@@ -55,7 +55,7 @@ import jme3utilities.Validate;
  * <li>Lowerlimit &gt; Upperlimit &rarr; axis is free</li>
  * <li>Lowerlimit &lt; Upperlimit &rarr; axis it limited in that range</li>
  * </ul>
- *
+ * <p>
  * TODO try btGeneric6DofSpring2Constraint
  *
  * @author normenhansen
@@ -87,10 +87,10 @@ public class SixDofSpringJoint extends SixDofJoint {
      * created)
      * @param nodeB the 2nd body connected by the joint (not null, alias
      * created)
-     * @param pivotA the local offset of the connection point in node A (not
-     * null, alias created) TODO
-     * @param pivotB the local offset of the connection point in node B (not
-     * null, alias created) TODO
+     * @param pivotA the offset of the joint in node A (in scaled local
+     * coordinates, not null, unaffected)
+     * @param pivotB the offset of the joint in node B (in scaled local
+     * coordinates, not null, unaffected)
      * @param rotA the local orientation of the connection to node A (not null,
      * alias created) TODO
      * @param rotB the local orientation of the connection to node B (not null,
@@ -143,7 +143,7 @@ public class SixDofSpringJoint extends SixDofJoint {
 
     /**
      * Alter the equilibrium points for all degrees of freedom, based on the
-     * current constraint position/orientation.
+     * joint's current location/orientation.
      */
     public void setEquilibriumPoint() {
         setEquilibriumPoint(objectId);
@@ -151,7 +151,7 @@ public class SixDofSpringJoint extends SixDofJoint {
 
     /**
      * Alter the equilibrium point of the indexed degree of freedom, based on
-     * the current constraint position/orientation.
+     * the joint's current location/orientation.
      *
      * @param dofIndex which degree of freedom (&ge;0, &lt;6)
      */
