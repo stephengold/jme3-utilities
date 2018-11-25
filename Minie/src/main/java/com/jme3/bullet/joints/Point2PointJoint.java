@@ -176,9 +176,17 @@ public class Point2PointJoint extends PhysicsJoint {
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
+
         createJoint();
 
         Point2PointJoint old = (Point2PointJoint) original;
+
+        float bit = old.getBreakingImpulseThreshold();
+        setBreakingImpulseThreshold(bit);
+
+        boolean enableJoint = old.isEnabled();
+        setEnabled(enableJoint);
+
         setDamping(old.getDamping());
         setImpulseClamp(old.getImpulseClamp());
         setTau(old.getTau());
@@ -208,12 +216,20 @@ public class Point2PointJoint extends PhysicsJoint {
     @Override
     public void read(JmeImporter im) throws IOException {
         super.read(im);
-        createJoint();
-        InputCapsule cap = im.getCapsule(this);
+        InputCapsule capsule = im.getCapsule(this);
 
-        setDamping(cap.readFloat("damping", 1f));
-        setDamping(cap.readFloat("tau", 0.3f));
-        setDamping(cap.readFloat("impulseClamp", 0f));
+        float breakingImpulseThreshold = capsule.readFloat(
+                "breakingImpulseThreshold", Float.MAX_VALUE);
+        boolean isEnabled = capsule.readBoolean("isEnabled", true);
+
+        createJoint();
+
+        setBreakingImpulseThreshold(breakingImpulseThreshold);
+        setEnabled(isEnabled);
+
+        setDamping(capsule.readFloat("damping", 1f));
+        setDamping(capsule.readFloat("tau", 0.3f));
+        setDamping(capsule.readFloat("impulseClamp", 0f));
     }
 
     /**

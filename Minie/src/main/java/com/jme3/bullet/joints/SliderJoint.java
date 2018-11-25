@@ -680,6 +680,13 @@ public class SliderJoint extends PhysicsJoint {
         createJoint();
 
         SliderJoint old = (SliderJoint) original;
+
+        float bit = old.getBreakingImpulseThreshold();
+        setBreakingImpulseThreshold(bit);
+
+        boolean enableJoint = old.isEnabled();
+        setEnabled(enableJoint);
+
         setDampingDirAng(old.getDampingDirAng());
         setDampingDirLin(old.getDampingDirLin());
         setDampingLimAng(old.getDampingLimAng());
@@ -742,6 +749,7 @@ public class SliderJoint extends PhysicsJoint {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
+
         //TODO: standard values..
         capsule.write(getDampingDirAng(), "dampingDirAng", 0f);
         capsule.write(getDampingDirLin(), "dampingDirLin", 0f);
@@ -791,6 +799,11 @@ public class SliderJoint extends PhysicsJoint {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
+
+        float breakingImpulseThreshold = capsule.readFloat(
+                "breakingImpulseThreshold", Float.MAX_VALUE);
+        boolean isEnabled = capsule.readBoolean("isEnabled", true);
+
         float dampingDirAng = capsule.readFloat("dampingDirAng", 0f);
         float dampingDirLin = capsule.readFloat("dampingDirLin", 0f);
         float dampingLimAng = capsule.readFloat("dampingLimAng", 0f);
@@ -831,6 +844,9 @@ public class SliderJoint extends PhysicsJoint {
                 "useLinearReferenceFrameA", false);
 
         createJoint();
+
+        setBreakingImpulseThreshold(breakingImpulseThreshold);
+        setEnabled(isEnabled);
 
         setDampingDirAng(dampingDirAng);
         setDampingDirLin(dampingDirLin);

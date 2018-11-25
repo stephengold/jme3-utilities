@@ -162,15 +162,26 @@ public class PhysicsDumper extends Dumper {
         if (type.endsWith("Joint")) {
             type = MyString.removeSuffix(type, "Joint");
         }
+
         long objectId = joint.getObjectId();
+        stream.printf("  %s #%s", type, Long.toHexString(objectId));
+
+        if (!joint.isEnabled()) {
+            stream.print(" DISABLED");
+        }
+
         long aId = joint.getBodyA().getObjectId();
-        stream.printf("  %s #%s a=%s", type, Long.toHexString(objectId),
-                Long.toHexString(aId));
+        stream.printf(" a=%s", Long.toHexString(aId));
 
         PhysicsRigidBody bodyB = joint.getBodyB();
         if (bodyB != null) {
             long bId = bodyB.getObjectId();
-            stream.printf(",b=%s", type, Long.toHexString(bId));
+            stream.printf(" b=%s", Long.toHexString(bId));
+        }
+
+        float bit = joint.getBreakingImpulseThreshold();
+        if (bit != Float.MAX_VALUE) {
+            stream.printf(" bit=%s", Float.toString(bit));
         }
 
         stream.println();
@@ -223,7 +234,13 @@ public class PhysicsDumper extends Dumper {
             if (type.endsWith("Joint")) {
                 type = MyString.removeSuffix(type, "Joint");
             }
-            stream.printf("    %s #%s ", type, Long.toHexString(objectId));
+
+            long jointId = joint.getObjectId();
+            stream.printf("    %s #%s ", type, Long.toHexString(jointId));
+
+            if (!joint.isEnabled()) {
+                stream.print("DISABLED ");
+            }
 
             long otherId = 0L;
             Vector3f pivot;

@@ -154,6 +154,19 @@ abstract public class PhysicsJoint
     // new methods exposed
 
     /**
+     * Count how many ends this joint has.
+     *
+     * @return 1 if single-ended, 2 if double-ended
+     */
+    public int countEnds() {
+        if (nodeB == null) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    /**
      * Remove this joint from the joint lists of both connected bodies.
      */
     public void destroy() {
@@ -172,6 +185,23 @@ abstract public class PhysicsJoint
         float result = getAppliedImpulse(objectId);
         assert result >= 0f : result;
         return result;
+    }
+
+    /**
+     * Access the specified body.
+     *
+     * @param end which end of the joint to access (not null)
+     * @return the pre-existing body (may be null)
+     */
+    public PhysicsRigidBody getBody(JointEnd end) {
+        switch (end) {
+            case A:
+                return nodeA;
+            case B:
+                return nodeB;
+            default:
+                throw new IllegalArgumentException("end = " + end.toString());
+        }
     }
 
     /**
@@ -194,6 +224,16 @@ abstract public class PhysicsJoint
     }
 
     /**
+     * Read the breaking impulse threshold.
+     *
+     * @return the value
+     */
+    public float getBreakingImpulseThreshold() {
+        float result = getBreakingImpulseThreshold(objectId);
+        return result;
+    }
+
+    /**
      * Read the id of the Bullet constraint.
      *
      * @return the unique identifier (not zero)
@@ -201,6 +241,26 @@ abstract public class PhysicsJoint
     public long getObjectId() {
         assert objectId != 0L;
         return objectId;
+    }
+
+    /**
+     * Copy the location of the specified connection point in the specified
+     * body.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @param end which end of the joint to access (not null)
+     * @return a location vector (in scaled local coordinates, either
+     * storeResult or a new instance)
+     */
+    public Vector3f getPivot(JointEnd end, Vector3f storeResult) {
+        switch (end) {
+            case A:
+                return getPivotA(storeResult);
+            case B:
+                return getPivotB(storeResult);
+            default:
+                throw new IllegalArgumentException("end = " + end.toString());
+        }
     }
 
     /**
@@ -243,13 +303,41 @@ abstract public class PhysicsJoint
     }
 
     /**
+     * Test whether this joint is enabled.
+     *
+     * @return true if enabled, otherwise false
+     */
+    public boolean isEnabled() {
+        boolean result = isEnabled(objectId);
+        return result;
+    }
+
+    /**
+     * Read the breaking impulse threshold.
+     *
+     * @param desiredThreshold the desired value
+     */
+    public void setBreakingImpulseThreshold(float desiredThreshold) {
+        setBreakingImpulseThreshold(objectId, desiredThreshold);
+    }
+
+    /**
      * Enable or disable collisions between the linked bodies. Changes take
      * effect when the joint is added to a PhysicsSpace.
      *
-     * @param enable true &rarr; allow collisions, false &rarr; prevent them
+     * @param enable true to allow collisions, false to prevent them
      */
     public void setCollisionBetweenLinkedBodies(boolean enable) {
         collisionBetweenLinkedBodies = enable;
+    }
+
+    /**
+     * Enable or disable this joint.
+     *
+     * @param enable true to enable, false to disable
+     */
+    public void setEnabled(boolean enable) {
+        setEnabled(objectId, enable);
     }
     // *************************************************************************
     // JmeCloneable methods
@@ -298,10 +386,15 @@ abstract public class PhysicsJoint
     @Override
     public void read(JmeImporter im) throws IOException {
         InputCapsule capsule = im.getCapsule(this);
+
         nodeA = (PhysicsRigidBody) capsule.readSavable("nodeA", null);
         nodeB = (PhysicsRigidBody) capsule.readSavable("nodeB", null);
         pivotA = (Vector3f) capsule.readSavable("pivotA", new Vector3f());
         pivotB = (Vector3f) capsule.readSavable("pivotB", null);
+        /*
+         * Each subclass must create the btCollisionObject and
+         * initialize the breaking impulse threshold and the enabled flag.
+         */
     }
 
     /**
@@ -317,6 +410,10 @@ abstract public class PhysicsJoint
         capsule.write(nodeB, "nodeB", null);
         capsule.write(pivotA, "pivotA", null);
         capsule.write(pivotB, "pivotB", null);
+
+        capsule.write(getBreakingImpulseThreshold(), "breakingImpulseThreshold",
+                Float.MAX_VALUE);
+        capsule.write(isEnabled(), "isEnabled", true);
     }
     // *************************************************************************
     // Object methods
@@ -340,4 +437,13 @@ abstract public class PhysicsJoint
     native private void finalizeNative(long objectId);
 
     native private float getAppliedImpulse(long objectId);
+
+    native private float getBreakingImpulseThreshold(long objectId);
+
+    native private boolean isEnabled(long objectId);
+
+    native private void setBreakingImpulseThreshold(long objectId,
+            float desiredThreshold);
+
+    native private void setEnabled(long objectId, boolean enable);
 }

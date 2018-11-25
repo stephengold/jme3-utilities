@@ -286,6 +286,7 @@ public class HingeJoint extends PhysicsJoint {
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
+
         axisA = cloner.clone(axisA);
         axisB = cloner.clone(axisB);
         createJoint();
@@ -293,6 +294,13 @@ public class HingeJoint extends PhysicsJoint {
         setAngularOnly(angularOnly);
 
         HingeJoint old = (HingeJoint) original;
+
+        float bit = old.getBreakingImpulseThreshold();
+        setBreakingImpulseThreshold(bit);
+
+        boolean enableJoint = old.isEnabled();
+        setEnabled(enableJoint);
+
         float low = old.getLowerLimit();
         float high = old.getUpperLimit();
         setLimit(low, high, limitSoftness, biasFactor, relaxationFactor);
@@ -328,6 +336,11 @@ public class HingeJoint extends PhysicsJoint {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
+
+        float breakingImpulseThreshold = capsule.readFloat(
+                "breakingImpulseThreshold", Float.MAX_VALUE);
+        boolean isEnabled = capsule.readBoolean("isEnabled", true);
+
         axisA = (Vector3f) capsule.readSavable("axisA", new Vector3f());
         axisB = (Vector3f) capsule.readSavable("axisB", new Vector3f());
 
@@ -345,6 +358,10 @@ public class HingeJoint extends PhysicsJoint {
         float maxMotorImpulse = capsule.readFloat("maxMotorImpulse", 0f);
 
         createJoint();
+
+        setBreakingImpulseThreshold(breakingImpulseThreshold);
+        setEnabled(isEnabled);
+
         enableMotor(enableAngularMotor, targetVelocity, maxMotorImpulse);
         setAngularOnly(angularOnly);
         setLimit(lowerLimit, upperLimit, limitSoftness, biasFactor,
@@ -361,6 +378,7 @@ public class HingeJoint extends PhysicsJoint {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
+
         capsule.write(axisA, "axisA", new Vector3f());
         capsule.write(axisB, "axisB", new Vector3f());
 

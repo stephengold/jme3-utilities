@@ -215,14 +215,23 @@ public class ConeJoint extends PhysicsJoint {
      *
      * @param cloner the cloner that's cloning this shape (not null)
      * @param original the instance from which this instance was shallow-cloned
-     * (unused)
+     * (not null, unaffected)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
+
         rotA = cloner.clone(rotA);
         rotB = cloner.clone(rotB);
         createJoint();
+
+        ConeJoint old = (ConeJoint) original;
+
+        float bit = old.getBreakingImpulseThreshold();
+        setBreakingImpulseThreshold(bit);
+
+        boolean enableJoint = old.isEnabled();
+        setEnabled(enableJoint);
     }
 
     /**
@@ -250,14 +259,23 @@ public class ConeJoint extends PhysicsJoint {
     public void read(JmeImporter im) throws IOException {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
-        this.rotA = (Matrix3f) capsule.readSavable("rotA", new Matrix3f());
-        this.rotB = (Matrix3f) capsule.readSavable("rotB", new Matrix3f());
 
-        this.angularOnly = capsule.readBoolean("angularOnly", false);
-        this.swingSpan1 = capsule.readFloat("swingSpan1", 1e30f);
-        this.swingSpan2 = capsule.readFloat("swingSpan2", 1e30f);
-        this.twistSpan = capsule.readFloat("twistSpan", 1e30f);
+        float breakingImpulseThreshold = capsule.readFloat(
+                "breakingImpulseThreshold", Float.MAX_VALUE);
+        boolean isEnabled = capsule.readBoolean("isEnabled", true);
+
+        rotA = (Matrix3f) capsule.readSavable("rotA", new Matrix3f());
+        rotB = (Matrix3f) capsule.readSavable("rotB", new Matrix3f());
+
+        angularOnly = capsule.readBoolean("angularOnly", false);
+        swingSpan1 = capsule.readFloat("swingSpan1", 1e30f);
+        swingSpan2 = capsule.readFloat("swingSpan2", 1e30f);
+        twistSpan = capsule.readFloat("twistSpan", 1e30f);
+
         createJoint();
+
+        setBreakingImpulseThreshold(breakingImpulseThreshold);
+        setEnabled(isEnabled);
     }
 
     /**
@@ -270,8 +288,9 @@ public class ConeJoint extends PhysicsJoint {
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
-        capsule.write(rotA, "rotA", new Matrix3f());
-        capsule.write(rotB, "rotB", new Matrix3f());
+
+        capsule.write(rotA, "rotA", null);
+        capsule.write(rotB, "rotB", null);
 
         capsule.write(angularOnly, "angularOnly", false);
         capsule.write(swingSpan1, "swingSpan1", 1e30f);

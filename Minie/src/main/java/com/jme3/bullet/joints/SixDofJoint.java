@@ -252,33 +252,6 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
-     * Copy one of this joint's connection-point locations.
-     *
-     * @param end which end of the joint to copy (not null)
-     * @param storeResult (modified if not null)
-     * @return the location (in local coordinates, either storeResult or a new
-     * instance, not null)
-     */
-    public Vector3f getPivot(JointEnd end, Vector3f storeResult) {
-        Validate.nonNull(end, "end");
-
-        Transform temp = new Transform();
-        switch (end) {
-            case A:
-                getFrameOffsetA(objectId, temp);
-                break;
-            case B:
-                getFrameOffsetB(objectId, temp);
-                break;
-            default:
-                throw new IllegalArgumentException(end.toString());
-        }
-
-        Vector3f result = temp.getTranslation(storeResult);
-        return result;
-    }
-
-    /**
      * Access the TranslationalLimitMotor of this joint, the motor which
      * influences translation on all 3 axes.
      *
@@ -404,6 +377,12 @@ public class SixDofJoint extends PhysicsJoint {
 
         SixDofJoint old = (SixDofJoint) original;
 
+        float bit = old.getBreakingImpulseThreshold();
+        setBreakingImpulseThreshold(bit);
+
+        boolean enableJoint = old.isEnabled();
+        setEnabled(enableJoint);
+
         setAngularLowerLimit(old.getAngularLowerLimit(null));
         setAngularUpperLimit(old.getAngularUpperLimit(null));
         setLinearLowerLimit(old.getLinearLowerLimit(null));
@@ -468,12 +447,19 @@ public class SixDofJoint extends PhysicsJoint {
         super.read(im);
         InputCapsule capsule = im.getCapsule(this);
 
+        float breakingImpulseThreshold = capsule.readFloat(
+                "breakingImpulseThreshold", Float.MAX_VALUE);
+        boolean isEnabled = capsule.readBoolean("isEnabled", true);
+
         rotA = (Matrix3f) capsule.readSavable("rotA", new Matrix3f());
         rotB = (Matrix3f) capsule.readSavable("rotB", new Matrix3f());
         useLinearReferenceFrameA
                 = capsule.readBoolean("useLinearReferenceFrameA", false);
 
         createJoint();
+
+        setBreakingImpulseThreshold(breakingImpulseThreshold);
+        setEnabled(isEnabled);
 
         setAngularUpperLimit((Vector3f) capsule.readSavable("angularUpperLimit", new Vector3f()));
         setAngularLowerLimit((Vector3f) capsule.readSavable("angularLowerLimit", new Vector3f()));
@@ -558,10 +544,6 @@ public class SixDofJoint extends PhysicsJoint {
         assert objectId != 0L;
         logger2.log(Level.FINE, "Created Joint {0}",
                 Long.toHexString(objectId));
-
-        Vector3f pivot = new Vector3f();
-        assert getPivot(JointEnd.A, pivot).equals(pivotA);
-        assert getPivot(JointEnd.B, pivot).equals(pivotB);
 
         gatherMotors();
     }
