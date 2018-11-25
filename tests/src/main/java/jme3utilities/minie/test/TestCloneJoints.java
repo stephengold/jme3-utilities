@@ -319,8 +319,8 @@ public class TestCloneJoints extends SimpleApplication {
         assert p2p.isCollisionBetweenLinkedBodies() == flag;
 
         assert p2p.getDamping() == b + 0.01f;
-        // assert p2p.getImpulseClamp() == b + 0.02f; TODO JME issue #918
-        // assert p2p.getTau() == b + 0.03f; TODO JME issue #918
+        assert p2p.getImpulseClamp() == b + 0.02f;
+        assert p2p.getTau() == b + 0.03f;
     }
 
     private void verifySix(SixDofJoint six, float b) {
