@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A joint based on Bullet's btPoint2PointConstraint.
+ * A 3 degree-of-freedom joint based on Bullet's btPoint2PointConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
  * Point to point constraint limits the translation so that the local pivot
@@ -72,16 +72,15 @@ public class Point2PointJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a single-ended PhysicsJoint. To be effective, the joint must
-     * be added to the physics space of the body. Also, the body must be
+     * Instantiate a single-ended Point2PointJoint. To be effective, the joint
+     * must be added to the physics space of the body. Also, the body must be
      * dynamic.
      *
-     * @param nodeA the dynamic rigid body to constrain (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotWorld the location of the joint (in physics-space
-     * coordinates, not null, unaffected)
+     * @param nodeA the body to constrain (not null, alias created)
+     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotWorld the pivot location in physics-space coordinates (not
+     * null, unaffected)
      */
     public Point2PointJoint(PhysicsRigidBody nodeA, Vector3f pivotA,
             Vector3f pivotWorld) {
@@ -94,12 +93,12 @@ public class Point2PointJoint extends PhysicsJoint {
      * must be added to the physics space of the 2 bodies. Also, the bodies must
      * be dynamic and distinct.
      *
-     * @param nodeA the 1st body to connect (not null, alias created)
-     * @param nodeB the 2nd body to connect (not null, alias created)
-     * @param pivotA the offset of the connection point in node A (in scaled
-     * local coordinates, not null, unaffected)
-     * @param pivotB the offset of the connection point in node B (in scaled
-     * local coordinates, not null, unaffected)
+     * @param nodeA the 1st body to constrain (not null, alias created)
+     * @param nodeB the 2nd body to constrain (not null, alias created)
+     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
      */
     public Point2PointJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
@@ -258,15 +257,24 @@ public class Point2PointJoint extends PhysicsJoint {
      */
     private void createJoint() {
         assert objectId == 0L;
+        assert nodeA != null;
+        assert pivotA != null;
+        assert pivotB != null;
+
         if (nodeB == null) {
             /*
-             * Create a single-ended joint.
+             * Create a single-ended joint.  Bullet assumes constraints are
+             * satisfied at creation, so temporarily re-position the body
+             * so that it satisfies the constraint.
              */
             Vector3f saveLocation = nodeA.getPhysicsLocation(null);
+
             Vector3f offset = pivotB.subtract(pivotA);
             nodeA.setPhysicsLocation(offset);
             objectId = createJoint1(nodeA.getObjectId(), pivotA);
+
             nodeA.setPhysicsLocation(saveLocation);
+
         } else {
             /*
              * Create a double-ended joint.
@@ -278,20 +286,20 @@ public class Point2PointJoint extends PhysicsJoint {
         logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
     }
 
-    native private long createJoint(long objectIdA, long objectIdB,
-            Vector3f pivotA, Vector3f pivotB);
+    native private long createJoint(long bodyIdA, long bodyIdB,
+            Vector3f pivotInA, Vector3f pivotInB);
 
-    native private long createJoint1(long objectIdA, Vector3f pivotA);
+    native private long createJoint1(long bodyIdA, Vector3f pivotInA);
 
-    native private float getDamping(long objectId);
+    native private float getDamping(long jointId);
 
-    native private float getImpulseClamp(long objectId);
+    native private float getImpulseClamp(long jointId);
 
-    native private float getTau(long objectId);
+    native private float getTau(long jointId);
 
-    native private void setDamping(long objectId, float value);
+    native private void setDamping(long jointId, float value);
 
-    native private void setImpulseClamp(long objectId, float value);
+    native private void setImpulseClamp(long jointId, float value);
 
-    native private void setTau(long objectId, float value);
+    native private void setTau(long jointId, float value);
 }

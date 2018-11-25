@@ -84,14 +84,12 @@ abstract public class PhysicsJoint
      */
     protected PhysicsRigidBody nodeB;
     /**
-     * copy of offset of this joint's connection point in body A (in scaled
-     * local coordinates)
+     * copy of pivot location in A's scaled local coordinates
      */
     protected Vector3f pivotA;
     /**
-     * copy of offset of this joint's connection point in body B (in scaled
-     * local coordinates) for a double-ended joint, or in physics space for a
-     * single-ended joint
+     * copy of pivot location, in B's scaled local coordinates for a
+     * double-ended joint, or in physics space for a single-ended joint
      */
     protected Vector3f pivotB;
     /**
@@ -113,12 +111,11 @@ abstract public class PhysicsJoint
      * be added to the physics space of the body. Also, the body must be
      * dynamic.
      *
-     * @param nodeA the dynamic rigid body to constrain (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotWorld the location of the joint (in physics-space
-     * coordinates, not null, unaffected)
+     * @param nodeA the body to constrain (not null, alias created)
+     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotWorld the pivot location in physics-space coordinates (not
+     * null, unaffected)
      */
     protected PhysicsJoint(PhysicsRigidBody nodeA, Vector3f pivotA,
             Vector3f pivotWorld) {
@@ -134,12 +131,12 @@ abstract public class PhysicsJoint
      * be added to the physics space of the 2 bodies. Also, the bodies must be
      * dynamic and distinct.
      *
-     * @param nodeA the 1st body to connect (not null, alias created)
-     * @param nodeB the 2nd body to connect (not null, alias created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
+     * @param nodeA the 1st body to constrain (not null, alias created)
+     * @param nodeB the 2nd body to constrain (not null, alias created)
+     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
      */
     protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotA, Vector3f pivotB) {
