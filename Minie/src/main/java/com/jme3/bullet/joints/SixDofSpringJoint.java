@@ -67,7 +67,7 @@ public class SixDofSpringJoint extends SixDofJoint {
     /**
      * message logger for this class
      */
-    final public static Logger logger2
+    final public static Logger logger3
             = Logger.getLogger(SixDofSpringJoint.class.getName());
     // *************************************************************************
     // constructors
@@ -80,21 +80,20 @@ public class SixDofSpringJoint extends SixDofJoint {
     }
 
     /**
-     * Instantiate a SixDofSpringJoint. To be effective, the joint must be added
-     * to a physics space.
+     * Instantiate a double-ended SixDofSpringJoint. To be effective, the joint
+     * must be added to the physics space of the 2 bodies. Also, the bodies must
+     * be dynamic and distinct.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
+     * @param nodeA the 1st body to constrain (not null, alias created)
+     * @param nodeB the 2nd body to constrain (not null, alias created)
+     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
      * @param rotA the local orientation of the connection to node A (not null,
-     * alias created) TODO
+     * unaffected)
      * @param rotB the local orientation of the connection to node B (not null,
-     * alias created) TODO
+     * unaffected)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
@@ -105,7 +104,7 @@ public class SixDofSpringJoint extends SixDofJoint {
                 useLinearReferenceFrameA);
     }
     // *************************************************************************
-    // new methods exposed
+    // new methods exposed TODO re-order methods
 
     /**
      * Enable or disable the spring for the indexed degree of freedom.
@@ -163,9 +162,9 @@ public class SixDofSpringJoint extends SixDofJoint {
     // SixDofJoint methods
 
     @Override
-    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
-            Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
-            boolean useLinearReferenceFrameA);
+    native protected long createJoint(long objectIdA, long objectIdB,
+            Vector3f pivotInA, Matrix3f rotInA, Vector3f pivotInB,
+            Matrix3f rotInB, boolean useLinearReferenceFrameA);
     // *************************************************************************
     // private methods
 
