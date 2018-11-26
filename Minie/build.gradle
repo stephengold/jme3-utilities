@@ -16,9 +16,21 @@ sourcesJar { baseName project.ext.baseName }
 dependencies {
     //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
     compile project(':debug')
+
+    testCompile 'junit:junit:4.12'
+    testCompile "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
 }
 
 compileJava.options.headerOutputDirectory = new File('build/cpp')
+
+// cleanup tasks
+clean { dependsOn 'cleanDLLs', 'cleanSOs' }
+task cleanDLLs(type: Delete) {
+    delete fileTree(dir: '.', include: '*.dll')
+}
+task cleanSOs(type: Delete) {
+    delete fileTree(dir: '.', include: '*.so')
+}
 
 build.dependsOn('pom')
 task pom {

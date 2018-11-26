@@ -4,6 +4,8 @@
 /debug/src/main/resources/Textures/shapes/
 /heart/build/
 /Minie/build/
+/Minie/*.dll
+/Minie/*.so
 /moon-ccbysa/build/
 /nifty/build/
 /SkyControl/build/

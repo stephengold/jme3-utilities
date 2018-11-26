@@ -45,6 +45,7 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import com.jme3.system.NativeLibraryLoader;
 import jme3utilities.Misc;
+import org.junit.Test;
 
 /**
  * Test cloning physics joints of all types.
@@ -55,7 +56,8 @@ public class TestCloneJoints {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
+    @Test
+    public void testCloneJoints() {
         NativeLibraryLoader.loadNativeLibrary("bulletjme", true);
 
         CollisionShape box = new BoxCollisionShape(new Vector3f(1f, 1f, 1f));
