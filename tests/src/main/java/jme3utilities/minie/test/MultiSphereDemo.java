@@ -26,6 +26,7 @@
  */
 package jme3utilities.minie.test;
 
+import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -50,10 +51,14 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyAsset;
+import jme3utilities.MyString;
 import jme3utilities.math.noise.Generator;
 import jme3utilities.minie.PhysicsDumper;
 import jme3utilities.ui.ActionApplication;
@@ -78,6 +83,10 @@ public class MultiSphereDemo
      */
     final public static Logger logger
             = Logger.getLogger(MultiSphereDemo.class.getName());
+    /**
+     * application name for the window's title bar
+     */
+    final private static String applicationName = "MultiSphereDemo";
     // *************************************************************************
     // fields
 
@@ -90,9 +99,29 @@ public class MultiSphereDemo
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
-        MultiSphereDemo app = new MultiSphereDemo();
-        app.start();
+    /**
+     * Main entry point for the application.
+     *
+     * @param arguments array of command-line arguments (not null)
+     */
+    public static void main(String[] arguments) {
+        /*
+         * Mute the chatty loggers found in some imported packages.
+         */
+        Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger(ALAudioRenderer.class.getName())
+                .setLevel(Level.SEVERE);
+
+        MultiSphereDemo application = new MultiSphereDemo();
+        /*
+         * Customize the window's title bar.
+         */
+        AppSettings settings = new AppSettings(true);
+        String title = applicationName + " " + MyString.join(arguments);
+        settings.setTitle(title);
+        application.setSettings(settings);
+
+        application.start();
     }
     // *************************************************************************
     // ActionApplication methods
@@ -122,14 +151,12 @@ public class MultiSphereDemo
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting(rootNode);
 
+        CollisionShape.setDefaultMargin(0.005f); // 5 mm
         bulletAppState = new BulletAppState();
         bulletAppState.setDebugEnabled(true);
         bulletAppState.setDebugFilter(this);
         bulletAppState.setDebugInitListener(this);
         stateManager.attach(bulletAppState);
-
-        CollisionShape.setDefaultMargin(0.005f); // 5 mm
-
         physicsSpace = bulletAppState.getPhysicsSpace();
         physicsSpace.setSolverNumIterations(30);
 
@@ -149,6 +176,13 @@ public class MultiSphereDemo
         dim.bind("toggle pause", KeyInput.KEY_PERIOD);
     }
 
+    /**
+     * Process an action that wasn't handled by the active input mode.
+     *
+     * @param actionString textual description of the action (not null)
+     * @param ongoing true if the action is ongoing, otherwise false
+     * @param tpf time interval between render passes (in seconds, &ge;0)
+     */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
