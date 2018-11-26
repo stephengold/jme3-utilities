@@ -31,6 +31,7 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.ConeJoint;
 import com.jme3.bullet.joints.HingeJoint;
+import com.jme3.bullet.joints.JointEnd;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.Point2PointJoint;
 import com.jme3.bullet.joints.SixDofJoint;
@@ -69,11 +70,20 @@ public class TestCloneJoints {
         cloneTest(cone, coneClone);
 
         HingeJoint hinge = new HingeJoint(bodyA, bodyB, new Vector3f(),
-                new Vector3f(), new Vector3f(), new Vector3f());
+                new Vector3f(), new Vector3f(1f, 0f, 0f),
+                new Vector3f(1f, 0f, 0f));
         set(hinge, 0f);
         verify(hinge, 0f);
         HingeJoint hingeClone = (HingeJoint) Misc.deepCopy(hinge);
         cloneTest(hinge, hingeClone);
+
+        HingeJoint seHinge = new HingeJoint(bodyA, new Vector3f(),
+                new Vector3f(), new Vector3f(1f, 0f, 0f),
+                new Vector3f(1f, 0f, 0f), JointEnd.A);
+        set(seHinge, 0f);
+        verify(seHinge, 0f);
+        HingeJoint seHingeClone = (HingeJoint) Misc.deepCopy(seHinge);
+        cloneTest(seHinge, seHingeClone);
 
         Point2PointJoint p2p = new Point2PointJoint(bodyA, bodyB,
                 new Vector3f(), new Vector3f());

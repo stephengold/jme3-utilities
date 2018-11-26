@@ -36,6 +36,8 @@ import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
@@ -43,15 +45,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A hinge joint based on Bullet's btHingeConstraint.
+ * A single degree-of-freedom joint based on Bullet's btHingeConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
  * Hinge constraint, or revolute joint restricts two additional angular degrees
  * of freedom, so the body can only rotate around one axis, the hinge axis. This
  * can be useful to represent doors or wheels rotating around one axis. The user
  * can specify limits and motor for the hinge.
- * <p>
- * TODO add single-ended versions
  *
  * @author normenhansen
  */
@@ -67,9 +67,19 @@ public class HingeJoint extends PhysicsJoint {
     // *************************************************************************
     // fields
 
+    /**
+     * copy of the "use reference frame A" flag (default=false)
+     */
+    private boolean useReferenceFrameA = false;
+    /**
+     * copy of axis direction in body A's local coordinates (unit vector)
+     */
     private Vector3f axisA;
+    /**
+     * copy of axis direction, in body B's local coordinates for a double-ended
+     * joint, or in physics space for a single-ended joint (unit vector)
+     */
     private Vector3f axisB;
-
     /**
      * copy of the angular-only flag (default=false)
      */
@@ -100,30 +110,73 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a HingeJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a single-ended HingeJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
-     * @param axisA the local axis of the connection to node A (not null,
-     * unaffected)
-     * @param axisB the local axis of the connection to node B (not null,
-     * unaffected)
+     * @param nodeA the body to constrain (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInWorld the pivot location in physics-space coordinates (not
+     * null, unaffected)
+     * @param axisInA the axis of the joint in A's local coordinates (unit
+     * vector, unaffected)
+     * @param axisInWorld the axis of the joint in physics-space coordinates
+     * (unit vector, unaffected)
+     * @param referenceFrame which end to use as the reference frame (not null)
      */
-    public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB, Vector3f axisA, Vector3f axisB) {
-        super(nodeA, nodeB, pivotA, pivotB);
-        this.axisA = axisA.clone();
-        this.axisB = axisB.clone();
+    public HingeJoint(PhysicsRigidBody nodeA, Vector3f pivotInA,
+            Vector3f pivotInWorld, Vector3f axisInA, Vector3f axisInWorld,
+            JointEnd referenceFrame) {
+        super(nodeA, JointEnd.A, pivotInA, pivotInWorld);
+
+        assert axisInA.isUnitVector() : axisInA;
+        assert axisInWorld.isUnitVector() : axisInWorld;
+        axisA = axisInA.clone();
+        axisB = axisInWorld.clone();
+        useReferenceFrameA = (referenceFrame == JointEnd.A);
         createJoint();
         /*
-         * Synchronize the btHingeConstraint with the local copies.
+         * Synchronize the btHingeConstraint data with the local copies.
+         */
+        setAngularOnly(objectId, angularOnly);
+
+        float low = getLowerLimit();
+        float high = getUpperLimit();
+        setLimit(objectId, low, high, limitSoftness, biasFactor,
+                relaxationFactor);
+    }
+
+    /**
+     * Instantiate a double-ended HingeJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
+     *
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param axisInA the axis of the joint in A's local coordinates (unit
+     * vector, unaffected)
+     * @param axisInB the axis of the joint in B's local coordinates (unit
+     * vector, unaffected)
+     */
+    public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotInA, Vector3f pivotInB, Vector3f axisInA,
+            Vector3f axisInB) {
+        super(nodeA, nodeB, pivotInA, pivotInB);
+
+        assert axisInA.isUnitVector() : axisInA;
+        assert axisInB.isUnitVector() : axisInB;
+        axisA = axisInA.clone();
+        axisB = axisInB.clone();
+        createJoint();
+        /*
+         * Synchronize btHingeConstraint parameters with local copies.
          */
         setAngularOnly(objectId, angularOnly);
 
@@ -405,33 +458,76 @@ public class HingeJoint extends PhysicsJoint {
      */
     private void createJoint() {
         assert objectId == 0L;
+        assert nodeA != null;
+        assert pivotA != null;
+        assert axisA.isUnitVector() : axisA;
+        assert pivotB != null;
+        assert axisB.isUnitVector() : axisB;
 
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
-                pivotA, axisA, pivotB, axisB);
+        if (nodeB == null) {
+            /*
+             * Create a single-ended joint.  Bullet assumes single-ended
+             * constraints are satisfied at creation, so we temporarily
+             * re-position the body to satisfy the constraint.
+             */
+            Vector3f saveLocation = nodeA.getPhysicsLocation(null);
+            Quaternion saveRotation = nodeA.getPhysicsRotation(null);
+
+            Vector3f cross = axisB.cross(axisA);
+            float sinAngle = cross.length();
+            float cosAngle = axisB.dot(axisA);
+            float angle = FastMath.atan2(sinAngle, cosAngle);
+            cross.normalizeLocal();
+            Quaternion rotation = new Quaternion();
+            rotation.fromAngleNormalAxis(angle, cross);
+            nodeA.setPhysicsRotation(rotation);
+
+            Vector3f offset = pivotB.subtract(pivotA);
+            nodeA.setPhysicsLocation(offset);
+
+            objectId = createJoint1(nodeA.getObjectId(), pivotA, axisA,
+                    useReferenceFrameA);
+
+            nodeA.setPhysicsLocation(saveLocation);
+            nodeA.setPhysicsRotation(saveRotation);
+
+        } else {
+            /*
+             * Create a double-ended joint.
+             */
+            assert !useReferenceFrameA;
+            objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
+                    pivotA, axisA, pivotB, axisB);
+        }
         assert objectId != 0L;
-        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}",
+                Long.toHexString(objectId));
     }
 
     native private long createJoint(long objectIdA, long objectIdB,
-            Vector3f pivotA, Vector3f axisA, Vector3f pivotB, Vector3f axisB);
+            Vector3f pivotInA, Vector3f axisInA, Vector3f pivotInB,
+            Vector3f axisInB);
 
-    native private void enableMotor(long objectId, boolean enable,
+    native private long createJoint1(long objectIdA, Vector3f pivotInA,
+            Vector3f axisInA, boolean useReferenceFrameA);
+
+    native private void enableMotor(long jointId, boolean enable,
             float targetVelocity, float maxMotorImpulse);
 
-    native private boolean getEnableAngularMotor(long objectId);
+    native private boolean getEnableAngularMotor(long jointId);
 
-    native private float getHingeAngle(long objectId);
+    native private float getHingeAngle(long jointId);
 
-    native private float getLowerLimit(long objectId);
+    native private float getLowerLimit(long jointId);
 
-    native private float getMaxMotorImpulse(long objectId);
+    native private float getMaxMotorImpulse(long jointId);
 
-    native private float getMotorTargetVelocity(long objectId);
+    native private float getMotorTargetVelocity(long jointId);
 
-    native private float getUpperLimit(long objectId);
+    native private float getUpperLimit(long jointId);
 
-    native private void setAngularOnly(long objectId, boolean angularOnly);
+    native private void setAngularOnly(long jointId, boolean angularOnly);
 
-    native private void setLimit(long objectId, float low, float high,
+    native private void setLimit(long jointId, float low, float high,
             float softness, float biasFactor, float relaxationFactor);
 }
