@@ -72,37 +72,39 @@ public class Point2PointJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a single-ended Point2PointJoint. To be effective, the joint
-     * must be added to the physics space of the body. Also, the body must be
-     * dynamic.
+     * Instantiate a single-ended Point2PointJoint using the specified body.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
      *
      * @param nodeA the body to constrain (not null, alias created)
-     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
      * null, unaffected)
-     * @param pivotWorld the pivot location in physics-space coordinates (not
+     * @param pivotInWorld the pivot location in physics-space coordinates (not
      * null, unaffected)
      */
-    public Point2PointJoint(PhysicsRigidBody nodeA, Vector3f pivotA,
-            Vector3f pivotWorld) {
-        super(nodeA, pivotA, pivotWorld);
+    public Point2PointJoint(PhysicsRigidBody nodeA, Vector3f pivotInA,
+            Vector3f pivotInWorld) {
+        super(nodeA, JointEnd.A, pivotInA, pivotInWorld);
         createJoint();
     }
 
     /**
-     * Instantiate a double-ended Point2PointJoint. To be effective, the joint
-     * must be added to the physics space of the 2 bodies. Also, the bodies must
-     * be dynamic and distinct.
+     * Instantiate a double-ended Point2PointJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
      *
-     * @param nodeA the 1st body to constrain (not null, alias created)
-     * @param nodeB the 2nd body to constrain (not null, alias created)
-     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
      * null, unaffected)
-     * @param pivotB the pivot location in B's scaled local coordinates (not
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
      * null, unaffected)
      */
     public Point2PointJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB) {
-        super(nodeA, nodeB, pivotA, pivotB);
+            Vector3f pivotInA, Vector3f pivotInB) {
+        super(nodeA, nodeB, pivotInA, pivotInB);
         createJoint();
     }
     // *************************************************************************
@@ -243,11 +245,11 @@ public class Point2PointJoint extends PhysicsJoint {
     @Override
     public void write(JmeExporter ex) throws IOException {
         super.write(ex);
-        OutputCapsule cap = ex.getCapsule(this);
+        OutputCapsule capsule = ex.getCapsule(this);
 
-        cap.write(getDamping(), "damping", 1f);
-        cap.write(getTau(), "tau", 0.3f);
-        cap.write(getImpulseClamp(), "impulseClamp", 0f);
+        capsule.write(getDamping(), "damping", 1f);
+        capsule.write(getTau(), "tau", 0.3f);
+        capsule.write(getImpulseClamp(), "impulseClamp", 0f);
     }
     // *************************************************************************
     // private methods
@@ -263,9 +265,9 @@ public class Point2PointJoint extends PhysicsJoint {
 
         if (nodeB == null) {
             /*
-             * Create a single-ended joint.  Bullet assumes constraints are
-             * satisfied at creation, so temporarily re-position the body
-             * so that it satisfies the constraint.
+             * Create a single-ended joint.  Bullet assumes single-ended
+             * constraints are satisfied at creation, so we temporarily
+             * re-position the body to satisfy the constraint.
              */
             Vector3f saveLocation = nodeA.getPhysicsLocation(null);
 
@@ -283,7 +285,8 @@ public class Point2PointJoint extends PhysicsJoint {
                     pivotA, pivotB);
         }
         assert objectId != 0L;
-        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}",
+                Long.toHexString(objectId));
     }
 
     native private long createJoint(long bodyIdA, long bodyIdB,
@@ -297,9 +300,9 @@ public class Point2PointJoint extends PhysicsJoint {
 
     native private float getTau(long jointId);
 
-    native private void setDamping(long jointId, float value);
+    native private void setDamping(long jointId, float desiredDamping);
 
-    native private void setImpulseClamp(long jointId, float value);
+    native private void setImpulseClamp(long jointId, float desiredClamp);
 
-    native private void setTau(long jointId, float value);
+    native private void setTau(long jointId, float desiredTau);
 }

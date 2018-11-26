@@ -43,6 +43,7 @@ import com.jme3.util.clone.JmeCloneable;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Validate;
 
 /**
  * The abstract base class for physics joints based on Bullet's
@@ -71,25 +72,29 @@ abstract public class PhysicsJoint
     // fields
 
     /**
-     * Unique identifier of the btTypedConstraint. Constructors are responsible
-     * for setting this to a non-zero value. After that, the id never changes.
+     * Unique identifier of the btTypedConstraint. Subtype constructors are
+     * responsible for setting this to a non-zero value. Once set, the
+     * identifier never changes.
      */
     protected long objectId = 0L;
     /**
-     * 1st body specified in the constructor
+     * body A specified in the constructor, or null for a single-ended joint
+     * with body B
      */
     protected PhysicsRigidBody nodeA;
     /**
-     * 2nd body specified in the constructor, or null for a single-ended joint
+     * body B specified in the constructor, or null for a single-ended joint
+     * with body A
      */
     protected PhysicsRigidBody nodeB;
     /**
-     * copy of pivot location in A's scaled local coordinates
+     * copy of pivot location, in physics space if nodeA is null, or else in A's
+     * scaled local coordinates
      */
     protected Vector3f pivotA;
     /**
-     * copy of pivot location, in B's scaled local coordinates for a
-     * double-ended joint, or in physics space for a single-ended joint
+     * copy of pivot location, in physics space if nodeB is null, or else in B's
+     * scaled local coordinates
      */
     protected Vector3f pivotB;
     /**
@@ -107,47 +112,72 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Instantiate a single-ended PhysicsJoint. To be effective, the joint must
-     * be added to the physics space of the body. Also, the body must be
-     * dynamic.
+     * Instantiate a single-ended PhysicsJoint using the specified body at the
+     * specified end.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
      *
-     * @param nodeA the body to constrain (not null, alias created)
-     * @param pivotA the pivot location in A's scaled local coordinates (not
-     * null, unaffected)
-     * @param pivotWorld the pivot location in physics-space coordinates (not
+     * @param body the body to constrain (not null, alias created)
+     * @param bodyEnd at which end to attach the body (not null)
+     * @param pivotInBody the pivot location in the body's scaled local
+     * coordinates (not null, unaffected)
+     * @param pivotInWorld the pivot location in physics-space coordinates (not
      * null, unaffected)
      */
-    protected PhysicsJoint(PhysicsRigidBody nodeA, Vector3f pivotA,
-            Vector3f pivotWorld) {
-        this.nodeA = nodeA;
-        this.nodeB = null;
-        this.pivotA = pivotA.clone();
-        this.pivotB = pivotWorld.clone();
-        nodeA.addJoint(this);
+    protected PhysicsJoint(PhysicsRigidBody body, JointEnd bodyEnd,
+            Vector3f pivotInBody, Vector3f pivotInWorld) {
+        Validate.nonNull(body, "body");
+        Validate.nonNull(bodyEnd, "body end");
+        Validate.nonNull(pivotInBody, "pivot in body");
+        Validate.nonNull(pivotInWorld, "pivot in world");
+
+        switch (bodyEnd) {
+            case A:
+                nodeA = body;
+                nodeB = null;
+                pivotA = pivotInBody.clone();
+                pivotB = pivotInWorld.clone();
+                nodeA.addJoint(this);
+                break;
+
+            case B:
+                nodeA = null;
+                nodeB = body;
+                pivotA = pivotInWorld.clone();
+                pivotB = pivotInBody.clone();
+                nodeB.addJoint(this);
+                break;
+
+            default:
+                String message = "body end = " + bodyEnd.toString();
+                throw new IllegalArgumentException(message);
+        }
     }
 
     /**
-     * Instantiate a double-ended PhysicsJoint. To be effective, the joint must
-     * be added to the physics space of the 2 bodies. Also, the bodies must be
-     * dynamic and distinct.
+     * Instantiate a double-ended PhysicsJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
      *
-     * @param nodeA the 1st body to constrain (not null, alias created)
-     * @param nodeB the 2nd body to constrain (not null, alias created)
-     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
      * null, unaffected)
-     * @param pivotB the pivot location in B's scaled local coordinates (not
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
      * null, unaffected)
      */
     protected PhysicsJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB) {
+            Vector3f pivotInA, Vector3f pivotInB) {
         if (nodeA == nodeB) {
             throw new IllegalArgumentException("The bodies must be distinct.");
         }
 
         this.nodeA = nodeA;
         this.nodeB = nodeB;
-        this.pivotA = pivotA.clone();
-        this.pivotB = pivotB.clone();
+        pivotA = pivotInA.clone();
+        pivotB = pivotInB.clone();
         nodeA.addJoint(this);
         nodeB.addJoint(this);
     }
@@ -160,7 +190,7 @@ abstract public class PhysicsJoint
      * @return 1 if single-ended, 2 if double-ended
      */
     public int countEnds() {
-        if (nodeB == null) {
+        if (nodeA == null || nodeB == null) {
             return 1;
         } else {
             return 2;
@@ -171,7 +201,9 @@ abstract public class PhysicsJoint
      * Remove this joint from the joint lists of both connected bodies.
      */
     public void destroy() {
-        nodeA.removeJoint(this);
+        if (nodeA != null) {
+            nodeA.removeJoint(this);
+        }
         if (nodeB != null) {
             nodeB.removeJoint(this);
         }
@@ -192,7 +224,7 @@ abstract public class PhysicsJoint
      * Access the specified body.
      *
      * @param end which end of the joint to access (not null)
-     * @return the pre-existing body (may be null)
+     * @return the pre-existing body, or null if none
      */
     public PhysicsRigidBody getBody(JointEnd end) {
         switch (end) {
@@ -206,19 +238,18 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Access the 1st body specified in the constructor.
+     * Access the body at the A end.
      *
-     * @return the pre-existing body (not null)
+     * @return the pre-existing body, or null if none
      */
     public PhysicsRigidBody getBodyA() {
-        assert nodeA != null;
         return nodeA;
     }
 
     /**
-     * Access the 2nd body specified in the constructor.
+     * Access the body at the B end.
      *
-     * @return the pre-existing body, or null if this joint is single-ended
+     * @return the pre-existing body, or null if none
      */
     public PhysicsRigidBody getBodyB() {
         return nodeB;
@@ -248,12 +279,14 @@ abstract public class PhysicsJoint
      * Copy the location of the specified connection point in the specified
      * body.
      *
-     * @param storeResult storage for the result (modified if not null)
      * @param end which end of the joint to access (not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a location vector (in scaled local coordinates, either
      * storeResult or a new instance)
      */
     public Vector3f getPivot(JointEnd end, Vector3f storeResult) {
+        Validate.nonNull(end, "end");
+
         switch (end) {
             case A:
                 return getPivotA(storeResult);
@@ -265,7 +298,7 @@ abstract public class PhysicsJoint
     }
 
     /**
-     * Copy the location of the connection point in body A.
+     * Copy the location of the connection point in the body at the A end.
      *
      * @param storeResult storage for the result (modified if not null)
      * @return a location vector (in scaled local coordinates, either
@@ -273,23 +306,26 @@ abstract public class PhysicsJoint
      */
     public Vector3f getPivotA(Vector3f storeResult) {
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        if (nodeA == null) {
+            throw new IllegalArgumentException("No body at the A end.");
+        }
+
         result.set(pivotA);
         return result;
     }
 
     /**
-     * Copy the location of the connection point in body B (for a double-ended
-     * joint).
+     * Copy the location of the connection point in the body at the B end.
      *
      * @param storeResult storage for the result (modified if not null)
      * @return a location vector (in scaled local coordinates, either
      * storeResult or a new instance)
      */
     public Vector3f getPivotB(Vector3f storeResult) {
-        if (pivotB == null) {
-            throw new IllegalStateException("Joint is single-ended.");
-        }
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        if (nodeB == null) {
+            throw new IllegalArgumentException("No body at the B end.");
+        }
 
         result.set(pivotB);
         return result;
@@ -303,13 +339,16 @@ abstract public class PhysicsJoint
      * @return a location vector (in scaled local coordinates, either
      * storeResult or a new instance)
      */
-    public Vector3f getPivotWorld(Vector3f storeResult) {
-        if (pivotB != null) {
+    public Vector3f getPivotInWorld(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        if (nodeA == null) {
+            result.set(pivotA);
+        } else if (nodeB == null) {
+            result.set(pivotB);
+        } else {
             throw new IllegalStateException("Joint is double-ended.");
         }
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
-        result.set(pivotB);
         return result;
     }
 
@@ -413,7 +452,7 @@ abstract public class PhysicsJoint
         pivotB = (Vector3f) capsule.readSavable("pivotB", null);
         /*
          * Each subclass must create the btCollisionObject and
-         * initialize the breaking impulse threshold and the enabled flag.
+         * read the breaking impulse threshold and the enabled flag.
          */
     }
 
@@ -426,6 +465,7 @@ abstract public class PhysicsJoint
     @Override
     public void write(JmeExporter ex) throws IOException {
         OutputCapsule capsule = ex.getCapsule(this);
+
         capsule.write(nodeA, "nodeA", null);
         capsule.write(nodeB, "nodeB", null);
         capsule.write(pivotA, "pivotA", null);
@@ -454,16 +494,16 @@ abstract public class PhysicsJoint
     // *************************************************************************
     // private methods
 
-    native private void finalizeNative(long objectId);
+    native private void finalizeNative(long jointId);
 
-    native private float getAppliedImpulse(long objectId);
+    native private float getAppliedImpulse(long jointId);
 
-    native private float getBreakingImpulseThreshold(long objectId);
+    native private float getBreakingImpulseThreshold(long jointId);
 
-    native private boolean isEnabled(long objectId);
+    native private boolean isEnabled(long jointId);
 
-    native private void setBreakingImpulseThreshold(long objectId,
+    native private void setBreakingImpulseThreshold(long jointId,
             float desiredThreshold);
 
-    native private void setEnabled(long objectId, boolean enable);
+    native private void setEnabled(long jointId, boolean enable);
 }
