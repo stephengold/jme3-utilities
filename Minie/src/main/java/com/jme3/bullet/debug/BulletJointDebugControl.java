@@ -128,11 +128,15 @@ public class BulletJointDebugControl extends AbstractPhysicsDebugControl {
     protected void controlUpdate(float tpf) {
         if (joint.isEnabled()) {
             PhysicsRigidBody bodyA = joint.getBodyA();
-            bodyA.getPhysicsLocation(a.getTranslation());
-            bodyA.getPhysicsRotation(a.getRotation());
-            geomA.setLocalTransform(a);
-            geomA.setCullHint(Spatial.CullHint.Never);
-            arrowA.setArrowExtent(joint.getPivotA(null));
+            if (bodyA == null) {
+                geomA.setCullHint(Spatial.CullHint.Always);
+            } else {
+                bodyA.getPhysicsLocation(a.getTranslation());
+                bodyA.getPhysicsRotation(a.getRotation());
+                geomA.setLocalTransform(a);
+                geomA.setCullHint(Spatial.CullHint.Never);
+                arrowA.setArrowExtent(joint.getPivotB(null));
+            }
 
             PhysicsRigidBody bodyB = joint.getBodyB();
             if (bodyB == null) {
