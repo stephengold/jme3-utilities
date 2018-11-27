@@ -40,6 +40,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.clone.Cloner;
@@ -49,7 +50,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A joint based on Bullet's btGeneric6DofConstraint.
+ * A 6 degree-of-freedom joint based on Bullet's btGeneric6DofConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
  * This generic constraint can emulate a variety of standard constraints, by
@@ -81,7 +82,14 @@ public class SixDofJoint extends PhysicsJoint {
     // *************************************************************************
     // fields
 
-    private Matrix3f rotA, rotB;
+    /**
+     * Rotation matrix for frameA.
+     */
+    private Matrix3f rotA;
+    /**
+     * Rotation matrix for frameB.
+     */
+    private Matrix3f rotB;
     /**
      * true&rarr;limits give the allowable range of movement of frameB in frameA
      * space, false&rarr;limits give the allowable range of movement of frameA
@@ -123,59 +131,91 @@ public class SixDofJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a SixDofJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a single-ended SixDofJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
-     * @param rotA the local orientation of the connection to node A (not null,
-     * unaffected)
-     * @param rotB the local orientation of the connection to node B (not null,
-     * unaffected)
-     * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
-     * B
+     * @param nodeB the body to constrain (not null, alias created)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInWorld the pivot location in physics-space coordinates (not
+     * null, unaffected)
+     * @param rotInB the orientation of the joint in B's local coordinates (not
+     * null, unaffected)
+     * @param rotInWorld the orientation of the joint in physics-space
+     * coordinates (not null, unaffected)
+     * @param linearReferenceFrame which end to use as the linear reference
+     * frame (not null)
      */
-    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB,
-            boolean useLinearReferenceFrameA) {
-        super(nodeA, nodeB, pivotA, pivotB);
-        this.useLinearReferenceFrameA = useLinearReferenceFrameA;
-        this.rotA = rotA.clone();
-        this.rotB = rotB.clone();
+    public SixDofJoint(PhysicsRigidBody nodeB, Vector3f pivotInB,
+            Vector3f pivotInWorld, Matrix3f rotInB, Matrix3f rotInWorld,
+            JointEnd linearReferenceFrame) {
+        super(nodeB, JointEnd.B, pivotInB, pivotInWorld);
+
+        useLinearReferenceFrameA = (linearReferenceFrame == JointEnd.A);
+        rotA = rotInWorld.clone();
+        rotB = rotInB.clone();
         createJoint();
     }
 
     /**
-     * Instantiate a SixDofJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a double-ended SixDofJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param rotInA the orientation of the joint in A's local coordinates (not
+     * null, unaffected)
+     * @param rotInB the orientation of the joint in B's local coordinates (not
+     * null, unaffected)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
     public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB,
+            Vector3f pivotInA, Vector3f pivotInB, Matrix3f rotInA,
+            Matrix3f rotInB, boolean useLinearReferenceFrameA) {
+        super(nodeA, nodeB, pivotInA, pivotInB);
+
+        this.useLinearReferenceFrameA = useLinearReferenceFrameA;
+        rotA = rotInA.clone();
+        rotB = rotInB.clone();
+        createJoint();
+    }
+
+    /**
+     * Instantiate a double-ended SixDofJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
+     *
+     * @param nodeA the 1st body to constrain (not null, alias created)
+     * @param nodeB the 2nd body to constrain (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
+     * B
+     */
+    public SixDofJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotInA, Vector3f pivotInB,
             boolean useLinearReferenceFrameA) {
-        super(nodeA, nodeB, pivotA, pivotB);
+        super(nodeA, nodeB, pivotInA, pivotInB);
+
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
         rotA = new Matrix3f();
         rotB = new Matrix3f();
         createJoint();
     }
     // *************************************************************************
+    // TODO re-order methods
 
     private void gatherMotors() {
         assert rotationalMotors == null;
@@ -344,10 +384,15 @@ public class SixDofJoint extends PhysicsJoint {
 
         setFrames(objectId, frameA, frameB);
     }
+    // *************************************************************************
+    // new protected methods
 
-    native long createJoint(long objectIdA, long objectIdB, Vector3f pivotA,
-            Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
-            boolean useLinearReferenceFrameA);
+    native protected long createJoint(long bodyIdA, long bodyIdB,
+            Vector3f pivotInA, Matrix3f rotInA, Vector3f pivotInB,
+            Matrix3f rotInB, boolean useLinearReferenceFrameA);
+
+    native protected long createJoint1(long bodyIdB, Vector3f pivotInB,
+            Matrix3f rotInB, boolean useLinearReferenceFrameB);
     // *************************************************************************
     // PhysicsJoint methods
 
@@ -532,15 +577,52 @@ public class SixDofJoint extends PhysicsJoint {
     // *************************************************************************
     // private methods
 
+    /**
+     * Create the configured joint in Bullet.
+     */
     private void createJoint() {
         assert objectId == 0L;
         assert pivotA != null;
         assert rotA != null;
+        assert nodeB != null;
         assert pivotB != null;
         assert rotB != null;
 
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
-                rotA, pivotB, rotB, useLinearReferenceFrameA);
+        if (nodeA == null) {
+            /*
+             * Create a single-ended joint.  Bullet assumes single-ended
+             * btGeneric6DofConstraints are satisfied at creation, so we
+             * temporarily re-position the body to satisfy the constraint.
+             */
+            Transform jInWorld = new Transform();
+            jInWorld.getRotation().fromRotationMatrix(rotA);
+            jInWorld.setTranslation(pivotA);
+
+            Transform jInB = new Transform();
+            jInB.getRotation().fromRotationMatrix(rotB);
+            jInB.setTranslation(pivotB);
+
+            Transform bToWorld = jInB.invert().combineWithParent(jInWorld);
+
+            Vector3f saveLocation = nodeB.getPhysicsLocation(null);
+            Quaternion saveRotation = nodeB.getPhysicsRotation(null);
+
+            nodeB.setPhysicsLocation(bToWorld.getTranslation());
+            nodeB.setPhysicsRotation(bToWorld.getRotation());
+            boolean useLinearReferenceFrameB = !useLinearReferenceFrameA;
+            objectId = createJoint1(nodeB.getObjectId(), pivotB, rotB,
+                    useLinearReferenceFrameB);
+
+            nodeB.setPhysicsLocation(saveLocation);
+            nodeB.setPhysicsRotation(saveRotation);
+
+        } else {
+            /*
+             * Create a double-ended joint.
+             */
+            objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
+                    pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
+        }
         assert objectId != 0L;
         logger2.log(Level.FINE, "Created Joint {0}",
                 Long.toHexString(objectId));
@@ -548,22 +630,22 @@ public class SixDofJoint extends PhysicsJoint {
         gatherMotors();
     }
 
-    native private void getFrameOffsetA(long objectId, Transform frameA);
+    native private void getFrameOffsetA(long jointId, Transform frameInA);
 
-    native private void getFrameOffsetB(long objectId, Transform frameB);
+    native private void getFrameOffsetB(long jointId, Transform frameInB);
 
-    native private long getRotationalLimitMotor(long objectId, int index);
+    native private long getRotationalLimitMotor(long jointId, int index);
 
-    native private long getTranslationalLimitMotor(long objectId);
+    native private long getTranslationalLimitMotor(long jointId);
 
-    native private void setAngularLowerLimit(long objectId, Vector3f vector);
+    native private void setAngularLowerLimit(long jointId, Vector3f limits);
 
-    native private void setAngularUpperLimit(long objectId, Vector3f vector);
+    native private void setAngularUpperLimit(long jointId, Vector3f limits);
 
-    native private void setFrames(long objectId, Transform frameA,
-            Transform frameB);
+    native private void setFrames(long jointId, Transform frameInA,
+            Transform frameInB);
 
-    native private void setLinearLowerLimit(long objectId, Vector3f vector);
+    native private void setLinearLowerLimit(long jointId, Vector3f limits);
 
-    native private void setLinearUpperLimit(long objectId, Vector3f vector);
+    native private void setLinearUpperLimit(long jointId, Vector3f limits);
 }

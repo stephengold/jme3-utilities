@@ -63,14 +63,18 @@ public class TestCloneJoints {
         CollisionShape box = new BoxCollisionShape(new Vector3f(1f, 1f, 1f));
         PhysicsRigidBody bodyA = new PhysicsRigidBody(box, 1f);
         PhysicsRigidBody bodyB = new PhysicsRigidBody(box, 1f);
-
+        /*
+         * ConeJoint
+         */
         ConeJoint cone
                 = new ConeJoint(bodyA, bodyB, new Vector3f(), new Vector3f());
         set(cone, 0f);
         verify(cone, 0f);
         ConeJoint coneClone = (ConeJoint) Misc.deepCopy(cone);
         cloneTest(cone, coneClone);
-
+        /*
+         * HingeJoint: single- and double-ended
+         */
         HingeJoint hinge = new HingeJoint(bodyA, bodyB, new Vector3f(),
                 new Vector3f(), new Vector3f(1f, 0f, 0f),
                 new Vector3f(1f, 0f, 0f));
@@ -86,7 +90,9 @@ public class TestCloneJoints {
         verify(seHinge, 0f);
         HingeJoint seHingeClone = (HingeJoint) Misc.deepCopy(seHinge);
         cloneTest(seHinge, seHingeClone);
-
+        /*
+         * Point2PointJoint: single- and double-ended
+         */
         Point2PointJoint p2p = new Point2PointJoint(bodyA, bodyB,
                 new Vector3f(), new Vector3f());
         set(p2p, 0f);
@@ -100,7 +106,9 @@ public class TestCloneJoints {
         verify(sep2p, 0f);
         Point2PointJoint sep2pClone = (Point2PointJoint) Misc.deepCopy(sep2p);
         cloneTest(sep2p, sep2pClone);
-
+        /*
+         * SixDofJoint: single- and double-ended
+         */
         SixDofJoint six = new SixDofJoint(bodyA, bodyB, new Vector3f(),
                 new Vector3f(), new Matrix3f(), new Matrix3f(), false);
         set(six, 0f);
@@ -108,6 +116,15 @@ public class TestCloneJoints {
         SixDofJoint sixClone = (SixDofJoint) Misc.deepCopy(six);
         cloneTest(six, sixClone);
 
+        SixDofJoint seSix = new SixDofJoint(bodyA, new Vector3f(),
+                new Vector3f(), new Matrix3f(), new Matrix3f(), JointEnd.A);
+        set(seSix, 0f);
+        verify(seSix, 0f);
+        SixDofJoint seSixClone = (SixDofJoint) Misc.deepCopy(seSix);
+        cloneTest(seSix, seSixClone);
+        /*
+         * SixDofSpringJoint
+         */
         SixDofSpringJoint spring = new SixDofSpringJoint(bodyA, bodyB,
                 new Vector3f(), new Vector3f(), new Matrix3f(), new Matrix3f(),
                 false);
@@ -116,7 +133,9 @@ public class TestCloneJoints {
         SixDofSpringJoint springClone
                 = (SixDofSpringJoint) Misc.deepCopy(spring);
         cloneTest(spring, springClone);
-
+        /*
+         * SliderJoint
+         */
         SliderJoint slide = new SliderJoint(bodyA, bodyB,
                 new Vector3f(), new Vector3f(), new Matrix3f(), new Matrix3f(),
                 false);
@@ -133,13 +152,19 @@ public class TestCloneJoints {
 
         PhysicsRigidBody a = joint.getBodyA();
         PhysicsRigidBody aClone = jointClone.getBodyA();
-        assert a.getObjectId() != aClone.getObjectId();
+        if (a == null) {
+            assert aClone == null;
+        } else {
+            assert aClone != null;
+            assert a.getObjectId() != aClone.getObjectId();
+        }
 
         PhysicsRigidBody b = joint.getBodyB();
         PhysicsRigidBody bClone = jointClone.getBodyB();
         if (b == null) {
             assert bClone == null;
         } else {
+            assert bClone != null;
             assert b.getObjectId() != bClone.getObjectId();
         }
 
