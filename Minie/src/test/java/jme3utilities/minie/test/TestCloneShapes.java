@@ -26,8 +26,10 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.DesktopAssetManager;
 import com.jme3.asset.ModelKey;
+import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -42,38 +44,44 @@ import com.jme3.bullet.collision.shapes.MultiSphere;
 import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.collision.shapes.SimplexCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.export.binary.BinaryLoader;
+import com.jme3.material.plugins.J3MLoader;
 import com.jme3.math.Plane;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.system.NativeLibraryLoader;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import com.jme3.texture.plugins.AWTLoader;
 import java.util.ArrayList;
 import java.util.List;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
+import org.junit.Test;
 
 /**
  * Deep clone collision shapes of all types.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestCloneShapes extends SimpleApplication {
+public class TestCloneShapes {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
-        TestCloneShapes app = new TestCloneShapes();
-        app.start();
-    }
-    // *************************************************************************
-    // SimpleApplication methods
+    @Test
+    public void testCloneShapes() {
+        NativeLibraryLoader.loadNativeLibrary("bulletjme", true);
 
-    @Override
-    public void simpleInitApp() {
+        AssetManager assetManager = new DesktopAssetManager();
+        assetManager.registerLoader(AWTLoader.class, "jpg", "png");
+        assetManager.registerLoader(BinaryLoader.class, "j3o");
+        assetManager.registerLoader(J3MLoader.class, "j3m", "j3md");
+        assetManager.registerLocator(null, ClasspathLocator.class);
+
         CollisionShape box = new BoxCollisionShape(new Vector3f(1f, 1f, 1f));
         CollisionShape boxClone = (CollisionShape) Misc.deepCopy(box);
         assert boxClone.getObjectId() != box.getObjectId();
@@ -191,7 +199,5 @@ public class TestCloneShapes extends SimpleApplication {
         assert sphereClone.getScale(null).x == 1f;
         sphere.setScale(new Vector3f(2f, 2f, 2f));
         assert sphereClone.getScale(null).x == 1f;
-
-        stop();
     }
 }

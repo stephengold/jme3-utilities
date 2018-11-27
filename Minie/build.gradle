@@ -19,6 +19,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
+    testRuntime 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 }
 
 compileJava.options.headerOutputDirectory = new File('build/cpp')
