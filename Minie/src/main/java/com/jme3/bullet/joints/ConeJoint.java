@@ -44,14 +44,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A joint based on Bullet's btConeTwistConstraint.
+ * A 3 degree-of-freedom joint based on Bullet's btConeTwistConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
  * To create ragdolls, the cone twist constraint is very useful for limbs like
  * the upper arm. It is a special point to point constraint that adds cone and
  * twist axis limits. The x-axis serves as twist axis.
- * <p>
- * TODO add single-ended versions
  *
  * @author normenhansen
  */
@@ -64,15 +62,20 @@ public class ConeJoint extends PhysicsJoint {
      */
     final public static Logger logger2
             = Logger.getLogger(ConeJoint.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
     /**
-     * local orientation of the connection to node A
+     * copy of frame orientation in A's local coordinates (rotation matrix)
      */
     private Matrix3f rotA;
     /**
-     * local orientation of the connection to node B
+     * copy of frame orientation in B's local coordinates for a double-ended
+     * joint, or in physics space for a single-ended joint (rotation matrix)
      */
     private Matrix3f rotB;
     /**
@@ -88,7 +91,7 @@ public class ConeJoint extends PhysicsJoint {
      */
     private float twistSpan = 1e30f;
     /**
-     * true if angular only, otherwise false
+     * copy of the angular-only flag (default=false)
      */
     private boolean angularOnly = false;
     // *************************************************************************
@@ -102,46 +105,70 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a ConeJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a single-ended ConeJoint with its pivot at the physics-space
+     * origin.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the body
+     * and the body must be dynamic.
      *
-     * @param nodeA the 1st body connected by the joint (not null, unaffected)
-     * @param nodeB the 2nd body connected by the joint (not null, unaffected)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
+     * @param nodeA the body to constrain (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param rotInA the frame orientation in A's local coordinates (rotation
+     * matrix, unaffected)
      */
-    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB) {
-        super(nodeA, nodeB, pivotA, pivotB);
-        this.rotA = new Matrix3f();
-        this.rotB = new Matrix3f();
+    public ConeJoint(PhysicsRigidBody nodeA, Vector3f pivotInA,
+            Matrix3f rotInA) {
+        super(nodeA, JointEnd.A, pivotInA, translateIdentity);
+        rotA = rotInA.clone();
+        rotB = rotA;
         createJoint();
     }
 
     /**
-     * Instantiate a ConeJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a double-ended ConeJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
-     * @param rotA the local orientation of the connection to node A (not null,
-     * unaffected)
-     * @param rotB the local orientation of the connection to node B (not null,
-     * unaffected)
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB) {
-        super(nodeA, nodeB, pivotA, pivotB);
-        this.rotA = rotA.clone();
-        this.rotB = rotB.clone();
+            Vector3f pivotInA, Vector3f pivotInB) {
+        super(nodeA, nodeB, pivotInA, pivotInB);
+        rotA = new Matrix3f();
+        rotB = new Matrix3f();
+        createJoint();
+    }
+
+    /**
+     * Instantiate a double-ended ConeJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
+     *
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param rotInA the frame orientation in A's local coordinates (rotation
+     * matrix, unaffected)
+     * @param rotInB the frame orientation in B's local coordinates (rotation
+     * matrix, unaffected)
+     */
+    public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotInA, Vector3f pivotInB, Matrix3f rotInA,
+            Matrix3f rotInB) {
+        super(nodeA, nodeB, pivotInA, pivotInB);
+        rotA = rotInA.clone();
+        rotB = rotInB.clone();
         createJoint();
     }
     // *************************************************************************
@@ -175,7 +202,7 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
-     * Test whether this joint is angular only.
+     * Test whether this joint is angular-only.
      *
      * @return true if angular only, otherwise false
      */
@@ -184,7 +211,7 @@ public class ConeJoint extends PhysicsJoint {
     }
 
     /**
-     * Alter whether this joint is angular only.
+     * Alter whether this joint is angular-only.
      *
      * @param value the desired setting (default=false)
      */
@@ -307,9 +334,27 @@ public class ConeJoint extends PhysicsJoint {
      */
     private void createJoint() {
         assert objectId == 0L;
+        assert nodeA != null;
+        assert pivotA != null;
+        assert rotA != null;
 
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
-                pivotA, rotA, pivotB, rotB);
+        if (nodeB == null) {
+            /*
+             * Create a single-ended joint.
+             * Bullet assumes single-ended btConeTwistConstraints have
+             * rotInWorld=rotInA and pivotInWorld=0,0,0.
+             */
+            objectId = createJoint1(nodeA.getObjectId(), pivotA, rotA);
+
+        } else {
+            assert pivotB != null;
+            assert rotB != null;
+            /*
+             * Create a double-ended joint.
+             */
+            objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
+                    pivotA, rotA, pivotB, rotB);
+        }
         assert objectId != 0L;
         logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
 
@@ -317,11 +362,15 @@ public class ConeJoint extends PhysicsJoint {
         setAngularOnly(angularOnly);
     }
 
-    native private long createJoint(long objectIdA, long objectIdB,
-            Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB);
+    native private long createJoint(long bodyIdA, long bodyIdB,
+            Vector3f pivotInA, Matrix3f rotInA, Vector3f pivotInB,
+            Matrix3f rotInB);
 
-    native private void setAngularOnly(long objectId, boolean value);
+    native private long createJoint1(long bodyIdA, Vector3f pivotInA,
+            Matrix3f rotInA);
 
-    native private void setLimit(long objectId, float swingSpan1,
+    native private void setAngularOnly(long jointId, boolean angularOnly);
+
+    native private void setLimit(long jointId, float swingSpan1,
             float swingSpan2, float twistSpan);
 }
