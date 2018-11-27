@@ -26,33 +26,28 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.joints.Point2PointJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
+import com.jme3.system.NativeLibraryLoader;
+import org.junit.Test;
 
 /**
  * Test case for JME issue #918: Point2PointJoint.getImpulseClamp() and
- * .getTau() return the damping value instead. The bug existed in Native Bullet
- * only.
- * <p>
- * If successful, no exception will be thrown.
+ * .getTau() return the damping value instead.
+ *
+ * @author Stephen Gold sgold@sonic.net
  */
-public class TestIssue918 extends SimpleApplication {
+public class TestIssue918 {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
-        TestIssue918 app = new TestIssue918();
-        app.start();
-    }
-    // *************************************************************************
-    // SimpleApplication methods
+    @Test
+    public void testIssue918() {
+        NativeLibraryLoader.loadNativeLibrary("bulletjme", true);
 
-    @Override
-    public void simpleInitApp() {
         CollisionShape capsule = new SphereCollisionShape(1f);
         PhysicsRigidBody body1 = new PhysicsRigidBody(capsule, 1f);
         PhysicsRigidBody body2 = new PhysicsRigidBody(capsule, 1f);
@@ -70,7 +65,5 @@ public class TestIssue918 extends SimpleApplication {
         if (joint.getTau() != 99f) {
             throw new RuntimeException();
         }
-
-        stop();
     }
 }
