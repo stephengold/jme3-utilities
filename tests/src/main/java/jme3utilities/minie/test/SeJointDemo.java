@@ -37,6 +37,7 @@ import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.bullet.joints.JointEnd;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.Point2PointJoint;
+import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -117,6 +118,7 @@ public class SeJointDemo extends ActionApplication {
     final private Material materials[] = new Material[maxGroups];
 
     final private Matrix3f rotInSeed = new Matrix3f();
+    final private Matrix3f rotInWorld = new Matrix3f();
     /**
      * mesh for visualizing seeds
      */
@@ -195,7 +197,7 @@ public class SeJointDemo extends ActionApplication {
         seedMesh = new Sphere(16, 32, seedRadius);
         seedShape = new MultiSphere(seedRadius);
 
-        seedNode.setCullHint(Spatial.CullHint.Never);
+        seedNode.setCullHint(Spatial.CullHint.Never);// meshes initially visible
         rootNode.attachChild(seedNode);
     }
 
@@ -212,6 +214,7 @@ public class SeJointDemo extends ActionApplication {
         dim.bind("signal orbitRight", KeyInput.KEY_RIGHT);
         dim.bind("signal shower", KeyInput.KEY_I);
         dim.bind("signal shower", KeyInput.KEY_INSERT);
+        dim.bind("test 6dof", KeyInput.KEY_F4);
         dim.bind("test cone", KeyInput.KEY_F3);
         dim.bind("test hinge", KeyInput.KEY_F2);
         dim.bind("test p2p", KeyInput.KEY_F1);
@@ -235,6 +238,10 @@ public class SeJointDemo extends ActionApplication {
                     return;
                 case "dump scene":
                     dumpScene();
+                    return;
+                case "test 6dof":
+                    cleanupAfterTest();
+                    testName = "6dof";
                     return;
                 case "test cone":
                     cleanupAfterTest();
@@ -327,8 +334,11 @@ public class SeJointDemo extends ActionApplication {
          * and a single spherical collision shape.
          * Non-uniform scaling gives seeds their shape.
          */
-        int numGroups = maxGroups;
+        int numGroups = maxGroups; // for most tests
         switch (testName) {
+            case "6dof":
+                seedScale.set(3f, 1f, 1f);
+                break;
             case "cone":
                 numGroups = 1;
                 seedScale.set(3f, 1f, 1f);
@@ -373,6 +383,19 @@ public class SeJointDemo extends ActionApplication {
 
         PhysicsJoint joint;
         switch (testName) {
+            case "6dof":
+                gravity.zero();
+                pivotInSeed.set(1f, 0f, 0f);
+                rotInSeed.loadIdentity();
+                rotInWorld.fromAngleAxis(groupIndex * FastMath.HALF_PI, Vector3f.UNIT_Z);
+                JointEnd referenceFrame = JointEnd.B;
+                SixDofJoint sixDofJoint = new SixDofJoint(rbc, pivotInSeed,
+                        pivotInWorld, rotInSeed, rotInWorld, referenceFrame);
+                sixDofJoint.setAngularLowerLimit(new Vector3f(0f, -1f, -1f));
+                sixDofJoint.setAngularUpperLimit(new Vector3f(0f, 1f, 1f));
+                joint = sixDofJoint;
+                break;
+
             case "cone":
                 gravity.zero();
                 pivotInSeed.set(2f, 0f, 0f);
@@ -387,7 +410,7 @@ public class SeJointDemo extends ActionApplication {
                 axisInSeed.set(1f, 1f, 0f).normalizeLocal();
                 gravity.set(0f, -1f, 0f);
                 pivotInSeed.set(0f, 1f, 0f);
-                JointEnd referenceFrame = JointEnd.A;
+                referenceFrame = JointEnd.A;
                 joint = new HingeJoint(rbc, pivotInSeed, pivotInWorld,
                         axisInSeed, axisInWorld, referenceFrame);
                 break;
@@ -460,10 +483,10 @@ public class SeJointDemo extends ActionApplication {
         /*
          * The 4 pivot locations are arranged in a square in the X-Y plane.
          */
-        pivotLocations[0] = new Vector3f(1.5f, 0f, 0f);
-        pivotLocations[1] = new Vector3f(-1.5f, 0f, 0f);
-        pivotLocations[2] = new Vector3f(0f, 1.5f, 0f);
-        pivotLocations[3] = new Vector3f(0f, -1.5f, 0f);
+        pivotLocations[0] = new Vector3f(-1.5f, 0f, 0f);
+        pivotLocations[1] = new Vector3f(0f, -1.5f, 0f);
+        pivotLocations[2] = new Vector3f(1.5f, 0f, 0f);
+        pivotLocations[3] = new Vector3f(0f, 1.5f, 0f);
     }
 
     /**
