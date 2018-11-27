@@ -80,27 +80,53 @@ public class SixDofSpringJoint extends SixDofJoint {
     }
 
     /**
-     * Instantiate a double-ended SixDofSpringJoint. To be effective, the joint
-     * must be added to the physics space of the 2 bodies. Also, the bodies must
-     * be dynamic and distinct.
+     * Instantiate a single-ended SixDofSpringJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
      *
-     * @param nodeA the 1st body to constrain (not null, alias created)
-     * @param nodeB the 2nd body to constrain (not null, alias created)
-     * @param pivotA the pivot location in A's scaled local coordinates (not
+     * @param nodeB the body to constrain (not null, alias created)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
      * null, unaffected)
-     * @param pivotB the pivot location in B's scaled local coordinates (not
+     * @param pivotInWorld the pivot location in physics-space coordinates (not
      * null, unaffected)
-     * @param rotA the local orientation of the connection to node A (not null,
-     * unaffected)
-     * @param rotB the local orientation of the connection to node B (not null,
-     * unaffected)
+     * @param rotInB the orientation of the joint in B's local coordinates (not
+     * null, unaffected)
+     * @param rotInWorld the orientation of the joint in physics-space
+     * coordinates (not null, unaffected)
+     * @param linearReferenceFrame which end to use as the linear reference
+     * frame (not null)
+     */
+    public SixDofSpringJoint(PhysicsRigidBody nodeB, Vector3f pivotInB,
+            Vector3f pivotInWorld, Matrix3f rotInB, Matrix3f rotInWorld,
+            JointEnd linearReferenceFrame) {
+        super(nodeB, pivotInB, pivotInWorld, rotInB, rotInWorld,
+                linearReferenceFrame);
+    }
+
+    /**
+     * Instantiate a double-ended SixDofSpringJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
+     *
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param rotInA the orientation of the joint in A's local coordinates (not
+     * null, unaffected)
+     * @param rotInB the orientation of the joint in B's local coordinates (not
+     * null, unaffected)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
     public SixDofSpringJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB,
+            Vector3f pivotInA, Vector3f pivotInB, Matrix3f rotInA, Matrix3f rotInB,
             boolean useLinearReferenceFrameA) {
-        super(nodeA, nodeB, pivotA, pivotB, rotA, rotB,
+        super(nodeA, nodeB, pivotInA, pivotInB, rotInA, rotInB,
                 useLinearReferenceFrameA);
     }
     // *************************************************************************
@@ -162,19 +188,23 @@ public class SixDofSpringJoint extends SixDofJoint {
     // SixDofJoint methods
 
     @Override
-    native protected long createJoint(long objectIdA, long objectIdB,
+    native protected long createJoint(long bodyIdA, long bodyIdB,
             Vector3f pivotInA, Matrix3f rotInA, Vector3f pivotInB,
             Matrix3f rotInB, boolean useLinearReferenceFrameA);
+
+    @Override
+    native protected long createJoint1(long bodyIdB, Vector3f pivotInB,
+            Matrix3f rotInB, boolean useLinearReferenceFrameB);
     // *************************************************************************
     // private methods
 
-    native private void enableSpring(long objectId, int index, boolean onOff);
+    native private void enableSpring(long jointId, int index, boolean onOff);
 
-    native private void setDamping(long objectId, int index, float damping);
+    native private void setDamping(long jointId, int index, float damping);
 
-    native private void setEquilibriumPoint(long objectId);
+    native private void setEquilibriumPoint(long jointId);
 
-    native private void setEquilibriumPoint(long objectId, int index);
+    native private void setEquilibriumPoint(long jointId, int index);
 
-    native private void setStiffness(long objectId, int index, float stiffness);
+    native private void setStiffness(long jointId, int index, float stiffness);
 }

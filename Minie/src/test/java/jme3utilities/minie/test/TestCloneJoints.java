@@ -123,7 +123,7 @@ public class TestCloneJoints {
         SixDofJoint seSixClone = (SixDofJoint) Misc.deepCopy(seSix);
         cloneTest(seSix, seSixClone);
         /*
-         * SixDofSpringJoint
+         * SixDofSpringJoint: single- and double-ended
          */
         SixDofSpringJoint spring = new SixDofSpringJoint(bodyA, bodyB,
                 new Vector3f(), new Vector3f(), new Matrix3f(), new Matrix3f(),
@@ -133,6 +133,15 @@ public class TestCloneJoints {
         SixDofSpringJoint springClone
                 = (SixDofSpringJoint) Misc.deepCopy(spring);
         cloneTest(spring, springClone);
+
+        SixDofSpringJoint seSpring = new SixDofSpringJoint(bodyA, bodyB,
+                new Vector3f(), new Vector3f(), new Matrix3f(), new Matrix3f(),
+                false);
+        set(seSpring, 0f);
+        verify(seSpring, 0f);
+        SixDofSpringJoint seSpringClone
+                = (SixDofSpringJoint) Misc.deepCopy(seSpring);
+        cloneTest(seSpring, seSpringClone);
         /*
          * SliderJoint
          */
