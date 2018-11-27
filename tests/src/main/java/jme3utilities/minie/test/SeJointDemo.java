@@ -26,132 +26,135 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.animation.AnimChannel;
-import com.jme3.animation.AnimControl;
-import com.jme3.animation.SkeletonControl;
-import com.jme3.asset.AssetNotFoundException;
-import com.jme3.asset.ModelKey;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.animation.BoneLink;
-import com.jme3.bullet.animation.DynamicAnimControl;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.bullet.collision.shapes.MultiSphere;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.binary.BinaryExporter;
-import com.jme3.export.xml.XMLExporter;
+import com.jme3.bullet.joints.ConeJoint;
+import com.jme3.bullet.joints.HingeJoint;
+import com.jme3.bullet.joints.JointEnd;
+import com.jme3.bullet.joints.PhysicsJoint;
+import com.jme3.bullet.joints.Point2PointJoint;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.system.AppSettings;
-import java.io.File;
-import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyAsset;
-import jme3utilities.MySpatial;
 import jme3utilities.MyString;
-import jme3utilities.NameGenerator;
-import jme3utilities.debug.SkeletonVisualizer;
-import jme3utilities.math.MyVector3f;
+import jme3utilities.debug.AxesVisualizer;
+import jme3utilities.math.MyMath;
 import jme3utilities.math.noise.Generator;
 import jme3utilities.minie.PhysicsDumper;
-import jme3utilities.minie.test.tunings.ElephantControl;
-import jme3utilities.minie.test.tunings.JaimeControl;
-import jme3utilities.minie.test.tunings.MhGameControl;
-import jme3utilities.minie.test.tunings.NinjaControl;
-import jme3utilities.minie.test.tunings.OtoControl;
-import jme3utilities.minie.test.tunings.PuppetControl;
-import jme3utilities.minie.test.tunings.SinbadControl;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.Signals;
 
 /**
- * Test scaling and load/save of a DynamicAnimControl.
+ * Demonstrate single-ended hinge joints.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestDac extends ActionApplication {
+public class SeJointDemo extends ActionApplication {
     // *************************************************************************
     // constants and loggers
 
     /**
+     * seed radius (in mesh units)
+     */
+    final private static float seedRadius = 0.12f;
+    /**
+     * upper limit on the number of seed groups
+     */
+    final private static int maxGroups = 4;
+    /**
+     * upper limit on the number of seeds
+     */
+    final private static int maxSeeds = 300;
+    /**
      * message logger for this class
      */
     final public static Logger logger
-            = Logger.getLogger(TestDac.class.getName());
-    /**
-     * asset path for saving j3O
-     */
-    final private static String saveAssetPath = "TestDac.j3o";
-    /**
-     * 1st asset path for saving XML
-     */
-    final private static String saveAssetPath1 = "TestDac_1.xml";
-    /**
-     * 2nd asset path for saving XML
-     */
-    final private static String saveAssetPath2 = "TestDac_2.xml";
+            = Logger.getLogger(SeJointDemo.class.getName());
     /**
      * application name for its window's title bar
      */
-    final private static String applicationName = "TestDac";
+    final private static String applicationName = "SeJointDemo";
+    /**
+     * joint axes in physics-space coordinates (unit vector)
+     */
+    final private static Vector3f axisInWorld = Vector3f.UNIT_Z;
     // *************************************************************************
     // fields
 
-    private AnimChannel animChannel = null;
-    private BoneLink leftClavicle;
-    private BoneLink leftFemur;
-    private BoneLink leftUlna;
-    private BoneLink rightClavicle;
-    private BoneLink rightFemur;
-    private BoneLink upperBody;
     private BulletAppState bulletAppState;
-    private CollisionShape ballShape;
-    private DynamicAnimControl dac;
-    final private float ballRadius = 0.2f; // mesh units
-    final private Generator random = new Generator();
-    private Material ballMaterial;
-    final private Mesh ballMesh = new Sphere(16, 32, ballRadius);
-    final private NameGenerator nameGenerator = new NameGenerator();
-    private Node cgModel;
+    private CollisionShape seedShape;
+    /**
+     * random number generator for this application
+     */
+    final private Generator rng = new Generator();
+    /**
+     * material for each type of seed
+     */
+    final private Material materials[] = new Material[maxGroups];
+
+    final private Matrix3f rotInSeed = new Matrix3f();
+    /**
+     * mesh for visualizing seeds
+     */
+    private Mesh seedMesh;
+    /**
+     * mesh for visualizing seeds
+     */
+    final private Node seedNode = new Node("seed node");
     private PhysicsSpace physicsSpace;
-    private SkeletonControl sc;
-    private SkeletonVisualizer sv;
-    private String animationName = null;
-    private String leftClavicleName;
-    private String leftFemurName;
-    private String leftUlnaName;
-    private String rightClavicleName;
-    private String rightFemurName;
-    private String upperBodyName;
-    private Transform resetTransform;
+    /**
+     * name of the test that's currently running
+     */
+    private String testName = "p2p";
+    /**
+     * joint axis in each seed's local coordinates (unit vector)
+     */
+    final private Vector3f axisInSeed = new Vector3f();
+    /**
+     * gravity vector (in physics-space coordinates)
+     */
+    final private Vector3f gravity = new Vector3f();
+    /**
+     * offset of pivot relative to each seed (in scaled shape coordinates)
+     */
+    final private Vector3f pivotInSeed = new Vector3f();
+    /**
+     * pivot location for each group (in physics-space coordinates)
+     */
+    final private Vector3f pivotLocations[] = new Vector3f[maxGroups];
+    /**
+     * scale factors that determine the seed's shape
+     */
+    final private Vector3f seedScale = new Vector3f();
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Main entry point.
+     * Main entry point for the application.
      *
      * @param arguments array of command-line arguments (not null)
      */
@@ -163,7 +166,7 @@ public class TestDac extends ActionApplication {
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
-        TestDac application = new TestDac();
+        SeJointDemo application = new SeJointDemo();
         /*
          * Customize the window's title bar.
          */
@@ -182,27 +185,18 @@ public class TestDac extends ActionApplication {
      */
     @Override
     public void actionInitializeApplication() {
-        flyCam.setDragToRotate(true);
-        flyCam.setMoveSpeed(4f);
-        cam.setLocation(new Vector3f(0f, 1.2f, 5f));
-
-        ColorRGBA ballColor = new ColorRGBA(0.4f, 0f, 0f, 1f);
-        ballMaterial = MyAsset.createShinyMaterial(assetManager, ballColor);
-        ballMaterial.setFloat("Shininess", 5f);
-        ballShape = new SphereCollisionShape(ballRadius);
-
+        configureCamera();
+        configurePhysics();
+        configureGroups();
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
+        addAxes();
 
-        bulletAppState = new BulletAppState();
-        stateManager.attach(bulletAppState);
-        CollisionShape.setDefaultMargin(0.005f); // 5 mm
+        seedMesh = new Sphere(16, 32, seedRadius);
+        seedShape = new MultiSphere(seedRadius);
 
-        physicsSpace = bulletAppState.getPhysicsSpace();
-        physicsSpace.setSolverNumIterations(30);
-
-        addBox();
-        addModel("Sinbad");
+        seedNode.setCullHint(Spatial.CullHint.Never);
+        rootNode.attachChild(seedNode);
     }
 
     /**
@@ -212,43 +206,17 @@ public class TestDac extends ActionApplication {
     public void moreDefaultBindings() {
         InputMode dim = getDefaultInputMode();
 
-        dim.bind("amputate left elbow", KeyInput.KEY_DELETE);
-        dim.bind("blend all to kinematic", KeyInput.KEY_K);
-        dim.bind("drop attachments", KeyInput.KEY_PGDN);
         dim.bind("dump physicsSpace", KeyInput.KEY_O);
         dim.bind("dump scene", KeyInput.KEY_P);
-        dim.bind("freeze all", KeyInput.KEY_F);
-        dim.bind("freeze upper body", KeyInput.KEY_U);
-        dim.bind("go bind pose", KeyInput.KEY_B);
-        dim.bind("go floating", KeyInput.KEY_0);
-        dim.bind("go limp", KeyInput.KEY_SPACE);
-        dim.bind("limp left arm", KeyInput.KEY_LBRACKET); // TODO drop
-        dim.bind("limp right arm", KeyInput.KEY_RBRACKET);
-        dim.bind("load", KeyInput.KEY_L);
-        dim.bind("load elephant", KeyInput.KEY_F3);
-        dim.bind("load jaime", KeyInput.KEY_F2);
-        dim.bind("load ninja", KeyInput.KEY_F7);
-        dim.bind("load mhgame", KeyInput.KEY_F9);
-        dim.bind("load oto", KeyInput.KEY_F6);
-        dim.bind("load puppet", KeyInput.KEY_F8);
-        dim.bind("load sinbad", KeyInput.KEY_F1);
-        dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
-        dim.bind("raise leftFoot", KeyInput.KEY_LCONTROL);
-        dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
-        dim.bind("raise rightFoot", KeyInput.KEY_RCONTROL);
-        dim.bind("raise rightHand", KeyInput.KEY_RSHIFT);
-        dim.bind("reset model transform", KeyInput.KEY_DOWN);
-        dim.bind("save", KeyInput.KEY_SEMICOLON);
-        dim.bind("set height 1", KeyInput.KEY_1);
-        dim.bind("set height 2", KeyInput.KEY_2);
-        dim.bind("set height 3", KeyInput.KEY_3);
-        dim.bind("signal rotateLeft", KeyInput.KEY_LEFT);
-        dim.bind("signal rotateRight", KeyInput.KEY_RIGHT);
+        dim.bind("signal orbitLeft", KeyInput.KEY_LEFT);
+        dim.bind("signal orbitRight", KeyInput.KEY_RIGHT);
+        dim.bind("signal shower", KeyInput.KEY_I);
         dim.bind("signal shower", KeyInput.KEY_INSERT);
-        dim.bind("toggle meshes", KeyInput.KEY_M);
+        dim.bind("test cone", KeyInput.KEY_F3);
+        dim.bind("test hinge", KeyInput.KEY_F2);
+        dim.bind("test p2p", KeyInput.KEY_F1);
         dim.bind("toggle pause", KeyInput.KEY_PERIOD);
-        dim.bind("toggle physics debug", KeyInput.KEY_SLASH);
-        dim.bind("toggle skeleton", KeyInput.KEY_V);
+        dim.bind("toggle view", KeyInput.KEY_SLASH);
     }
 
     /**
@@ -262,115 +230,30 @@ public class TestDac extends ActionApplication {
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
             switch (actionString) {
-                case "amputate left elbow":
-                    dac.amputateSubtree(leftUlna, 2f);
-                    return;
-                case "blend all to kinematic":
-                    dac.blendToKinematicMode(2f, null);
-                    return;
-                case "drop attachments":
-                    dac.dropAttachments();
-                    return;
                 case "dump physicsSpace":
                     dumpPhysicsSpace();
                     return;
                 case "dump scene":
                     dumpScene();
                     return;
-                case "freeze all":
-                    dac.freezeSubtree(dac.getTorsoLink(), false);
+                case "test cone":
+                    cleanupAfterTest();
+                    testName = "cone";
                     return;
-                case "freeze upper body":
-                    dac.freezeSubtree(upperBody, false);
+                case "test hinge":
+                    cleanupAfterTest();
+                    testName = "hinge";
                     return;
-                case "go bind pose":
-                    dac.bindSubtree(dac.getTorsoLink(), 2f);
-                    return;
-                case "go floating":
-                    dac.setDynamicSubtree(dac.getTorsoLink(), Vector3f.ZERO,
-                            false);
-                    return;
-                case "go limp":
-                    dac.setRagdollMode();
-                    return;
-                case "limp left arm":
-                    dac.setDynamicSubtree(leftClavicle,
-                            new Vector3f(0f, -30f, 0f), false);
-                    return;
-                case "limp right arm":
-                    dac.setDynamicSubtree(rightClavicle,
-                            new Vector3f(0f, -30f, 0f), false);
-                    return;
-                case "load":
-                    load();
-                    return;
-                case "load elephant":
-                    addModel("Elephant");
-                    return;
-                case "load jaime":
-                    addModel("Jaime");
-                    return;
-                case "load mhgame":
-                    addModel("MhGame");
-                    return;
-                case "load ninja":
-                    addModel("Ninja");
-                    return;
-                case "load oto":
-                    addModel("Oto");
-                    return;
-                case "load puppet":
-                    addModel("Puppet");
-                    return;
-                case "load sinbad":
-                    addModel("Sinbad");
-                    return;
-                case "load sinbadWithSwords":
-                    addModel("SinbadWithSwords");
-                    return;
-                case "raise leftFoot":
-                    dac.setDynamicSubtree(leftFemur,
-                            new Vector3f(0f, 20f, 0f), false);
-                    return;
-                case "raise leftHand":
-                    dac.setDynamicSubtree(leftClavicle,
-                            new Vector3f(0f, 20f, 0f), false);
-                    return;
-                case "raise rightFoot":
-                    dac.setDynamicSubtree(rightFemur,
-                            new Vector3f(0f, 20f, 0f), false);
-                    return;
-                case "raise rightHand":
-                    dac.setDynamicSubtree(rightClavicle,
-                            new Vector3f(0f, 20f, 0f), false);
-                    return;
-                case "reset model transform":
-                    cgModel.setLocalTransform(resetTransform);
-                    return;
-                case "save":
-                    save(cgModel, saveAssetPath);
-                    save(cgModel, saveAssetPath1);
-                    return;
-                case "set height 1":
-                    setHeight(1f);
-                    return;
-                case "set height 2":
-                    setHeight(2f);
-                    return;
-                case "set height 3":
-                    setHeight(3f);
-                    return;
-                case "toggle meshes":
-                    toggleMeshes();
+                case "test p2p":
+                    cleanupAfterTest();
+                    testName = "p2p";
                     return;
                 case "toggle pause":
                     togglePause();
                     return;
-                case "toggle physics debug":
+                case "toggle view":
+                    toggleMeshes();
                     togglePhysicsDebug();
-                    return;
-                case "toggle skeleton":
-                    toggleSkeleton();
                     return;
             }
         }
@@ -387,185 +270,214 @@ public class TestDac extends ActionApplication {
         super.simpleUpdate(tpf);
 
         Signals signals = getSignals();
-        if (signals.test("rotateLeft")) {
-            Quaternion orientation = MySpatial.worldOrientation(cgModel, null);
-            Quaternion rotate = new Quaternion().fromAngles(0f, -tpf, 0f);
-            rotate.mult(orientation, orientation);
-            MySpatial.setWorldOrientation(cgModel, orientation);
-        }
-        if (signals.test("rotateRight")) {
-            Quaternion orientation = MySpatial.worldOrientation(cgModel, null);
-            Quaternion rotate = new Quaternion().fromAngles(0f, tpf, 0f);
-            rotate.mult(orientation, orientation);
-            MySpatial.setWorldOrientation(cgModel, orientation);
-        }
         if (signals.test("shower")) {
-            addBall();
+            addSeed();
+        }
+
+        float orbitAngle = 0f;
+        if (signals.test("orbitLeft")) {
+            orbitAngle += tpf;
+        }
+        if (signals.test("orbitRight")) {
+            orbitAngle -= tpf;
+        }
+        if (orbitAngle != 0f) {
+            orbitCamera(orbitAngle);
+
         }
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Add a falling ball to the scene.
+     * Add a visualizer for the axes of the world coordinate system.
      */
-    private void addBall() {
-        String name = nameGenerator.unique("ball");
-        Geometry geometry = new Geometry(name, ballMesh);
-        rootNode.attachChild(geometry);
+    private void addAxes() {
+        float axisLength = 0.8f;
+        AxesVisualizer axes = new AxesVisualizer(assetManager, axisLength);
+        axes.setLineWidth(0f);
 
-        geometry.setMaterial(ballMaterial);
-        geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        Vector3f location = random.nextVector3f();
-        location.multLocal(0.5f, 1f, 0.5f);
-        location.y += 4f;
-        geometry.move(location);
-
-        Vector3f worldScale = geometry.getWorldScale();
-        ballShape.setScale(worldScale);
-        float mass = 0.1f;
-        RigidBodyControl rbc = new RigidBodyControl(ballShape, mass);
-        rbc.setApplyScale(true);
-        rbc.setLinearVelocity(new Vector3f(0f, -1f, 0f));
-        rbc.setKinematic(false);
-
-        rbc.setPhysicsSpace(physicsSpace);
-        rbc.setGravity(new Vector3f(0f, -1f, 0f));
-
-        geometry.addControl(rbc);
+        rootNode.addControl(axes);
+        axes.setEnabled(true);
     }
 
     /**
-     * Add a large static box to serve as a platform.
-     */
-    private void addBox() {
-        float halfExtent = 50f; // mesh units
-        Mesh mesh = new Box(halfExtent, halfExtent, halfExtent);
-        Geometry geometry = new Geometry("box", mesh);
-        rootNode.attachChild(geometry);
-
-        geometry.move(0f, -halfExtent, 0f);
-        ColorRGBA color = new ColorRGBA(0.1f, 0.4f, 0.1f, 1f);
-        Material material = MyAsset.createShadedMaterial(assetManager, color);
-        geometry.setMaterial(material);
-        geometry.setShadowMode(RenderQueue.ShadowMode.Receive);
-
-        Vector3f hes = new Vector3f(halfExtent, halfExtent, halfExtent);
-        BoxCollisionShape shape = new BoxCollisionShape(hes);
-        float mass = PhysicsRigidBody.massForStatic;
-        RigidBodyControl rbc = new RigidBodyControl(shape, mass);
-        rbc.setApplyScale(true);
-        rbc.setKinematic(true);
-        rbc.setPhysicsSpace(physicsSpace);
-        geometry.addControl(rbc);
-    }
-
-    /**
-     * Add lighting and shadows to the scene.
+     * Add lighting to the scene.
      */
     private void addLighting() {
-        ColorRGBA ambientColor = new ColorRGBA(0.7f, 0.7f, 0.7f, 1f);
+        ColorRGBA ambientColor = new ColorRGBA(2f, 2f, 2f, 1f);
         AmbientLight ambient = new AmbientLight(ambientColor);
         rootNode.addLight(ambient);
 
         Vector3f direction = new Vector3f(1f, -2f, -1f).normalizeLocal();
         DirectionalLight sun = new DirectionalLight(direction);
         rootNode.addLight(sun);
-
-        DirectionalLightShadowRenderer dlsr
-                = new DirectionalLightShadowRenderer(assetManager, 4_096, 3);
-        dlsr.setLight(sun);
-        dlsr.setShadowIntensity(0.5f);
-        viewPort.addProcessor(dlsr);
     }
 
     /**
-     * Add an animated model to the scene, removing any previously added model.
-     *
-     * @param modelName the name of the model to add (not null, not empty)
+     * Add a dynamic seed to the scene.
      */
-    private void addModel(String modelName) {
-        if (cgModel != null) {
-            dac.getSpatial().removeControl(dac);
-            rootNode.detachChild(cgModel);
-            rootNode.removeControl(sv);
-            removeAllBalls();
+    private void addSeed() {
+        int numSeeds = seedNode.getChildren().size();
+        if (numSeeds >= maxSeeds) {
+            return; // too many seeds
+        }
+        /*
+         * All seeds share a single spherical mesh
+         * and a single spherical collision shape.
+         * Non-uniform scaling gives seeds their shape.
+         */
+        int numGroups = maxGroups;
+        switch (testName) {
+            case "cone":
+                numGroups = 1;
+                seedScale.set(3f, 1f, 1f);
+                break;
+            case "hinge":
+                seedScale.set(1f, 2f, 1.5f);
+                break;
+            case "p2p":
+                seedScale.set(1f, 1f, 1f);
+                break;
+            default:
+                throw new IllegalStateException("testName = " + testName);
+        }
+        seedShape.setScale(seedScale);
+        /*
+         * Randomize which group the new seed is in.
+         */
+        int groupIndex = MyMath.modulo(rng.nextInt(), numGroups);
+        Material material = materials[groupIndex];
+        Vector3f pivotInWorld = pivotLocations[groupIndex];
+        /*
+         * Randomize the new seed's initial location and velocity.
+         */
+        Vector3f velocity = rng.nextVector3f();
+        Vector3f location = rng.nextVector3f();
+        location.multLocal(0.5f, 1f, 0.5f);
+        location.addLocal(0f, 4f, 0f);
+
+        Geometry geometry = new Geometry("seed", seedMesh);
+        seedNode.attachChild(geometry);
+        geometry.setMaterial(material);
+        geometry.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        geometry.move(location);
+
+        RigidBodyControl rbc = new RigidBodyControl(seedShape);
+        rbc.setApplyScale(true);
+        rbc.setKinematic(false);
+        rbc.setLinearDamping(0.5f);
+        rbc.setLinearVelocity(velocity);
+        rbc.setPhysicsLocation(location);
+        rbc.setSleepingThresholds(0f, 0f); // never sleep
+
+        PhysicsJoint joint;
+        switch (testName) {
+            case "cone":
+                gravity.zero();
+                pivotInSeed.set(2f, 0f, 0f);
+                rotInSeed.fromAngleAxis(FastMath.PI, Vector3f.UNIT_Z);
+                ConeJoint coneJoint
+                        = new ConeJoint(rbc, pivotInSeed, rotInSeed);
+                coneJoint.setLimit(1f, 1f, 1e30f); // radians
+                joint = coneJoint;
+                break;
+
+            case "hinge":
+                axisInSeed.set(1f, 1f, 0f).normalizeLocal();
+                gravity.set(0f, -1f, 0f);
+                pivotInSeed.set(0f, 1f, 0f);
+                JointEnd referenceFrame = JointEnd.A;
+                joint = new HingeJoint(rbc, pivotInSeed, pivotInWorld,
+                        axisInSeed, axisInWorld, referenceFrame);
+                break;
+
+            case "p2p":
+                gravity.set(0f, -1f, 0f);
+                pivotInSeed.set(0.5f, 0f, 0f);
+                joint = new Point2PointJoint(rbc, pivotInSeed, pivotInWorld);
+                break;
+
+            default:
+                throw new IllegalStateException("testName = " + testName);
         }
 
-        switch (modelName) {
-            case "Elephant":
-                loadElephant();
-                break;
-            case "Jaime":
-                loadJaime();
-                break;
-            case "MhGame":
-                loadMhGame();
-                break;
-            case "Ninja":
-                loadNinja();
-                break;
-            case "Oto":
-                loadOto();
-                break;
-            case "Puppet":
-                loadPuppet();
-                break;
-            case "Sinbad":
-                loadSinbad();
-                break;
-            case "SinbadWithSwords":
-                loadSinbadWithSwords();
-                break;
-        }
+        rbc.addJoint(joint);
+        physicsSpace.add(joint);
 
-        List<Spatial> list
-                = MySpatial.listSpatials(cgModel, Spatial.class, null);
-        for (Spatial spatial : list) {
-            spatial.setShadowMode(RenderQueue.ShadowMode.Cast);
-        }
+        rbc.setPhysicsSpace(physicsSpace);
+        rbc.setGravity(gravity); // must be set *after* setPhysicsSpace!
 
-        rootNode.attachChild(cgModel);
-        setHeight(cgModel, 2f);
-        center(cgModel);
-        resetTransform = cgModel.getLocalTransform().clone();
-
-        List<SkeletonControl> scList
-                = MySpatial.listControls(cgModel, SkeletonControl.class, null);
-        assert scList.size() == 1;
-        sc = scList.get(0);
-        Spatial controlledSpatial = sc.getSpatial();
-        controlledSpatial.addControl(dac);
-        dac.setPhysicsSpace(physicsSpace);
-
-        leftClavicle = dac.findBoneLink(leftClavicleName);
-        leftFemur = dac.findBoneLink(leftFemurName);
-        leftUlna = dac.findBoneLink(leftUlnaName);
-        rightClavicle = dac.findBoneLink(rightClavicleName);
-        rightFemur = dac.findBoneLink(rightFemurName);
-        upperBody = dac.findBoneLink(upperBodyName);
-
-        AnimControl animControl = controlledSpatial.getControl(AnimControl.class);
-        animChannel = animControl.createChannel();
-        animChannel.setAnim(animationName);
-
-        sv = new SkeletonVisualizer(assetManager, sc);
-        sv.setLineColor(ColorRGBA.Yellow); // TODO clean up visualization
-        rootNode.addControl(sv);
+        geometry.addControl(rbc);
+        ++numSeeds;
     }
 
     /**
-     * Translate a model's center so that the model rests on the X-Z plane, and
-     * its center lies on the Y axis.
+     * Clean up after a test.
      */
-    private void center(Spatial model) {
-        Vector3f[] minMax = MySpatial.findMinMaxCoords(model);
-        Vector3f center = MyVector3f.midpoint(minMax[0], minMax[1]);
-        Vector3f offset = new Vector3f(center.x, minMax[0].y, center.z);
+    private void cleanupAfterTest() {
+        Collection<PhysicsJoint> jointList = physicsSpace.getJointList();
+        for (PhysicsJoint joint : jointList) {
+            joint.destroy();
+            physicsSpace.remove(joint);
+        }
 
-        Vector3f location = model.getWorldTranslation();
-        location.subtractLocal(offset);
-        MySpatial.setWorldLocation(model, location);
+        List<Spatial> seeds = seedNode.getChildren();
+        for (Spatial geometry : seeds) {
+            RigidBodyControl rbc = geometry.getControl(RigidBodyControl.class);
+            rbc.setPhysicsSpace(null);
+            geometry.removeControl(rbc);
+            geometry.removeFromParent();
+        }
+    }
+
+    /**
+     * Configure the camera during startup.
+     */
+    private void configureCamera() {
+        flyCam.setDragToRotate(true);
+        flyCam.setMoveSpeed(4f);
+
+        cam.setLocation(new Vector3f(2.65f, 2.42f, 9.37f));
+        cam.setRotation(new Quaternion(0f, 0.9759f, -0.04f, -0.2136f));
+    }
+
+    /**
+     * Configure seed groups during startup. Seeds are divided into 4 groups,
+     * each with its own color and pivot location.
+     */
+    private void configureGroups() {
+        ColorRGBA seedColors[] = new ColorRGBA[maxGroups];
+        seedColors[0] = new ColorRGBA(0.2f, 0f, 0f, 1f);
+        seedColors[1] = new ColorRGBA(0f, 0.07f, 0f, 1f);
+        seedColors[2] = new ColorRGBA(0f, 0f, 0.3f, 1f);
+        seedColors[3] = new ColorRGBA(0.2f, 0.1f, 0f, 1f);
+        for (int i = 0; i < maxGroups; ++i) {
+            ColorRGBA color = seedColors[i];
+            materials[i] = MyAsset.createShinyMaterial(assetManager, color);
+            materials[i].setFloat("Shininess", 15f);
+        }
+        /*
+         * The 4 pivot locations are arranged in a square in the X-Y plane.
+         */
+        pivotLocations[0] = new Vector3f(1.5f, 0f, 0f);
+        pivotLocations[1] = new Vector3f(-1.5f, 0f, 0f);
+        pivotLocations[2] = new Vector3f(0f, 1.5f, 0f);
+        pivotLocations[3] = new Vector3f(0f, -1.5f, 0f);
+    }
+
+    /**
+     * Configure physics during startup.
+     */
+    private void configurePhysics() {
+        CollisionShape.setDefaultMargin(0.001f); // 1 mm
+
+        bulletAppState = new BulletAppState();
+        stateManager.attach(bulletAppState);
+
+        physicsSpace = bulletAppState.getPhysicsSpace();
+        physicsSpace.setAccuracy(0.1f); // 10 Hz
+        physicsSpace.setSolverNumIterations(15);
     }
 
     /**
@@ -591,262 +503,40 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Load the saved model from the J3O file.
+     * Orbit the camera around the world's Y axis.
      */
-    private void load() {
-        /*
-         * Remove any copy from the asset manager's cache.
-         */
-        ModelKey key = new ModelKey(saveAssetPath);
-        assetManager.deleteFromCache(key);
+    private void orbitCamera(float orbitAngle) {
+        Quaternion rotate = new Quaternion();
+        rotate.fromAngles(0f, orbitAngle, 0f);
 
-        Spatial loadedScene;
-        try {
-            loadedScene = assetManager.loadAsset(key);
-        } catch (AssetNotFoundException e) {
-            logger.log(Level.SEVERE, "Didn''t find asset {0}",
-                    MyString.quote(saveAssetPath));
-            return;
-        }
-        logger.log(Level.INFO, "Loaded {0} from asset {1}", new Object[]{
-            MyString.quote(loadedScene.getName()),
-            MyString.quote(saveAssetPath)
-        });
+        Vector3f camLocation = cam.getLocation().clone();
+        Vector3f centerLocation
+                = camLocation.clone().multLocal(Vector3f.UNIT_Y);
+        Vector3f xzOffset = camLocation.subtract(centerLocation);
+        rotate.mult(xzOffset, xzOffset);
+        Vector3f newLocation = centerLocation.add(xzOffset);
+        cam.setLocation(newLocation);
 
-        save(loadedScene, saveAssetPath2);
+        Vector3f camDirection = cam.getDirection();
+        rotate.mult(camDirection, camDirection);
+        cam.lookAtDirection(camDirection, Vector3f.UNIT_Y);
     }
 
     /**
-     * Load the Elephant model.
-     */
-    private void loadElephant() {
-        cgModel = (Node) assetManager.loadModel(
-                "Models/Elephant/Elephant.mesh.xml");
-        cgModel.setCullHint(Spatial.CullHint.Never);
-        cgModel.rotate(0f, 1.6f, 0f);
-        dac = new ElephantControl();
-        animationName = "legUp";
-        leftClavicleName = "Oberschenkel_F_L";
-        leftFemurName = "Oberschenkel_B_L";
-        leftUlnaName = "Knee_F_L";
-        rightClavicleName = "Oberschenkel_F_R";
-        rightFemurName = "Oberschenkel_B_R";
-        upperBodyName = "joint5";
-    }
-
-    /**
-     * Load the Jaime model.
-     */
-    private void loadJaime() {
-        cgModel = (Node) assetManager.loadModel("Models/Jaime/Jaime.j3o");
-        Geometry g = (Geometry) cgModel.getChild(0);
-        RenderState rs = g.getMaterial().getAdditionalRenderState();
-        rs.setFaceCullMode(RenderState.FaceCullMode.Off);
-        dac = new JaimeControl();
-        animationName = "Punches";
-        leftClavicleName = "shoulder.L";
-        leftFemurName = "thigh.L";
-        leftUlnaName = "forearm.L";
-        rightClavicleName = "shoulder.R";
-        rightFemurName = "thigh.R";
-        upperBodyName = "ribs";
-    }
-
-    /**
-     * Load the MhGame model.
-     */
-    private void loadMhGame() {
-        cgModel = (Node) assetManager.loadModel("Models/MhGame/MhGame.j3o");
-        dac = new MhGameControl();
-        animationName = "expr-lib-pose";
-        leftClavicleName = "upperarm_l";
-        leftFemurName = "thigh_l";
-        leftUlnaName = "lowerarm_l";
-        rightClavicleName = "upperarm_r";
-        rightFemurName = "thigh_r";
-        upperBodyName = "spine_01";
-    }
-
-    /**
-     * Load the Ninja model.
-     */
-    private void loadNinja() {
-        cgModel = (Node) assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
-        cgModel.rotate(0f, 3f, 0f);
-        dac = new NinjaControl();
-        animationName = "Walk";
-        leftClavicleName = "Joint14";
-        leftFemurName = "Joint23";
-        leftUlnaName = "Joint16";
-        rightClavicleName = "Joint9";
-        rightFemurName = "Joint18";
-        upperBodyName = "Joint4";
-    }
-
-    /**
-     * Load the Oto model.
-     */
-    private void loadOto() {
-        cgModel = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
-        dac = new OtoControl();
-        animationName = "Walk";
-        leftClavicleName = "uparm.left";
-        leftFemurName = "hip.left";
-        leftUlnaName = "arm.left";
-        rightClavicleName = "uparm.right";
-        rightFemurName = "hip.right";
-        upperBodyName = "spinehigh";
-    }
-
-    /**
-     * Load the Puppet model.
-     */
-    private void loadPuppet() {
-        cgModel = (Node) assetManager.loadModel("Models/Puppet/Puppet.j3o");
-        dac = new PuppetControl();
-        animationName = "walk";
-        leftClavicleName = "upper_arm.1.L";
-        leftFemurName = "thigh.L";
-        leftUlnaName = "forearm.1.L";
-        rightClavicleName = "upper_arm.1.R";
-        rightFemurName = "thigh.R";
-        upperBodyName = "spine";
-    }
-
-    /**
-     * Load the Sinbad model.
-     */
-    private void loadSinbad() {
-        cgModel = (Node) assetManager.loadModel(
-                "Models/Sinbad/Sinbad.mesh.xml");
-        dac = new SinbadControl();
-        animationName = "Dance";
-        leftClavicleName = "Clavicle.L";
-        leftFemurName = "Thigh.L";
-        leftUlnaName = "Ulna.L";
-        rightClavicleName = "Clavicle.R";
-        rightFemurName = "Thigh.R";
-        upperBodyName = "Chest";
-    }
-
-    /**
-     * Load the Sinbad model with 2 attached swords.
-     */
-    private void loadSinbadWithSwords() {
-        cgModel = (Node) assetManager.loadModel(
-                "Models/Sinbad/Sinbad.mesh.xml");
-
-        Node sword = (Node) assetManager.loadModel(
-                "Models/Sinbad/Sword.mesh.xml");
-        List<Spatial> list
-                = MySpatial.listSpatials(sword, Spatial.class, null);
-        for (Spatial spatial : list) {
-            spatial.setShadowMode(RenderQueue.ShadowMode.Cast);
-        }
-
-        dac = new SinbadControl();
-        dac.attach("Handle.L", 5f, sword);
-        dac.attach("Handle.R", 5f, sword);
-
-        animationName = "Dance";
-        leftClavicleName = "Clavicle.L";
-        leftFemurName = "Thigh.L";
-        leftUlnaName = "Ulna.L";
-        rightClavicleName = "Clavicle.R";
-        rightFemurName = "Thigh.R";
-        upperBodyName = "Chest";
-    }
-
-    /**
-     * Remove all balls from the scene.
-     */
-    private void removeAllBalls() {
-        List<Geometry> geometries = rootNode.descendantMatches(Geometry.class);
-        for (Geometry geometry : geometries) {
-            String name = geometry.getName();
-            if (NameGenerator.isFrom(name, "ball")) {
-                RigidBodyControl rbc
-                        = geometry.getControl(RigidBodyControl.class);
-                rbc.setPhysicsSpace(null);
-                geometry.removeControl(rbc);
-                geometry.removeFromParent();
-            }
-        }
-    }
-
-    /**
-     * Save the specified model to a J3O file.
-     */
-    private void save(Spatial model, String assetPath) {
-        String filePath = ActionApplication.filePath(assetPath);
-        File file = new File(filePath);
-
-        JmeExporter exporter;
-        if (assetPath.endsWith(".j3o")) {
-            exporter = BinaryExporter.getInstance();
-        } else {
-            assert assetPath.endsWith(".xml");
-            exporter = XMLExporter.getInstance();
-        }
-
-        try {
-            exporter.save(model, file);
-        } catch (IOException exception) {
-            System.out.println("Caught IOException: " + exception.getMessage());
-            logger.log(Level.SEVERE,
-                    "Output exception while saving {0} to file {1}",
-                    new Object[]{
-                        MyString.quote(model.getName()),
-                        MyString.quote(filePath)
-                    });
-            return;
-        }
-        logger.log(Level.INFO, "Saved {0} to file {1}", new Object[]{
-            MyString.quote(model.getName()),
-            MyString.quote(filePath)
-        });
-    }
-
-    /**
-     * Test re-scaling the model.
-     */
-    private void setHeight(float height) {
-        assert height > 0f : height;
-
-        setHeight(cgModel, height);
-        center(cgModel);
-        dac.rebuild();
-    }
-
-    /**
-     * Scale the specified model uniformly so that it has the specified height.
-     *
-     * @param model (not null, modified)
-     * @param height (in world units)
-     */
-    private void setHeight(Spatial model, float height) {
-        Vector3f[] minMax = MySpatial.findMinMaxCoords(model);
-        float oldHeight = minMax[1].y - minMax[0].y;
-
-        model.scale(height / oldHeight);
-    }
-
-    /**
-     * Toggle mesh rendering on/off.
+     * Toggle seed rendering on/off.
      */
     private void toggleMeshes() {
-        Spatial.CullHint hint = cgModel.getLocalCullHint();
-        if (hint == Spatial.CullHint.Inherit
-                || hint == Spatial.CullHint.Never) {
+        Spatial.CullHint hint = seedNode.getCullHint();
+        if (hint == Spatial.CullHint.Always) {
+            hint = Spatial.CullHint.Dynamic;
+        } else {
             hint = Spatial.CullHint.Always;
-        } else if (hint == Spatial.CullHint.Always) {
-            hint = Spatial.CullHint.Never;
         }
-        cgModel.setCullHint(hint);
+        seedNode.setCullHint(hint);
     }
 
     /**
-     * Toggle the animation and physics simulation: paused/running.
+     * Toggle physics simulation paused/running.
      */
     private void togglePause() {
         float newSpeed = (speed > Float.MIN_VALUE) ? Float.MIN_VALUE : 1f;
@@ -854,18 +544,10 @@ public class TestDac extends ActionApplication {
     }
 
     /**
-     * Toggle the physics-debug visualization on/off.
+     * Toggle physics-debug visualization on/off.
      */
     private void togglePhysicsDebug() {
         boolean enabled = bulletAppState.isDebugEnabled();
         bulletAppState.setDebugEnabled(!enabled);
-    }
-
-    /**
-     * Toggle the skeleton visualizer on/off.
-     */
-    private void toggleSkeleton() {
-        boolean enabled = sv.isEnabled();
-        sv.setEnabled(!enabled);
     }
 }
