@@ -26,30 +26,26 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.system.NativeLibraryLoader;
+import org.junit.Test;
 
 /**
  * Test case for JME issue #911: PhysicsRigidBody sleeping threshold setters
- * have unexpected side effects. The bug existed in Native Bullet only.
- * <p>
- * If successful, no exception will be thrown.
+ * have unexpected side effects.
+ *
+ * @author Stephen Gold sgold@sonic.net
  */
-public class TestIssue911 extends SimpleApplication {
+public class TestIssue911 {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
-        TestIssue911 app = new TestIssue911();
-        app.start();
-    }
-    // *************************************************************************
-    // SimpleApplication methods
+    @Test
+    public void testIssue911() {
+        NativeLibraryLoader.loadNativeLibrary("bulletjme", true);
 
-    @Override
-    public void simpleInitApp() {
         CollisionShape capsule = new SphereCollisionShape(1f);
         PhysicsRigidBody body = new PhysicsRigidBody(capsule, 1f);
         assert body.getAngularSleepingThreshold() == 1f;
@@ -65,7 +61,5 @@ public class TestIssue911 extends SimpleApplication {
 
         float ast = body.getAngularSleepingThreshold();
         assert ast == 0.03f : ast; // fails, actual value is 1f
-
-        stop();
     }
 }

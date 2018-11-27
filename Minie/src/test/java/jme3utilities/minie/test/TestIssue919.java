@@ -26,33 +26,28 @@
  */
 package jme3utilities.minie.test;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
+import com.jme3.system.NativeLibraryLoader;
+import org.junit.Test;
 
 /**
  * Test case for JME issue #919: native implementation of
- * TranslationalLimitMotor.getLimitSoftness() has wrong name. The bug existed in
- * Native Bullet only.
- * <p>
- * If successful, no UnsatisfiedLinkError exception will be thrown.
+ * TranslationalLimitMotor.getLimitSoftness() has wrong name.
+ *
+ * @author Stephen Gold sgold@sonic.net
  */
-public class TestIssue919 extends SimpleApplication {
+public class TestIssue919 {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
-        TestIssue919 app = new TestIssue919();
-        app.start();
-    }
-    // *************************************************************************
-    // SimpleApplication methods
+    @Test
+    public void testIssue919() {
+        NativeLibraryLoader.loadNativeLibrary("bulletjme", true);
 
-    @Override
-    public void simpleInitApp() {
         CollisionShape capsule = new SphereCollisionShape(1f);
         PhysicsRigidBody body1 = new PhysicsRigidBody(capsule, 1f);
         PhysicsRigidBody body2 = new PhysicsRigidBody(capsule, 1f);
@@ -61,7 +56,5 @@ public class TestIssue919 extends SimpleApplication {
         SixDofJoint joint = new SixDofJoint(body1, body2, pivot1, pivot2, true);
 
         joint.getTranslationalLimitMotor().getLimitSoftness();
-
-        stop();
     }
 }
