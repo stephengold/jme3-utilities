@@ -70,12 +70,13 @@ public class ConeJoint extends PhysicsJoint {
     // fields
 
     /**
-     * copy of frame orientation in A's local coordinates (rotation matrix)
+     * copy of joint orientation in A's local coordinates (rotation matrix)
      */
     private Matrix3f rotA;
     /**
-     * copy of frame orientation in B's local coordinates for a double-ended
-     * joint, or in physics space for a single-ended joint (rotation matrix)
+     * copy of joint orientation: in B's local coordinates for a double-ended
+     * joint, or in physics-space coordinates for a single-ended joint (rotation
+     * matrix)
      */
     private Matrix3f rotB;
     /**
@@ -114,7 +115,7 @@ public class ConeJoint extends PhysicsJoint {
      * @param nodeA the body to constrain (not null, alias created)
      * @param pivotInA the pivot location in A's scaled local coordinates (not
      * null, unaffected)
-     * @param rotInA the frame orientation in A's local coordinates (rotation
+     * @param rotInA the joint orientation in A's local coordinates (rotation
      * matrix, unaffected)
      */
     public ConeJoint(PhysicsRigidBody nodeA, Vector3f pivotInA,
@@ -158,9 +159,9 @@ public class ConeJoint extends PhysicsJoint {
      * null, unaffected)
      * @param pivotInB the pivot location in B's scaled local coordinates (not
      * null, unaffected)
-     * @param rotInA the frame orientation in A's local coordinates (rotation
+     * @param rotInA the joint orientation in A's local coordinates (rotation
      * matrix, unaffected)
-     * @param rotInB the frame orientation in B's local coordinates (rotation
+     * @param rotInB the joint orientation in B's local coordinates (rotation
      * matrix, unaffected)
      */
     public ConeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,

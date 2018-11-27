@@ -347,7 +347,7 @@ public class AttachmentLink extends PhysicsLink {
      * Calculate a physics transform for the rigid body.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the calculated transform (in physics coordinates, either
+     * @return the calculated transform (in physics-space coordinates, either
      * storeResult or a new transform, not null)
      */
     @Override

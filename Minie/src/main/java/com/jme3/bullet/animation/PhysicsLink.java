@@ -283,7 +283,7 @@ abstract public class PhysicsLink
      * Calculate a physics transform for the rigid body.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return the calculated transform (in physics coordinates, either
+     * @return the calculated transform (in physics-space coordinates, either
      * storeResult or a new transform, not null)
      */
     public Transform physicsTransform(Transform storeResult) {
@@ -309,7 +309,6 @@ abstract public class PhysicsLink
             blendInterval = 0f;
             kinematicWeight = 1f;
         }
-
     }
 
     /**

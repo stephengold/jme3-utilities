@@ -266,8 +266,8 @@ public class Point2PointJoint extends PhysicsJoint {
         if (nodeB == null) {
             /*
              * Create a single-ended joint.  Bullet assumes single-ended
-             * constraints are satisfied at creation, so we temporarily
-             * re-position the body to satisfy the constraint.
+             * btPoint2PointConstraints are satisfied at creation, so we
+             * temporarily re-position the body to satisfy the constraint.
              */
             Vector3f saveLocation = nodeA.getPhysicsLocation(null);
 

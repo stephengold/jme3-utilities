@@ -74,8 +74,8 @@ abstract public class AbstractPhysicsControl
     // fields
 
     /**
-     * true &rarr; physics coordinates match local transform, false &rarr;
-     * physics coordinates match world transform
+     * true &rarr; physics-space coordinates match local transform, false &rarr;
+     * physics-space coordinates match world transform
      */
     private boolean applyLocal = false;
     /**

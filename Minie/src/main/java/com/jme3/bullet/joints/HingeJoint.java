@@ -72,12 +72,13 @@ public class HingeJoint extends PhysicsJoint {
      */
     private boolean useReferenceFrameA = false;
     /**
-     * copy of axis direction in body A's local coordinates (unit vector)
+     * copy of the joint axis in A's local coordinates (unit vector)
      */
     private Vector3f axisA;
     /**
-     * copy of axis direction, in body B's local coordinates for a double-ended
-     * joint, or in physics space for a single-ended joint (unit vector)
+     * copy of the joint axis: in B's local coordinates for a double-ended
+     * joint, or in physics-space coordinates for a single-ended joint (unit
+     * vector)
      */
     private Vector3f axisB;
     /**
@@ -112,18 +113,18 @@ public class HingeJoint extends PhysicsJoint {
     /**
      * Instantiate a single-ended HingeJoint.
      * <p>
-     * To be effective, the joint must be added to the physics space with the
-     * body and the body must be dynamic.
+     * To be effective, the joint must be added to the physics space of the body
+     * and the body must be dynamic.
      *
      * @param nodeA the body to constrain (not null, alias created)
      * @param pivotInA the pivot location in A's scaled local coordinates (not
      * null, unaffected)
      * @param pivotInWorld the pivot location in physics-space coordinates (not
      * null, unaffected)
-     * @param axisInA the axis of the joint in A's local coordinates (unit
+     * @param axisInA the joint axis in A's local coordinates (unit vector,
+     * unaffected)
+     * @param axisInWorld the joint axis in physics-space coordinates (unit
      * vector, unaffected)
-     * @param axisInWorld the axis of the joint in physics-space coordinates
-     * (unit vector, unaffected)
      * @param referenceFrame which end to use as the reference frame (not null)
      */
     public HingeJoint(PhysicsRigidBody nodeA, Vector3f pivotInA,
@@ -138,7 +139,7 @@ public class HingeJoint extends PhysicsJoint {
         useReferenceFrameA = (referenceFrame == JointEnd.A);
         createJoint();
         /*
-         * Synchronize the btHingeConstraint data with the local copies.
+         * Synchronize the btHingeConstraint parameters with the local copies.
          */
         setAngularOnly(objectId, angularOnly);
 
@@ -160,10 +161,10 @@ public class HingeJoint extends PhysicsJoint {
      * null, unaffected)
      * @param pivotInB the pivot location in B's scaled local coordinates (not
      * null, unaffected)
-     * @param axisInA the axis of the joint in A's local coordinates (unit
-     * vector, unaffected)
-     * @param axisInB the axis of the joint in B's local coordinates (unit
-     * vector, unaffected)
+     * @param axisInA the joint axis in A's local coordinates (unit vector,
+     * unaffected)
+     * @param axisInB the joint axis in B's local coordinates (unit vector,
+     * unaffected)
      */
     public HingeJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
             Vector3f pivotInA, Vector3f pivotInB, Vector3f axisInA,
@@ -284,7 +285,7 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Test whether this joint is angular only.
+     * Test whether this joint is angular-only.
      *
      * @return true if angular only, otherwise false
      */
@@ -293,10 +294,9 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Alter the hinge translation flag.
+     * Alter whether this joint is angular-only.
      *
-     * @param angularOnly true&rarr;rotate only, false&rarr;rotate and translate
-     * (default=false)
+     * @param angularOnly the desired setting (default=false)
      */
     public void setAngularOnly(boolean angularOnly) {
         this.angularOnly = angularOnly;
@@ -304,9 +304,11 @@ public class HingeJoint extends PhysicsJoint {
     }
 
     /**
-     * Alter this joint's limits. If you're above the softness, velocities that
-     * would shoot through the actual limit are slowed down. The bias should be
-     * in the range of 0.2 - 0.5.
+     * Alter the angular limits for this joint.
+     * <p>
+     * If you're above the softness, velocities that would shoot through the
+     * actual limit are slowed down. The bias should be in the range of 0.2 -
+     * 0.5.
      *
      * @param low the desired lower limit of the hinge angle (in radians)
      * @param high the desired upper limit of the joint angle (in radians)
@@ -434,8 +436,8 @@ public class HingeJoint extends PhysicsJoint {
         super.write(ex);
         OutputCapsule capsule = ex.getCapsule(this);
 
-        capsule.write(axisA, "axisA", new Vector3f());
-        capsule.write(axisB, "axisB", new Vector3f());
+        capsule.write(axisA, "axisA", null);
+        capsule.write(axisB, "axisB", null);
 
         capsule.write(angularOnly, "angularOnly", false);
 
@@ -467,8 +469,8 @@ public class HingeJoint extends PhysicsJoint {
         if (nodeB == null) {
             /*
              * Create a single-ended joint.  Bullet assumes single-ended
-             * constraints are satisfied at creation, so we temporarily
-             * re-position the body to satisfy the constraint.
+             * btHingeConstraints are satisfied at creation, so we
+             * temporarily re-position the body to satisfy the constraint.
              */
             Vector3f saveLocation = nodeA.getPhysicsLocation(null);
             Quaternion saveRotation = nodeA.getPhysicsRotation(null);

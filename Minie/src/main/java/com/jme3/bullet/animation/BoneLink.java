@@ -438,8 +438,8 @@ public class BoneLink extends PhysicsLink {
     /**
      * Immediately put this link into dynamic mode.
      *
-     * @param uniformAcceleration the uniform acceleration vector (in
-     * physics-space coordinates, not null, unaffected)
+     * @param uniformAcceleration the uniform acceleration vector (in physics
+     * space, not null, unaffected)
      */
     @Override
     public void setDynamic(Vector3f uniformAcceleration) {

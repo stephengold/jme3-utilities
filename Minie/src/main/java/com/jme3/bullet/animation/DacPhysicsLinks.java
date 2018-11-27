@@ -363,7 +363,7 @@ public class DacPhysicsLinks extends ConfigDynamicAnimControl {
         Transform localToMesh = MySkeleton.copyMeshTransform(bone, null);
         result.combineWithParent(localToMesh);
         /*
-         * Convert to world/physics coordinates.
+         * Convert to world (physics-space) coordinates.
          */
         Transform meshToWorld = meshTransform(null);
         result.combineWithParent(meshToWorld);
