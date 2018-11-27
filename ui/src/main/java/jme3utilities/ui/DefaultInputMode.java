@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -97,7 +97,7 @@ class DefaultInputMode extends InputMode {
     protected void defaultBindings() {
         bindSignal(CameraInput.FLYCAM_BACKWARD, KeyInput.KEY_S);
         bindSignal(CameraInput.FLYCAM_FORWARD, KeyInput.KEY_W);
-        bindSignal(CameraInput.FLYCAM_LOWER, KeyInput.KEY_R);
+        bindSignal(CameraInput.FLYCAM_LOWER, KeyInput.KEY_Z);
         bindSignal(CameraInput.FLYCAM_RISE, KeyInput.KEY_Q);
         bindSignal(CameraInput.FLYCAM_STRAFELEFT, KeyInput.KEY_A);
         bindSignal(CameraInput.FLYCAM_STRAFERIGHT, KeyInput.KEY_D);
