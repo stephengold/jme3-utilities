@@ -142,13 +142,11 @@ public class MyShape {
     public static Vector3f halfExtents(CollisionShape shape,
             Vector3f storeResult) {
         Validate.nonNull(shape, "shape");
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
         if (shape instanceof BoxCollisionShape) {
             BoxCollisionShape box = (BoxCollisionShape) shape;
-            box.getHalfExtents(storeResult);
+            box.getHalfExtents(result);
 
         } else if (shape instanceof CapsuleCollisionShape) {
             CapsuleCollisionShape capsule = (CapsuleCollisionShape) shape;
@@ -158,13 +156,13 @@ public class MyShape {
             int axisIndex = axisIndex(shape);
             switch (axisIndex) {
                 case PhysicsSpace.AXIS_X:
-                    storeResult.set(axisHalfExtent, radius, radius);
+                    result.set(axisHalfExtent, radius, radius);
                     break;
                 case PhysicsSpace.AXIS_Y:
-                    storeResult.set(radius, axisHalfExtent, radius);
+                    result.set(radius, axisHalfExtent, radius);
                     break;
                 case PhysicsSpace.AXIS_Z:
-                    storeResult.set(radius, radius, axisHalfExtent);
+                    result.set(radius, radius, axisHalfExtent);
                     break;
                 default:
                     String msg = Integer.toString(axisIndex);
@@ -179,13 +177,13 @@ public class MyShape {
             int axisIndex = axisIndex(shape);
             switch (axisIndex) {
                 case PhysicsSpace.AXIS_X:
-                    storeResult.set(axisHalfExtent, radius, radius);
+                    result.set(axisHalfExtent, radius, radius);
                     break;
                 case PhysicsSpace.AXIS_Y:
-                    storeResult.set(radius, axisHalfExtent, radius);
+                    result.set(radius, axisHalfExtent, radius);
                     break;
                 case PhysicsSpace.AXIS_Z:
-                    storeResult.set(radius, radius, axisHalfExtent);
+                    result.set(radius, radius, axisHalfExtent);
                     break;
                 default:
                     String msg = Integer.toString(axisIndex);
@@ -194,27 +192,27 @@ public class MyShape {
 
         } else if (shape instanceof CylinderCollisionShape) {
             CylinderCollisionShape cylinder = (CylinderCollisionShape) shape;
-            cylinder.getHalfExtents(storeResult);
+            cylinder.getHalfExtents(result);
 
         } else if (shape instanceof HullCollisionShape) {
             HullCollisionShape hull = (HullCollisionShape) shape;
-            hull.getHalfExtents(storeResult);
+            hull.getHalfExtents(result);
 
         } else if (shape instanceof MultiSphere) {
             MultiSphere multiSphere = (MultiSphere) shape;
             if (multiSphere.countSpheres() == 1) {
                 float radius = multiSphere.getRadius(0);
-                storeResult.set(radius, radius, radius);
+                result.set(radius, radius, radius);
             }
 
         } else if (shape instanceof SimplexCollisionShape) {
             SimplexCollisionShape simplex = (SimplexCollisionShape) shape;
-            simplex.getHalfExtents(storeResult);
+            simplex.getHalfExtents(result);
 
         } else if (shape instanceof SphereCollisionShape) {
             SphereCollisionShape sphere = (SphereCollisionShape) shape;
             float radius = sphere.getRadius();
-            storeResult.set(radius, radius, radius);
+            result.set(radius, radius, radius);
 
         } else { // TODO handle more shapes
             String typeName = shape.getClass().getCanonicalName();
@@ -222,9 +220,9 @@ public class MyShape {
             throw new IllegalArgumentException(msg);
         }
 
-        assert MyVector3f.isAllNonNegative(storeResult) : storeResult;
+        assert MyVector3f.isAllNonNegative(result) : result;
 
-        return storeResult;
+        return result;
     }
 
     /**

@@ -432,9 +432,10 @@ public class BetterCharacterControl
      */
     public void resetForward(Vector3f vec) {
         if (vec == null) {
-            vec = Vector3f.UNIT_Z;
+            localForward.set(Vector3f.UNIT_Z);
+        } else {
+            localForward.set(vec);
         }
-        localForward.set(vec);
         updateLocalCoordinateSystem();
     }
 

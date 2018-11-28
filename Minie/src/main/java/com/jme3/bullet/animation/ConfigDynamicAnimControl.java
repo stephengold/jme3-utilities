@@ -694,20 +694,21 @@ abstract public class ConfigDynamicAnimControl extends AbstractPhysicsControl {
     /**
      * Find the manager of the specified bone.
      *
-     * @param bone the bone (not null, unaffected)
+     * @param startBone the bone (not null, unaffected)
      * @return a bone/torso name (not null)
      */
-    protected String findManager(Bone bone) {
-        Validate.nonNull(bone, "bone");
+    protected String findManager(Bone startBone) {
+        Validate.nonNull(startBone, "start bone");
 
         String managerName;
+        Bone bone = startBone;
         while (true) {
             String boneName = bone.getName();
             if (hasBoneLink(boneName)) {
                 managerName = boneName;
                 break;
             }
-            bone = bone.getParent(); // TODO don't assign parameter
+            bone = bone.getParent();
             if (bone == null) {
                 managerName = torsoName;
                 break;

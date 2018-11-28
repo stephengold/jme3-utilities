@@ -610,12 +610,9 @@ public class PhysicsVehicle extends PhysicsRigidBody {
      * storeResult or a new vector, not null)
      */
     public Vector3f getForwardVector(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getForwardVector(vehicleId, storeResult);
-
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getForwardVector(vehicleId, result);
+        return result;
     }
 
     /**

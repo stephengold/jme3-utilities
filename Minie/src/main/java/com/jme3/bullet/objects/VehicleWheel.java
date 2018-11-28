@@ -510,16 +510,13 @@ public class VehicleWheel
      * Copy the location where the wheel touches the ground.
      *
      * @param storeResult storage for the result (modified if not null)
-     * @return a new location vector (in physics-space coordinates, either
+     * @return a location vector (in physics-space coordinates, either
      * storeResult or a new instance)
      */
     public Vector3f getCollisionLocation(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getCollisionLocation(vehicleId, wheelIndex, storeResult);
-
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getCollisionLocation(vehicleId, wheelIndex, result);
+        return result;
     }
 
     /**
@@ -530,12 +527,9 @@ public class VehicleWheel
      * or a new instance)
      */
     public Vector3f getCollisionNormal(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-        getCollisionNormal(vehicleId, wheelIndex, storeResult);
-
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getCollisionNormal(vehicleId, wheelIndex, result);
+        return result;
     }
 
     /**
@@ -693,11 +687,10 @@ public class VehicleWheel
      */
     public Quaternion getWheelWorldRotation(Quaternion storeResult) {
         if (storeResult == null) {
-            storeResult = new Quaternion();
+            return wheelWorldRotation.clone();
+        } else {
+            return storeResult.set(wheelWorldRotation);
         }
-        storeResult.set(wheelWorldRotation);
-
-        return storeResult;
     }
 
     /**
@@ -709,11 +702,10 @@ public class VehicleWheel
      */
     public Vector3f getWheelWorldLocation(Vector3f storeResult) {
         if (storeResult == null) {
-            storeResult = new Vector3f();
+            return wheelWorldLocation.clone();
+        } else {
+            return storeResult.set(wheelWorldLocation);
         }
-        storeResult.set(wheelWorldLocation);
-
-        return storeResult;
     }
     // *************************************************************************
     // private methods

@@ -179,12 +179,9 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * null)
      */
     public Vector3f getAngularVelocity(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-        getAngularVelocity(characterId, storeResult);
-
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getAngularVelocity(characterId, result);
+        return result;
     }
 
     /**
@@ -203,12 +200,9 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * @return a vector (either storeResult or a new vector, not null)
      */
     public Vector3f getLinearVelocity(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-        getLinearVelocity(characterId, storeResult);
-
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getLinearVelocity(characterId, result);
+        return result;
     }
 
     /**
@@ -266,12 +260,9 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
      * null)
      */
     public Vector3f getGravity(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-        getGravity(characterId, storeResult);
-
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getGravity(characterId, result);
+        return result;
     }
 
     /**
@@ -416,16 +407,14 @@ public class PhysicsCharacter extends PhysicsCollisionObject {
     /**
      * Copy the location of this character's center of mass.
      *
-     * @param trans storage for the result (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the location vector (either storeResult or a new vector, not
      * null)
      */
-    public Vector3f getPhysicsLocation(Vector3f trans) {
-        if (trans == null) {
-            trans = new Vector3f(); // TODO don't assign parameter
-        }
-        getPhysicsLocation(objectId, trans);
-        return trans;
+    public Vector3f getPhysicsLocation(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getPhysicsLocation(objectId, result);
+        return result;
     }
 
     /**

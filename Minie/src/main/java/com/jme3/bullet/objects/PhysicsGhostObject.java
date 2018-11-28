@@ -163,12 +163,9 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * storeResult or a new vector, not null)
      */
     public Vector3f getPhysicsLocation(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-        getPhysicsLocation(objectId, storeResult);
-
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getPhysicsLocation(objectId, result);
+        return result;
     }
 
     /**
@@ -179,12 +176,10 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * or a new quaternion, not null)
      */
     public Quaternion getPhysicsRotation(Quaternion storeResult) {
-        if (storeResult == null) {
-            storeResult = new Quaternion(); // TODO don't assign parameter
-        }
-        getPhysicsRotation(objectId, storeResult);
-
-        return storeResult;
+        Quaternion result
+                = (storeResult == null) ? new Quaternion() : storeResult;
+        getPhysicsRotation(objectId, result);
+        return result;
     }
 
     /**
@@ -195,12 +190,9 @@ public class PhysicsGhostObject extends PhysicsCollisionObject {
      * or a new matrix, not null)
      */
     public Matrix3f getPhysicsRotationMatrix(Matrix3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Matrix3f(); // TODO don't assign parameter
-        }
-        getPhysicsRotationMatrix(objectId, storeResult);
-
-        return storeResult;
+        Matrix3f result = (storeResult == null) ? new Matrix3f() : storeResult;
+        getPhysicsRotationMatrix(objectId, result);
+        return result;
     }
 
     /**

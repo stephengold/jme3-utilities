@@ -219,12 +219,9 @@ public class PhysicsCollisionEvent extends EventObject {
      * @return a direction vector (either storeResult or a new instance)
      */
     public Vector3f getLateralFrictionDir1(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-
-        getLateralFrictionDir1(manifoldPointObjectId, storeResult);
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getLateralFrictionDir1(manifoldPointObjectId, result);
+        return result;
     }
 
     /**
@@ -234,12 +231,9 @@ public class PhysicsCollisionEvent extends EventObject {
      * @return a direction vector (either storeResult or a new instance)
      */
     public Vector3f getLateralFrictionDir2(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-
-        getLateralFrictionDir2(manifoldPointObjectId, storeResult);
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getLateralFrictionDir2(manifoldPointObjectId, result);
+        return result;
     }
 
     /**
@@ -268,12 +262,9 @@ public class PhysicsCollisionEvent extends EventObject {
      * new instance)
      */
     public Vector3f getLocalPointA(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-
-        getLocalPointA(manifoldPointObjectId, storeResult);
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getLocalPointA(manifoldPointObjectId, result);
+        return result;
     }
 
     /**
@@ -284,12 +275,9 @@ public class PhysicsCollisionEvent extends EventObject {
      * new instance)
      */
     public Vector3f getLocalPointB(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-
-        getLocalPointB(manifoldPointObjectId, storeResult);
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getLocalPointB(manifoldPointObjectId, result);
+        return result;
     }
 
     /**
@@ -300,12 +288,9 @@ public class PhysicsCollisionEvent extends EventObject {
      * or a new instance)
      */
     public Vector3f getNormalWorldOnB(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-
-        getNormalWorldOnB(manifoldPointObjectId, storeResult);
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getNormalWorldOnB(manifoldPointObjectId, result);
+        return result;
     }
 
     /**
@@ -334,12 +319,9 @@ public class PhysicsCollisionEvent extends EventObject {
      * storeResult or a new instance)
      */
     public Vector3f getPositionWorldOnA(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-
-        getPositionWorldOnA(manifoldPointObjectId, storeResult);
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getPositionWorldOnA(manifoldPointObjectId, result);
+        return result;
     }
 
     /**
@@ -350,12 +332,9 @@ public class PhysicsCollisionEvent extends EventObject {
      * storeResult or a new instance)
      */
     public Vector3f getPositionWorldOnB(Vector3f storeResult) {
-        if (storeResult == null) {
-            storeResult = new Vector3f(); // TODO don't assign parameter
-        }
-
-        getPositionWorldOnB(manifoldPointObjectId, storeResult);
-        return storeResult;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+        getPositionWorldOnB(manifoldPointObjectId, result);
+        return result;
     }
     // *************************************************************************
     // private methods
