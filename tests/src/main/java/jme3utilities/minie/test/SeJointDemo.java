@@ -38,6 +38,7 @@ import com.jme3.bullet.joints.JointEnd;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.Point2PointJoint;
 import com.jme3.bullet.joints.SixDofJoint;
+import com.jme3.bullet.joints.SixDofSpringJoint;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -214,7 +215,8 @@ public class SeJointDemo extends ActionApplication {
         dim.bind("signal orbitRight", KeyInput.KEY_RIGHT);
         dim.bind("signal shower", KeyInput.KEY_I);
         dim.bind("signal shower", KeyInput.KEY_INSERT);
-        dim.bind("test 6dof", KeyInput.KEY_F4);
+        dim.bind("test 6dof", KeyInput.KEY_F6);
+        dim.bind("test 6dofSpring", KeyInput.KEY_F7);
         dim.bind("test cone", KeyInput.KEY_F3);
         dim.bind("test hinge", KeyInput.KEY_F2);
         dim.bind("test p2p", KeyInput.KEY_F1);
@@ -242,6 +244,10 @@ public class SeJointDemo extends ActionApplication {
                 case "test 6dof":
                     cleanupAfterTest();
                     testName = "6dof";
+                    return;
+                case "test 6dofSpring":
+                    cleanupAfterTest();
+                    testName = "6dofSpring";
                     return;
                 case "test cone":
                     cleanupAfterTest();
@@ -337,6 +343,7 @@ public class SeJointDemo extends ActionApplication {
         int numGroups = maxGroups; // for most tests
         switch (testName) {
             case "6dof":
+            case "6dofSpring":
                 seedScale.set(3f, 1f, 1f);
                 break;
             case "cone":
@@ -394,6 +401,19 @@ public class SeJointDemo extends ActionApplication {
                 sixDofJoint.setAngularLowerLimit(new Vector3f(0f, -1f, -1f));
                 sixDofJoint.setAngularUpperLimit(new Vector3f(0f, 1f, 1f));
                 joint = sixDofJoint;
+                break;
+
+            case "6dofSpring":
+                gravity.zero();
+                pivotInSeed.set(1f, 0f, 0f);
+                rotInSeed.loadIdentity();
+                rotInWorld.fromAngleAxis(groupIndex * FastMath.HALF_PI, Vector3f.UNIT_Z);
+                referenceFrame = JointEnd.B;
+                SixDofSpringJoint springJoint = new SixDofSpringJoint(rbc, pivotInSeed,
+                        pivotInWorld, rotInSeed, rotInWorld, referenceFrame);
+                springJoint.setAngularLowerLimit(new Vector3f(0f, -1f, -1f));
+                springJoint.setAngularUpperLimit(new Vector3f(0f, 1f, 1f));
+                joint = springJoint;
                 break;
 
             case "cone":
