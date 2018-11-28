@@ -109,7 +109,7 @@ class DebugMeshCallback {
             Vector3f pos2 = list.get(firstVertex + 1);
             Vector3f pos3 = list.get(firstVertex + 2);
             triangle.set(pos1, pos2, pos3);
-            triangle.setNormal(null);
+            triangle.setNormal(null); // work around JME issue #957
             Vector3f normal = triangle.getNormal();
             for (int j = 0; j < vpt; j++) {
                 buffer.put(normal.x);
@@ -156,7 +156,7 @@ class DebugMeshCallback {
             Vector3f loc2 = list.get(firstVertex + 1);
             Vector3f loc3 = list.get(firstVertex + 2);
             triangle.set(loc1, loc2, loc3);
-            triangle.setNormal(null);
+            triangle.setNormal(null); // work around JME issue #957
             Vector3f faceNormal = triangle.getNormal();
 
             int i1 = indexMap.get(loc1);
