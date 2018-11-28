@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A slider joint based on Bullet's btSliderConstraint.
+ * A 2 degree-of-freedom joint based on Bullet's btSliderConstraint.
  * <p>
  * <i>From the Bullet manual:</i><br>
  * The slider constraint allows the body to rotate around one axis and translate
@@ -62,10 +62,22 @@ public class SliderJoint extends PhysicsJoint {
     final public static Logger logger2
             = Logger.getLogger(SliderJoint.class.getName());
     // *************************************************************************
-    // fields
+    // fields TODO re-order
 
+    /**
+     * copy of the joint orientation: in physics-space coordinates if nodeA is
+     * null, or else in A's local coordinates (rotation matrix)
+     */
     private Matrix3f rotA;
+    /**
+     * copy of the joint orientation in B's local coordinates (rotation matrix)
+     */
     private Matrix3f rotB;
+    /**
+     * true&rarr;limits give the allowable range of movement of frameB in frameA
+     * space, false&rarr;limits give the allowable range of movement of frameA
+     * in frameB space
+     */
     private boolean useLinearReferenceFrameA;
     // *************************************************************************
     // constructors
@@ -78,60 +90,86 @@ public class SliderJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a SliderJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a single-ended SliderJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
-     * @param rotA the local orientation of the connection to node A (not null,
-     * alias unaffected)
-     * @param rotB the local orientation of the connection to node B (not null,
-     * alias unaffected)
-     * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
-     * B
+     * @param nodeB the body to constrain (not null, alias created)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInWorld the pivot location in physics-space coordinates (not
+     * null, unaffected)
+     * @param linearReferenceFrame which end to use as the linear reference (not
+     * null)
      */
-    public SliderJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB, Matrix3f rotA, Matrix3f rotB,
-            boolean useLinearReferenceFrameA) {
-        super(nodeA, nodeB, pivotA, pivotB);
-        this.rotA = rotA.clone();
-        this.rotB = rotB.clone();
-        this.useLinearReferenceFrameA = useLinearReferenceFrameA;
+    public SliderJoint(PhysicsRigidBody nodeB, Vector3f pivotInB,
+            Vector3f pivotInWorld, JointEnd linearReferenceFrame) {
+        super(nodeB, JointEnd.B, pivotInB, pivotInWorld);
+        rotA = new Matrix3f();
+        rotB = new Matrix3f();
+
+        useLinearReferenceFrameA = (linearReferenceFrame == JointEnd.A);
         createJoint();
     }
 
     /**
-     * Instantiate a SliderJoint. To be effective, the joint must be added to a
-     * physics space.
+     * Instantiate a double-ended SliderJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space of the 2
+     * bodies. Also, the bodies must be dynamic and distinct.
      *
-     * @param nodeA the 1st body connected by the joint (not null, alias
-     * created)
-     * @param nodeB the 2nd body connected by the joint (not null, alias
-     * created)
-     * @param pivotA the offset of the joint in node A (in scaled local
-     * coordinates, not null, unaffected)
-     * @param pivotB the offset of the joint in node B (in scaled local
-     * coordinates, not null, unaffected)
+     * @param nodeA the body for the A end (not null, alias created)
+     * @param nodeB the body for the B end (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param rotInA the joint orientation in A's local coordinates (not null,
+     * alias unaffected)
+     * @param rotInB the joint orientation in B's local coordinates (not null,
+     * alias unaffected)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
     public SliderJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
-            Vector3f pivotA, Vector3f pivotB,
-            boolean useLinearReferenceFrameA) {
-        super(nodeA, nodeB, pivotA, pivotB);
-        this.rotA = new Matrix3f();
-        this.rotB = new Matrix3f();
+            Vector3f pivotInA, Vector3f pivotInB, Matrix3f rotInA,
+            Matrix3f rotInB, boolean useLinearReferenceFrameA) {
+        super(nodeA, nodeB, pivotInA, pivotInB);
+
         this.useLinearReferenceFrameA = useLinearReferenceFrameA;
+        rotA = rotInA.clone();
+        rotB = rotInB.clone();
+        createJoint();
+    }
+
+    /**
+     * Instantiate a double-ended SliderJoint.
+     * <p>
+     * To be effective, the joint must be added to the physics space with the
+     * body and the body must be dynamic.
+     *
+     * @param nodeA the 1st body to constrain (not null, alias created)
+     * @param nodeB the 2nd body to constrain (not null, alias created)
+     * @param pivotInA the pivot location in A's scaled local coordinates (not
+     * null, unaffected)
+     * @param pivotInB the pivot location in B's scaled local coordinates (not
+     * null, unaffected)
+     * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
+     * B
+     */
+    public SliderJoint(PhysicsRigidBody nodeA, PhysicsRigidBody nodeB,
+            Vector3f pivotInA, Vector3f pivotInB,
+            boolean useLinearReferenceFrameA) {
+        super(nodeA, nodeB, pivotInA, pivotInB);
+
+        this.useLinearReferenceFrameA = useLinearReferenceFrameA;
+        rotA = new Matrix3f();
+        rotB = new Matrix3f();
         createJoint();
     }
     // *************************************************************************
-    // new methods exposed
+    // new methods exposed TODO re-order
 
     /**
      * Read the joint's lower limit for on-axis translation.
@@ -884,130 +922,159 @@ public class SliderJoint extends PhysicsJoint {
     // private methods
 
     /**
-     * Instantiate the configured joint in Bullet.
+     * Create the configured joint in Bullet.
      */
     private void createJoint() {
         assert objectId == 0L;
+        assert pivotA != null;
+        assert rotA != null;
+        assert nodeB != null;
+        assert pivotB != null;
+        assert rotB != null;
 
-        objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(), pivotA,
-                rotA, pivotB, rotB, useLinearReferenceFrameA);
+        if (nodeA == null) {
+            /*
+             * Create a single-ended joint.  Bullet assumes single-ended
+             * btSliderConstraints are satisfied at creation, so we
+             * temporarily re-position the body to satisfy the constraint.
+             */
+            Vector3f saveLocation = nodeB.getPhysicsLocation(null);
+
+            Vector3f offset = pivotA.subtract(pivotB);
+            nodeB.setPhysicsLocation(offset);
+            objectId = createJoint1(nodeB.getObjectId(), pivotB, rotB,
+                    useLinearReferenceFrameA);
+
+            nodeB.setPhysicsLocation(saveLocation);
+
+        } else {
+            /*
+             * Create a double-ended joint.
+             */
+            objectId = createJoint(nodeA.getObjectId(), nodeB.getObjectId(),
+                    pivotA, rotA, pivotB, rotB, useLinearReferenceFrameA);
+        }
         assert objectId != 0L;
-        logger2.log(Level.FINE, "Created Joint {0}", Long.toHexString(objectId));
+        logger2.log(Level.FINE, "Created Joint {0}",
+                Long.toHexString(objectId));
     }
 
-    native private long createJoint(long objectIdA, long objectIdB,
-            Vector3f pivotA, Matrix3f rotA, Vector3f pivotB, Matrix3f rotB,
-            boolean useLinearReferenceFrameA);
+    native private long createJoint(long bodyIdA, long bodyIdB,
+            Vector3f pivotInA, Matrix3f rotInA, Vector3f pivotInB,
+            Matrix3f rotInB, boolean useLinearReferenceFrameA);
 
-    native private float getDampingDirAng(long objectId);
+    native private long createJoint1(long bodyIdB, Vector3f pivotInB,
+            Matrix3f rotInB, boolean useLinearReferenceFrameA);
 
-    native private float getDampingDirLin(long objectId);
+    native private float getDampingDirAng(long jointId);
 
-    native private float getDampingLimAng(long objectId);
+    native private float getDampingDirLin(long jointId);
 
-    native private float getDampingLimLin(long objectId);
+    native private float getDampingLimAng(long jointId);
 
-    native private float getDampingOrthoAng(long objectId);
+    native private float getDampingLimLin(long jointId);
 
-    native private float getDampingOrthoLin(long objectId);
+    native private float getDampingOrthoAng(long jointId);
 
-    native private float getLowerAngLimit(long objectId);
+    native private float getDampingOrthoLin(long jointId);
 
-    native private float getLowerLinLimit(long objectId);
+    native private float getLowerAngLimit(long jointId);
 
-    native private float getMaxAngMotorForce(long objectId);
+    native private float getLowerLinLimit(long jointId);
 
-    native private float getMaxLinMotorForce(long objectId);
+    native private float getMaxAngMotorForce(long jointId);
 
-    native private float getRestitutionDirAng(long objectId);
+    native private float getMaxLinMotorForce(long jointId);
 
-    native private float getRestitutionDirLin(long objectId);
+    native private float getRestitutionDirAng(long jointId);
 
-    native private float getRestitutionLimAng(long objectId);
+    native private float getRestitutionDirLin(long jointId);
 
-    native private float getRestitutionLimLin(long objectId);
+    native private float getRestitutionLimAng(long jointId);
 
-    native private float getRestitutionOrthoAng(long objectId);
+    native private float getRestitutionLimLin(long jointId);
 
-    native private float getRestitutionOrthoLin(long objectId);
+    native private float getRestitutionOrthoAng(long jointId);
 
-    native private float getSoftnessDirAng(long objectId);
+    native private float getRestitutionOrthoLin(long jointId);
 
-    native private float getSoftnessDirLin(long objectId);
+    native private float getSoftnessDirAng(long jointId);
 
-    native private float getSoftnessLimAng(long objectId);
+    native private float getSoftnessDirLin(long jointId);
 
-    native private float getSoftnessLimLin(long objectId);
+    native private float getSoftnessLimAng(long jointId);
 
-    native private float getSoftnessOrthoAng(long objectId);
+    native private float getSoftnessLimLin(long jointId);
 
-    native private float getSoftnessOrthoLin(long objectId);
+    native private float getSoftnessOrthoAng(long jointId);
 
-    native private float getTargetAngMotorVelocity(long objectId);
+    native private float getSoftnessOrthoLin(long jointId);
 
-    native private float getTargetLinMotorVelocity(long objectId);
+    native private float getTargetAngMotorVelocity(long jointId);
 
-    native private float getUpperAngLimit(long objectId);
+    native private float getTargetLinMotorVelocity(long jointId);
 
-    native private float getUpperLinLimit(long objectId);
+    native private float getUpperAngLimit(long jointId);
 
-    native private boolean isPoweredAngMotor(long objectId);
+    native private float getUpperLinLimit(long jointId);
 
-    native private boolean isPoweredLinMotor(long objectId);
+    native private boolean isPoweredAngMotor(long jointId);
 
-    native private void setDampingDirAng(long objectId, float value);
+    native private boolean isPoweredLinMotor(long jointId);
 
-    native private void setDampingDirLin(long objectId, float value);
+    native private void setDampingDirAng(long jointId, float value);
 
-    native private void setDampingLimAng(long objectId, float value);
+    native private void setDampingDirLin(long jointId, float value);
 
-    native private void setDampingLimLin(long objectId, float value);
+    native private void setDampingLimAng(long jointId, float value);
 
-    native private void setDampingOrthoAng(long objectId, float value);
+    native private void setDampingLimLin(long jointId, float value);
 
-    native private void setDampingOrthoLin(long objectId, float value);
+    native private void setDampingOrthoAng(long jointId, float value);
 
-    native private void setLowerAngLimit(long objectId, float value);
+    native private void setDampingOrthoLin(long jointId, float value);
 
-    native private void setLowerLinLimit(long objectId, float value);
+    native private void setLowerAngLimit(long jointId, float value);
 
-    native private void setMaxAngMotorForce(long objectId, float value);
+    native private void setLowerLinLimit(long jointId, float value);
 
-    native private void setMaxLinMotorForce(long objectId, float value);
+    native private void setMaxAngMotorForce(long jointId, float value);
 
-    native private void setPoweredAngMotor(long objectId, boolean value);
+    native private void setMaxLinMotorForce(long jointId, float value);
 
-    native private void setPoweredLinMotor(long objectId, boolean value);
+    native private void setPoweredAngMotor(long jointId, boolean value);
 
-    native private void setRestitutionDirAng(long objectId, float value);
+    native private void setPoweredLinMotor(long jointId, boolean value);
 
-    native private void setRestitutionDirLin(long objectId, float value);
+    native private void setRestitutionDirAng(long jointId, float value);
 
-    native private void setRestitutionLimAng(long objectId, float value);
+    native private void setRestitutionDirLin(long jointId, float value);
 
-    native private void setRestitutionLimLin(long objectId, float value);
+    native private void setRestitutionLimAng(long jointId, float value);
 
-    native private void setRestitutionOrthoAng(long objectId, float value);
+    native private void setRestitutionLimLin(long jointId, float value);
 
-    native private void setRestitutionOrthoLin(long objectId, float value);
+    native private void setRestitutionOrthoAng(long jointId, float value);
 
-    native private void setSoftnessDirAng(long objectId, float value);
+    native private void setRestitutionOrthoLin(long jointId, float value);
 
-    native private void setSoftnessDirLin(long objectId, float value);
+    native private void setSoftnessDirAng(long jointId, float value);
 
-    native private void setSoftnessLimAng(long objectId, float value);
+    native private void setSoftnessDirLin(long jointId, float value);
 
-    native private void setSoftnessLimLin(long objectId, float value);
+    native private void setSoftnessLimAng(long jointId, float value);
 
-    native private void setSoftnessOrthoAng(long objectId, float value);
+    native private void setSoftnessLimLin(long jointId, float value);
 
-    native private void setSoftnessOrthoLin(long objectId, float value);
+    native private void setSoftnessOrthoAng(long jointId, float value);
 
-    native private void setTargetAngMotorVelocity(long objectId, float value);
+    native private void setSoftnessOrthoLin(long jointId, float value);
 
-    native private void setTargetLinMotorVelocity(long objectId, float value);
+    native private void setTargetAngMotorVelocity(long jointId, float value);
 
-    native private void setUpperAngLimit(long objectId, float value);
+    native private void setTargetLinMotorVelocity(long jointId, float value);
+
+    native private void setUpperAngLimit(long jointId, float value);
 
     native private void setUpperLinLimit(long objectId, float value);
 }

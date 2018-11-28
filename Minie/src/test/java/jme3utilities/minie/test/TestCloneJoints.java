@@ -143,15 +143,21 @@ public class TestCloneJoints {
                 = (SixDofSpringJoint) Misc.deepCopy(seSpring);
         cloneTest(seSpring, seSpringClone);
         /*
-         * SliderJoint
+         * SliderJoint: single- and double-ended
          */
-        SliderJoint slide = new SliderJoint(bodyA, bodyB,
-                new Vector3f(), new Vector3f(), new Matrix3f(), new Matrix3f(),
-                false);
+        SliderJoint slide = new SliderJoint(bodyA, bodyB, new Vector3f(),
+                new Vector3f(), new Matrix3f(), new Matrix3f(), false);
         set(slide, 0f);
         verify(slide, 0f);
         SliderJoint slideClone = (SliderJoint) Misc.deepCopy(slide);
         cloneTest(slide, slideClone);
+
+        SliderJoint seSlide = new SliderJoint(bodyB, new Vector3f(),
+                new Vector3f(), JointEnd.B);
+        set(seSlide, 0f);
+        verify(seSlide, 0f);
+        SliderJoint seSlideClone = (SliderJoint) Misc.deepCopy(seSlide);
+        cloneTest(seSlide, seSlideClone);
     }
     // *************************************************************************
     // private methods

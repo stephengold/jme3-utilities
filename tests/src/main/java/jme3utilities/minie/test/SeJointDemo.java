@@ -39,6 +39,7 @@ import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.Point2PointJoint;
 import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.bullet.joints.SixDofSpringJoint;
+import com.jme3.bullet.joints.SliderJoint;
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -220,6 +221,7 @@ public class SeJointDemo extends ActionApplication {
         dim.bind("test cone", KeyInput.KEY_F3);
         dim.bind("test hinge", KeyInput.KEY_F2);
         dim.bind("test p2p", KeyInput.KEY_F1);
+        dim.bind("test slider", KeyInput.KEY_F4);
         dim.bind("toggle pause", KeyInput.KEY_PERIOD);
         dim.bind("toggle view", KeyInput.KEY_SLASH);
     }
@@ -260,6 +262,10 @@ public class SeJointDemo extends ActionApplication {
                 case "test p2p":
                     cleanupAfterTest();
                     testName = "p2p";
+                    return;
+                case "test slider":
+                    cleanupAfterTest();
+                    testName = "slider";
                     return;
                 case "toggle pause":
                     togglePause();
@@ -356,6 +362,10 @@ public class SeJointDemo extends ActionApplication {
             case "p2p":
                 seedScale.set(1f, 1f, 1f);
                 break;
+            case "slider":
+                numGroups = 3;
+                seedScale.set(1f, 2f, 2f);
+                break;
             default:
                 throw new IllegalStateException("testName = " + testName);
         }
@@ -394,7 +404,8 @@ public class SeJointDemo extends ActionApplication {
                 gravity.zero();
                 pivotInSeed.set(1f, 0f, 0f);
                 rotInSeed.loadIdentity();
-                rotInWorld.fromAngleAxis(groupIndex * FastMath.HALF_PI, Vector3f.UNIT_Z);
+                float angle = (groupIndex - 1) * FastMath.HALF_PI;
+                rotInWorld.fromAngleAxis(angle, Vector3f.UNIT_Z);
                 JointEnd referenceFrame = JointEnd.B;
                 SixDofJoint sixDofJoint = new SixDofJoint(rbc, pivotInSeed,
                         pivotInWorld, rotInSeed, rotInWorld, referenceFrame);
@@ -407,10 +418,12 @@ public class SeJointDemo extends ActionApplication {
                 gravity.zero();
                 pivotInSeed.set(1f, 0f, 0f);
                 rotInSeed.loadIdentity();
-                rotInWorld.fromAngleAxis(groupIndex * FastMath.HALF_PI, Vector3f.UNIT_Z);
+                angle = (groupIndex - 1) * FastMath.HALF_PI;
+                rotInWorld.fromAngleAxis(angle, Vector3f.UNIT_Z);
                 referenceFrame = JointEnd.B;
-                SixDofSpringJoint springJoint = new SixDofSpringJoint(rbc, pivotInSeed,
-                        pivotInWorld, rotInSeed, rotInWorld, referenceFrame);
+                SixDofSpringJoint springJoint = new SixDofSpringJoint(rbc,
+                        pivotInSeed, pivotInWorld, rotInSeed, rotInWorld,
+                        referenceFrame);
                 springJoint.setAngularLowerLimit(new Vector3f(0f, -1f, -1f));
                 springJoint.setAngularUpperLimit(new Vector3f(0f, 1f, 1f));
                 joint = springJoint;
@@ -439,6 +452,14 @@ public class SeJointDemo extends ActionApplication {
                 gravity.set(0f, -1f, 0f);
                 pivotInSeed.set(0.5f, 0f, 0f);
                 joint = new Point2PointJoint(rbc, pivotInSeed, pivotInWorld);
+                break;
+
+            case "slider":
+                gravity.set(0f, 0f, 0f); // TODO
+                pivotInSeed.set(1f, 0f, 0f);
+                referenceFrame = JointEnd.B;
+                joint = new SliderJoint(rbc, pivotInSeed, pivotInWorld,
+                        referenceFrame);
                 break;
 
             default:
@@ -503,10 +524,10 @@ public class SeJointDemo extends ActionApplication {
         /*
          * The 4 pivot locations are arranged in a square in the X-Y plane.
          */
-        pivotLocations[0] = new Vector3f(-1.5f, 0f, 0f);
-        pivotLocations[1] = new Vector3f(0f, -1.5f, 0f);
-        pivotLocations[2] = new Vector3f(1.5f, 0f, 0f);
-        pivotLocations[3] = new Vector3f(0f, 1.5f, 0f);
+        pivotLocations[0] = new Vector3f(0f, 1.5f, 0f);
+        pivotLocations[1] = new Vector3f(-1.5f, 0f, 0f);
+        pivotLocations[2] = new Vector3f(0f, -1.5f, 0f);
+        pivotLocations[3] = new Vector3f(1.5f, 0f, 0f);
     }
 
     /**
