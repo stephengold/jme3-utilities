@@ -64,7 +64,7 @@ public class TestCloneJoints {
         PhysicsRigidBody bodyA = new PhysicsRigidBody(box, 1f);
         PhysicsRigidBody bodyB = new PhysicsRigidBody(box, 1f);
         /*
-         * ConeJoint
+         * ConeJoint: single- and double-ended
          */
         ConeJoint cone
                 = new ConeJoint(bodyA, bodyB, new Vector3f(), new Vector3f());
@@ -72,6 +72,12 @@ public class TestCloneJoints {
         verify(cone, 0f);
         ConeJoint coneClone = (ConeJoint) Misc.deepCopy(cone);
         cloneTest(cone, coneClone);
+
+        ConeJoint seCone = new ConeJoint(bodyA, new Vector3f(), new Matrix3f());
+        set(seCone, 0f);
+        verify(seCone, 0f);
+        ConeJoint seConeClone = (ConeJoint) Misc.deepCopy(seCone);
+        cloneTest(seCone, seConeClone);
         /*
          * HingeJoint: single- and double-ended
          */
