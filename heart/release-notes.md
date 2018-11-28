@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.14.0 released on TBD
+## Version 2.14.0 released on 28 November 2018
 
  + Added a `RectangularSolid` class to model rotated boxes
  + Added a `covariance()` method to the `MyVector3f` class
