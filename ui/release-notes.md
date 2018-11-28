@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.6.6 released on TBD
+## Version 0.6.6 released on 28 November 2018
 
  + Fixed a bug where `FLYCAM_LOWER` mapped to the R key instead of the Z key.
  + Added an `ActionApplication.speed()` method.
