@@ -83,11 +83,12 @@ public class SixDofJoint extends PhysicsJoint {
     // fields
 
     /**
-     * Rotation matrix for frameA.
+     * copy of the joint orientation: in physics-space coordinates if nodeA is
+     * null, or else in A's local coordinates (rotation matrix)
      */
     private Matrix3f rotA;
     /**
-     * Rotation matrix for frameB.
+     * copy of the joint orientation in B's local coordinates (rotation matrix)
      */
     private Matrix3f rotB;
     /**
@@ -141,10 +142,10 @@ public class SixDofJoint extends PhysicsJoint {
      * null, unaffected)
      * @param pivotInWorld the pivot location in physics-space coordinates (not
      * null, unaffected)
-     * @param rotInB the orientation of the joint in B's local coordinates (not
-     * null, unaffected)
+     * @param rotInB the orientation of the joint in B's local coordinates
+     * (rotation matrix, unaffected)
      * @param rotInWorld the orientation of the joint in physics-space
-     * coordinates (not null, unaffected)
+     * coordinates (rotation matrix, unaffected)
      * @param linearReferenceFrame which end to use as the linear reference
      * frame (not null)
      */
@@ -171,10 +172,10 @@ public class SixDofJoint extends PhysicsJoint {
      * null, unaffected)
      * @param pivotInB the pivot location in B's scaled local coordinates (not
      * null, unaffected)
-     * @param rotInA the orientation of the joint in A's local coordinates (not
-     * null, unaffected)
-     * @param rotInB the orientation of the joint in B's local coordinates (not
-     * null, unaffected)
+     * @param rotInA the joint orientation in A's local coordinates (rotation
+     * matrix, unaffected)
+     * @param rotInB the joint orientation in B's local coordinates (rotation
+     * matrix, unaffected)
      * @param useLinearReferenceFrameA true&rarr;use node A, false&rarr;use node
      * B
      */
@@ -215,7 +216,7 @@ public class SixDofJoint extends PhysicsJoint {
         createJoint();
     }
     // *************************************************************************
-    // TODO re-order methods
+    // new methods exposed TODO re-order
 
     private void gatherMotors() {
         assert rotationalMotors == null;

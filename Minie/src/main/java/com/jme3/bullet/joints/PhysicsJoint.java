@@ -69,7 +69,7 @@ abstract public class PhysicsJoint
     final public static Logger logger
             = Logger.getLogger(PhysicsJoint.class.getName());
     // *************************************************************************
-    // fields
+    // fields TODO re-order
 
     /**
      * Unique identifier of the btTypedConstraint. Subtype constructors are
@@ -88,13 +88,13 @@ abstract public class PhysicsJoint
      */
     protected PhysicsRigidBody nodeB;
     /**
-     * copy of pivot location, in physics space if nodeA is null, or else in A's
-     * scaled local coordinates
+     * copy of the pivot location: in physics-space coordinates if nodeA is
+     * null, or else in A's scaled local coordinates
      */
     protected Vector3f pivotA;
     /**
-     * copy of pivot location, in physics space if nodeB is null, or else in B's
-     * scaled local coordinates
+     * copy of the pivot location: in physics-space coordinates if nodeB is
+     * null, or else in B's scaled local coordinates
      */
     protected Vector3f pivotB;
     /**

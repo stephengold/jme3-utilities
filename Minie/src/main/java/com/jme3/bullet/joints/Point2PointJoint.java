@@ -72,7 +72,7 @@ public class Point2PointJoint extends PhysicsJoint {
     }
 
     /**
-     * Instantiate a single-ended Point2PointJoint using the specified body.
+     * Instantiate a single-ended Point2PointJoint.
      * <p>
      * To be effective, the joint must be added to the physics space with the
      * body and the body must be dynamic.
