@@ -1,5 +1,14 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.6.6 released on TBD
+
+ + Fixed a bug where `FLYCAM_LOWER` mapped to the R key instead of the Z key.
+ + Added an `ActionApplication.speed()` method.
+ + Renamed `ActionApplication.getWrittenAssetDirPath()`
+   to `writtenAssetDirPath()`.
+ + Improved argument validation in the `Signals` class.
+ + Based on version 2.14 of the jme3-utilities-heart library.
+
 ## Version 0.6.5 released on 23 September 2018
 
  + Renamed `UiVersion.getVersionShort()` to `versionShort()`. (API change)
