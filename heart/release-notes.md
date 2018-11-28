@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.14.0 released on TBD
+
+ + Added a `RectangularSolid` class to model rotated boxes
+ + Added a `covariance()` method to the `MyVector3f` class
+ + Added a `nextQuaternion()` method to the `Generator` class
+ + Added a `lengthSquared()` method to the `MyQuaternion` class
+
 ## Version 2.13.0 released on 19 November 2018
 
  + Added an `area()` method for `Triangle` to the `MyMath` class
