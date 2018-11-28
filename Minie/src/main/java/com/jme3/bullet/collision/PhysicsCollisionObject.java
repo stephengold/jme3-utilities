@@ -62,11 +62,6 @@ abstract public class PhysicsCollisionObject
     // constants and loggers
 
     /**
-     * message logger for this class
-     */
-    final public static Logger logger
-            = Logger.getLogger(PhysicsCollisionObject.class.getName());
-    /**
      * collideWithGroups bitmask that represents "no groups"
      */
     public static final int COLLISION_GROUP_NONE = 0x0;
@@ -134,17 +129,16 @@ abstract public class PhysicsCollisionObject
      * collisionGroup/collideWithGroups bitmask that represents group #16
      */
     public static final int COLLISION_GROUP_16 = 0x8000;
+    /**
+     * message logger for this class
+     */
+    final public static Logger logger
+            = Logger.getLogger(PhysicsCollisionObject.class.getName());
     // *************************************************************************
     // fields
 
     /**
-     * Unique identifier of the btCollisionObject. Constructors are responsible
-     * for setting this to a non-zero value. The id might change if the object
-     * gets rebuilt.
-     */
-    protected long objectId = 0L;
-    /**
-     * shape associated with this object (not null)
+     * shape of this object (not null)
      */
     protected CollisionShape collisionShape;
     /**
@@ -152,23 +146,32 @@ abstract public class PhysicsCollisionObject
      */
     private DebugMeshNormals debugMeshNormals = DebugMeshNormals.None;
     /**
-     * custom material for debug shape, or null to use the default material
-     */
-    private Material debugMaterial = null;
-    /**
-     * collision group to which this physics object belongs (default=group #1)
-     */
-    private int collisionGroup = COLLISION_GROUP_01;
-    /**
      * collision groups with which this object can collide (default=only group
      * #1)
      */
     private int collideWithGroups = COLLISION_GROUP_01;
     /**
+     * collision group to which this physics object belongs (default=group #1)
+     */
+    private int collisionGroup = COLLISION_GROUP_01;
+    /**
      * resolution for new debug meshes (default=low, effective only for convex
      * shapes)
      */
     private int debugMeshResolution = DebugShapeFactory.lowResolution;
+    /**
+     * Unique identifier of the btCollisionObject. Constructors are responsible
+     * for setting this to a non-zero value. The id might change if the object
+     * gets rebuilt.
+     */
+    protected long objectId = 0L;
+    /**
+     * custom material for debug shape, or null to use the default material
+     */
+    private Material debugMaterial = null;
+    /**
+     * associated user object
+     */
     private Object userObject;
     // *************************************************************************
     // new methods exposed
@@ -180,6 +183,21 @@ abstract public class PhysicsCollisionObject
      */
     public void activate(boolean forceFlag) {
         activate(objectId, forceFlag);
+    }
+
+    /**
+     * Add collision groups to the set with which this object can collide.
+     *
+     * Two objects can collide only if one of them has the collisionGroup of the
+     * other in its collideWithGroups set.
+     *
+     * @param collisionGroup groups to add (bit mask)
+     */
+    public void addCollideWithGroup(int collisionGroup) {
+        collideWithGroups |= collisionGroup;
+        if (objectId != 0L) {
+            setCollideWithGroups(objectId, collideWithGroups);
+        }
     }
 
     /**
@@ -204,15 +222,21 @@ abstract public class PhysicsCollisionObject
     }
 
     /**
-     * Apply the specified CollisionShape to this object. Note that the object
-     * should not be in any physics space while changing shape; the object gets
-     * rebuilt on the physics side.
+     * Read the set of collision groups with which this object can collide.
      *
-     * @param collisionShape the shape to apply (not null, alias created)
+     * @return bit mask
      */
-    public void setCollisionShape(CollisionShape collisionShape) {
-        Validate.nonNull(collisionShape, "collision shape");
-        this.collisionShape = collisionShape;
+    public int getCollideWithGroups() {
+        return collideWithGroups;
+    }
+
+    /**
+     * Read the collision group for this physics object.
+     *
+     * @return the collision group (bit mask with exactly one bit set)
+     */
+    public int getCollisionGroup() {
+        return collisionGroup;
     }
 
     /**
@@ -236,59 +260,22 @@ abstract public class PhysicsCollisionObject
     }
 
     /**
-     * Alter or remove the custom debug material.
+     * Read the ID of the btCollisionObject.
      *
-     * @param material the desired material, or null for default/unspecified
-     * (alias created)
+     * @return the unique identifier (not zero)
      */
-    public void setDebugMaterial(Material material) {
-        debugMaterial = material;
+    public long getObjectId() {
+        assert objectId != 0L;
+        return objectId;
     }
 
     /**
-     * Read the collision group for this physics object.
+     * Access the user object associated with this collision object.
      *
-     * @return the collision group (bit mask with exactly one bit set)
+     * @return the pre-existing instance, or null if none
      */
-    public int getCollisionGroup() {
-        return collisionGroup;
-    }
-
-    /**
-     * Alter the collision group for this physics object.
-     * <p>
-     * Groups are represented by integer bit masks with exactly 1 bit set.
-     * Pre-made variables are available in PhysicsCollisionObject. By default,
-     * physics objects are in COLLISION_GROUP_01.
-     * <p>
-     * Two objects can collide only if one of them has the collisionGroup of the
-     * other in its collideWithGroups set.
-     *
-     * @param collisionGroup the collisionGroup to apply (bit mask with exactly
-     * 1 bit set)
-     */
-    public void setCollisionGroup(int collisionGroup) {
-        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
-
-        this.collisionGroup = collisionGroup;
-        if (objectId != 0L) {
-            setCollisionGroup(objectId, collisionGroup);
-        }
-    }
-
-    /**
-     * Add collision groups to the set with which this object can collide.
-     *
-     * Two objects can collide only if one of them has the collisionGroup of the
-     * other in its collideWithGroups set.
-     *
-     * @param collisionGroup groups to add (bit mask)
-     */
-    public void addCollideWithGroup(int collisionGroup) {
-        collideWithGroups |= collisionGroup;
-        if (objectId != 0L) {
-            setCollideWithGroups(objectId, collideWithGroups);
-        }
+    public Object getUserObject() {
+        return userObject;
     }
 
     /**
@@ -316,31 +303,47 @@ abstract public class PhysicsCollisionObject
     }
 
     /**
-     * Read the set of collision groups with which this object can collide.
+     * Alter the collision group for this physics object.
+     * <p>
+     * Groups are represented by integer bit masks with exactly 1 bit set.
+     * Pre-made variables are available in PhysicsCollisionObject. By default,
+     * physics objects are in COLLISION_GROUP_01.
+     * <p>
+     * Two objects can collide only if one of them has the collisionGroup of the
+     * other in its collideWithGroups set.
      *
-     * @return bit mask
+     * @param collisionGroup the collisionGroup to apply (bit mask with exactly
+     * 1 bit set)
      */
-    public int getCollideWithGroups() {
-        return collideWithGroups;
+    public void setCollisionGroup(int collisionGroup) {
+        assert Integer.bitCount(collisionGroup) == 1 : collisionGroup;
+
+        this.collisionGroup = collisionGroup;
+        if (objectId != 0L) {
+            setCollisionGroup(objectId, collisionGroup);
+        }
     }
 
     /**
-     * Initialize the user pointer and collision-group information of this
-     * object.
+     * Apply the specified CollisionShape to this object. Note that the object
+     * should not be in any physics space while changing shape; the object gets
+     * rebuilt on the physics side.
+     *
+     * @param collisionShape the shape to apply (not null, alias created)
      */
-    protected void initUserPointer() {
-        logger.log(Level.FINE, "initUserPointer() objectId = {0}",
-                Long.toHexString(objectId));
-        initUserPointer(objectId, collisionGroup, collideWithGroups);
+    public void setCollisionShape(CollisionShape collisionShape) {
+        Validate.nonNull(collisionShape, "collision shape");
+        this.collisionShape = collisionShape;
     }
 
     /**
-     * Access the user object associated with this collision object.
+     * Alter or remove the custom debug material.
      *
-     * @return the pre-existing instance, or null if none
+     * @param material the desired material, or null for default/unspecified
+     * (alias created)
      */
-    public Object getUserObject() {
-        return userObject;
+    public void setDebugMaterial(Material material) {
+        debugMaterial = material;
     }
 
     /**
@@ -373,16 +376,6 @@ abstract public class PhysicsCollisionObject
     public void setUserObject(Object userObject) {
         this.userObject = userObject;
     }
-
-    /**
-     * Read the id of the btCollisionObject.
-     *
-     * @return the unique identifier (not zero)
-     */
-    public long getObjectId() {
-        assert objectId != 0L;
-        return objectId;
-    }
     // *************************************************************************
     // new protected methods
 
@@ -402,6 +395,15 @@ abstract public class PhysicsCollisionObject
      * @param objectId the identifier of the btCollisionObject (not zero)
      */
     native protected void finalizeNative(long objectId);
+
+    /**
+     * Initialize the collision-group information of this object.
+     */
+    protected void initUserPointer() {
+        logger.log(Level.FINE, "initUserPointer() objectId = {0}",
+                Long.toHexString(objectId));
+        initUserPointer(objectId, collisionGroup, collideWithGroups);
+    }
     // *************************************************************************
     // JmeCloneable methods
 
@@ -442,26 +444,6 @@ abstract public class PhysicsCollisionObject
     // Savable methods
 
     /**
-     * Serialize this object, for example when saving to a J3O file.
-     *
-     * @param ex exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        OutputCapsule capsule = ex.getCapsule(this);
-
-        capsule.write(collisionGroup, "collisionGroup", COLLISION_GROUP_01);
-        capsule.write(collideWithGroups, "collisionGroupsMask",
-                COLLISION_GROUP_01);
-        capsule.write(debugMeshNormals, "debugMeshNormals",
-                DebugMeshNormals.None);
-        capsule.write(debugMeshResolution, "debugMeshResolution", 0);
-        capsule.write(debugMaterial, "debugMaterial", null);
-        capsule.write(collisionShape, "collisionShape", null);
-    }
-
-    /**
      * De-serialize this object, for example when loading from a J3O file.
      *
      * @param im importer (not null)
@@ -481,6 +463,26 @@ abstract public class PhysicsCollisionObject
 
         Savable shape = capsule.readSavable("collisionShape", null);
         collisionShape = (CollisionShape) shape;
+    }
+
+    /**
+     * Serialize this object, for example when saving to a J3O file.
+     *
+     * @param ex exporter (not null)
+     * @throws IOException from exporter
+     */
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        OutputCapsule capsule = ex.getCapsule(this);
+
+        capsule.write(collisionGroup, "collisionGroup", COLLISION_GROUP_01);
+        capsule.write(collideWithGroups, "collisionGroupsMask",
+                COLLISION_GROUP_01);
+        capsule.write(debugMeshNormals, "debugMeshNormals",
+                DebugMeshNormals.None);
+        capsule.write(debugMeshResolution, "debugMeshResolution", 0);
+        capsule.write(debugMaterial, "debugMaterial", null);
+        capsule.write(collisionShape, "collisionShape", null);
     }
     // *************************************************************************
     // Object methods
