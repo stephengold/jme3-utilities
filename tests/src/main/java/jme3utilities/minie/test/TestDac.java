@@ -40,6 +40,7 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.joints.Point2PointJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.binary.BinaryExporter;
@@ -58,6 +59,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.plugins.ogre.MeshLoader;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
@@ -160,6 +162,7 @@ public class TestDac extends ActionApplication {
          * Mute the chatty loggers found in some imported packages.
          */
         Misc.setLoggingLevels(Level.WARNING);
+        Logger.getLogger(MeshLoader.class.getName()).setLevel(Level.SEVERE);
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
@@ -233,6 +236,7 @@ public class TestDac extends ActionApplication {
         dim.bind("load puppet", KeyInput.KEY_F8);
         dim.bind("load sinbad", KeyInput.KEY_F1);
         dim.bind("load sinbadWithSwords", KeyInput.KEY_F4);
+        dim.bind("pin leftFemur", KeyInput.KEY_9);
         dim.bind("raise leftFoot", KeyInput.KEY_LCONTROL);
         dim.bind("raise leftHand", KeyInput.KEY_LSHIFT);
         dim.bind("raise rightFoot", KeyInput.KEY_RCONTROL);
@@ -327,6 +331,9 @@ public class TestDac extends ActionApplication {
                     return;
                 case "load sinbadWithSwords":
                     addModel("SinbadWithSwords");
+                    return;
+                case "pin leftFemur":
+                    pin(leftFemur);
                     return;
                 case "raise leftFoot":
                     dac.setDynamicSubtree(leftFemur,
@@ -755,6 +762,20 @@ public class TestDac extends ActionApplication {
         rightClavicleName = "Clavicle.R";
         rightFemurName = "Thigh.R";
         upperBodyName = "Chest";
+    }
+
+    /**
+     * Pin the specified BoneLink to its current world location.
+     *
+     * @param boneLink (not null)
+     */
+    private void pin(BoneLink boneLink) {
+        PhysicsRigidBody body = boneLink.getRigidBody();
+        Vector3f currentWorld = body.getPhysicsLocation(null);
+        Point2PointJoint sep2p = new Point2PointJoint(body,
+                new Vector3f(0f, 0f, 0f), currentWorld);
+        body.addJoint(sep2p);
+        physicsSpace.add(sep2p);
     }
 
     /**
