@@ -3,9 +3,6 @@
 /debug/build/
 /debug/src/main/resources/Textures/shapes/
 /heart/build/
-/Minie/build/
-/Minie/*.dll
-/Minie/*.so
 /moon-ccbysa/build/
 /nifty/build/
 /SkyControl/build/
@@ -14,8 +11,6 @@
 /tests/*.so
 /tests/build/
 /tests/src/main/java/jme3test/
-/tests/src/main/resources/Models/MhGame/
-/tests/src/main/resources/Models/nan1/
 /tests/Written Assets/
 /textures/build/
 /textures/src/main/java/jme3utilities/sky/*.java

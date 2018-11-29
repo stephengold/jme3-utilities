@@ -2,7 +2,7 @@
 
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
-It contains 11 sub-projects:
+It contains 10 sub-projects:
 
  1. heart: the "jme3-utilities-heart" library of core classes
  2. SkyControl: the "SkyControl" library for sky simulation
@@ -14,8 +14,10 @@ It contains 11 sub-projects:
  8. nifty: the "jme3-utilities-nifty" library for using NiftyGUI user
     interfaces with jMonkeyEngine
  9. wes: the "Wes" library for animation editing and retargeting
- 10. Minie: the "Minie" library for using Bullet physics with jMonkeyEngine
- 11. x: the "jme3-utilities-x" library of experimental software
+ 10. x: the "jme3-utilities-x" library of experimental software
+
+The "Minie" library, formerly a sub-project, is now a separate project
+at [GitHub](https://github.com/stephengold/Minie).
 
 Summary of SkyControl features:
 
@@ -314,7 +316,7 @@ select "Run File (Shift+F6)".
 ### CubeMapExample
 
 Sometimes you'll want to combine SkyControl with other sky elements. The
-jme3-utilities project includes CubeMapExample, a slightly more sophisticated
+Jme3-utilities Project includes CubeMapExample, a slightly more sophisticated
 application than BasicGame. CubeMapExample includes a cube-mapped sky, lit
 terrain, and multiple light sources. In this section, you'll see how SkyControl
 can be used to add sun, moon, and clouds to CubeMapExample.
@@ -327,7 +329,7 @@ file to examine the code and run it.
  + The W/A/S/D/Q/Z keys translate (move) the camera.
  + To exit, press the Esc key.
 
-Since CubeMapExample is part of the jme3-utilities project, there's no need
+Since CubeMapExample is part of the Jme3-utilities Project, there's no need
 to add anything to the classpath.  And since we plan to use the existing cube
 map, there's nothing to remove.
 
@@ -478,7 +480,7 @@ on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 
   + November 2013 [SkyControl demo video](https://www.youtube.com/watch?v=FsJRM6tr3oQ)
   + January 2014 [SkyControl update video](https://www.youtube.com/watch?v=gE4wxgBIkaw)
-  + A [maze game](https://github.com/stephengold/jme3-maze) that uses the jme3-utilities libraries.
+  + A [maze game](https://github.com/stephengold/jme3-maze) that uses the Jme3-utilities libraries.
   + A [flight simulation game](https://github.com/ZoltanTheHun/SkyHussars) that uses SkyControl.
 
   + October 2018 [DynamicAnimControl demo video](https://www.youtube.com/watch?v=A1Rii99nb3Q)
@@ -503,7 +505,6 @@ artists and software developers:
  (on which Minie is based) and also for helpful insights
 + Alexandr Brui (aka "javasabr") for a solving a problem with the
   de-serialization of SkyControl
-+ Nathan Vegdahl, for creating the Puppet model
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
     + Davis Rollman
     + "Lockhead"

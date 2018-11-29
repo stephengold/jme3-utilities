@@ -20,9 +20,6 @@ dependencies {
     //compile "jme3utilities:SkyControl:$skycontrolVersion"
     compile project(':SkyControl')
 
-    //compile "jme3utilities:Minie:$minieVersion"
-    compile project(':Minie')
-
     //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
     compile project(':debug')
 
