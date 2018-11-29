@@ -124,7 +124,7 @@ Clone the jme3-utilities repository using Git:
 10. Click on the "Finish" button.
 11. When the "Clone Complete" dialog appears, click on the "Open Project..."
     button.
-12. Expand the root project node to reveal the 11 sub-projects.
+12. Expand the root project node to reveal the 10 sub-projects.
 13. To start with, I recommend opening 4 sub-projects:  "heart", "SkyControl",
     "tests", and "textures".  Select them using control-click, then click on the
     "Open" button.
@@ -483,8 +483,6 @@ on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
   + A [maze game](https://github.com/stephengold/jme3-maze) that uses the Jme3-utilities libraries.
   + A [flight simulation game](https://github.com/ZoltanTheHun/SkyHussars) that uses SkyControl.
 
-  + October 2018 [DynamicAnimControl demo video](https://www.youtube.com/watch?v=A1Rii99nb3Q)
-
 <a name="acks"/>
 
 ## Acknowledgments
@@ -498,11 +496,8 @@ artists and software developers:
   it ... thank you yet again!
 + Paul Speed, for helpful insights which got me unstuck during debugging
 + Rémy Bouquet (aka "nehon") for creating the BVH Retarget Project (parts of
-  which are incorporated into the Wes library) and co-creating
-  KinematicRagdollControl (on which DynamicAnimControl is based) and also for
+  which are incorporated into the Wes library) and also for
   many helpful insights
-+ Normen Hansen (aka "normen") for creating most of the jme3-bullet library
- (on which Minie is based) and also for helpful insights
 + Alexandr Brui (aka "javasabr") for a solving a problem with the
   de-serialization of SkyControl
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
@@ -524,7 +519,6 @@ artists and software developers:
     + Adobe Photoshop Elements
     + the Ant and Gradle build tools
     + the Blender 3-D animation suite
-    + the Bullet real-time physics library
     + the FindBugs source-code analyzer
     + Gimp, the GNU Image Manipulation Program
     + the Git and Subversion revision-control systems
