@@ -58,7 +58,7 @@ Maven artifacts are available from
 
 ### Conventions
 
-Package names generally begin with "jme3utilities".
+Package names generally begin with `jme3utilities`.
 
 The source code is compatible with JDK 7.
 
@@ -80,6 +80,16 @@ From November 2013 to September 2015, it was hosted at
 
 Old (2014) versions of the Jme3-utilities Project can still be found in
 [the jMonkeyEngine-Contributions Project](https://github.com/jMonkeyEngine-Contributions/SkyControl).
+
+The evolution of each sub-project is chronicled in its release notes:
+
+ + [heart](https://github.com/stephengold/jme3-utilities/blob/master/heart/release-notes.md)
+ + [SkyControl](https://github.com/stephengold/jme3-utilities/blob/master/SkyControl/release-notes.md)
+ + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
+ + [ui](https://github.com/stephengold/jme3-utilities/blob/master/ui/release-notes.md)
+ + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
+ + [Wes](https://github.com/stephengold/jme3-utilities/blob/master/wes/release-notes.md)
+ + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
 
 <a name="install"/>
 
