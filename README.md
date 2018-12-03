@@ -141,13 +141,6 @@ Clone the jme3-utilities repository using Git:
 14. There will be errors in the "textures" sub-project.  However, the build
     task should resolve them.
 
-### External file
-
- 1. Download "bsc5.dat.gz" (the ASCII catalog, version 5 of the Yale Bright Star
-    Catalog) from [Harvard](http://tdc-www.harvard.edu/catalogs/bsc5.html).
- 2. Extract the file "bsc5.dat" to the "src/main/resources" folder of the
-    "textures" sub-project.
-
 ### Build the project
 
  1. In the "Projects" window, right-click on the "tests" sub-project to

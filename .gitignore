@@ -15,6 +15,7 @@
 /textures/build/
 /textures/src/main/java/jme3utilities/sky/*.java
 /textures/src/main/resources/bsc5.dat
+/textures/src/main/resources/bsc5.dat.gz
 /ui/build/
 /wes/build/
 /x/build/
