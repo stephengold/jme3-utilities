@@ -125,6 +125,17 @@ public class RectangularSolid implements Savable {
     }
 
     /**
+     * Instantiate a centered solid with the specified half extents.
+     *
+     * @param halfExtents half extents the axis-aligned bounding box (not null,
+     * unaffected)
+     */
+    public RectangularSolid(Vector3f halfExtents) {
+        maxima.set(halfExtents);
+        halfExtents.mult(-1f, minima);
+    }
+
+    /**
      * Instantiate a solid with the specified minima, maxima, and rotation.
      *
      * @param min the minimum coordinate value for each local axis (not null,
