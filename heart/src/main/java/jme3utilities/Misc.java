@@ -53,6 +53,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
+import jme3utilities.math.RectangularSolid;
 import jme3utilities.math.VectorXZ;
 
 /**
@@ -144,6 +145,7 @@ public class Misc {
                 || object instanceof Float
                 || object instanceof Integer
                 || object instanceof Long
+                || object instanceof RectangularSolid
                 || object instanceof Short
                 || object instanceof String
                 || object instanceof VectorXZ) {
