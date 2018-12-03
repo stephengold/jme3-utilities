@@ -31,12 +31,11 @@ ext {
     // current versions of the libraries
     jcommanderVersion = '1.74'
     jme3utilitiesdebugVersion = '0.9.6'
-    jme3utilitiesheartVersion = '2.14.0'
+    jme3utilitiesheartVersion = '2.15.0'
     jme3utilitiesniftyVersion = '0.8.2'
     jme3utilitiesuiVersion = '0.6.6'
     jme3utilitiesxVersion = '0.2.6'
     jmonkeyengineVersion = '3.2.1-stable'
-    minieVersion = '0.4.5'
     skycontrolVersion = '0.9.14'
     wesVersion = '0.3.7'
 }
@@ -47,6 +46,7 @@ repositories {
     maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for testdata
     jcenter()
     maven { url 'http://nifty-gui.sourceforge.net/nifty-maven-repo' }
+    maven { url 'https://plugins.gradle.org/m2/' }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Create a jar of source files.') {

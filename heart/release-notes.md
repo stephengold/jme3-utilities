@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.15.0 released on 3 December 2018
+
+ + Fixed bug in the `RectangularSolid` constructor based on `BoundingBox`
+ + Added support for `RectangularSolid` in `Misc.deepCopy()`
+ + Added a `RectangularSolid` constructor based on half extents
+
 ## Version 2.14.0 released on 28 November 2018
 
  + Added a `RectangularSolid` class to model rotated boxes
@@ -53,13 +59,13 @@
 
 ## Version 2.7.0 released on 22 August 2018
 
- + Added a getWorldScale() method to the MySpatial class
- + Added support for VectorXZ in Misc.deepClone()
+ + Added a `getWorldScale()` method to the `MySpatial` class
+ + Added support for `VectorXZ` in `Misc.deepClone()`
 
 ## Version 2.6.1 released on 21 August 2018
 
  + Fixed logic errors in 3 material definitions
- + Added support for Byte, Character, and String in Misc.deepClone()
+ + Added support for `Byte`, `Character`, and `String` in `Misc.deepClone()`
 
 ## Version 2.6.0 released on 17 August 2018
 
