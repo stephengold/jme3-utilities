@@ -87,7 +87,7 @@ public class RectangularSolid implements Savable {
      */
     public RectangularSolid(BoundingBox aabb) {
         aabb.getMax(maxima);
-        aabb.getMax(minima);
+        aabb.getMin(minima);
     }
 
     /**
