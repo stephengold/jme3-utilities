@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
  */
 package jme3utilities.math;
 
+import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -152,6 +153,27 @@ final public class MyArray {
                 }
             }
         }
+
+        return result;
+    }
+
+    /**
+     * Calculate the arithmetic mean of a non-empty array of vectors.
+     *
+     * @param array the vectors to average (not null, not empty, unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the mean (either storeResult or a new vector, not null)
+     */
+    public static Vector3f mean(Vector3f[] array, Vector3f storeResult) {
+        Validate.nonEmpty(array, "array");
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.zero();
+        for (Vector3f location : array) {
+            result.addLocal(location);
+        }
+        int count = array.length;
+        result.divideLocal(count);
 
         return result;
     }
