@@ -36,7 +36,7 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 
 /**
- * Console application to generate the texture "solid circle.png".
+ * Console application to generate the texture "ring.png".
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -82,7 +82,7 @@ public class MakeRing {
     // new methods exposed
 
     /**
-     * Main entry point for the MakeSolidCircle application.
+     * Main entry point for the MakeRing application.
      *
      * @param arguments array of command-line arguments (not null)
      */
@@ -115,7 +115,7 @@ public class MakeRing {
     // private methods
 
     /**
-     * Generate an image map for a solid circle.
+     * Generate an image map for a ring.
      */
     private void makeRing() {
         /*

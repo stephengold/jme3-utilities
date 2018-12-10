@@ -76,8 +76,9 @@ public class PointVisualizer extends Geometry {
      * @param assetManager for loading assets (not null)
      * @param size the desired size (in pixels, &gt;0)
      * @param color the desired color (unaffected) or null for the default
-     * @param shapeName the name of a sprite texture (either "ring", "saltire",
-     * "solid circle", or null for a solid square)
+     * @param shapeName the name of a sprite texture (either "cross", "lozenge",
+     * "mascle", "ring", "saltire", "solid circle", or "square", or null for a
+     * solid square)
      */
     public PointVisualizer(AssetManager assetManager, int size,
             ColorRGBA color, String shapeName) {
@@ -163,8 +164,9 @@ public class PointVisualizer extends Geometry {
     /**
      * Alter the shape.
      *
-     * @param shapeName the name of a sprite texture (either "ring", "saltire",
-     * or "solid circle")
+     * @param shapeName the name of a sprite texture (either "cross", "lozenge",
+     * "mascle", "ring", "saltire", "solid circle", or "square", or null for a
+     * solid square)
      */
     public void setShape(String shapeName) {
         Validate.nonEmpty(shapeName, "shape name");
