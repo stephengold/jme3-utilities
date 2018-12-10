@@ -1,5 +1,14 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.16.0 released on TBD
+
+ + Added describers for axes, floats, and fractions to the `MyString` class
+ + Added describers suitable for locations and directions
+   to the `MyVector3f` class
+ + Added describers to the `MyColor` and `MyQuaternion` classes
+ + Added a `mean()` method to the `MyArray` class
+ + Trim trailing zeros in the `MyCamera.describe()` and `describeMore()` methods
+
 ## Version 2.15.0 released on 3 December 2018
 
  + Fixed bug in the `RectangularSolid` constructor based on `BoundingBox`
