@@ -325,7 +325,7 @@ public class MyVector3f {
 
     /**
      * Count the number of distinct vectors in the specified array,
-     * distinguishing 0 from -0.
+     * distinguishing 0 from -0. TODO move to MyArray class
      *
      * @param array input (not null, unaffected)
      * @return count (&ge;0)
@@ -343,7 +343,7 @@ public class MyVector3f {
 
     /**
      * Count the number of distinct vectors in the specified array, without
-     * distinguishing 0 from -0.
+     * distinguishing 0 from -0. TODO move to MyArray class
      *
      * @param array input (not null, unaffected)
      * @return count (&ge;0)
@@ -361,7 +361,8 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the sample covariance of a collection of sample vectors.
+     * Calculate the sample covariance of a collection of sample vectors. TODO
+     * array/buffer versions
      *
      * @param collection the sample vectors (not null, at least 2, unaffected)
      * @param storeResult storage for the result (modified if not null)
@@ -941,7 +942,8 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the arithmetic mean of a non-empty collection of vectors.
+     * Calculate the arithmetic mean of a non-empty collection of vectors. TODO
+     * FloatBuffer version
      *
      * @param collection the vectors to average (not null, not empty,
      * unaffected)
@@ -950,7 +952,7 @@ public class MyVector3f {
      */
     public static Vector3f mean(Collection<Vector3f> collection,
             Vector3f storeResult) {
-        Validate.nonEmpty(collection, "locations");
+        Validate.nonEmpty(collection, "collection");
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
         result.zero();
@@ -981,7 +983,8 @@ public class MyVector3f {
     }
 
     /**
-     * Find the most distant pair of locations in a specified list.
+     * Find the most distant pair of locations in a specified list. TODO
+     * array/buffer versions
      *
      * @param locations list of input coordinates (not null, all elements
      * non-null, unaffected)

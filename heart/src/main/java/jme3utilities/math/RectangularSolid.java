@@ -92,7 +92,7 @@ public class RectangularSolid implements Savable {
 
     /**
      * Instantiate a compact solid that bounds the specified collection of
-     * sample locations.
+     * sample locations. TODO version with the locations in a FloatBuffer
      *
      * @param sampleLocations the sample locations (not null, at least 2,
      * unaffected)

@@ -71,7 +71,7 @@ abstract public class ActionApplication
     // fields
 
     /**
-     * the folder/directory for writing assets
+     * folder/directory for writing assets
      */
     private static File writtenAssetDir = null;
     /**
@@ -268,14 +268,15 @@ abstract public class ActionApplication
                     "application should be initialized only once");
         }
         /*
-         * Attempt to create a folder for writing assets.
+         * Attempt to create a folder/directory for writing assets.
          */
         writtenAssetDir = new File("Written Assets");
         if (!writtenAssetDir.isDirectory()) {
             boolean success = writtenAssetDir.mkdirs();
             if (!success) {
                 String wadPath = getWrittenAssetDirPath();
-                logger.log(Level.WARNING, "Unable to create folder {0}.",
+                logger.log(Level.WARNING,
+                        "Failed to create folder/directory {0}.",
                         MyString.quote(wadPath));
             }
         }
