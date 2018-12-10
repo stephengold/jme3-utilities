@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jme3utilities.MySpatial;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -407,6 +408,71 @@ public class MyVector3f {
             }
         }
 
+        return result;
+    }
+
+    /**
+     * Generate a textual description of a Vector3f value.
+     *
+     * @param vector the value to describe (may be null, unaffected)
+     * @return a description (not null, not empty)
+     */
+    public static String describe(Vector3f vector) {
+        String result;
+        if (vector == null) {
+            result = "null";
+        } else {
+            StringBuilder builder = new StringBuilder(40);
+            builder.append("x=");
+            String x = MyString.describe(vector.x);
+            builder.append(x);
+
+            builder.append(" y=");
+            String y = MyString.describe(vector.y);
+            builder.append(y);
+
+            builder.append(" z=");
+            String z = MyString.describe(vector.z);
+            builder.append(z);
+
+            result = builder.toString();
+        }
+
+        assert result != null;
+        assert !result.isEmpty();
+        return result;
+    }
+
+    /**
+     * Generate a textual description of a direction vector.
+     *
+     * @param v the value to describe (may be null, unaffected)
+     * @return a description (not null, not empty)
+     */
+    public static String describeDirection(Vector3f v) {
+        String result;
+        if (v == null) {
+            result = "null";
+        } else {
+            StringBuilder builder = new StringBuilder(40);
+
+            builder.append("dx=");
+            String x = MyString.describeFraction(v.x);
+            builder.append(x);
+
+            builder.append(" dy=");
+            String y = MyString.describeFraction(v.y);
+            builder.append(y);
+
+            builder.append(" dz=");
+            String z = MyString.describeFraction(v.z);
+            builder.append(z);
+
+            result = builder.toString();
+        }
+
+        assert result != null;
+        assert !result.isEmpty();
         return result;
     }
 
