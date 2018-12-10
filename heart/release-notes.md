@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.16.0 released on TBD
+## Version 2.16.0 released on 9 December 2018
 
  + Added describers for axes, floats, and fractions to the `MyString` class
  + Added describers suitable for locations and directions
