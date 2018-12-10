@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.7 released on TBD
+## Version 0.9.7 released on 9 December 2018
 
  + Added a `PointVisualizer` class.
  + Trim trailing zeroes in the `Describer` class.
