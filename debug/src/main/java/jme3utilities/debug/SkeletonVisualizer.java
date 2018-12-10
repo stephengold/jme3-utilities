@@ -202,17 +202,16 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     public ColorRGBA copyHeadColor(int boneIndex, ColorRGBA storeResult) {
         Validate.nonNegative(boneIndex, "bone index");
-        if (storeResult == null) {
-            storeResult = new ColorRGBA();
-        }
+        ColorRGBA result
+                = (storeResult == null) ? new ColorRGBA() : storeResult;
 
         ColorRGBA color = customColors.get(boneIndex);
         if (color == null) {
             color = headColor;
         }
-        storeResult.set(color);
+        result.set(color);
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -222,15 +221,14 @@ public class SkeletonVisualizer extends SubtreeControl {
      * @return the color (either storeResult or a new instance)
      */
     public ColorRGBA copyLineColor(ColorRGBA storeResult) {
-        if (storeResult == null) {
-            storeResult = new ColorRGBA();
-        }
+        ColorRGBA result
+                = (storeResult == null) ? new ColorRGBA() : storeResult;
 
         MatParam parameter = lineMaterial.getParam("Color");
         ColorRGBA color = (ColorRGBA) parameter.getValue();
-        storeResult.set(color);
+        result.set(color);
 
-        return storeResult;
+        return result;
     }
 
     /**
