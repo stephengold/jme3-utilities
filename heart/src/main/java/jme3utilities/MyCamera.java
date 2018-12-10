@@ -128,14 +128,14 @@ final public class MyCamera {
         String result;
         if (camera == null) {
             result = "null";
-
         } else {
             String name = camera.getName();
             Vector3f location = camera.getLocation();
+            String locString = MyVector3f.describe(location);
             Vector3f direction = camera.getDirection();
+            String dirString = MyVector3f.describeDirection(direction);
             result = String.format("camera %s loc=%s dir=%s",
-                    MyString.quote(name), location.toString(),
-                    direction.toString());
+                    MyString.quote(name), locString, dirString);
         }
 
         return result;
@@ -149,11 +149,12 @@ final public class MyCamera {
      * @see #describe(com.jme3.renderer.Camera)
      */
     public static String describeMore(Camera camera) {
-        String projection = camera.isParallelProjection() ? "paral" : "persp";
+        String projection = camera.isParallelProjection() ? "para" : "persp";
         float fAspect = frustumAspectRatio(camera);
         float vAspect = viewAspectRatio(camera);
-        String result = String.format("%s F%.3f:1 V%.3f:1", projection,
-                fAspect, vAspect);
+        String result = String.format("%s F%s:1 V%s:1", projection,
+                MyString.describeFraction(fAspect),
+                MyString.describeFraction(vAspect));
 
         float near = camera.getFrustumNear();
         float far = camera.getFrustumFar();
@@ -163,9 +164,14 @@ final public class MyCamera {
         float top = camera.getViewPortTop();
         int dWidth = camera.getWidth();
         int dHeight = camera.getHeight();
-        result += String.format(
-                " fz[%.2f %.2f] vx[%.2f %.2f] vy[%.2f %.2f] %dx%d",
-                near, far, left, right, bottom, top, dWidth, dHeight);
+        result += String.format(" fz[%s %s] vx[%s %s] vy[%s %s] %dx%d",
+                MyString.describe(near),
+                MyString.describe(far),
+                MyString.describeFraction(left),
+                MyString.describeFraction(right),
+                MyString.describeFraction(bottom),
+                MyString.describeFraction(top),
+                dWidth, dHeight);
 
         return result;
     }
