@@ -58,13 +58,26 @@ task cleanDownload(type: Delete) {
 // generate shape textures
 
 task shapeTextures {
-    dependsOn = ['ring', 'saltire', 'solidCircle']
+    dependsOn = ['cross', 'lozenge', 'mascle', 'ring', \
+        'saltire', 'solidCircle', 'square']
     description 'generate texture assets distributed with jme3-utilities-debug'
 }
 task cleanShapeTextures(type:Delete) {
     delete fileTree(dir: shapes)
 }
 
+task cross(type: JavaExec) {
+    main 'jme3utilities.debug.textures.MakeCross'
+    outputs.files(["$shapes/cross.png"])
+}
+task lozenge(type: JavaExec) {
+    main 'jme3utilities.debug.textures.MakeLozenge'
+    outputs.files(["$shapes/lozenge.png"])
+}
+task mascle(type: JavaExec) {
+    main 'jme3utilities.debug.textures.MakeMascle'
+    outputs.files(["$shapes/mascle.png"])
+}
 task ring(type: JavaExec) {
     main 'jme3utilities.debug.textures.MakeRing'
     outputs.files(["$shapes/ring.png"])
@@ -76,6 +89,10 @@ task saltire(type: JavaExec) {
 task solidCircle(type: JavaExec) {
     main 'jme3utilities.debug.textures.MakeSolidCircle'
     outputs.files(["$shapes/solid circle.png"])
+}
+task square(type: JavaExec) {
+    main 'jme3utilities.debug.textures.MakeSquare'
+    outputs.files(["$shapes/square.png"])
 }
 
 // generate sky textures
