@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2018, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -146,6 +147,42 @@ public class MyQuaternion {
         float qw = q.getW();
         result.set(-qx, -qy, -qz, qw);
 
+        return result;
+    }
+
+    /**
+     * Generate a textual description of a Quaternion value.
+     *
+     * @param q the value to describe (may be null, unaffected)
+     * @return a description (not null, not empty)
+     */
+    public static String describe(Quaternion q) {
+        String result;
+        if (q == null) {
+            result = "null";
+        } else {
+            StringBuilder builder = new StringBuilder(40);
+            builder.append("x=");
+            String x = MyString.describeFraction(q.getX());
+            builder.append(x);
+
+            builder.append(" y=");
+            String y = MyString.describeFraction(q.getY());
+            builder.append(y);
+
+            builder.append(" z=");
+            String z = MyString.describeFraction(q.getZ());
+            builder.append(z);
+
+            builder.append(" w=");
+            String w = MyString.describeFraction(q.getW());
+            builder.append(w);
+
+            result = builder.toString();
+        }
+
+        assert result != null;
+        assert !result.isEmpty();
         return result;
     }
 

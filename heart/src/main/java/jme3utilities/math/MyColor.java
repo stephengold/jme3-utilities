@@ -30,6 +30,7 @@ import com.jme3.math.ColorRGBA;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -61,6 +62,51 @@ final public class MyColor {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Generate a textual description of a ColorRGBA value.
+     *
+     * @param color the value to describe (may be null, unaffected)
+     * @return a description (not null, not empty)
+     */
+    public static String describe(ColorRGBA color) {
+        String result;
+        if (color == null) {
+            result = "null";
+        } else {
+            StringBuilder builder = new StringBuilder(40);
+
+            if (color.r == color.g && color.g == color.b) {
+                builder.append("rgb=");
+                String rgb = MyString.describeFraction(color.r);
+                builder.append(rgb);
+            } else {
+                builder.append("r=");
+                String r = MyString.describeFraction(color.r);
+                builder.append(r);
+
+                builder.append(" g=");
+                String g = MyString.describeFraction(color.g);
+                builder.append(g);
+
+                builder.append(" b=");
+                String b = MyString.describeFraction(color.b);
+                builder.append(b);
+            }
+
+            if (color.a != 1f) {
+                builder.append(" a=");
+                String a = MyString.describeFraction(color.a);
+                builder.append(a);
+            }
+
+            result = builder.toString();
+        }
+
+        assert result != null;
+        assert !result.isEmpty();
+        return result;
+    }
 
     /**
      * Interpolate linearly between two colors (with no side effect).
