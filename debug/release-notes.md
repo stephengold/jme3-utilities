@@ -1,5 +1,12 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.7 released on TBD
+
+ + Added a `PointVisualizer` class.
+ + Trim trailing zeroes in the `Describer` class.
+ + Added 4 sprite textures: cross, lozenge, mascle, and square.
+ + Based on version 2.16 of the jme3-utilities-heart library.
+
 ## Version 0.9.6 released on 19 November 2018
 
 Based on version 2.13 of the jme3-utilities-heart library.
