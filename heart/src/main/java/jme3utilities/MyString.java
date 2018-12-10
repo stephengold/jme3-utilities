@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.math.MyVector3f;
 
 /**
  * Utility methods for char sequences, strings, and collections of strings.
@@ -46,6 +47,10 @@ public class MyString {
      */
     final private static Logger logger
             = Logger.getLogger(MyString.class.getName());
+    /**
+     * names of the coordinate axes
+     */
+    final private static String[] axisNames = {"X", "Y", "Z"};
     // *************************************************************************
     // constructors
 
@@ -99,6 +104,20 @@ public class MyString {
     }
 
     /**
+     * Describe a coordinate axis.
+     *
+     * @param axisIndex the index of the axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @return a textual description (not null, not empty)
+     */
+    public static String axisName(int axisIndex) {
+        Validate.inRange(axisIndex, "axis index", MyVector3f.xAxis,
+                MyVector3f.zAxis);
+
+        String description = axisNames[axisIndex];
+        return description;
+    }
+
+    /**
      * De-duplicate a list of strings by appending distinguishing suffixes as
      * needed. The number of strings and their order remains unchanged.
      *
@@ -132,6 +151,38 @@ public class MyString {
                 }
             }
         }
+    }
+
+    /**
+     * Generate a textual description of a single-precision floating-point
+     * value.
+     *
+     * @param fValue the value to describe
+     * @return a description (not null, not empty)
+     */
+    public static String describe(float fValue) {
+        String raw = String.format("%f", fValue);
+        String result = MyString.trimFloat(raw);
+
+        assert result != null;
+        assert !result.isEmpty();
+        return result;
+    }
+
+    /**
+     * Generate a textual description of a single-precision floating-point value
+     * using at most 3 decimal places.
+     *
+     * @param fValue the value to describe
+     * @return a description (not null, not empty)
+     */
+    public static String describeFraction(float fValue) {
+        String raw = String.format("%.3f", fValue);
+        String result = MyString.trimFloat(raw);
+
+        assert result != null;
+        assert !result.isEmpty();
+        return result;
     }
 
     /**
