@@ -75,6 +75,7 @@ import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyColor;
 import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
@@ -207,7 +208,7 @@ public class Describer {
         result.append(" mode=");
         Mesh.Mode mode = mesh.getMode();
         result.append(mode);
-        result.append(" buffers=");
+        result.append(" bufs=");
 
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         for (IntMap.Entry<VertexBuffer> bufferEntry : buffers) {
@@ -251,23 +252,7 @@ public class Describer {
     public String describeAxis(int axisIndex) {
         Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
                 MyVector3f.lastAxis);
-
-        String result;
-        switch (axisIndex) {
-            case MyVector3f.xAxis:
-                result = "X";
-                break;
-            case MyVector3f.yAxis:
-                result = "Y";
-                break;
-            case MyVector3f.zAxis:
-                result = "Z";
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-
-        return result;
+        return MyString.axisName(axisIndex);
     }
 
     /**
@@ -386,7 +371,7 @@ public class Describer {
      * @return a description (not null, not empty)
      */
     public String describeFlags(ViewPort viewPort) {
-        StringBuilder result = new StringBuilder(20);
+        StringBuilder result = new StringBuilder(32);
 
         if (!viewPort.isClearColor()) {
             result.append("NO");
@@ -419,8 +404,10 @@ public class Describer {
 
         Vector3f location = MySpatial.worldLocation(spatial, null);
         if (!MyVector3f.isZero(location)) {
-            result.append("loc=");
-            result.append(location);
+            result.append("loc=(");
+            String locText = MyVector3f.describe(location);
+            result.append(locText);
+            result.append(")");
         }
 
         return result.toString();
@@ -439,8 +426,10 @@ public class Describer {
 
         Quaternion orientation = MySpatial.worldOrientation(spatial, null);
         if (!MyQuaternion.isRotationIdentity(orientation)) {
-            result.append("orient=");
-            result.append(orientation);
+            result.append("orient=(");
+            String orientText = MyQuaternion.describe(orientation);
+            result.append(orientText);
+            result.append(")");
         }
 
         return result.toString();
@@ -455,7 +444,7 @@ public class Describer {
      */
     public String describeOverrides(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
-        StringBuilder result = new StringBuilder(20);
+        StringBuilder result = new StringBuilder(60);
 
         result.append("mpo=(");
         boolean addSeparators = false;
@@ -526,14 +515,17 @@ public class Describer {
         StringBuilder result = new StringBuilder(30);
 
         if (!MyVector3f.isScaleUniform(vector)) {
-            result.append("scale=");
-            result.append(vector);
+            result.append("scale=(");
+            String vectorText = MyVector3f.describe(vector);
+            result.append(vectorText);
+            result.append(")");
         } else if (!MyVector3f.isScaleIdentity(vector)) {
             /*
              * uniform scaling
              */
             result.append("scale=");
-            result.append(vector.x);
+            String floatText = MyString.describe(vector.x);
+            result.append(floatText);
         }
 
         return result.toString();
@@ -687,37 +679,27 @@ public class Describer {
         } else {
             String name = MyString.quote(light.getName());
             ColorRGBA color = light.getColor();
-            String rgb;
-            if (color.r == color.g && color.g == color.b) {
-                rgb = String.format("rgb=%.2f", color.r);
-            } else {
-                rgb = String.format("r=%.2f g=%.2f b=%.2f",
-                        color.r, color.g, color.b);
-            }
+            String rgb = MyColor.describe(color);
             if (light instanceof AmbientLight) {
                 result = String.format("AL%s(%s)", name, rgb);
 
             } else if (light instanceof DirectionalLight) {
                 Vector3f direction = ((DirectionalLight) light).getDirection();
-                String dir = String.format("dx=%.2f dy=%.2f dz=%.2f",
-                        direction.x, direction.y, direction.z);
-                result = String.format("DL%s(%s, %s)", name, rgb, dir);
+                String dir = MyVector3f.describeDirection(direction);
+                result = String.format("DL%s(%s; %s)", name, rgb, dir);
 
             } else if (light instanceof PointLight) {
                 Vector3f location = ((PointLight) light).getPosition();
-                String loc = String.format("x=%.2f y=%.2f z=%.2f",
-                        location.x, location.y, location.z);
-                result = String.format("PL%s(%s, %s)", name, rgb, loc);
+                String loc = MyVector3f.describe(location);
+                result = String.format("PL%s(%s; %s)", name, rgb, loc);
 
             } else if (light instanceof SpotLight) {
                 SpotLight spotLight = (SpotLight) light;
                 Vector3f location = spotLight.getPosition();
-                String loc = String.format("x=%.2f y=%.2f z=%.2f",
-                        location.x, location.y, location.z);
+                String loc = MyVector3f.describe(location);
                 Vector3f direction = spotLight.getDirection();
-                String dir = String.format("dx=%.2f dy=%.2f dz=%.2f",
-                        direction.x, direction.y, direction.z);
-                result = String.format("SL%s(%s, %s, %s)", name, rgb, loc, dir);
+                String dir = MyVector3f.describeDirection(direction);
+                result = String.format("SL%s(%s; %s; %s)", name, rgb, loc, dir);
 
             } else {
                 result = light.getClass().getSimpleName();
