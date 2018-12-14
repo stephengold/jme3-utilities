@@ -41,7 +41,7 @@ import jme3utilities.Validate;
 import jme3utilities.mesh.PointMesh;
 
 /**
- * Visualize a single location in space. TODO move to Debug library
+ * Visualize a single location in space.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -153,11 +153,10 @@ public class PointVisualizer extends Geometry {
      * @param enable true &rarr; enable, false &rarr; disable
      */
     public void setEnabled(boolean enable) {
-        boolean wasEnabled = isEnabled();
-        if (wasEnabled && !enable) {
-            cullHint = CullHint.Always;
-        } else if (enable && !wasEnabled) {
+        if (enable) {
             cullHint = CullHint.Never;
+        } else {
+            cullHint = CullHint.Always;
         }
     }
 
