@@ -467,7 +467,7 @@ public class MyString {
     }
 
     /**
-     * Trim any trailing zeroes and one trailing decimal point from a string
+     * Trim any trailing zeros and one trailing decimal point from a string
      * representation of a float. Also remove sign from zero.
      *
      * @param input the string to trim (not null)

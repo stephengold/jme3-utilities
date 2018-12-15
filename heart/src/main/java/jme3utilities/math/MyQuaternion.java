@@ -468,7 +468,7 @@ public class MyQuaternion {
      *
      * @param input (not null, unaffected)
      * @param storeResult (modified if not null)
-     * @return an equivalent quaternion without negative zeroes (either
+     * @return an equivalent quaternion without negative zeros (either
      * storeResult or a new instance)
      */
     public static Quaternion standardize(Quaternion input,

@@ -1182,7 +1182,7 @@ public class MyVector3f {
      *
      * @param input (not null, unaffected)
      * @param storeResult storage for the result (modified if not null)
-     * @return an equivalent vector without negative zeroes (either storeResult
+     * @return an equivalent vector without negative zeros (either storeResult
      * or a new instance)
      */
     public static Vector3f standardize(Vector3f input, Vector3f storeResult) {
