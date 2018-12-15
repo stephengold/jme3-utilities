@@ -426,10 +426,10 @@ public class Describer {
 
         Quaternion orientation = MySpatial.worldOrientation(spatial, null);
         if (!MyQuaternion.isRotationIdentity(orientation)) {
-            result.append("orient=(");
+            result.append("orient=[");
             String orientText = MyQuaternion.describe(orientation);
             result.append(orientText);
-            result.append(")");
+            result.append("]");
         }
 
         return result.toString();

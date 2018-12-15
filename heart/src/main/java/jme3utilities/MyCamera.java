@@ -134,7 +134,7 @@ final public class MyCamera {
             String locString = MyVector3f.describe(location);
             Vector3f direction = camera.getDirection();
             String dirString = MyVector3f.describeDirection(direction);
-            result = String.format("camera %s loc=%s dir=%s",
+            result = String.format("camera %s loc=[%s] dir=[%s]",
                     MyString.quote(name), locString, dirString);
         }
 
