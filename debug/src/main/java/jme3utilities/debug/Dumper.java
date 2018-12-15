@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.MyColor;
 
 /**
  * Dump portions of a jME3 scene graph for debugging.
@@ -196,15 +197,15 @@ public class Dumper {
                 numMains, (numMains == 1) ? "" : "s");
         stream.printf("%d postView%s%n", numPosts, (numPosts == 1) ? "" : "s");
 
-        for (int index = 0; index < numPres; index++) {
+        for (int index = 0; index < numPres; ++index) {
             stream.printf("preView[%d]:%n", index);
             dump(pres.get(index), indentIncrement);
         }
-        for (int index = 0; index < numMains; index++) {
+        for (int index = 0; index < numMains; ++index) {
             stream.printf("mainView[%d]:%n", index);
             dump(mains.get(index), indentIncrement);
         }
-        for (int index = 0; index < numPosts; index++) {
+        for (int index = 0; index < numPosts; ++index) {
             stream.printf("postView[%d]:%n", index);
             dump(posts.get(index), indentIncrement);
         }
@@ -379,7 +380,7 @@ public class Dumper {
             stream.print(desc);
             if (viewPort.isClearColor()) {
                 ColorRGBA backColor = viewPort.getBackgroundColor();
-                stream.printf(" bg%s", backColor.toString());
+                stream.printf(" bg%s", MyColor.describe(backColor));
             }
             String descP = describer.describeProcessors(viewPort);
             stream.printf(" procs=(%s)%n", descP);
