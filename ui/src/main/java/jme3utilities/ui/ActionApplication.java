@@ -83,7 +83,7 @@ abstract public class ActionApplication
      */
     private Signals signals = null;
     // *************************************************************************
-    // new public methods
+    // new methods exposed
 
     /**
      * Callback to the user's application startup code.
@@ -142,18 +142,6 @@ abstract public class ActionApplication
     }
 
     /**
-     * Read the filesystem path to the folder/directory for writing assets.
-     *
-     * @return the absolute pathname (not null, not empty)
-     * @deprecated use {@link #writtenAssetPath()}
-     */
-    @Deprecated
-    public static String getWrittenAssetDirPath() {
-        String path = writtenAssetPath();
-        return path;
-    }
-
-    /**
      * Callback invoked immediately after initializing the hotkey bindings of
      * the default input mode. Meant to be overridden. Can be used to add action
      * names and/or override those bindings.
@@ -202,7 +190,7 @@ abstract public class ActionApplication
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param tpf time interval between render passes (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
@@ -274,10 +262,10 @@ abstract public class ActionApplication
         if (!writtenAssetDir.isDirectory()) {
             boolean success = writtenAssetDir.mkdirs();
             if (!success) {
-                String wadPath = getWrittenAssetDirPath();
+                String waPath = writtenAssetPath();
                 logger.log(Level.WARNING,
                         "Failed to create folder/directory {0}.",
-                        MyString.quote(wadPath));
+                        MyString.quote(waPath));
             }
         }
         /*
@@ -308,9 +296,9 @@ abstract public class ActionApplication
     }
 
     /**
-     * Callback invoked once per render pass.
+     * Callback invoked once per frame.
      *
-     * @param tpf time interval between render passes (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void simpleUpdate(float tpf) {
