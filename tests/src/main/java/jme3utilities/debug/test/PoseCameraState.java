@@ -332,9 +332,9 @@ class PoseCameraState
 
     /**
      * Callback to update this state prior to rendering. (Invoked once per
-     * render pass.)
+     * frame.)
      *
-     * @param tpf time interval between render passes (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {
@@ -371,7 +371,7 @@ class PoseCameraState
      *
      * @param eventString textual description of the analog event (not null)
      * @param amount amount of the event (&ge;0)
-     * @param ignored time interval between render passes (in seconds, &ge;0)
+     * @param ignored time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void onAnalog(String eventString, float amount, float ignored) {

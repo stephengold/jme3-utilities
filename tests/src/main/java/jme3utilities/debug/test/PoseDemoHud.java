@@ -229,7 +229,7 @@ public class PoseDemoHud
      *
      * @param actionString textual description of the action (not null)
      * @param ongoing true if the action is ongoing, otherwise false
-     * @param tpf time interval between render passes (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
@@ -388,9 +388,9 @@ public class PoseDemoHud
 
     /**
      * Callback to update this state prior to rendering. (Invoked once per
-     * render pass.)
+     * frame.)
      *
-     * @param tpf time interval between render passes (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float tpf) {

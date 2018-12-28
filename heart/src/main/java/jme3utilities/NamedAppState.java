@@ -198,7 +198,7 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Callback during each render pass after all rendering is complete.
+     * Callback during each frame after all rendering is complete.
      */
     @Override
     public void postRender() {
@@ -211,7 +211,7 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Callback to perform rendering for this state during each render pass.
+     * Callback to perform rendering for this state during each frame.
      *
      * @param rm the application's render manager (not null)
      */
@@ -276,10 +276,9 @@ public class NamedAppState implements AppState {
 
     /**
      * Callback to update this state prior to rendering. (Invoked once per
-     * render pass.)
+     * frame.)
      *
-     * @param elapsedTime the time interval between render passes (in seconds,
-     * &ge;0)
+     * @param elapsedTime the time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float elapsedTime) {

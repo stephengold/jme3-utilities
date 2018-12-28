@@ -174,8 +174,8 @@ public class SimpleAppState extends NamedAppState {
     }
 
     /**
-     * Callback to perform rendering for this state during each render pass.
-     * Should be invoked only by a subclass or by the AppStateManager.
+     * Callback to perform rendering for this state during each frame. Should be
+     * invoked only by a subclass or by the AppStateManager.
      *
      * @param rm the application's render manager (not null)
      */

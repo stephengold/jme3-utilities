@@ -479,7 +479,7 @@ public class SkyControl extends SkyControlCore {
     /**
      * Callback to update this control prior to rendering.
      *
-     * @param tpf time interval between render passes (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void controlUpdate(float tpf) {

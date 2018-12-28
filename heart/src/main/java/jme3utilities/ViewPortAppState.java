@@ -54,7 +54,7 @@ public class ViewPortAppState extends SimpleAppState {
     // fields
 
     /**
-     * time interval between render passes (in seconds, &ge;0)
+     * time interval between frames (in seconds, &ge;0)
      */
     private float tpf;
     /**
@@ -74,7 +74,7 @@ public class ViewPortAppState extends SimpleAppState {
     // SimpleAppState methods
 
     /**
-     * Callback to perform rendering for this state during each render pass.
+     * Callback to perform rendering for this state during each frame.
      *
      * @param rm application's render manager (not null)
      */
@@ -101,10 +101,9 @@ public class ViewPortAppState extends SimpleAppState {
 
     /**
      * Callback to update this state prior to rendering. (Invoked once per
-     * render pass.)
+     * frame.)
      *
-     * @param elapsedTime time interval between render passes (in seconds,
-     * &ge;0)
+     * @param elapsedTime time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float elapsedTime) {

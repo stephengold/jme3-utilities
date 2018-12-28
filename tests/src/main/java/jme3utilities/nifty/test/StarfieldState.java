@@ -191,10 +191,9 @@ public class StarfieldState extends SimpleAppState {
 
     /**
      * Callback to update this state prior to rendering. (Invoked once per
-     * render pass.)
+     * frame.)
      *
-     * @param updateInterval time interval between render passes (in seconds,
-     * &ge;0)
+     * @param updateInterval time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float updateInterval) {
