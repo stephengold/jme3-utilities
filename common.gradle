@@ -31,11 +31,11 @@ ext {
     // current versions of the libraries
     jcommanderVersion = '1.74'
     jme3utilitiesdebugVersion = '0.9.7'
-    jme3utilitiesheartVersion = '2.16.0'
+    jme3utilitiesheartVersion = '2.17.0'
     jme3utilitiesniftyVersion = '0.8.2'
     jme3utilitiesuiVersion = '0.6.6'
     jme3utilitiesxVersion = '0.2.6'
-    jmonkeyengineVersion = '3.2.1-stable'
+    jmonkeyengineVersion = '3.2.2-beta1'
     skycontrolVersion = '0.9.14'
     wesVersion = '0.3.7'
 }

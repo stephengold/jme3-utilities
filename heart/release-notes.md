@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.17.0 released on TBD
+
+ + Improved output formatting in the `MyCamera.describe()` method
+ + Targeted jMonkeyEngine version 3.2.2-beta1
+
 ## Version 2.16.0 released on 9 December 2018
 
  + Added describers for axes, floats, and fractions to the `MyString` class
@@ -7,7 +12,8 @@
    to the `MyVector3f` class
  + Added describers to the `MyColor` and `MyQuaternion` classes
  + Added a `mean()` method to the `MyArray` class
- + Trim trailing zeros in the `MyCamera.describe()` and `describeMore()` methods
+ + Trimmed trailing zeros in the `MyCamera.describe()` and `describeMore()`
+   methods
 
 ## Version 2.15.0 released on 3 December 2018
 
