@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.8.3 released on TBD
+## Version 0.8.3 released on 28 December 2018
 
  + Based on version 1.4.3 of Nifty, version 3.2.2-beta1 of jMonkeyEngine,
    version 2.17 of the jme3-utilities-heart library,
