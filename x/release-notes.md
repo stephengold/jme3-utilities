@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.7 released on TBD
+## Version 0.2.7 released on 28 December 2018
 
  + Targeted version 3.2.2-beta1 of jMonkeyEngine.
  + Based on version 2.17 of the jme3-utilities-heart library.

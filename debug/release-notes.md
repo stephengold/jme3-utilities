@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.8 released on TBD
+## Version 0.9.8 released on 28 December 2018
 
  + Made dumps more concise.
  + Clarified `Spatial` descriptions.

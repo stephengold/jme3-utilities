@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.6.7 released on TBD
+## Version 0.6.7 released on 28 December 2018
 
  + Removed the deprecated `ActionApplication.getWrittenAssetDirPath()` method.
  + Based on version 2.17 of the jme3-utilities-heart library.

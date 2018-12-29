@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.15 released on TBD
+## Version 0.9.15 released on 28 December 2018
 
 Notable changes:
  + automate downloading and decompression of the star catalog

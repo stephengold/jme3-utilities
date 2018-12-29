@@ -60,6 +60,6 @@ public class XVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.2.7";
+        return "master 0.2.7+1";
     }
 }
