@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.6.7 released on TBD
+
+ + Removed the deprecated `ActionApplication.getWrittenAssetDirPath()` method.
+ + Based on version 2.17 of the jme3-utilities-heart library.
+
 ## Version 0.6.6 released on 28 November 2018
 
  + Fixed a bug where `FLYCAM_LOWER` mapped to the R key instead of the Z key.

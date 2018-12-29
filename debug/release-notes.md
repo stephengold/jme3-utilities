@@ -1,5 +1,12 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.8 released on TBD
+
+ + Made dumps more concise.
+ + Clarified `Spatial` descriptions.
+ + Simplified the `PointVisualizer.setEnabled()` method.
+ + Based on version 2.17 of the jme3-utilities-heart library.
+
 ## Version 0.9.7 released on 9 December 2018
 
  + Added a `PointVisualizer` class.

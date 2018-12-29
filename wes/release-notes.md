@@ -1,5 +1,10 @@
 # release notes for the Wes library and related tests
 
+## Version 0.3.8 released on TBD
+
+ + Base on version 2.17 of the heart library.
+ + Target JME v3.2.2-beta1 .
+
 ## Version 0.3.7 released on 23 September 2018
 
  + Rename WesVersion.getVersionShort() to versionShort(). (API change)

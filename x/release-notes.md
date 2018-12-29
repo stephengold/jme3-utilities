@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-x library and related tests
 
+## Version 0.2.7 released on TBD
+
+ + Targeted version 3.2.2-beta1 of jMonkeyEngine.
+ + Based on version 2.17 of the jme3-utilities-heart library.
+
 ## Version 0.2.6 released on 14 November 2018
 
  + Bugfix: assertion failure in `Population.size()`.

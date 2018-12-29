@@ -1,24 +1,30 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.15 released on TBD
+
+Notable changes:
+ + automate downloading and decompression of the star catalog
+ + base on version 2.17 of the heart library and target JME 3.2.2-beta1
+
 ## Version 0.9.14 released on 23 September 2018
 
 Notable changes:
- + Renamed Constants.getVersionShort() to versionShort(). (API change)
+ + renamed `Constants.getVersionShort()` to `versionShort()`. (API change)
  + base on version 2.10 of the heart library
 
 ## Version 0.9.13 released on 24 July 2018
 
 Notable changes:
- + deprecate the old constructors for SkyControl and SkyControlCore
- + rm bogus assert from TestSkyControlRun
+ + deprecate the old constructors for `SkyControl` and `SkyControlCore`
+ + rm bogus assert from `TestSkyControlRun`
  + base on version 2.5 of the heart library
 
 ## Version 0.9.12 released on 18 February 2018
 
 Notable changes:
- + add new constructors and a TwoDomes stars option, for use with edge filters
- + add a --nocubes command-line parameter to TestSkyControl
- + add a cartoon-edge filter to TestSkyControl
+ + add new constructors and a `TwoDomes` stars option, for use with edge filters
+ + add a --nocubes command-line parameter to `TestSkyControl`
+ + add a cartoon-edge filter to `TestSkyControl`
 
 ## Version 0.9.11 released on 25 January 2018
 
@@ -28,7 +34,7 @@ Notable changes:
 ## Version 0.9.10 released on 23 January 2018
 
 Notable changes:
- + update SkyControl and FloorControl cameras from the RenderManager
+ + update `SkyControl` and `FloorControl` cameras from the RenderManager
 
 ## Version 0.9.9 released on 22 January 2018
 
