@@ -1,30 +1,37 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.8.3 released on TBD
+
+ + Based on version 1.4.3 of Nifty, version 3.2.2-beta1 of jMonkeyEngine,
+   version 2.17 of the jme3-utilities-heart library,
+   and version 0.6.7 of the jme3-utilities-ui library.
+ + Improved argument validation in the `SoundHandleJme` class.
+
 ## Version 0.8.2 released on 23 September 2018
 
  + Require a controller for every dialog box.
- + Rename LibraryVersion.getVersionShort() to versionShort().
+ + Rename `LibraryVersion.getVersionShort()` to `versionShort()`.
  + Based on version 2.10 of the jme3-utilities-heart library.
 
 ## Version 0.8.1 released on 14 September 2018
 
  + Allow modal dialog boxes to open popup menus
- + Replace PopScreenController.hasActiveDialog() with getActiveDialog()
+ + Replace `PopScreenController.hasActiveDialog()` with `getActiveDialog()`
    (API change)
 
 ## Version 0.8.0 released on 13 September 2018
 
  + Improve the extensibility of dialog boxes. Formerly commit-action suffixes
-   were constructed in PopScreenController.dialogCommit() based on what
+   were constructed in `PopScreenController.dialogCommit()` based on what
    controls the dialog contained.  That functionality has moved to the dialog
    controller, providing more flexibility.
- + Add a MinimalDialog class for use as a default and a superclass.
- + Use TextEntryDialog as a superclass for all dialog boxes based on
-   Interface/Nifty/dialogs/text-entry.xml .
+ + Add a `MinimalDialog` class for use as a default and a superclass.
+ + Use `TextEntryDialog` as a superclass for all dialog boxes based on
+   `Interface/Nifty/dialogs/text-entry.xml`.
 
 ## Version 0.7.13 released on 17 August 2018
 
- + Add a commit description to TextEntryDialog class.
+ + Add a commit description to `TextEntryDialog` class.
  + Dim the screen by 25% for each popup menu.
 
 ## Version 0.7.12 released on 24 July 2018
@@ -40,19 +47,19 @@
 
 ## Version 0.7.10 released on 8 February 2018
 
- + Add setColorBank() methods to the GuiScreenController and
-   GuiWindowController classes.
- + Add storeResult arguments to the readVectorBank() methods.
+ + Add `setColorBank()` methods to the `GuiScreenController` and
+   `GuiWindowController` classes.
+ + Add `storeResult` arguments to the `readVectorBank()` methods.
 
 ## Version 0.7.9 released on 2 February 2018
 
  + More flexible policies for the placement of submenus.
- + Disable warnings while loading the screen layout in BasicScreenController.
- + Don't pre-validate the screen layout in BasicScreenController.
- + Add readColorBank() methods to the GuiScreenController and
-   GuiWindowController classes.
+ + Disable warnings while loading the screen layout in `BasicScreenController`.
+ + Don't pre-validate the screen layout in `BasicScreenController`.
+ + Add `readColorBank()` methods to the `GuiScreenController` and
+   `GuiWindowController` classes.
  + Incorporate the fix for Nifty issue #384.
- + Remove the useControls and useStyles directives from the layouts for
+ + Remove the `useControls` and `useStyles` directives from the layouts for
    simple popups.
 
 ## Version 0.7.8 released on 25 January 2018
@@ -63,8 +70,8 @@
 
 ## Version 0.7.7 released on 10 January 2018
 
-Add disableCheckBox() methods to the GuiScreenController and
- GuiWindowController classes.
+Add `disableCheckBox()` methods to the `GuiScreenController` and
+ `GuiWindowController` classes.
 
 ## Version 0.7.6 released on 4 January 2018
 
