@@ -4,19 +4,19 @@ The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
 It contains 10 sub-projects:
 
- 1. heart: the "jme3-utilities-heart" library of core classes
- 2. SkyControl: the "SkyControl" library for sky simulation
- 3. moon-ccbysa: assets for a realistic Moon in SkyControl
- 4. debug: the "jme3-utilities-debug" library of debugging aids
+ 1. heart: the `jme3-utilities-heart` library of core classes
+ 2. SkyControl: the `SkyControl` library for sky simulation
+ 3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
+ 4. debug: the `jme3-utilities-debug` library of debugging aids
  5. tests: demos, examples, and test software
- 6. textures: generate textures used by jme3-utilities-debug and SkyControl
- 7. ui: the "jme3-utilities-ui" library for building user interfaces
- 8. nifty: the "jme3-utilities-nifty" library for using NiftyGUI user
+ 6. textures: generate textures used by `jme3-utilities-debug` and `SkyControl`
+ 7. ui: the `jme3-utilities-ui` library for building user interfaces
+ 8. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
     interfaces with jMonkeyEngine
- 9. wes: the "Wes" library for animation editing and retargeting
- 10. x: the "jme3-utilities-x" library of experimental software
+ 9. wes: the `Wes` library for animation editing and retargeting
+ 10. x: the `jme3-utilities-x` library of experimental software
 
-The "Minie" library, formerly a sub-project, is now a separate project
+The `Minie` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Minie).
 
 Summary of SkyControl features:
@@ -24,7 +24,7 @@ Summary of SkyControl features:
  + sun, moon, stars, horizon haze, and up to 6 cloud layers
  + compatible with static backgrounds such as cube maps
  + high resolution textures are provided -- or customize with your own textures
- + compatible with effects such as SimpleWater, shadows, bloom, and cartoon edges
+ + compatible with effects such as `SimpleWater`, shadows, bloom, and cartoon edges
  + continuous and reversible motion and blending of cloud layers
  + option to foreshorten clouds near the horizon
  + continuous and reversible motion of sun, moon, and stars based on time of day
@@ -58,15 +58,18 @@ Maven artifacts are available from
 
 ### Conventions
 
-Package names generally begin with `jme3utilities`.
+Since the Jme3-utilities Project is not associated with an Internet domain,
+package names generally begin with `jme3utilities`.  Packages copied from
+jMonkeyEngine and the BVH Retarget Project,
+however, retain their original names, which began with `com.jme3`.
 
-The source code is compatible with JDK 7.
+The source code remains compatible with JDK 7.
 
 World coordinate system:
 
- + the +X axis points toward the northern horizon
- + the +Y axis points up (toward the zenith)
- + the +Z axis points toward the eastern horizon
+ + the `+X` axis points toward the northern horizon
+ + the `+Y` axis points up (toward the zenith)
+ + the `+Z` axis points toward the eastern horizon
 
 <a name="history"/>
 
@@ -97,8 +100,8 @@ The evolution of each sub-project is chronicled in its release notes:
 
 ### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
 
-The "master" branch of the jme3-utilities repository targets
-Version 3.2.1 of jMonkeyEngine.  You are welcome to use the Engine
+The `master` branch of the jme3-utilities repository targets
+Version 3.2.2 of jMonkeyEngine.  You are welcome to use the Engine
 without also using the SDK, but I use the SDK, and the following
 installation instructions assume you will too.
 
@@ -157,13 +160,13 @@ Adding it to an existing JME3 project should be a simple 6-step process:
 
  1. Add jme3-utilities JARs to the classpath.
  2. Disable any existing sky which might interfere with SkyControl.
- 3. Add a SkyControl instance to some node in the scene graph.
- 4. Configure the SkyControl instance.
- 5. Enable the SkyControl instance.
+ 3. Add a `SkyControl` instance to some node in the scene graph.
+ 4. Configure the `SkyControl` instance.
+ 5. Enable the `SkyControl` instance.
  6. Test and tune as necessary.
 
-To demonstrate this process, we'll apply it to BasicGame and then to
-CubeMapExample, a more sophisticated application. I encourage you to
+To demonstrate this process, we'll apply it to `BasicGame` and then to
+`CubeMapExample`, a more sophisticated application. I encourage you to
 follow along in your development environment.
 
 ### BasicGame example
@@ -203,7 +206,7 @@ Open the project's properties in the IDE:
  2. Select "Properties to open the "Project Properties" dialog.
  3. Under "Categories:" select "Libraries".
  4. Click on the "Compile" tab.
- 5. Add the "jme3-utilities-heart" class JAR:
+ 5. Add the `jme3-utilities-heart` class JAR:
     + Click on the "Add JAR/Folder" button.
     + Navigate to the "jme3-utilities" project folder.
     + Open the "heart" sub-project folder.
@@ -252,7 +255,7 @@ viewport background -- there is nothing to disable.
 #### Add a SkyControl instance to the scene graph
 
 The scene graph of BasicGame has only one node, the root node. The root node is
-typically a good place to add SkyControl.
+typically a good place to add `SkyControl`.
 
  1. Open the "Main.java" source file in the IDE:
     + In the "Projects" window, expand the BasicGame project node.
@@ -266,18 +269,18 @@ typically a good place to add SkyControl.
         import jme3utilities.sky.SkyControl;
         import jme3utilities.sky.StarsOption;
 
- 3. Scroll down to the simpleInitApp() method and insert the following code just
+ 3. Scroll down to the `simpleInitApp()` method and insert the following code just
     before the final close-brace:
 
         SkyControl sc = new SkyControl(assetManager, cam, 0.9f, StarsOption.Cube, true);
         rootNode.addControl(sc);
 
 The parameters of the constructor are documented in the Javadoc for the
-SkyControl class.
+`SkyControl` class.
 
 #### Configure the SkyControl instance
 
-By default, SkyControl simulates midnight on March 21st in Wiltshire, England,
+By default, `SkyControl` simulates midnight on March 21st in Wiltshire, England,
 with no clouds and a full moon. Instead, let's configure 6 a.m. on February 10th
 in Sunnyvale, California with dense clouds:
 
@@ -287,7 +290,7 @@ in Sunnyvale, California with dense clouds:
         import java.util.Calendar;
         import jme3utilities.sky.SunAndStars;
 
- 2. In simpleInitApp(), insert the following code just before the final
+ 2. In `simpleInitApp()`, insert the following code just before the final
     close brace:
 
         SunAndStars sns = sc.getSunAndStars();
@@ -296,13 +299,13 @@ in Sunnyvale, California with dense clouds:
         sns.setSolarLongitude(Calendar.FEBRUARY, 10);
         sc.setCloudiness(1f);
 
-Other configuration methods are documented in the Javadocs for the SkyControl,
-SkyControlCore, SunAndStars, CloudLayer, and Updater classes.
+Other configuration methods are documented in the Javadoc for the `SkyControl`,
+`SkyControlCore`, `SunAndStars`, `CloudLayer`, and `Updater` classes.
 
 #### Enable the SkyControl instance
 
 If you run the modified BasicGame at this point, you'll find no visible change.
-Unlike most JME3 controls, SkyControl instantiates in a disabled state. In order
+Unlike most JME3 controls, `SkyControl` instantiates in a disabled state. In order
 to see the sky, you must enable the control:
 
  1. In simpleInitApp(), insert the following code just before the final
@@ -348,7 +351,7 @@ after the sky cube in the scene graph.
         import jme3utilities.sky.SkyControl;
         import jme3utilities.sky.StarsOption;
 
- 2. Scroll down to the initializeSky() method and insert the following code just
+ 2. Scroll down to the `initializeSky()` method and insert the following code just
     before the final close-brace:
 
         SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.TopDome, true);
@@ -371,7 +374,7 @@ scene's low horizon.
 
 #### Enable the SkyControl instance
 
-In initializeSky(), insert the following code just before the final close-brace:
+In `initializeSky()`, insert the following code just before the final close-brace:
 
         sc.setEnabled(true);
 
@@ -393,7 +396,7 @@ However, for the best result, it needs some tuning.
 
         import com.jme3.light.Light;
 
-    and this to the end of the initializeSky() method:
+    and this to the end of the `initializeSky()` method:
 
         for (Light light : rootNode.getLocalLightList()) {
             if (light.getName().equals("ambient")) {
@@ -436,7 +439,7 @@ to
     SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.Cube, true);
 
 It's also necessary to rotate the cube map to match SkyControl's notions of time
-and space.  To achieve this, override the application's simpleUpdate() method:
+and space.  To achieve this, override the application's `simpleUpdate()` method:
 
     @Override
     public void simpleUpdate(float unused) {
@@ -452,11 +455,11 @@ The jme3utilities.TimeOfDay appstate fills this need.
 
         import jme3utilities.TimeOfDay;
 
- 2. Declare a field in CubeMapExample:
+ 2. Declare a field in `CubeMapExample`:
 
         TimeOfDay timeOfDay;
 
- 3. Initialize and attach it in simpleInitApp():
+ 3. Initialize and attach it in `simpleInitApp()`:
 
         timeOfDay = new TimeOfDay(19f);
         stateManager.attach(timeOfDay);
@@ -464,8 +467,8 @@ The jme3utilities.TimeOfDay appstate fills this need.
 
     All that remains is to update the control.
 
- 4. Add 2 lines to simpleUpdate(), right before the invocation of
-    orientExternalSky():
+ 4. Add 2 lines to `simpleUpdate()`, right before the invocation of
+    `orientExternalSky()`:
 
         float hour = timeOfDay.hour();
         sc.getSunAndStars().setHour(hour);
@@ -499,10 +502,10 @@ artists and software developers:
   it ... thank you yet again!
 + Paul Speed, for helpful insights which got me unstuck during debugging
 + Rémy Bouquet (aka "nehon") for creating the BVH Retarget Project (parts of
-  which are incorporated into the Wes library) and also for
+  which are incorporated into the `Wes` library) and also for
   many helpful insights
 + Alexandr Brui (aka "javasabr") for a solving a problem with the
-  de-serialization of SkyControl
+  de-serialization of `SkyControl`
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
     + Davis Rollman
     + "Lockhead"
