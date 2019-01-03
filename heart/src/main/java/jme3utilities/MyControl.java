@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -204,8 +204,8 @@ public class MyControl {
             result = statsView.isEnabled();
 
         } else {
-            throw new IllegalArgumentException();
-
+            String message = sgc.getClass().getName();
+            throw new IllegalArgumentException(message);
         }
 
         return result;
@@ -240,7 +240,8 @@ public class MyControl {
             statsView.setEnabled(newState);
 
         } else {
-            throw new IllegalArgumentException();
+            String message = sgc.getClass().getName();
+            throw new IllegalArgumentException(message);
         }
     }
 }
