@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -415,16 +415,23 @@ public class BasicScreenController
      */
     private void validateAndLoad() {
         assert xmlAssetPath != null;
+        logger.log(Level.INFO, "xmlAssetPath={0}", xmlAssetPath);
         /*
          * Read and validate the screen's interface XML and build the interface.
-
+         *
          * Warnings from Nifty's logger are disabled in case the screen
          * wants to override registered styles.
          */
         Logger niftyLogger = Logger.getLogger(Nifty.class.getName());
         Level save = niftyLogger.getLevel();
         niftyLogger.setLevel(Level.SEVERE);
-        nifty.addXml(xmlAssetPath);
+        try {
+            nifty.addXml(xmlAssetPath);
+        } catch (Throwable e) {
+            String message = "while loading ScreenController layout from asset "
+                    + MyString.quote(xmlAssetPath);
+            throw new RuntimeException(message, e);
+        }
         niftyLogger.setLevel(save);
     }
 }
