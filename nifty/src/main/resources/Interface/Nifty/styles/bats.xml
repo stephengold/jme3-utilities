@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (c) 2013-2014, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@
             height="30"/>
     </style>
 
-    <!-- custom style for a scrollpanel without the rendering bug -->
+    <!-- custom style for a scrollpanel without the rendering bug (JME issue 99) -->
     <style id="bats-scroll-panel#scrollpanel">
         <attributes backgroundColor="#ffff"/>
         <effect overlay="true">
