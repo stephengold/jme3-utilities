@@ -1,5 +1,9 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.9 released on TBD
+
+ + Based on version 2.18 of the jme3-utilities-heart library.
+
 ## Version 0.9.8 released on 28 December 2018
 
  + Made dumps more concise.
