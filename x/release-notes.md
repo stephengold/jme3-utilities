@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.8 released on TBD
+## Version 0.2.8 released on 6 January 2019
 
  + Allow streaming audio with an `AudioControl`.
  + Targeted version 3.2.2-stable of jMonkeyEngine.
