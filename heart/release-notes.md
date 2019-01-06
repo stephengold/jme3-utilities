@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.18.0 released on TBD
+
+ + Improved exception handling in the `MyControl` class
+ + Targeted jMonkeyEngine version 3.2.2-stable
+
 ## Version 2.17.0 released on 28 December 2018
 
  + Improved output formatting in the `MyCamera.describe()` method
