@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.18.0 released on TBD
+## Version 2.18.0 released on 5 January 2019
 
  + Improved exception handling in the `MyControl` class
  + Targeted jMonkeyEngine version 3.2.2-stable

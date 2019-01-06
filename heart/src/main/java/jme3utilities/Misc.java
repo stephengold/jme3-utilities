@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -360,7 +360,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String version() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 2.18.0 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 2.18.0+1 $";
     }
 
     /**
