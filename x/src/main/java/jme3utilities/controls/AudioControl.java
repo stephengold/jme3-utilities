@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -94,7 +94,7 @@ public class AudioControl extends SimpleControl {
 
         if (startFlag) {
             AudioNode node = (AudioNode) spatial;
-            node.playInstance();
+            node.play();
             startFlag = false;
         }
     }
