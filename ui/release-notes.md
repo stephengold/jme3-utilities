@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.6.8 released on TBD
+
+ + Added an `ActionApplication.getSettings()` method.
+ + Based on version 2.18 of the jme3-utilities-heart library.
+
 ## Version 0.6.7 released on 28 December 2018
 
  + Removed the deprecated `ActionApplication.getWrittenAssetDirPath()` method.
