@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@ import com.jme3.input.CameraInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.system.AppSettings;
 import com.jme3.util.BufferUtils;
 import java.io.File;
 import java.util.logging.Level;
@@ -129,6 +130,16 @@ abstract public class ActionApplication
     public InputMode getDefaultInputMode() {
         assert defaultInputMode != null;
         return defaultInputMode;
+    }
+
+    /**
+     * Access the live display settings.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public AppSettings getSettings() {
+        assert settings != null;
+        return settings;
     }
 
     /**
