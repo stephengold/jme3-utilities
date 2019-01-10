@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,8 @@ import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -43,7 +45,7 @@ import jme3utilities.Validate;
 
 /**
  * A pop screen controller with added support for Nifty controls such as check
- * boxes, radio buttons, sliders, and dynamic labels.
+ * boxes, radio buttons, sliders, tool windows, and dynamic labels.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -56,6 +58,26 @@ public class GuiScreenController extends PopScreenController {
      */
     final private static Logger logger
             = Logger.getLogger(GuiScreenController.class.getName());
+    // *************************************************************************
+    // fields
+
+    /**
+     * flag that causes this controller to temporarily ignore change events from
+     * GUI controls during an update
+     */
+    private boolean ignoreGuiChanges = false;
+    /**
+     * map a check-box name to the tool that manages the check box
+     */
+    final private Map<String, Tool> checkBoxMap = new TreeMap<>();
+    /**
+     * map a slider name to the tool that manages the slider
+     */
+    final private Map<String, Tool> sliderMap = new TreeMap<>();
+    /**
+     * map a tool name to the controller for that tool
+     */
+    final private Map<String, Tool> toolMap = new TreeMap<>();
     // *************************************************************************
     // constructors
 
@@ -88,6 +110,18 @@ public class GuiScreenController extends PopScreenController {
 
         CheckBox checkBox = getCheckBox(name);
         checkBox.disable();
+    }
+
+    /**
+     * Find the named tool.
+     *
+     * @param toolName the name (unique id prefix) of the tool (not null)
+     * @return the pre-existing instance, or null if none
+     */
+    public Tool findTool(String toolName) {
+        Validate.nonNull(toolName, "tool name");
+        Tool tool = toolMap.get(toolName);
+        return tool;
     }
 
     /**
@@ -175,6 +209,60 @@ public class GuiScreenController extends PopScreenController {
         boolean result = checkBox.isChecked();
 
         return result;
+    }
+
+    /**
+     * Test whether GUI changes should be ignored.
+     *
+     * @return true if ignored, otherwise false
+     */
+    public boolean isIgnoreGuiChanges() {
+        return ignoreGuiChanges;
+    }
+
+    /**
+     * Associate the named check box with the tool that manages it.
+     *
+     * @param checkBoxName the name (unique id prefix) of the check box (not
+     * null)
+     * @param managingTool (not null, alias created)
+     */
+    public void mapCheckBox(String checkBoxName, Tool managingTool) {
+        Validate.nonNull(checkBoxName, "check-box name");
+        Validate.nonNull(managingTool, "managing tool");
+
+        Tool oldMapping = checkBoxMap.put(checkBoxName, managingTool);
+        assert oldMapping == null;
+    }
+
+    /**
+     * Associate the named slider with the tool that manages it.
+     *
+     * @param sliderName the name (unique id prefix) of the slider (not null)
+     * @param managingTool (not null, alias created)
+     */
+    public void mapSlider(String sliderName, Tool managingTool) {
+        Validate.nonNull(sliderName, "slider name");
+        Validate.nonNull(managingTool, "managing tool");
+
+        Tool oldMapping = sliderMap.put(sliderName, managingTool);
+        assert oldMapping == null;
+    }
+
+    /**
+     * Associate the named tool with its controller.
+     *
+     * @param toolName the name (unique id prefix) of the tool (not null)
+     * @param controller the tool's controller (not null, alias created)
+     */
+    public void mapTool(String toolName, Tool controller) {
+        Validate.nonNull(toolName, "tool name");
+        Validate.nonNull(controller, "controller");
+
+        Tool oldMapping = toolMap.put(toolName, controller);
+        if (oldMapping != null) {
+            throw new RuntimeException("Two tools with the same name.");
+        }
     }
 
     /**
@@ -299,6 +387,16 @@ public class GuiScreenController extends PopScreenController {
 
         setSlider(name + "B", transform, color.b);
         updateSliderStatus(name + "B", color.b, "");
+    }
+
+    /**
+     * Alter the "ignore GUI changes" flag.
+     *
+     * @param newSetting true &rarr; ignore events, false &rarr; invoke callback
+     * handlers for events
+     */
+    public void setIgnoreGuiChanges(boolean newSetting) {
+        ignoreGuiChanges = newSetting;
     }
 
     /**
@@ -442,6 +540,33 @@ public class GuiScreenController extends PopScreenController {
 
         String statusName = name + "SliderStatus";
         setStatusText(statusName, statusText);
+    }
+    // *************************************************************************
+    // protected methods
+
+    /**
+     * Find the tool that manages the named check box.
+     *
+     * @param checkBoxName the name (unique id prefix) of the check box (not
+     * null)
+     * @return the pre-existing instance, or null if none
+     */
+    protected Tool findCheckBoxTool(String checkBoxName) {
+        Validate.nonNull(checkBoxName, "check-box name");
+        Tool managingTool = checkBoxMap.get(checkBoxName);
+        return managingTool;
+    }
+
+    /**
+     * Find the tool that manages the named slider.
+     *
+     * @param sliderName the name (unique id prefix) of the slider (not null)
+     * @return the pre-existing instance, or null if none
+     */
+    protected Tool findSliderTool(String sliderName) {
+        Validate.nonNull(sliderName, "slider name");
+        Tool managingTool = sliderMap.get(sliderName);
+        return managingTool;
     }
     // *************************************************************************
     // private methods
