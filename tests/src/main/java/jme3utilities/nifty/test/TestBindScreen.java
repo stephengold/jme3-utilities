@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -38,12 +38,12 @@ import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.MessageDisplay;
+import jme3utilities.nifty.PopScreenController;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating the hotkey bindings editor. The
- * application's main entry point is here.
+ * GUI application for testing/demonstrating the hotkey-bindings editor.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -246,6 +246,9 @@ public class TestBindScreen extends GuiApplication {
                     messageHud.addLine("Hailing frequencies open.");
                     return;
                 case asHelp:
+                    PopScreenController psc
+                            = (PopScreenController) getEnabledScreen();
+                    psc.closeAllPopups();
                     InputMode thisMode = InputMode.findMode("default");
                     bindScreen.activate(thisMode);
                     return;
