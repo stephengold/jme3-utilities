@@ -92,6 +92,27 @@ public class DisplaySizeLimits {
     // new methods exposed
 
     /**
+     * Explain why the specified display size is invalid.
+     *
+     * @param width the display width (in pixels)
+     * @param height the height (in pixels)
+     * @return message text (not null)
+     */
+    public String feedbackValid(int width, int height) {
+        if (width < minWidth) {
+            return String.format("width must not be < %d", minWidth);
+        } else if (width > maxWidth) {
+            return String.format("width must not be > %d", maxWidth);
+        } else if (height < minHeight) {
+            return String.format("height must not be < %d", minHeight);
+        } else if (height > maxHeight) {
+            return String.format("height must not be > %d", maxHeight);
+        } else {
+            return "";
+        }
+    }
+
+    /**
      * Test the validity of the specified display size.
      *
      * @param width the display width (in pixels)
