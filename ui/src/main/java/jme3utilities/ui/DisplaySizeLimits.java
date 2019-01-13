@@ -50,19 +50,19 @@ public class DisplaySizeLimits {
     /**
      * maximum display height (in pixels, &ge;minHeight)
      */
-    final private int maxHeight;
+    final public int maxHeight;
     /**
      * maximum display width (in pixels, &ge;minWidth)
      */
-    final private int maxWidth;
+    final public int maxWidth;
     /**
      * minimum display height (in pixels, &le;maxHeight)
      */
-    final private int minHeight;
+    final public int minHeight;
     /**
      * minimum display width (in pixels, &le;maxWidth)
      */
-    final private int minWidth;
+    final public int minWidth;
     // *************************************************************************
     // constructors
 
@@ -108,45 +108,5 @@ public class DisplaySizeLimits {
         } else {
             return true;
         }
-    }
-
-    /**
-     * Read the maximum display height.
-     *
-     * @return height (in pixels, &gt;0)
-     */
-    public int maxHeight() {
-        assert maxHeight > 0 : maxHeight;
-        return maxHeight;
-    }
-
-    /**
-     * Read the maximum display width.
-     *
-     * @return width (in pixels, &gt;0)
-     */
-    public int maxWidth() {
-        assert maxWidth > 0 : maxWidth;
-        return maxWidth;
-    }
-
-    /**
-     * Read the minimum display height.
-     *
-     * @return height (in pixels, &gt;0)
-     */
-    public int minHeight() {
-        assert minHeight > 0 : minHeight;
-        return minHeight;
-    }
-
-    /**
-     * Read the minimum display width.
-     *
-     * @return width (in pixels, &gt;0)
-     */
-    public int minWidth() {
-        assert minWidth > 0 : minWidth;
-        return minWidth;
     }
 }
