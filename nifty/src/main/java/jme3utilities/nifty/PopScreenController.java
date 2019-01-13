@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.nifty.tools.SizeValueType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -401,6 +402,27 @@ public class PopScreenController extends BasicScreenController {
 
         String[] itemArray = MyString.toArray(itemList);
         showPopupMenu(actionPrefix, itemArray);
+    }
+
+    /**
+     * Display the specified PopupMenuBuilder unless it's empty.
+     *
+     * @param actionPrefix common prefix of the menu's action strings (not null,
+     * usually the final character will be a space)
+     * @param menuBuilder (not null)
+     */
+    public void showPopupMenu(String actionPrefix,
+            PopupMenuBuilder menuBuilder) {
+        Validate.nonNull(menuBuilder, "menuBuilder");
+        Validate.nonNull(actionPrefix, "action prefix");
+        logger.log(Level.INFO, "actionPrefix = {0}",
+                MyString.quote(actionPrefix));
+
+        if (!menuBuilder.isEmpty()) {
+            String[] itemArray = menuBuilder.copyItems();
+            String[] iconArray = menuBuilder.copyIconAssetPaths();
+            showPopupMenu(actionPrefix, itemArray, iconArray);
+        }
     }
 
     /**
