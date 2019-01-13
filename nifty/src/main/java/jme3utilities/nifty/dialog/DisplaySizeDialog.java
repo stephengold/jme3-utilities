@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jme3utilities.Validate;
-import jme3utilities.nifty.displaysettings.DisplaySizeLimits;
+import jme3utilities.ui.DisplaySizeLimits;
 
 /**
  * Controller for a text-entry dialog box used to input display dimensions.
@@ -105,18 +105,20 @@ public class DisplaySizeDialog extends TextEntryDialog {
     /**
      * Determine the feedback message for the specified input text.
      *
-     * @param text the input text (not null)
-     * @return the message (not null)
+     * @param input the input text (not null)
+     * @return the feedback message (not null)
      */
     @Override
-    protected String feedback(String text) {
+    protected String feedback(String input) {
+        Validate.nonNull(input, "input");
+
         String msg = "";
-        Matcher matcher = dimensionsPattern.matcher(text);
+        Matcher matcher = dimensionsPattern.matcher(input);
         if (matcher.find()) {
             String widthText = matcher.group(1);
             int width = Integer.parseInt(widthText);
-            int maxWidth = limits.maxWidth();
-            int minWidth = limits.minWidth();
+            int maxWidth = limits.maxWidth;
+            int minWidth = limits.minWidth;
             if (width < minWidth) {
                 msg = String.format("width must not be < %d", minWidth);
             } else if (width > maxWidth) {
@@ -124,8 +126,8 @@ public class DisplaySizeDialog extends TextEntryDialog {
             } else {
                 String heightText = matcher.group(2);
                 int height = Integer.parseInt(heightText);
-                int maxHeight = limits.maxHeight();
-                int minHeight = limits.minHeight();
+                int maxHeight = limits.maxHeight;
+                int minHeight = limits.minHeight;
                 if (height < minHeight) {
                     msg = String.format("height must not be < %d", minHeight);
                 } else if (height > maxHeight) {
