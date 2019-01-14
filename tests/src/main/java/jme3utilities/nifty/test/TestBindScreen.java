@@ -37,13 +37,18 @@ import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.MessageDisplay;
-import jme3utilities.nifty.PopScreenController;
 import jme3utilities.nifty.bind.BindScreen;
+import jme3utilities.nifty.displaysettings.DsScreen;
+import jme3utilities.ui.DisplaySettings;
+import jme3utilities.ui.DisplaySizeLimits;
 import jme3utilities.ui.InputMode;
+import jme3utilities.ui.UiVersion;
 
 /**
- * GUI application for testing/demonstrating the hotkey-bindings editor.
+ * GUI application for testing/demonstrating the hotkey-bindings editor
+ * (BindScreen) and the display-settings editor (DsScreen).
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -76,14 +81,16 @@ public class TestBindScreen extends GuiApplication {
     final private static String asReverse = "accelerate reverse";
     final private static String asRollLeft = "roll left";
     final private static String asRollRight = "roll right";
+    final private static String asSettings = "edit displaySettings";
     final private static String asStopAll = "stop all";
     final private static String asStopRotation = "stop rotation";
     final private static String asYawLeft = "yaw left";
     final private static String asYawRight = "yaw right";
     /**
-     * application name for its window's title bar
+     * application name for the window's title bar
      */
-    final private static String applicationName = "TestBindScreen";
+    final private static String applicationName
+            = TestBindScreen.class.getSimpleName();
     /**
      * axes of rotation
      */
@@ -97,6 +104,14 @@ public class TestBindScreen extends GuiApplication {
      * editor for hotkey bindings (set by guiInitializeApplication())
      */
     private BindScreen bindScreen;
+    /**
+     * display settings (set by main())
+     */
+    private static DisplaySettings displaySettings;
+    /**
+     * editor for display settings (set by guiInitializeApplication())
+     */
+    private DsScreen dsScreen;
     /**
      * rate of movement in the direction the camera is pointed (arbitrary units,
      * may be negative)
@@ -127,16 +142,32 @@ public class TestBindScreen extends GuiApplication {
                 .setLevel(Level.SEVERE);
 
         TestBindScreen application = new TestBindScreen();
-        /*
-         * Customize the window's title bar.
-         */
-        AppSettings settings = new AppSettings(true);
-        settings.setTitle(applicationName);
-        application.setSettings(settings);
-        application.start();
-        /*
-         * ... and onward to TestBindScreen.guiInitializeApplication()!
-         */
+        DisplaySizeLimits dsl = new DisplaySizeLimits(
+                600, 480, // min width, height
+                2_048, 1_080 // max width, height
+        );
+        displaySettings
+                = new DisplaySettings(application, applicationName, dsl) {
+            @Override
+            protected void applyOverrides(AppSettings settings) {
+                super.applyOverrides(settings);
+                settings.setSamples(8);
+                settings.setVSync(true);
+            }
+        };
+        AppSettings appSettings = displaySettings.initialize();
+        if (appSettings != null) {
+            application.setSettings(appSettings);
+            /*
+             * If the settings dialog should be shown, it was already shown
+             * by DisplaySettings.initialize().
+             */
+            application.setShowSettings(false);
+            application.start();
+            /*
+             * ... and onward to TestBindScreen.guiInitializeApplication()!
+             */
+        }
     }
     // *************************************************************************
     // GuiApplication methods
@@ -153,6 +184,10 @@ public class TestBindScreen extends GuiApplication {
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "jme3-utilities-heart version is {0}",
                 MyString.quote(Misc.versionShort()));
+        logger.log(Level.INFO, "jme3-utilities-ui version is {0}",
+                MyString.quote(UiVersion.versionShort()));
+        logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",
+                MyString.quote(LibraryVersion.versionShort()));
 
         Logger.getLogger(InputMode.class.getName()).setLevel(Level.INFO);
         /*
@@ -175,7 +210,7 @@ public class TestBindScreen extends GuiApplication {
         messageHud.setListener(this);
         success = stateManager.attach(messageHud);
         assert success;
-        messageHud.addLine("Press the H key to view/edit hotkey bindings.");
+        messageHud.addLine("Press H key to view/edit hotkey bindings, U key to view/edit display settings.");
         /*
          * The (default) input mode should influence the animation and HUD.
          */
@@ -185,10 +220,16 @@ public class TestBindScreen extends GuiApplication {
 
         mode.setConfigPath("Interface/bindings/TestBindScreen.properties");
         /*
-         * Attach a screen controller for the hotkey bindings editor.
+         * Attach a screen controller for the hotkey-bindings editor.
          */
         bindScreen = new BindScreen();
         success = stateManager.attach(bindScreen);
+        assert success;
+        /*
+         * Attach a screen controller for the display-settings editor.
+         */
+        dsScreen = new DsScreen(displaySettings);
+        success = stateManager.attach(dsScreen);
         assert success;
     }
 
@@ -216,6 +257,7 @@ public class TestBindScreen extends GuiApplication {
         dim.addActionName(asReverse);
         dim.addActionName(asRollLeft);
         dim.addActionName(asRollRight);
+        dim.addActionName(asSettings);
         dim.addActionName(asStopAll);
         dim.addActionName(asStopRotation);
         dim.addActionName(asYawLeft);
@@ -232,6 +274,8 @@ public class TestBindScreen extends GuiApplication {
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
+            GuiScreenController gsc = (GuiScreenController) getEnabledScreen();
+            InputMode thisMode = InputMode.findMode("default");
             switch (actionString) {
                 case asFeels:
                     messageHud.addLine("I have a bad feeling about this.");
@@ -246,18 +290,14 @@ public class TestBindScreen extends GuiApplication {
                     messageHud.addLine("Hailing frequencies open.");
                     return;
                 case asHelp:
-                    PopScreenController psc
-                            = (PopScreenController) getEnabledScreen();
-                    psc.closeAllPopups();
-                    InputMode thisMode = InputMode.findMode("default");
+                    gsc.closeAllPopups();
                     bindScreen.activate(thisMode);
                     return;
                 case asLowerShields:
                     messageHud.addLine("Shields are down.");
                     return;
                 case asMenu:
-                    String[] items = {asHelp};
-                    GuiScreenController gsc = (GuiScreenController) getEnabledScreen();
+                    String[] items = {asHelp, asSettings};
                     gsc.showPopupMenu("", items);
                     return;
                 case asPitchDown:
@@ -277,6 +317,10 @@ public class TestBindScreen extends GuiApplication {
                     return;
                 case asRollRight:
                     starfield.setRotation(-0.2f, rollAxis);
+                    return;
+                case asSettings:
+                    gsc.closeAllPopups();
+                    dsScreen.activate();
                     return;
                 case asStopAll:
                     starfield.setRotation(0f, yawAxis);

@@ -73,7 +73,7 @@ public class DsScreen
     final public static String apSelectColorDepth = "select colorDepth ";
     /**
      * action prefix: argument is a number of samples per pixel, formatted using
-     * {@link maud.DescribeUtil#msaaFactor(int)}
+     * {@link #describeMsaaFactor(int)}
      */
     final public static String apSelectMsaaFactor = "select msaaFactor ";
     /**
@@ -100,6 +100,10 @@ public class DsScreen
      * input mode for this screen controller: set by constructor
      */
     final private DsInputMode inputMode;
+    /**
+     * input mode to return to
+     */
+    private InputMode returnMode = null;
     // *************************************************************************
     // constructors
 
@@ -122,6 +126,21 @@ public class DsScreen
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Activate this screen.
+     */
+    public void activate() {
+        assert !isEnabled();
+        assert isInitialized();
+        assert returnMode == null;
+
+        returnMode = InputMode.getActiveMode();
+        assert returnMode != inputMode;
+        assert returnMode.isEnabled();
+        returnMode.setEnabled(false);
+        setEnabled(true);
+    }
 
     /**
      * Describe an MSAA sampling factor.
@@ -343,8 +362,7 @@ public class DsScreen
                     return;
 
                 case "return":
-                    setEnabled(false);
-                    defaultMode.setEnabled(true);
+                    deactivate();
                     return;
 
                 case "save displaySettings":
@@ -436,6 +454,22 @@ public class DsScreen
     }
     // *************************************************************************
     // private methods
+
+    /**
+     * Deactivate this screen and return to the previous input mode.
+     */
+    private void deactivate() {
+        assert isEnabled();
+        assert isInitialized();
+        assert returnMode != null;
+        assert returnMode != inputMode;
+        assert !returnMode.isEnabled();
+
+        closeAllPopups();
+        setEnabled(false);
+        returnMode.setEnabled(true);
+        returnMode = null;
+    }
 
     /**
      * Process an ongoing action that starts with the word "select".
