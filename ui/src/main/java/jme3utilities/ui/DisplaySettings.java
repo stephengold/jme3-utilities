@@ -508,6 +508,20 @@ public class DisplaySettings {
     }
 
     /**
+     * Maximize the display dimensions.
+     */
+    public void setMaxDimensions() {
+        setDimensions(sizeLimits.maxWidth, sizeLimits.maxHeight);
+    }
+
+    /**
+     * Minimize the display dimensions.
+     */
+    public void setMinDimensions() {
+        setDimensions(sizeLimits.minWidth, sizeLimits.minHeight);
+    }
+
+    /**
      * Alter the sampling factor for multi-sample anti-aliasing (MSAA).
      *
      * @param newFactor number of samples per pixel (&ge;1, &le;16)
