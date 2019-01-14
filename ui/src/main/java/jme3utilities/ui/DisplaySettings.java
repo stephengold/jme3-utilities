@@ -231,6 +231,81 @@ public class DisplaySettings {
     }
 
     /**
+     * Explain why these settings cannot be applied.
+     *
+     * @return message text (not null)
+     */
+    public String feedbackApplicable() {
+        AppSettings current = application.getSettings();
+
+        int currentBpp = current.getBitsPerPixel();
+        if (currentBpp != colorDepth()) {
+            return "Can't apply BPP change.";
+        }
+
+        boolean currentGamma = current.isGammaCorrection();
+        if (currentGamma != isGammaCorrection()) {
+            return "Can't apply gamma change.";
+        }
+
+        int currentMsaa = current.getSamples();
+        if (currentMsaa != msaaFactor()) {
+            return "Can't apply MSAA change.";
+        }
+
+        return "";
+    }
+
+    /**
+     * Explain why the cached settings are invalid.
+     *
+     * @return message text (not null)
+     */
+    public String feedbackValid() {
+        int height = cachedSettings.getHeight();
+        int width = cachedSettings.getWidth();
+        if (!sizeLimits.isValidDisplaySize(width, height)) {
+            return sizeLimits.feedbackValid(width, height);
+        }
+
+        if (cachedSettings.isFullscreen()) {
+            GraphicsEnvironment environment
+                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice device = environment.getDefaultScreenDevice();
+            if (!device.isFullScreenSupported()) {
+                return "Device does not support full screen.";
+            }
+
+            boolean foundMatch = false;
+            DisplayMode[] modes = device.getDisplayModes();
+            for (DisplayMode mode : modes) {
+                int bitDepth = mode.getBitDepth();
+                int frequency = mode.getRefreshRate();
+                // TODO see algorithm in LwjglDisplay.getFullscreenDisplayMode()
+                if (bitDepth == DisplayMode.BIT_DEPTH_MULTI
+                        || bitDepth == cachedSettings.getBitsPerPixel()) {
+                    if (mode.getWidth() == cachedSettings.getWidth()
+                            && mode.getHeight() == cachedSettings.getHeight()
+                            && frequency == cachedSettings.getFrequency()) {
+                        foundMatch = true;
+                    }
+                }
+            }
+            if (!foundMatch) {
+                return "No matching mode for device.";
+            }
+
+        } else { // The cached settings specify a windowed display.
+            int bpp = cachedSettings.getBitsPerPixel();
+            if (bpp != 24 && bpp != 32) {
+                return "Window BPP must be 24 or 32.";
+            }
+        }
+
+        return "";
+    }
+
+    /**
      * Read the display height.
      *
      * @return height (in pixels, &gt;0)
