@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2019 Stephen Gold <sgold@sonic.net>
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Neither the name of the copyright holder nor the names of its contributors
+ may be used to endorse or promote products derived from this software without
+ specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!--
+Nifty XML to lay out the screen for the display-settings editor.
+
+Approximate minimum screen size: 370x140
+-->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <screen id="ds" controller="jme3utilities.nifty.displaysettings.DsScreen">
+        <layer childLayout="center"
+               backgroundColor="#444f">
+            <panel childLayout="vertical"
+                   height="136px"
+                   width="366px">
+
+                <panel childLayout="horizontal" height="28px">
+                    <control name="checkbox" id="fullscreenCheckBox"/>
+                    <control name="label" text="  full screen"/>
+                    <panel/>
+                    <control name="label" text="dimensions:  "/>
+                    <control name="button" id="displayDimensionsButton"
+                             width="80px">
+                        <interact onRelease="perform(set dimensions)"/>
+                    </control>
+                    <panel/>
+                    <control name="checkbox" id="vSyncCheckBox"/>
+                    <control name="label" text="  vSync"/>
+                </panel>
+                <panel childLayout="horizontal" height="28px">
+                    <control name="checkbox" id="gammaCorrectionCheckBox"/>
+                    <control name="label" text="  gamma correction"/>
+                    <panel/>
+                    <control name="label" text="refresh rate:  "/>
+                    <control name="button" id="refreshRateButton"
+                             width="65px">
+                        <interact onRelease="perform(set refreshRate)"/>
+                    </control>
+                </panel>
+                <panel childLayout="horizontal" height="28px">
+                    <control name="label" text="MSAA factor:  "/>
+                    <control name="button" id="displayMsaaButton"
+                             width="65px">
+                        <interact onRelease="perform(select msaaFactor)"/>
+                    </control>
+                    <panel/>
+                    <control name="label" text="color depth:  "/>
+                    <control name="button" id="colorDepthButton"
+                             width="55px">
+                        <interact onRelease="perform(select colorDepth)"/>
+                    </control>
+                </panel>
+                <panel childLayout="horizontal" height="28px">
+                    <control name="label" id="feedback"
+                             color="#800f"
+                             textHAlign="center"
+                             width="*"/>
+                </panel>
+                <panel childLayout="horizontal" height="28px">
+                    <control name="button" id="applyDisplaySettingsButton"
+                             width="60px">
+                        <interact onRelease="perform(apply displaySettings)"/>
+                    </control>
+                    <panel/>
+                    <control name="button" id="saveDisplaySettingsButton"
+                             width="60px">
+                        <interact onRelease="perform(save displaySettings)"/>
+                    </control>
+                    <panel/>
+                    <control name="button" id="returnButton"
+                             width="220px">
+                        <interact onRelease="perform(return)"/>
+                    </control>
+                </panel>
+
+            </panel>
+        </layer>
+    </screen>
+</nifty>
