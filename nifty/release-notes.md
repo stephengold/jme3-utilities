@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.0 released on TBD
+## Version 0.9.0 released on 13 January 2019
 
  + Add a `PopupMenuBuilder` class based on the Maud's `MenuBuilder`.
  + Add a display-settings editor screen.
