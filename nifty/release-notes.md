@@ -1,8 +1,21 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.0 released on TBD
+
+ + Add a `PopupMenuBuilder` class based on the Maud's `MenuBuilder`.
+ + Add a display-settings editor screen.
+ + Add a `DisplaySizeDialog` class based on Maud's `DimensionsDialog`
+ + Add abstract class `Tool` for tool windows.
+ + Catch exceptions while loading XML.
+ + Fix an `AssertionError` that occurred after selecting from the menu
+   in `TestBindScreen`.
+ + Based on version 3.2.2-stable of jMonkeyEngine,
+   version 2.18 of the jme3-utilities-heart library,
+   and version 0.7.0 of the jme3-utilities-ui library.
+
 ## Version 0.8.3 released on 28 December 2018
 
- + Based on version 1.4.3 of Nifty, version 3.2.2-beta1 of jMonkeyEngine,
+ + Base on version 1.4.3 of Nifty, version 3.2.2-beta1 of jMonkeyEngine,
    version 2.17 of the jme3-utilities-heart library,
    and version 0.6.7 of the jme3-utilities-ui library.
  + Improved argument validation in the `SoundHandleJme` class.
@@ -75,7 +88,7 @@ Add `disableCheckBox()` methods to the `GuiScreenController` and
 
 ## Version 0.7.6 released on 4 January 2018
 
- + Remove disableSlider() and enableSlider() methods from GuiSceneController.
+ + Remove `disableSlider()` and `enableSlider()` methods from `GuiSceneController`.
  + Fix an assertion error triggered by clicking a mouse button in "bind" screen.
  + In "bind" screen, selecting a bound hotkey using a keypress will now select
    its action as well.
