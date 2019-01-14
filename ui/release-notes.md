@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.7.0 released on TBD
+## Version 0.7.0 released on 13 January 2019
 
  + Added a `DisplaySizeLimits` class.
  + Added a `DisplaySettings` class based on the one in Maud.
