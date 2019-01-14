@@ -204,8 +204,7 @@ public class PopScreenController extends BasicScreenController {
             throw new IllegalStateException("no active dialog");
         }
 
-        if (dialogController != null
-                && !dialogController.allowCommit(dialogElement)) {
+        if (!dialogController.allowCommit(dialogElement)) {
             return;
         }
 

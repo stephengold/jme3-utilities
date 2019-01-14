@@ -379,7 +379,6 @@ public class DsScreen
 
                 case "set":
                     handled = setAction(actionString);
-                    break;
             }
         }
 
