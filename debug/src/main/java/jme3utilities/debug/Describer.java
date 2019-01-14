@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -754,6 +754,9 @@ public class Describer {
                 result.append('=');
                 result.append(valueString);
             }
+        }
+        if (!override.isEnabled()) {
+            result.append("!DISABLED");
         }
 
         return result.toString();
