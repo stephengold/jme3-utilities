@@ -112,16 +112,22 @@ public class DisplaySizeDialog extends TextEntryDialog {
     protected String feedback(String input) {
         Validate.nonNull(input, "input");
 
+        String lcInput = input.toLowerCase(Locale.ROOT);
+
         String msg;
-        Matcher matcher = dimensionsPattern.matcher(input);
-        if (matcher.find()) {
-            String widthText = matcher.group(1);
-            int width = Integer.parseInt(widthText);
-            String heightText = matcher.group(2);
-            int height = Integer.parseInt(heightText);
-            msg = limits.feedbackValid(width, height);
+        if ("min".equals(lcInput) || "max".equals(lcInput)) {
+            msg = "";
         } else {
-            msg = "improperly formatted display dimensions";
+            Matcher matcher = dimensionsPattern.matcher(lcInput);
+            if (matcher.find()) {
+                String widthText = matcher.group(1);
+                int width = Integer.parseInt(widthText);
+                String heightText = matcher.group(2);
+                int height = Integer.parseInt(heightText);
+                msg = limits.feedbackValid(width, height);
+            } else {
+                msg = "improperly formatted display dimensions";
+            }
         }
 
         return msg;
