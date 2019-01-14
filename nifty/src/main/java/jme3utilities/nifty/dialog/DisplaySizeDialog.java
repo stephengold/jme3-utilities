@@ -77,6 +77,21 @@ public class DisplaySizeDialog extends TextEntryDialog {
     // new methods exposed
 
     /**
+     * Describe the specified display dimensions.
+     *
+     * @param width width in pixels (&gt;0)
+     * @param height height in pixels (&gt;0)
+     * @return a textual description (not null, not empty)
+     */
+    public static String describeDisplaySize(int width, int height) {
+        Validate.positive(width, "width");
+        Validate.positive(height, "height");
+
+        String description = String.format("%d x %d", width, height);
+        return description;
+    }
+
+    /**
      * Parse the specified text to obtain display dimensions.
      *
      * @param text the input text (not null, not empty)
