@@ -1,5 +1,10 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.16 released on TBD
+
+Notable changes:
+ + base on version 2.18 of the heart library and target JME 3.2.2-stable
+
 ## Version 0.9.15 released on 28 December 2018
 
 Notable changes:
@@ -9,7 +14,7 @@ Notable changes:
 ## Version 0.9.14 released on 23 September 2018
 
 Notable changes:
- + renamed `Constants.getVersionShort()` to `versionShort()`. (API change)
+ + rename `Constants.getVersionShort()` to `versionShort()`. (API change)
  + base on version 2.10 of the heart library
 
 ## Version 0.9.13 released on 24 July 2018
@@ -23,7 +28,7 @@ Notable changes:
 
 Notable changes:
  + add new constructors and a `TwoDomes` stars option, for use with edge filters
- + add a --nocubes command-line parameter to `TestSkyControl`
+ + add a `--nocubes` command-line parameter to `TestSkyControl`
  + add a cartoon-edge filter to `TestSkyControl`
 
 ## Version 0.9.11 released on 25 January 2018
@@ -34,34 +39,34 @@ Notable changes:
 ## Version 0.9.10 released on 23 January 2018
 
 Notable changes:
- + update `SkyControl` and `FloorControl` cameras from the RenderManager
+ + update `SkyControl` and `FloorControl` cameras from the `RenderManager`
 
 ## Version 0.9.9 released on 22 January 2018
 
 Notable changes:
  + target JME v3.2.1
- + give each Updater its own list of view ports
+ + give each `Updater` its own list of view ports
 
 ## Version 0.9.8 released on 14 January 2018
 
 Notable changes:
- + fix a bug in Updater that caused an IllegalArgumentException while cloning
+ + fix a bug in `Updater` that caused an `IllegalArgumentException` while cloning
  + standardize the BSD license texts for tests
 
 ## Version 0.9.7for32 released on 5 December 2017
 
 Notable changes:
  + 1st release to target JME 3.2
- + use a contrast-adjustment filter in GlobeRenderer
+ + use a contrast-adjustment filter in `GlobeRenderer`
  + rename private fields
 
 ## Version 0.9.6 released on 19 September 2017
 
 Notable changes:
- + use the DomeMesh class from the heart library
+ + use the `DomeMesh` class from the heart library
  + move wireframe material to heart library
- + make SkyControl JmeCloneable
- + fix some potential aliasing bugs related to Material.setColor()
+ + make `SkyControl` class `JmeCloneable`
+ + fix some potential aliasing bugs related to `Material.setColor()`
  + standardize the BSD license texts
 
 ## Version 0.9.5 released on 20 May 2017
