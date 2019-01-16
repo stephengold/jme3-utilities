@@ -2,7 +2,7 @@
 
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
-It contains 10 sub-projects:
+It contains 9 sub-projects:
 
  1. heart: the `jme3-utilities-heart` library of core classes
  2. SkyControl: the `SkyControl` library for sky simulation
@@ -13,11 +13,13 @@ It contains 10 sub-projects:
  7. ui: the `jme3-utilities-ui` library for building user interfaces
  8. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
     interfaces with jMonkeyEngine
- 9. wes: the `Wes` library for animation editing and retargeting
- 10. x: the `jme3-utilities-x` library of experimental software
+ 9. x: the `jme3-utilities-x` library of experimental software
 
 The `Minie` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Minie).
+
+The `Wes` library, formerly a sub-project, is now a separate project
+at [GitHub](https://github.com/stephengold/Wes).
 
 Summary of SkyControl features:
 
@@ -91,7 +93,6 @@ The evolution of each sub-project is chronicled in its release notes:
  + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
  + [ui](https://github.com/stephengold/jme3-utilities/blob/master/ui/release-notes.md)
  + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
- + [Wes](https://github.com/stephengold/jme3-utilities/blob/master/wes/release-notes.md)
  + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
 
 <a name="install"/>
@@ -501,9 +502,7 @@ artists and software developers:
   and a starting point for SkyControl) and also for encouraging me to run with
   it ... thank you yet again!
 + Paul Speed, for helpful insights which got me unstuck during debugging
-+ Rémy Bouquet (aka "nehon") for creating the BVH Retarget Project (parts of
-  which are incorporated into the `Wes` library) and also for
-  many helpful insights
++ Rémy Bouquet (aka "nehon") for many helpful insights
 + Alexandr Brui (aka "javasabr") for a solving a problem with the
   de-serialization of `SkyControl`
 + the brave souls who volunteered to be alpha testers for SkyControl, including:
