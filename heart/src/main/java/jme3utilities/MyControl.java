@@ -108,7 +108,8 @@ public class MyControl {
         } else if (control instanceof SkeletonControl) {
             SkeletonControl skeletonControl = (SkeletonControl) control;
             int boneCount = skeletonControl.getSkeleton().getBoneCount();
-            result += String.format("[%d]", boneCount);
+            boolean useHw = skeletonControl.isHardwareSkinningUsed();
+            result += String.format("[%d %s]", boneCount, useHw ? "hw" : "sw");
         }
 
         return result;
