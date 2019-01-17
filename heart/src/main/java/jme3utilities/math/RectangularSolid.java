@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018, Stephen Gold
+ Copyright (c) 2018-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,9 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -173,6 +175,34 @@ public class RectangularSolid implements Savable {
         assert result.y >= 0f : result.y;
         assert result.z >= 0f : result.z;
         return result;
+    }
+
+    /**
+     * Enumerate the corner locations of the specified RectangularSolid.
+     *
+     * @return a new list of new vectors
+     */
+    public List<Vector3f> listCorners() {
+        /*
+         * Enumerate the local coordinates of the 8 corners of the box.
+         */
+        List<Vector3f> cornerLocations = new ArrayList<>(8);
+        cornerLocations.add(new Vector3f(maxima.x, maxima.y, maxima.z));
+        cornerLocations.add(new Vector3f(maxima.x, maxima.y, minima.z));
+        cornerLocations.add(new Vector3f(maxima.x, minima.y, maxima.z));
+        cornerLocations.add(new Vector3f(maxima.x, minima.y, minima.z));
+        cornerLocations.add(new Vector3f(minima.x, maxima.y, maxima.z));
+        cornerLocations.add(new Vector3f(minima.x, maxima.y, minima.z));
+        cornerLocations.add(new Vector3f(minima.x, minima.y, maxima.z));
+        cornerLocations.add(new Vector3f(minima.x, minima.y, minima.z));
+        /*
+         * Transform local coordinates to world coordinates.
+         */
+        for (Vector3f location : cornerLocations) {
+            localToWorld.mult(location, location);
+        }
+
+        return cornerLocations;
     }
 
     /**
