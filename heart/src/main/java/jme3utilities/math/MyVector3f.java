@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -620,7 +620,7 @@ public class MyVector3f {
     }
 
     /**
-     * Generate an orthonormal basis.
+     * Generate an orthonormal basis that includes the specified vector.
      *
      * @param in1 input direction for 1st basis vector (not null, not zero,
      * modified)
