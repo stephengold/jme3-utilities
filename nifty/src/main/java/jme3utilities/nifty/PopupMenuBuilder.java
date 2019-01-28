@@ -49,7 +49,7 @@ public class PopupMenuBuilder {
     // fields
 
     /**
-     * list of menu icon asset paths
+     * list of menu icon asset paths TODO implement as a Map instead of a List
      */
     final protected List<String> iconAssetPaths = new ArrayList<>(40);
     /**
