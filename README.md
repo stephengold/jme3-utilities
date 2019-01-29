@@ -116,8 +116,11 @@ The hardware and software requirements of the SDK are documented on
     + an integrated development environment (IDE) based on NetBeans,
     + various plugins, and
     + the Blender 3D application.
- 3. To open the project in the SDK (or NetBeans), you will need the "Gradle
-    Support" plugin.  Download and install it before proceeding.
+ 3. To open the Jme3-utilities Project in the IDE (or NetBeans), you will need the
+    `Gradle Support` plugin.  Download and install it before proceeding.
+    If this plugin isn't shown in the IDE's "Plugins" tool,
+    you can download it from
+    [GitHub](https://github.com/kelemen/netbeans-gradle-project/releases).
 
 ### Source files
 
@@ -126,7 +129,7 @@ Clone the jme3-utilities repository using Git:
  1. Open the Clone wizard in the IDE:
      + Menu bar -> "Team" -> "Remote" -> "Clone..."
  2. For "Repository URL:" specify
-    "https://github.com/stephengold/jme3-utilities.git" (without the quotes).
+    `https://github.com/stephengold/jme3-utilities.git`
  3. Clear the "User:" and "Password:" text boxes.
  4. For "Clone into:" specify a writable folder (on a local filesystem)
     which doesn't already contain "jme3-utilities".
