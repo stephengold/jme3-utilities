@@ -15,8 +15,8 @@ javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
-    compile 'com.github.nifty-gui:nifty:1.4.3'
-    compile 'com.github.nifty-gui:nifty-default-controls:1.4.3'
+    compile 'com.github.nifty-gui:nifty:1.4.2'
+    compile 'com.github.nifty-gui:nifty-default-controls:1.4.2'
 
     //compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
     compile project(':ui')
