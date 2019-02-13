@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.1 released on 13 February 2019
+
+ + Revert to version 1.4.2 of Nifty in an attempt to resolve some issues.
+ + Add a `TestMultipleWindows` example app.
+ + Correct the width of the "Bind" button in `BindScreen`.
+
 ## Version 0.9.0 released on 13 January 2019
 
  + Add a `PopupMenuBuilder` class based on the Maud's `MenuBuilder`.
@@ -9,7 +15,7 @@
  + Catch exceptions while loading XML.
  + Fix an `AssertionError` that occurred after selecting from the menu
    in `TestBindScreen`.
- + Based on version 3.2.2-stable of jMonkeyEngine,
+ + Base on version 3.2.2-stable of jMonkeyEngine,
    version 2.18 of the jme3-utilities-heart library,
    and version 0.7.0 of the jme3-utilities-ui library.
 
