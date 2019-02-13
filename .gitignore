@@ -11,6 +11,7 @@
 /tests/*.dll
 /tests/*.so
 /tests/build/
+/tests/private/
 /tests/src/main/java/jme3test/
 /tests/Written Assets/
 /textures/build/
