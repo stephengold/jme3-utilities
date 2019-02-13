@@ -2,7 +2,7 @@
 
 ## Version 0.9.1 released on 13 February 2019
 
- + Revert to version 1.4.2 of Nifty in an attempt to resolve some issues.
+ + Revert to version 1.4.2 of Nifty to resolve some issues.
  + Add a `TestMultipleWindows` example app.
  + Correct the width of the "Bind" button in `BindScreen`.
 
