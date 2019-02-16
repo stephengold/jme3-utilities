@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -351,14 +351,20 @@ public class SkeletonVisualizer extends SubtreeControl {
      *
      * @param subject which skeleton control to use (may be null)
      */
-    public void setSubject(SkeletonControl subject) {
+    final public void setSubject(SkeletonControl subject) {
         if (subject == null) {
             skeleton = null;
             transformSpatial = null;
         } else {
             skeleton = subject.getSkeleton();
-            Spatial tree = subject.getSpatial();
-            transformSpatial = MySpatial.findAnimatedGeometry(tree);
+            Spatial controlledSpatial = subject.getSpatial();
+            Spatial animatedGeometry
+                    = MySpatial.findAnimatedGeometry(controlledSpatial);
+            if (animatedGeometry == null) {
+                transformSpatial = controlledSpatial;
+            } else {
+                transformSpatial = animatedGeometry;
+            }
         }
     }
 
