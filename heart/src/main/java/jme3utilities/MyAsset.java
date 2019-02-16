@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -64,9 +64,14 @@ final public class MyAsset {
     final private static Mesh squareMesh
             = new RectangleMesh(-1f, 1f, -1f, 1f, 1f);
     /**
+     * asset path of the ShowNormals material definition
+     */
+    final public static String debugMaterialAssetPath
+            = "Common/MatDefs/Misc/ShowNormals.j3md";
+    /**
      * asset path of the Particle material definition
      */
-    final private static String particleMaterialAssetPath
+    final public static String particleMaterialAssetPath
             = "Common/MatDefs/Misc/Particle.j3md";
     /**
      * asset path of the shaded material definition TODO Materials in JME3.3
@@ -164,6 +169,18 @@ final public class MyAsset {
     public static Vector3f copyVDirection(int faceIndex) {
         Vector3f result = vDirection[faceIndex].normalize();
         return result;
+    }
+
+    /**
+     * Create a material for debugging mesh normals.
+     *
+     * @param assetManager (not null)
+     * @return a new instance
+     */
+    public static Material createDebugMaterial(AssetManager assetManager) {
+        Validate.nonNull(assetManager, "asset manager");
+        Material material = new Material(assetManager, debugMaterialAssetPath);
+        return material;
     }
 
     /**
