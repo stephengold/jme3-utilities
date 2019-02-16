@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -77,7 +77,7 @@ class SkeletonMesh extends Mesh {
             numConnections = 0;
         } else {
             boneCount = skeleton.getBoneCount();
-            int numRoots = MySkeleton.numRootBones(skeleton);
+            int numRoots = MySkeleton.countRootBones(skeleton);
             numConnections = boneCount - numRoots;
         }
 

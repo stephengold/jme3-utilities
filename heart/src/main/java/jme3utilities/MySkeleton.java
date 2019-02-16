@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -174,6 +174,39 @@ public class MySkeleton {
         storeResult.setScale(scale);
 
         return storeResult;
+    }
+
+    /**
+     * Count the leaf bones in the specified skeleton.
+     *
+     * @param skeleton (not null, unaffected)
+     * @return count (&ge;0)
+     */
+    public static int countLeafBones(Skeleton skeleton) {
+        int boneCount = skeleton.getBoneCount();
+        int result = 0;
+        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            Bone bone = skeleton.getBone(boneIndex);
+            List<Bone> children = bone.getChildren();
+            if (children.isEmpty()) {
+                ++result;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Count the root bones in the specified skeleton.
+     *
+     * @param skeleton (not null, unaffected)
+     * @return count (&ge;0)
+     */
+    public static int countRootBones(Skeleton skeleton) {
+        Bone[] roots = skeleton.getRoots();
+        int result = roots.length;
+
+        return result;
     }
 
     /**
@@ -425,36 +458,27 @@ public class MySkeleton {
     }
 
     /**
-     * Count the number of leaf bones in the specified skeleton.
+     * Count the leaf bones in the specified skeleton.
      *
      * @param skeleton (not null, unaffected)
      * @return count (&ge;0)
+     * @deprecated use {@link #countLeafBones(com.jme3.animation.Skeleton)}
      */
+    @Deprecated
     public static int numLeafBones(Skeleton skeleton) {
-        int boneCount = skeleton.getBoneCount();
-        int result = 0;
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
-            Bone bone = skeleton.getBone(boneIndex);
-            List<Bone> children = bone.getChildren();
-            if (children.isEmpty()) {
-                ++result;
-            }
-        }
-
-        return result;
+        return countLeafBones(skeleton);
     }
 
     /**
-     * Count the number of root bones in the specified skeleton.
+     * Count the root bones in the specified skeleton.
      *
      * @param skeleton (not null, unaffected)
      * @return count (&ge;0)
+     * @deprecated use {@link #countRootBones(com.jme3.animation.Skeleton)}
      */
+    @Deprecated
     public static int numRootBones(Skeleton skeleton) {
-        Bone[] roots = skeleton.getRoots();
-        int result = roots.length;
-
-        return result;
+        return countRootBones(skeleton);
     }
 
     /**
