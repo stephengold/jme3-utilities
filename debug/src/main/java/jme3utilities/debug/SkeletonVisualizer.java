@@ -51,12 +51,12 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * Subtree control to visualize the subject skeleton.
+ * A SubtreeControl to visualize a Skeleton.
  * <p>
- * The controlled spatial must be a node.
+ * The controlled Spatial must be a Node.
  * <p>
- * The control is disabled by default. When enabled, it attaches 2 geometries to
- * the subtree.
+ * A new Control is disabled by default. When enabled, it attaches 2 geometries
+ * to its subtree Node.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -83,11 +83,11 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     final private static float defaultLineWidth = 2f;
     /**
-     * child position of the heads geometry in the subtree node
+     * child position of the heads geometry in the subtree Node
      */
     final private static int headsChildPosition = 0;
     /**
-     * child position of the links geometry in the subtree node
+     * child position of the links geometry in the subtree Node
      */
     final private static int linksChildPosition = 1;
     /**
@@ -101,11 +101,11 @@ public class SkeletonVisualizer extends SubtreeControl {
     final private static String defaultShapeAssetPath
             = "Textures/shapes/solid circle.png";
     /**
-     * name for the heads geometry
+     * name for the heads Geometry
      */
     final private static String headsName = "skeleton heads";
     /**
-     * name for the links geometry
+     * name for the links Geometry
      */
     final private static String linksName = "skeleton links";
     /**
@@ -145,11 +145,11 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     private Material lineMaterial;
     /**
-     * skeleton being visualized, or null for none
+     * Skeleton being visualized, or null for none
      */
     private Skeleton skeleton = null;
     /**
-     * spatial to provide the world transform, or null for none
+     * Spatial providing the world transform, or null for none
      */
     private Spatial transformSpatial = null;
     // *************************************************************************
@@ -196,7 +196,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * Copy the color for the head of the indexed bone.
      *
-     * @param boneIndex which bone (&ge;0)
+     * @param boneIndex which Bone (&ge;0)
      * @param storeResult (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
@@ -332,10 +332,9 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter which skeleton is visualized.
+     * Alter which Skeleton is visualized.
      *
-     * @param newSkeleton which skeleton to visualize (may be null, alias
-     * created)
+     * @param newSkeleton the Skeleton to visualize (may be null, alias created)
      */
     public void setSkeleton(Skeleton newSkeleton) {
         if (skeleton != newSkeleton) {
@@ -347,9 +346,9 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Configure the skeleton and transform spatial from a skeleton control.
+     * Configure the skeleton and transform spatial based on the specified SkeletonControl.
      *
-     * @param subject which skeleton control to use (may be null)
+     * @param subject the SkeletonControl to analyze (may be null)
      */
     final public void setSubject(SkeletonControl subject) {
         if (subject == null) {
@@ -369,7 +368,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter which spatial provides the world transform
+     * Alter which Spatial provides the world transform
      *
      * @param spatial which spatial to use (may be null, alias created)
      */
@@ -382,7 +381,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * Create a shallow copy of this control.
      *
-     * @return a new control, equivalent to this one
+     * @return a new Control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
@@ -392,8 +391,8 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Convert this shallow-cloned control into a deep-cloned one, using the
-     * specified cloner and original to resolve copied fields.
+     * Convert this shallow-cloned Control into a deep-cloned one, using the
+     * specified Cloner and original to resolve copied fields.
      *
      * @param cloner the cloner currently cloning this control (not null,
      * modified)
@@ -463,8 +462,8 @@ public class SkeletonVisualizer extends SubtreeControl {
     // private methods
 
     /**
-     * Create a heads geometry and a links geometry and attach them to the empty
-     * subtree.
+     * Create a heads Geometry and a links Geometry and attach them to the empty
+     * subtree Node.
      */
     private void addGeometries() {
         assert subtree.getQuantity() == 0;
