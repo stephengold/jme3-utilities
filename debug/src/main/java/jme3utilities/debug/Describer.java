@@ -771,17 +771,17 @@ public class Describer {
     protected String describe(RenderState state) {
         StringBuilder result = new StringBuilder(20);
 
-        if (state.isDepthTest()) {
+        if (!state.isDepthTest()) {
             result.append("NO");
         }
         result.append("dTest,");
 
-        if (state.isDepthWrite()) {
+        if (!state.isDepthWrite()) {
             result.append("NO");
         }
         result.append("dWrite,");
 
-        if (state.isWireframe()) {
+        if (!state.isWireframe()) {
             result.append("NO");
         }
         result.append("wireframe");
