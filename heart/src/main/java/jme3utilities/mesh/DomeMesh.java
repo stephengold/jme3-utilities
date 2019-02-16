@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -619,7 +619,7 @@ public class DomeMesh extends Mesh {
         /*
          * Allocate and assign a buffer for normals.
          */
-        FloatBuffer nomalBuffer = BufferUtils.createFloatBuffer(normalArray);
-        setBuffer(VertexBuffer.Type.Normal, numAxes, nomalBuffer);
+        FloatBuffer normalBuffer = BufferUtils.createFloatBuffer(normalArray);
+        setBuffer(VertexBuffer.Type.Normal, numAxes, normalBuffer);
     }
 }
