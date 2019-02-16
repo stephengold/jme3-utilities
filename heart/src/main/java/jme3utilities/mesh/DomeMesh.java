@@ -52,7 +52,7 @@ import jme3utilities.math.MyMath;
  * <li> the radius and center ARE NOT configurable,
  * <li> the texture coordinates, segment angle, and vertical angle ARE
  * configurable, and
- * <li> the normal vectors have the correct sign (issue #615).</ol>
+ * <li> the normal vectors have the correct sign (JME issue #615).</ol>
  * <p>
  * The projection to texture space is an "azimuthal equidistant projection". The
  * dome's equator maps to a circle of radius uvScale centered at (topU,topV).
@@ -292,7 +292,7 @@ public class DomeMesh extends Mesh {
 
     /**
      * Regenerate the mesh for a new segment angle: 2*Pi produces a complete
-     * dome, and Pi results in a quarter of a dome, and so on.
+     * dome, Pi results in a half dome, and so on.
      *
      * @param newAngle (in radians, &le;2*Pi, &gt;0)
      */
@@ -327,7 +327,7 @@ public class DomeMesh extends Mesh {
     // Savable methods
 
     /**
-     * De-serialize this instance when loading.
+     * De-serialize this mesh, for example when loading from a J3O file.
      *
      * @param importer (not null)
      * @throws IOException from importer
@@ -354,7 +354,7 @@ public class DomeMesh extends Mesh {
     }
 
     /**
-     * Serialize this instance when saving.
+     * Serialize this mesh, for example when saving to a J3O file.
      *
      * @param exporter (not null)
      * @throws IOException from exporter
@@ -404,7 +404,7 @@ public class DomeMesh extends Mesh {
      */
     private void updateCoordinates() {
         /*
-         * Allocate an array to hold the local (XYZ) coordinates.
+         * Allocate an array to hold the mesh (XYZ) coordinates.
          */
         Vector3f[] locationArray = new Vector3f[vertexCount];
         /*
@@ -497,7 +497,7 @@ public class DomeMesh extends Mesh {
      */
     private void updateIndices() {
         /*
-         * Allocate an array to hold the three vertex indices of each triangle.
+         * Allocate an array to hold the 3 vertex indices of each triangle.
          */
         short[] indexArray = new short[vpt * triangleCount];
         /*
@@ -599,8 +599,8 @@ public class DomeMesh extends Mesh {
         Vector3f[] normalArray = new Vector3f[vertexCount];
         /*
          * Compute the normal at each vertex, which is simply its local
-         * coordinates (for an outward facing dome) or the negative of its local
-         * coordinates (for an inward facing dome).
+         * coordinates (for an outward-facing dome) or the negative of its local
+         * coordinates (for an inward-facing dome).
          */
         FloatBuffer locationBuffer = getFloatBuffer(VertexBuffer.Type.Position);
         locationBuffer.rewind();
