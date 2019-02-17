@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,8 @@
 package jme3utilities.math;
 
 import com.jme3.math.Vector3f;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -54,6 +56,43 @@ final public class MyArray {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Count the number of distinct vectors in the specified array,
+     * distinguishing 0 from -0.
+     *
+     * @param array input (not null, unaffected)
+     * @return count (&ge;0)
+     */
+    public static int countDistinct(Vector3f[] array) {
+        int length = array.length;
+        Set<Vector3f> distinct = new HashSet<>(length);
+        for (Vector3f vector : array) {
+            distinct.add(vector);
+        }
+        int count = distinct.size();
+
+        return count;
+    }
+
+    /**
+     * Count the number of distinct vectors in the specified array, without
+     * distinguishing 0 from -0.
+     *
+     * @param array input (not null, unaffected)
+     * @return count (&ge;0)
+     */
+    public static int countNe(Vector3f[] array) {
+        int length = array.length;
+        Set<Vector3f> distinct = new HashSet<>(length);
+        for (Vector3f vector : array) {
+            Vector3f standard = MyVector3f.standardize(vector, null);
+            distinct.add(standard);
+        }
+        int count = distinct.size();
+
+        return count;
+    }
 
     /**
      * Test whether the first N elements of the specified vector contain &gt;1

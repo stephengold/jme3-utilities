@@ -34,9 +34,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -326,38 +324,33 @@ public class MyVector3f {
 
     /**
      * Count the number of distinct vectors in the specified array,
-     * distinguishing 0 from -0. TODO move to MyArray class
+     * distinguishing 0 from -0.
      *
      * @param array input (not null, unaffected)
      * @return count (&ge;0)
+     * @deprecated use
+     * {@link jme3utilities.math.MyArray#countDistinct(com.jme3.math.Vector3f[])}
      */
+    @Deprecated
     public static int countDistinct(Vector3f[] array) {
-        int length = array.length;
-        Set<Vector3f> distinct = new HashSet<>(length);
-        for (Vector3f vector : array) {
-            distinct.add(vector);
-        }
-        int count = distinct.size();
-
+        Validate.nonNull(array, "array");
+        int count = MyArray.countDistinct(array);
         return count;
     }
 
     /**
      * Count the number of distinct vectors in the specified array, without
-     * distinguishing 0 from -0. TODO move to MyArray class
+     * distinguishing 0 from -0.
+     *
+     * @deprecated use
+     * {@link jme3utilities.math.MyArray#countNe(com.jme3.math.Vector3f[])}
      *
      * @param array input (not null, unaffected)
      * @return count (&ge;0)
      */
     public static int countNe(Vector3f[] array) {
-        int length = array.length;
-        Set<Vector3f> distinct = new HashSet<>(length);
-        for (Vector3f vector : array) {
-            Vector3f standard = standardize(vector, null);
-            distinct.add(standard);
-        }
-        int count = distinct.size();
-
+        Validate.nonNull(array, "array");
+        int count = MyArray.countNe(array);
         return count;
     }
 
