@@ -1,33 +1,45 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.10 released on TBD
+
+ + Removed `LandscapeControl`. (API change)
+ + Excluded the `arrow.blend` file from the JAR.
+ + Bugfix: `RenderState` described incorrectly.
+ + Changed `SkeletonVisualizer` to work with models that do not
+   contain an animated `Geometry`.
+ + Eliminated all dependencies on
+   the `jme3-effects` and `jme3-terrain` libraries.
+ + Flag disabled `MatParamOverride`s in `Describer`.
+ + Based on version 2.19 of the `jme3-utilities-heart` library.
+
 ## Version 0.9.9 released on 5 January 2019
 
- + Based on version 2.18 of the jme3-utilities-heart library.
+ + Based on version 2.18 of the `jme3-utilities-heart` library.
 
 ## Version 0.9.8 released on 28 December 2018
 
  + Made dumps more concise.
  + Clarified `Spatial` descriptions.
  + Simplified the `PointVisualizer.setEnabled()` method.
- + Based on version 2.17 of the jme3-utilities-heart library.
+ + Based on version 2.17 of the `jme3-utilities-heart` library.
 
 ## Version 0.9.7 released on 9 December 2018
 
  + Added a `PointVisualizer` class.
  + Trim trailing zeroes in the `Describer` class.
  + Added 4 sprite textures: cross, lozenge, mascle, and square.
- + Based on version 2.16 of the jme3-utilities-heart library.
+ + Based on version 2.16 of the `jme3-utilities-heart` library.
 
 ## Version 0.9.6 released on 19 November 2018
 
-Based on version 2.13 of the jme3-utilities-heart library.
+Based on version 2.13 of the `jme3-utilities-heart` library.
 
 ## Version 0.9.5 released on 12 November 2018
 
  + Bugfix: `SkeletonVisualizer` custom colors not deeply cloned.
  + Added `dump()` and `describe()` methods for `Bone` and `Skeleton`.
  + Dump material parameters one-per-line and make dumping optional.
- + Based on version 2.12 of the jme3-utilities-heart library.
+ + Based on version 2.12 of the `jme3-utilities-heart` library.
 
 ## Version 0.9.4 released on 20 October 2018
 
@@ -37,12 +49,12 @@ Based on version 2.13 of the jme3-utilities-heart library.
  + Bugfix: custom scene-graph control caused Describer to throw an exception.
  + Bugfix: reading an `AxesVisualizer` from J3O failed due to missing
    no-arg constructor.
- + Based on version 2.11 of the jme3-utilities-heart library.
+ + Based on version 2.11 of the `jme3-utilities-heart` library.
 
 ## Version 0.9.3 released on 23 September 2018
 
  + Added a texture asset for a "ring" point shape.
- + Based on version 2.10 of the jme3-utilities-heart library.
+ + Based on version 2.10 of the `jme3-utilities-heart` library.
 
 ## Version 0.9.2 released on 12 September 2018
 
@@ -68,17 +80,17 @@ Based on version 2.13 of the jme3-utilities-heart library.
    (API change)
  + Added capability to describe `depthWrite` flag.
  + Generate shape textures programmatically.
- + Based on version 2.7 of the jme3-utilities-heart library.
+ + Based on version 2.7 of the `jme3-utilities-heart` library.
 
 ## Version 0.8.10 released on 17 August 2018
 
  + Describe locations and directions of lights.
  + Added capability to describe and dump material-parameter overrides.
- + Based on version 2.6 of the jme3-utilities-heart library.
+ + Based on version 2.6 of the `jme3-utilities-heart` library.
 
 ## Version 0.8.9 released on 24 July 2018
 
- + Based on version 2.5 of the heart library.
+ + Based on version 2.5 of the `jme3-utilities-heart` library.
  + No longer need to `setWireframe` flag in visualizer render state.
 
 ## Version 0.8.8 released on 18 February 2018
@@ -87,7 +99,7 @@ Added mesh descriptions when dumping a scene graph.
 
 ## Version 0.8.7 released on 2 February 2018
 
-Based on version 2.2 of the jme3-utilities-heart library.
+Based on version 2.2 of the `jme3-utilities-heart` library.
 
 ## Version 0.8.6 released on 27 January 2018
 
