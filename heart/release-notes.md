@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.19.0 released on TBD
+## Version 2.19.0 released on 17 January 2019
 
  + Moved the `countDistinct()` and `countNe()` methods from `MyVector3f` to the
    `MyArray` class.
