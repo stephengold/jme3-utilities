@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,9 @@
  */
 package jme3utilities;
 
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix4f;
 import com.jme3.math.Vector2f;
@@ -36,6 +39,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.util.BufferUtils;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -77,6 +81,55 @@ public class MyMesh {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Generate a material to visualize the bone weights in the specified mesh.
+     *
+     * @param mesh the subject mesh (not null, animated, modified)
+     * @param boneIndexToColor map bone indices to colors (not null, unaffected)
+     * @param assetManager (not null)
+     * @return a new wireframe material instance
+     */
+    public static Material boneWeightMaterial(Mesh mesh,
+            ColorRGBA[] boneIndexToColor, AssetManager assetManager) {
+        if (!isAnimated(mesh)) {
+            throw new IllegalArgumentException("Must be an animated mesh.");
+        }
+
+        int numVertices = mesh.getVertexCount();
+        FloatBuffer colorBuf = BufferUtils.createFloatBuffer(4 * numVertices);
+
+        int[] biArray = new int[maxWeights];
+        float[] bwArray = new float[maxWeights];
+        ColorRGBA sum = new ColorRGBA();
+        ColorRGBA term = new ColorRGBA();
+        for (int vertexIndex = 0; vertexIndex < numVertices; ++vertexIndex) {
+            vertexBoneIndices(mesh, vertexIndex, biArray);
+            vertexBoneWeights(mesh, vertexIndex, bwArray);
+            sum.set(0f, 0f, 0f, 1f);
+            for (int j = 0; j < maxWeights; j++) {
+                int boneI = biArray[j];
+                if (boneI >= 0 && boneI < boneIndexToColor.length) {
+                    term.set(boneIndexToColor[boneI]);
+                    float weight = bwArray[j];
+                    term.multLocal(weight);
+                    sum.addLocal(term);
+                }
+            }
+            colorBuf.put(sum.r).put(sum.g).put(sum.b).put(1f);
+        }
+
+        mesh.setBuffer(VertexBuffer.Type.Color, 4, VertexBuffer.Format.Float,
+                colorBuf);
+
+        Material material = MyAsset.createUnshadedMaterial(assetManager);
+        material.setBoolean("VertexColor", true);
+
+        RenderState rs = material.getAdditionalRenderState();
+        rs.setWireframe(true);
+
+        return material;
+    }
 
     /**
      * Estimate the number of bones in the specified mesh by reading its
