@@ -46,8 +46,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
-import com.jme3.post.filters.DepthOfFieldFilter;
-import com.jme3.post.filters.PosterizationFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
@@ -61,11 +59,7 @@ import com.jme3.shadow.PointLightShadowFilter;
 import com.jme3.shadow.PointLightShadowRenderer;
 import com.jme3.shadow.SpotLightShadowFilter;
 import com.jme3.shadow.SpotLightShadowRenderer;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.util.IntMap;
-import com.jme3.water.ReflectionProcessor;
-import com.jme3.water.SimpleWaterProcessor;
-import com.jme3.water.SimpleWaterProcessor.RefractionProcessor;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
@@ -643,14 +637,10 @@ public class Describer {
      */
     protected String describe(Filter filter) {
         String result;
-        if (filter instanceof DepthOfFieldFilter) {
-            result = "DOF";
-        } else if (filter instanceof DirectionalLightShadowFilter) {
+        if (filter instanceof DirectionalLightShadowFilter) {
             result = "DShadow";
         } else if (filter instanceof PointLightShadowFilter) {
             result = "PShadow";
-        } else if (filter instanceof PosterizationFilter) {
-            result = "Poster";
         } else if (filter instanceof SpotLightShadowFilter) {
             result = "SShadow";
         } else if (filter == null) {
@@ -805,20 +795,15 @@ public class Describer {
             result = String.format("filters<%s>", desc);
         } else if (processor instanceof PointLightShadowRenderer) {
             result = "PShadow";
-        } else if (processor instanceof ReflectionProcessor) {
-            result = "Reflect";
-        } else if (processor instanceof RefractionProcessor) {
-            result = "Refract";
         } else if (processor instanceof ScreenshotAppState) {
             result = "Screenshot";
-        } else if (processor instanceof SimpleWaterProcessor) {
-            result = "SimpleWater";
         } else if (processor instanceof SpotLightShadowRenderer) {
             result = "SShadow";
         } else if (processor == null) {
             result = "null";
         } else {
             result = processor.getClass().getSimpleName();
+            result = result.replace("Processor", "");
             if (result.isEmpty()) {
                 result = "?";
             }
@@ -879,8 +864,8 @@ public class Describer {
      */
     protected char describeType(Spatial spatial) {
         char result;
-        if (spatial instanceof TerrainQuad) {
-            result = 'q';
+        if (spatial.getClass().getSimpleName().equals("TerrainQuad")) {
+            result = 'q'; // TODO move to MySpatial
         } else {
             result = MySpatial.describeType(spatial);
         }

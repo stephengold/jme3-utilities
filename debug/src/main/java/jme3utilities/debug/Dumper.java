@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
@@ -353,7 +352,8 @@ public class Dumper {
          * If the spatial is a node (but not a terrain node),
          * dump its children with incremented indentation.
          */
-        if (spatial instanceof Node && !(spatial instanceof TerrainQuad)) {
+        if (spatial instanceof Node
+                && !spatial.getClass().getSimpleName().equals("TerrainQuad")) {
             Node node = (Node) spatial;
             for (Spatial child : node.getChildren()) {
                 dump(child, indent + indentIncrement);
@@ -380,7 +380,7 @@ public class Dumper {
             stream.print(desc);
             if (viewPort.isClearColor()) {
                 ColorRGBA backColor = viewPort.getBackgroundColor();
-                stream.printf(" bg%s", MyColor.describe(backColor));
+                stream.printf(" bg(%s)", MyColor.describe(backColor));
             }
             String descP = describer.describeProcessors(viewPort);
             stream.printf(" procs=(%s)%n", descP);

@@ -6,12 +6,13 @@ description = 'demos, examples, and tests that do not generate reports'
 
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
-    runtime 'com.github.nifty-gui:nifty-style-black:1.4.3'
+    runtime 'com.github.nifty-gui:nifty-style-black:1.4.2'
     runtime "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
     runtime "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
     runtime "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengineVersion"
     compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
     runtime 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 
     //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
