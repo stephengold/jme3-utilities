@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,14 @@
 package jme3utilities;
 
 import com.jme3.app.StatsView;
+import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.font.BitmapText;
 import com.jme3.light.Light;
 import com.jme3.material.MatParamOverride;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
@@ -1206,6 +1208,32 @@ public class MySpatial {
         }
 
         return result;
+    }
+
+    /**
+     * Apply new materials to all animated meshes in the specified subtree in
+     * order to visualize their bone weights.
+     *
+     * @param subtree the subtree to modify (may be null)
+     * @param boneIndexToColor map bone indices to colors (not null, unaffected)
+     * @param assetManager (not null)
+     */
+    public static void visualizeBoneWeights(Spatial subtree,
+            ColorRGBA[] boneIndexToColor, AssetManager assetManager) {
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            for (Spatial spatial : node.getChildren()) {
+                visualizeBoneWeights(spatial, boneIndexToColor, assetManager);
+            }
+        } else if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            if (MyMesh.isAnimated(mesh)) {
+                Material material = MyMesh.boneWeightMaterial(mesh,
+                        boneIndexToColor, assetManager);
+                geometry.setMaterial(material);
+            }
+        }
     }
 
     /**
