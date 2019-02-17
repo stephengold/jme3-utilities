@@ -9,7 +9,10 @@ ext {
     baseName = "$artifact-$version"
 }
 
-jar { baseName project.ext.baseName }
+jar {
+    baseName project.ext.baseName
+    exclude('**/arrow.blend')
+}
 javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 processResources.dependsOn(':textures:shapeTextures')
