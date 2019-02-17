@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.10 released on TBD
+## Version 0.9.10 released on 27 February 2019
 
  + Removed `LandscapeControl`. (API change)
  + Excluded the `arrow.blend` file from the JAR.
