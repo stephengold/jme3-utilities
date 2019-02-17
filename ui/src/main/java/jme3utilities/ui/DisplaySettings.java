@@ -83,7 +83,8 @@ public class DisplaySettings {
     final public DisplaySizeLimits sizeLimits;
     /**
      * application name for the window's title bar, which is also the key for
-     * loading/saving app settings from Java's user preferences (not null)
+     * loading/saving app settings from Java's user preferences (not null) TODO
+     * append command-line arguments in the title bar
      */
     final private String title;
     // *************************************************************************
@@ -319,7 +320,8 @@ public class DisplaySettings {
     /**
      * Initialize the settings before the application starts.
      *
-     * @return a new instance, or null if user clicked on the "Cancel" button
+     * @return a new AppSettings instance, or null if user clicked on the
+     * "Cancel" button
      */
     public AppSettings initialize() {
         /*
@@ -470,10 +472,10 @@ public class DisplaySettings {
     }
 
     /**
-     * Alter whether startup must show the settings dialog.
+     * Alter whether initialize() must show the JME settings dialog.
      *
-     * @param newSetting true&rarr;force startup to show it, false&rarr; show it
-     * only if persistent settings are missing
+     * @param newSetting true&rarr;force initialize() to show the dialog,
+     * false&rarr; show the dialog only if persistent settings are missing
      */
     public void setForceDialog(boolean newSetting) {
         forceDialog = newSetting;
