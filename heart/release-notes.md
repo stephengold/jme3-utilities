@@ -1,5 +1,17 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.19.0 released on TBD
+
+ + Moved the `countDistinct()` and `countNe()` methods from `MyVector3f` to the
+   `MyArray` class.
+ + Renamed `MySkeleton.numLeafBones()` to `countLeafBones()`.
+ + Renamed `MySkeleton.numRootBones()` to `countRootBones()`.
+ + Added a `createDebugMaterial()` method to the `MyAsset` class.
+ + Added `SkeletonControl` skinning modes to `MyControl.describe()`.
+ + Added a `boneWeightMaterial()` method to the `MyMesh` class.
+ + Added a `visualizeBoneWeights()` method to the `MySpatial` class.
+ + Added a `listCorners()` method to the `RectangularSolid` class.
+
 ## Version 2.18.0 released on 5 January 2019
 
  + Improved exception handling in the `MyControl` class
