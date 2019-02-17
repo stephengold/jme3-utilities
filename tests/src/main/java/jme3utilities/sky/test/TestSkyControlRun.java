@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,6 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.ViewPortListener;
 import jme3utilities.debug.Dumper;
-import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.sky.CloudLayer;
@@ -772,7 +771,7 @@ public class TestSkyControlRun
                 break;
 
             default:
-                throw new IllegalStateException("unknown star map name");
+                throw new IllegalStateException("unknown star-map name");
         }
     }
 }

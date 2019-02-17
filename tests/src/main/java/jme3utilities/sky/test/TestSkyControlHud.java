@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@ import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyString;
 import jme3utilities.TimeOfDay;
-import jme3utilities.debug.LandscapeControl;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.SliderTransform;
