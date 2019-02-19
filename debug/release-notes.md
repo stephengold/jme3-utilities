@@ -1,8 +1,8 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.11 released on TBD
+## Version 0.9.11 released on 19 February 2019
 
- + Privatized the `SkeletonVisualizer.setSkeleton()` method.
+ + Privatized the `SkeletonVisualizer.setSkeleton()` method. (API change)
  + Bugfix: garbled visualization after `SkeletonVisualizer.setSubject()`.
  + Based on version 2.20 of the `jme3-utilities-heart` library.
 
