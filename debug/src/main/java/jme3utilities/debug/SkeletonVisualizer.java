@@ -355,7 +355,7 @@ public class SkeletonVisualizer extends SubtreeControl {
             skeleton = null;
             transformSpatial = null;
         } else {
-            skeleton = subject.getSkeleton();
+            setSkeleton(subject.getSkeleton());
             Spatial controlledSpatial = subject.getSpatial();
             Spatial animatedGeometry
                     = MySpatial.findAnimatedGeometry(controlledSpatial);
