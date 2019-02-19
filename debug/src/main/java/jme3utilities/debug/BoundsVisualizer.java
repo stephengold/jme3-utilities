@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ import jme3utilities.Validate;
  * may be a geometry.
  * <p>
  * The control is disabled by default. When enabled, it attaches a geometry to
- * the subtree. TODO rename BoundVisualizer
+ * the subtree.
  *
  * @author Stephen Gold sgold@sonic.net
  */
