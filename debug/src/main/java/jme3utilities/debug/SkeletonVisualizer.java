@@ -56,7 +56,7 @@ import jme3utilities.Validate;
  * The controlled Spatial must be a Node.
  * <p>
  * A new Control is disabled by default. When enabled, it attaches 2 geometries
- * to its subtree Node.
+ * to its subtree node.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -194,7 +194,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Copy the color for the head of the indexed bone.
+     * Copy the color for the head of the indexed Bone.
      *
      * @param boneIndex which Bone (&ge;0)
      * @param storeResult (modified if not null)
@@ -332,21 +332,8 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter which Skeleton is visualized.
-     *
-     * @param newSkeleton the Skeleton to visualize (may be null, alias created)
-     */
-    public void setSkeleton(Skeleton newSkeleton) {
-        if (skeleton != newSkeleton) {
-            if (subtree != null) {
-                subtree.detachAllChildren();
-            }
-            skeleton = newSkeleton;
-        }
-    }
-
-    /**
-     * Configure the skeleton and transform spatial based on the specified SkeletonControl.
+     * Configure the Skeleton and transform spatial based on the specified
+     * SkeletonControl.
      *
      * @param subject the SkeletonControl to analyze (may be null)
      */
@@ -482,7 +469,21 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Update existing geometries based on the skeleton and the transform
+     * Alter which Skeleton is visualized.
+     *
+     * @param newSkeleton the Skeleton to visualize (may be null, alias created)
+     */
+    private void setSkeleton(Skeleton newSkeleton) {
+        if (skeleton != newSkeleton) {
+            if (subtree != null) {
+                subtree.detachAllChildren();
+            }
+            skeleton = newSkeleton;
+        }
+    }
+
+    /**
+     * Update existing geometries based on the Skeleton and the transform
      * spatial.
      */
     private void updateGeometries() {
