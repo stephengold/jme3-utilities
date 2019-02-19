@@ -156,6 +156,30 @@ public class RectangularSolid implements Savable {
         minima.set(min);
         localToWorld.set(orientation);
     }
+
+    /**
+     * Instantiate a rectangular solid by scaling another solid around its
+     * center.
+     *
+     * @param otherSolid (not null, unaffected)
+     * @param scaleFactors (not null, all components non-negative, unaffected)
+     */
+    public RectangularSolid(RectangularSolid otherSolid, Vector3f scaleFactors) {
+        Validate.nonNegative(scaleFactors, "scale factors");
+
+        Vector3f center
+                = MyVector3f.midpoint(otherSolid.minima, otherSolid.maxima);
+
+        otherSolid.maxima.subtract(center, maxima);
+        maxima.multLocal(scaleFactors);
+        maxima.addLocal(center);
+
+        otherSolid.minima.subtract(center, minima);
+        minima.multLocal(scaleFactors);
+        minima.addLocal(center);
+
+        localToWorld.set(otherSolid.localToWorld);
+    }
     // *************************************************************************
     // new methods exposed
 
@@ -203,6 +227,23 @@ public class RectangularSolid implements Savable {
         }
 
         return cornerLocations;
+    }
+
+    /**
+     * Copy the local-to-world rotation.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the maxima (either storeResult or a new vector, not null)
+     */
+    public Quaternion localToWorld(Quaternion storeResult) {
+        Quaternion result;
+        if (storeResult == null) {
+            result = localToWorld.clone();
+        } else {
+            result = storeResult.set(localToWorld);
+        }
+
+        return result;
     }
 
     /**
