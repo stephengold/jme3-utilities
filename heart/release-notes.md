@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.20.0 released on TBD
+
+ + Added `localToWorld(Quaternion)` and
+   `RectangularSolid(RectangularSolid, Vector3f)` methods to the
+   `RectangularSolid` class.
+
 ## Version 2.19.0 released on 17 January 2019
 
  + Moved the `countDistinct()` and `countNe()` methods from `MyVector3f` to the
