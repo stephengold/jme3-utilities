@@ -693,6 +693,9 @@ public class MyMesh {
     /**
      * Copy Vector3f data for the indexed vertex from the specified vertex
      * buffer.
+     * <p>
+     * A software skin update is required BEFORE reading
+     * vertex positions/normals/tangents from an animated mesh
      *
      * @param mesh subject mesh (not null)
      * @param bufferType which buffer to read (5 legal values)
