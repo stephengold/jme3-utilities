@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -190,6 +191,25 @@ public class Misc {
                 File oldFile = result.put(absoluteDirPath, root);
                 assert oldFile == null : oldFile;
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Access the 1st member of a collection.
+     *
+     * @param <T> the type of the member
+     * @param collection the collection to access (not null)
+     * @return the pre-existing member, or null if none
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Object> T first(Collection<T> collection) {
+        T result = null;
+        if (!collection.isEmpty()) {
+            int size = collection.size();
+            Object[] members = collection.toArray(new Object[size]);
+            result = (T) members[0];
         }
 
         return result;
