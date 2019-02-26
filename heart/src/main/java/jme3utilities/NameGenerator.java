@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ import com.jme3.export.Savable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -124,12 +125,17 @@ public class NameGenerator implements Savable {
      * Generate a new unique name consisting of a prefix string followed by the
      * separator followed by a decimal sequence number.
      *
-     * @param prefix the prefix string
+     * @param prefix the prefix string (not null, doesn't contain separator)
      * @return unique String which begins with the specified prefix
      */
     public String unique(String prefix) {
         int separatorIndex = prefix.indexOf(separator);
-        assert separatorIndex == -1 : separatorIndex;
+        if (separatorIndex >= 0) {
+            logger.log(Level.SEVERE, "prefix={0}", MyString.quote(prefix));
+            String message = String.format(
+                    "prefix must not contain the separator '%c'", separator);
+            throw new IllegalArgumentException(message);
+        }
 
         Integer sequenceNumber = nextSequenceNumbers.get(prefix);
         if (sequenceNumber == null) {
