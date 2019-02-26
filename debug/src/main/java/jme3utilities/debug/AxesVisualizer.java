@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -397,6 +397,7 @@ public class AxesVisualizer extends SubtreeControl {
         Quaternion orientation = new Quaternion();
         orientation.fromAxes(xDir, yDir, zDir);
         geometry.setLocalRotation(orientation);
+        geometry.setName(name);
 
         Material material = MyAsset.createUnshadedMaterial(assetManager, color);
         material.getAdditionalRenderState().setDepthTest(depthTest);
