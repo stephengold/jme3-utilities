@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -186,16 +186,18 @@ public class MyString {
     }
 
     /**
-     * Escape all tab, quote, newline, and backslash characters in a string.
+     * Escape all tab, quote, newline, and backslash characters in a
+     * CharSequence.
      *
-     * @param unescaped the input string (not null)
-     * @return an escaped string (not null)
-     * @see #unEscape(String)
+     * @param unescaped the input sequence (not null)
+     * @return an escaped String (not null)
+     * @see #unEscape(CharSequence)
      */
-    public static String escape(String unescaped) {
+    public static String escape(CharSequence unescaped) {
         int length = unescaped.length();
         StringBuilder result = new StringBuilder(length + 10);
-        for (char ch : unescaped.toCharArray()) {
+        for (int i = 0; i < length; ++i) {
+            char ch = unescaped.charAt(i);
             switch (ch) {
                 case '\n':
                     result.append("\\n");
@@ -344,12 +346,12 @@ public class MyString {
      * @param text input text to quote
      * @return quoted string, or "null" if the input was null
      */
-    public static String quote(String text) {
+    public static String quote(CharSequence text) {
         String result;
         if (text == null) {
             result = "null";
         } else {
-            result = String.format("\"%s\"", escape(text));
+            result = "\"" + escape(text) + "\"";
         }
 
         return result;
@@ -468,10 +470,10 @@ public class MyString {
 
     /**
      * Trim any trailing zeros and one trailing decimal point from a string
-     * representation of a float. Also remove sign from zero.
+     * representation of a float. Also remove sign from zero. TODO localize
      *
-     * @param input the string to trim (not null)
-     * @return a trimmed string (not null)
+     * @param input the String to trim (not null)
+     * @return a trimmed String (not null)
      */
     public static String trimFloat(String input) {
         String result;
@@ -498,17 +500,17 @@ public class MyString {
     }
 
     /**
-     * Undo character escapes added by escape().
+     * Undo character escapes added by {@link #escape(CharSequence)}.
      *
-     * @param escaped the input string (not null)
+     * @param escaped the input sequence (not null)
      * @return an unescaped string (not null)
-     * @see #escape(String)
      */
-    public static String unEscape(String escaped) {
+    public static String unEscape(CharSequence escaped) {
         int length = escaped.length();
         StringBuilder result = new StringBuilder(length);
         boolean inEscape = false;
-        for (char ch : escaped.toCharArray()) {
+        for (int i = 0; i < length; ++i) {
+            char ch = escaped.charAt(i);
             if (inEscape) {
                 if (ch == '\\' || ch == '"') {
                     result.append(ch);
