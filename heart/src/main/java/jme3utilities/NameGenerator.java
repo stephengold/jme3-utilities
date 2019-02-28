@@ -168,7 +168,7 @@ public class NameGenerator implements Savable {
         assert values.length == size : size;
 
         reset();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; ++i) {
             String key = keys[i];
             int value = values[i];
             nextSequenceNumbers.put(key, value);
@@ -192,7 +192,7 @@ public class NameGenerator implements Savable {
                 : nextSequenceNumbers.entrySet()) {
             keys[i] = entry.getKey();
             values[i] = entry.getValue();
-            i++;
+            ++i;
         }
 
         OutputCapsule capsule = exporter.getCapsule(this);

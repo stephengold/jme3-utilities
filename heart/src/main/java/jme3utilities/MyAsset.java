@@ -316,7 +316,7 @@ final public class MyAsset {
          */
         Node result = new Node("star map");
         result.setQueueBucket(Bucket.Sky);
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; ++faceIndex) {
             String faceName = String.format("%s_face%d", name, faceIndex + 1);
             Geometry geometry = new Geometry(faceName, squareMesh);
             result.attachChild(geometry);

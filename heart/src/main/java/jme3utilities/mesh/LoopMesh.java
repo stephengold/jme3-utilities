@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -110,7 +110,7 @@ public class LoopMesh extends Mesh {
         vertexCount = cornerArray.length;
         Validate.inRange(vertexCount, "length of corner list",
                 3, Integer.MAX_VALUE);
-        for (int index = 0; index < vertexCount; index++) {
+        for (int index = 0; index < vertexCount; ++index) {
             String description = String.format("cornerArray[%d]", index);
             Validate.nonNull(cornerArray[index], description);
         }
@@ -173,7 +173,7 @@ public class LoopMesh extends Mesh {
         Vector3f[] locationArray = new Vector3f[vertexCount];
 
         float increment = FastMath.TWO_PI / vertexCount;
-        for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+        for (int vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex) {
             float longitude = increment * vertexIndex;
             float x = FastMath.cos(longitude);
             float z = FastMath.sin(longitude);
@@ -197,7 +197,7 @@ public class LoopMesh extends Mesh {
          * Allocate an array to hold the vertex indices.
          */
         short[] indexArray = new short[vertexCount + 1];
-        for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+        for (int vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex) {
             indexArray[vertexIndex] = (short) vertexIndex;
         }
         /*

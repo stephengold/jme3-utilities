@@ -140,7 +140,7 @@ public class MyString {
                  */
                 int numElements = list.size();
                 int nextSuffix = 1;
-                for (int index = 0; index < numElements; index++) {
+                for (int index = 0; index < numElements; ++index) {
                     String originalName = list.get(index);
                     if (originalName.equals(string)) {
                         String withSuffix = String.format("%s%s%d",
@@ -236,9 +236,9 @@ public class MyString {
 
         String[] array = toArray(collection);
         int count = array.length;
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
             String si = array[i];
-            for (int j = i + 1; j < count; j++) {
+            for (int j = i + 1; j < count; ++j) {
                 String sj = array[j];
                 int prefixLength = sharedPrefixLength(si, sj);
                 if (prefixLength > longestLength) {
@@ -441,7 +441,7 @@ public class MyString {
         int maxPrefixLength = Math.min(length1, length2);
 
         int spLength;
-        for (spLength = 0; spLength < maxPrefixLength; spLength++) {
+        for (spLength = 0; spLength < maxPrefixLength; ++spLength) {
             char c1 = s1.charAt(spLength);
             char c2 = s2.charAt(spLength);
             if (c1 != c2) {
@@ -481,10 +481,10 @@ public class MyString {
             int end = input.length();
             char[] chars = input.toCharArray();
             while (end >= 1 && chars[end - 1] == '0') {
-                end--;
+                --end;
             }
             if (end >= 1 && chars[end - 1] == '.') {
-                end--;
+                --end;
             }
             result = input.substring(0, end);
 

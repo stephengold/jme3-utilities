@@ -185,7 +185,7 @@ public class MySkeleton {
     public static int countLeafBones(Skeleton skeleton) {
         int boneCount = skeleton.getBoneCount();
         int result = 0;
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
             Bone bone = skeleton.getBone(boneIndex);
             List<Bone> children = bone.getChildren();
             if (children.isEmpty()) {
@@ -248,7 +248,7 @@ public class MySkeleton {
 
         Bone result = null;
         int numControls = spatial.getNumControls();
-        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+        for (int controlIndex = 0; controlIndex < numControls; ++controlIndex) {
             Control control = spatial.getControl(controlIndex);
             Skeleton skeleton = MyControl.findSkeleton(control);
             if (skeleton != null) {
@@ -328,7 +328,7 @@ public class MySkeleton {
             addResult = new ArrayList<>(boneCount);
         }
 
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
             Bone bone = skeleton.getBone(boneIndex);
             if (bone != null) {
                 String name = bone.getName();
@@ -352,7 +352,7 @@ public class MySkeleton {
         List<String> result = new ArrayList<>(80);
 
         int numControls = spatial.getNumControls();
-        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+        for (int controlIndex = 0; controlIndex < numControls; ++controlIndex) {
             Control control = spatial.getControl(controlIndex);
             Skeleton skeleton = MyControl.findSkeleton(control);
             if (skeleton != null) {
@@ -381,7 +381,7 @@ public class MySkeleton {
         }
 
         int numControls = subtree.getNumControls();
-        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+        for (int controlIndex = 0; controlIndex < numControls; ++controlIndex) {
             Control control = subtree.getControl(controlIndex);
             Skeleton skeleton = MyControl.findSkeleton(control);
             if (skeleton != null && !addResult.contains(skeleton)) {
@@ -415,7 +415,7 @@ public class MySkeleton {
         }
 
         int numBones = skeleton.getBoneCount();
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < numBones; ++boneIndex) {
             Bone bone = skeleton.getBone(boneIndex);
             Node attachmentsNode = getAttachments(bone);
             if (attachmentsNode != null) {
@@ -576,7 +576,7 @@ public class MySkeleton {
      */
     public static void setUserControl(Skeleton skeleton, boolean newSetting) {
         int boneCount = skeleton.getBoneCount();
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
             Bone bone = skeleton.getBone(boneIndex);
             bone.setUserControl(newSetting);
         }

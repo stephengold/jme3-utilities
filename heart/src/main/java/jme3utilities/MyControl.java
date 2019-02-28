@@ -97,7 +97,7 @@ public class MyControl {
             AnimControl ac = (AnimControl) control;
             Collection<String> nameCollection = ac.getAnimationNames();
             String[] array = MyString.toArray(nameCollection);
-            for (int iAnimation = 0; iAnimation < array.length; iAnimation++) {
+            for (int iAnimation = 0; iAnimation < array.length; ++iAnimation) {
                 String animationName = array[iAnimation];
                 Animation animation = ac.getAnim(animationName);
                 array[iAnimation] = MyAnimation.describe(animation, ac);
@@ -143,7 +143,7 @@ public class MyControl {
 
         int result = -1;
         int numControls = spatial.getNumControls();
-        for (int index = 0; index < numControls; index++) {
+        for (int index = 0; index < numControls; ++index) {
             Control control = spatial.getControl(index);
             if (control == sgc) {
                 result = index;

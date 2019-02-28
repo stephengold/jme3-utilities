@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -112,47 +112,47 @@ public class RoundedRectangle extends Mesh {
 
         centerX = x1 + cornerRadius;
         centerY = y1 + cornerRadius;
-        for (int edge = 0; edge <= epa; edge++) {
+        for (int edge = 0; edge <= epa; ++edge) {
             float theta = FastMath.HALF_PI * edge / epa;
             float sin = FastMath.sin(theta);
             float cos = FastMath.cos(theta);
             positions[numAxes * vIndex] = centerX - cornerRadius * cos;
             positions[numAxes * vIndex + 1] = centerY - cornerRadius * sin;
-            vIndex++;
+            ++vIndex;
         }
 
         centerX = x2 - cornerRadius;
-        for (int edge = 0; edge <= epa; edge++) {
+        for (int edge = 0; edge <= epa; ++edge) {
             float theta = FastMath.HALF_PI * edge / epa;
             float sin = FastMath.sin(theta);
             float cos = FastMath.cos(theta);
             positions[numAxes * vIndex] = centerX + cornerRadius * sin;
             positions[numAxes * vIndex + 1] = centerY - cornerRadius * cos;
-            vIndex++;
+            ++vIndex;
         }
 
         centerY = y2 - cornerRadius;
-        for (int edge = 0; edge <= epa; edge++) {
+        for (int edge = 0; edge <= epa; ++edge) {
             float theta = FastMath.HALF_PI * edge / epa;
             float sin = FastMath.sin(theta);
             float cos = FastMath.cos(theta);
             positions[numAxes * vIndex] = centerX + cornerRadius * cos;
             positions[numAxes * vIndex + 1] = centerY + cornerRadius * sin;
-            vIndex++;
+            ++vIndex;
         }
 
         centerX = x1 + cornerRadius;
-        for (int edge = 0; edge <= epa; edge++) {
+        for (int edge = 0; edge <= epa; ++edge) {
             float theta = FastMath.HALF_PI * edge / epa;
             float sin = FastMath.sin(theta);
             float cos = FastMath.cos(theta);
             positions[numAxes * vIndex] = centerX - cornerRadius * sin;
             positions[numAxes * vIndex + 1] = centerY + cornerRadius * cos;
-            vIndex++;
+            ++vIndex;
         }
         assert vIndex == numVertices : vIndex;
 
-        for (int vi = 0; vi < numVertices; vi++) {
+        for (int vi = 0; vi < numVertices; ++vi) {
             indices[vi] = (short) vi;
             normals[numAxes * vi] = 0f;
             normals[numAxes * vi + 1] = 0f;

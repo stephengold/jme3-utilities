@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -114,7 +114,7 @@ public class MyAnimation {
             result = String.format("%s[%d]", name, numTracks);
         } else {
             String[] trackDescriptions = new String[numTracks];
-            for (int trackIndex = 0; trackIndex < numTracks; trackIndex++) {
+            for (int trackIndex = 0; trackIndex < numTracks; ++trackIndex) {
                 Track track = tracks[trackIndex];
                 trackDescriptions[trackIndex] = describe(track, animControl);
             }
@@ -305,7 +305,7 @@ public class MyAnimation {
         int result = -1;
         Track[] tracks = animation.getTracks();
         int numTracks = tracks.length;
-        for (int index = 0; index < numTracks; index++) {
+        for (int index = 0; index < numTracks; ++index) {
             if (track == tracks[index]) {
                 result = index;
                 break;
@@ -522,7 +522,7 @@ public class MyAnimation {
         Vector3f[] scales = new Vector3f[numFrames];
         transform = transform.clone();
 
-        for (int frameIndex = 0; frameIndex < numFrames; frameIndex++) {
+        for (int frameIndex = 0; frameIndex < numFrames; ++frameIndex) {
             times[frameIndex] = frameTimes[frameIndex];
             translations[frameIndex] = transform.getTranslation();
             rotations[frameIndex] = transform.getRotation();

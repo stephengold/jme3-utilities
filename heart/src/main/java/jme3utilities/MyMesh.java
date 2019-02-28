@@ -107,7 +107,7 @@ public class MyMesh {
             vertexBoneIndices(mesh, vertexIndex, biArray);
             vertexBoneWeights(mesh, vertexIndex, bwArray);
             sum.set(0f, 0f, 0f, 1f);
-            for (int j = 0; j < maxWeights; j++) {
+            for (int j = 0; j < maxWeights; ++j) {
                 int boneI = biArray[j];
                 if (boneI >= 0 && boneI < boneIndexToColor.length) {
                     term.set(boneIndexToColor[boneI]);
@@ -157,8 +157,8 @@ public class MyMesh {
         assert numWeights == numVertices * maxWeights : numWeights;
 
         int result = 0;
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
+        for (int vIndex = 0; vIndex < numVertices; ++vIndex) {
+            for (int wIndex = 0; wIndex < maxWeights; ++wIndex) {
                 float weight = weightBuffer.get();
                 int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert && weight != 0f
@@ -265,8 +265,8 @@ public class MyMesh {
         assert numWeights == numVertices * maxWeights : numWeights;
 
         float result = 0f;
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
+        for (int vIndex = 0; vIndex < numVertices; ++vIndex) {
+            for (int wIndex = 0; wIndex < maxWeights; ++wIndex) {
                 float weight = weightBuffer.get();
                 int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert
@@ -309,14 +309,14 @@ public class MyMesh {
         assert numWeights == numVertices * maxWeights : numWeights;
 
         int result = 0;
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
+        for (int vIndex = 0; vIndex < numVertices; ++vIndex) {
+            for (int wIndex = 0; wIndex < maxWeights; ++wIndex) {
                 float weight = weightBuffer.get();
                 int bIndex = readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert
                         && bIndex == boneIndex
                         && weight != 0f) {
-                    result++;
+                    ++result;
                 }
             }
         }
@@ -374,7 +374,7 @@ public class MyMesh {
         VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
         Buffer boneIndexBuffer = biBuf.getDataReadOnly();
         boneIndexBuffer.position(maxWeights * vertexIndex);
-        for (int wIndex = 0; wIndex < maxWeightsPerVert; wIndex++) {
+        for (int wIndex = 0; wIndex < maxWeightsPerVert; ++wIndex) {
             int boneIndex = readIndex(boneIndexBuffer);
             storeResult[wIndex] = boneIndex;
         }
@@ -382,7 +382,7 @@ public class MyMesh {
          * Fill with -1s.
          */
         int length = storeResult.length;
-        for (int wIndex = maxWeightsPerVert; wIndex < length; wIndex++) {
+        for (int wIndex = maxWeightsPerVert; wIndex < length; ++wIndex) {
             storeResult[wIndex] = -1;
         }
 
@@ -415,14 +415,14 @@ public class MyMesh {
         VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
         FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
         weightBuffer.position(maxWeights * vertexIndex);
-        for (int wIndex = 0; wIndex < maxWeightsPerVert; wIndex++) {
+        for (int wIndex = 0; wIndex < maxWeightsPerVert; ++wIndex) {
             storeResult[wIndex] = weightBuffer.get();
         }
         /*
          * Fill with 0s.
          */
         int length = storeResult.length;
-        for (int wIndex = maxWeightsPerVert; wIndex < length; wIndex++) {
+        for (int wIndex = maxWeightsPerVert; wIndex < length; ++wIndex) {
             storeResult[wIndex] = 0f;
         }
 
@@ -489,7 +489,7 @@ public class MyMesh {
 
             storeResult.zero();
             int maxWeightsPerVertex = mesh.getMaxNumWeights();
-            for (int wIndex = 0; wIndex < maxWeightsPerVertex; wIndex++) {
+            for (int wIndex = 0; wIndex < maxWeightsPerVertex; ++wIndex) {
                 float weight = weightBuffer.get();
                 int boneIndex = readIndex(boneIndexBuffer);
                 if (weight != 0f) {
@@ -548,7 +548,7 @@ public class MyMesh {
 
             result.zero();
             int maxWeightsPerVertex = mesh.getMaxNumWeights();
-            for (int wIndex = 0; wIndex < maxWeightsPerVertex; wIndex++) {
+            for (int wIndex = 0; wIndex < maxWeightsPerVertex; ++wIndex) {
                 float weight = weightBuffer.get();
                 int boneIndex = readIndex(boneIndexBuffer);
                 if (weight != 0f) {
@@ -625,7 +625,7 @@ public class MyMesh {
 
             result.zero();
             int maxWeightsPerVertex = mesh.getMaxNumWeights();
-            for (int wIndex = 0; wIndex < maxWeightsPerVertex; wIndex++) {
+            for (int wIndex = 0; wIndex < maxWeightsPerVertex; ++wIndex) {
                 float weight = weightBuffer.get();
                 int boneIndex = readIndex(boneIndexBuffer);
                 if (weight != 0f) {

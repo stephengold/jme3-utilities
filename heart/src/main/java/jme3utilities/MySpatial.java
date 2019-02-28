@@ -135,7 +135,7 @@ public class MySpatial {
 
         if (subtree != null) {
             int numControls = subtree.getNumControls();
-            for (int controlI = 0; controlI < numControls; controlI++) {
+            for (int controlI = 0; controlI < numControls; ++controlI) {
                 Control control = subtree.getControl(controlI);
                 if (controlType.isAssignableFrom(control.getClass())) {
                     ++result;
@@ -460,7 +460,7 @@ public class MySpatial {
 
         int numControls = spatial.getNumControls();
         int result = -1;
-        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+        for (int controlIndex = 0; controlIndex < numControls; ++controlIndex) {
             Control control = spatial.getControl(controlIndex);
             if (control == sgc) {
                 result = controlIndex;
@@ -536,7 +536,7 @@ public class MySpatial {
 
         Mesh mesh = geometry.getMesh();
         int numVertices = mesh.getVertexCount();
-        for (int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++) {
+        for (int vertexIndex = 0; vertexIndex < numVertices; ++vertexIndex) {
             MyMesh.vertexVector3f(mesh, VertexBuffer.Type.Position, vertexIndex,
                     meshLocation);
 
@@ -832,7 +832,7 @@ public class MySpatial {
         }
 
         int numControls = subtree.getNumControls();
-        for (int controlIndex = 0; controlIndex < numControls; controlIndex++) {
+        for (int controlIndex = 0; controlIndex < numControls; ++controlIndex) {
             T control = (T) subtree.getControl(controlIndex);
             if (controlType.isAssignableFrom(control.getClass())
                     && !storeResult.contains(control)) {
