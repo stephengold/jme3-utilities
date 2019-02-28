@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
@@ -265,7 +265,8 @@ public class FloorControl extends SubtreeControl {
          * Create a node to parent the floor geometry.
          */
         subtree = new Node(nodeName);
-        subtree.setQueueBucket(Bucket.Sky);
+        subtree.setQueueBucket(RenderQueue.Bucket.Sky);
+        subtree.setShadowMode(RenderQueue.ShadowMode.Off);
         /*
          * Create and attach the floor geometry.
          */
