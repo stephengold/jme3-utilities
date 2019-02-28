@@ -383,7 +383,7 @@ public class Dumper {
                 stream.printf(" bg(%s)", MyColor.describe(backColor));
             }
             String descP = describer.describeProcessors(viewPort);
-            stream.printf(" procs=(%s)%n", descP);
+            stream.printf(" procs={%s}%n", descP);
 
             stream.print(indent);
             stream.print(" ");
