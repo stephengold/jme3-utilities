@@ -109,7 +109,7 @@ final public class MyArray {
         boolean result = false;
         if (n > 1) {
             float firstValue = vector[0];
-            for (int i = 1; i < n; i++) {
+            for (int i = 1; i < n; ++i) {
                 float value = vector[i];
                 if (value != firstValue) {
                     result = true;
@@ -164,7 +164,7 @@ final public class MyArray {
      * @return index (&ge;0, &lt;length) or -1 if no true element found
      */
     public static int first(boolean[] array) {
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; ++i) {
             if (array[i]) {
                 return i;
             }
@@ -249,7 +249,7 @@ final public class MyArray {
     public static void normalize(float[] dataset, float min, float max) {
         Validate.nonNull(dataset, "dataset");
 
-        for (int i = 0; i < dataset.length; i++) {
+        for (int i = 0; i < dataset.length; ++i) {
             if (min == max) {
                 dataset[i] = 0.5f;
             } else {

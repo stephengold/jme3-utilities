@@ -422,7 +422,7 @@ public class DomeMesh extends Mesh {
         } else {
             quadWidth = segmentAngle / (rimSamples - 1);
         }
-        for (int parallel = 0; parallel < quadrantSamples - 1; parallel++) {
+        for (int parallel = 0; parallel < quadrantSamples - 1; ++parallel) {
             float latitude = FastMath.HALF_PI - verticalAngle
                     + quadHeight * parallel;
             float y = FastMath.sin(latitude);
@@ -432,7 +432,7 @@ public class DomeMesh extends Mesh {
              * (starting from the +X meridian and proceeding counterclockwise
              * as seen from +Y).
              */
-            for (int meridian = 0; meridian < rimSamples; meridian++) {
+            for (int meridian = 0; meridian < rimSamples; ++meridian) {
                 float longitude = quadWidth * meridian;
                 float sinLongitude = FastMath.sin(longitude);
                 float cosLongitude = FastMath.cos(longitude);
@@ -515,14 +515,14 @@ public class DomeMesh extends Mesh {
          * and foremost by latitude, starting at the rim.
          */
         int quadsPerGore = quadrantSamples - 2;
-        for (int parallel = 0; parallel < quadsPerGore; parallel++) {
+        for (int parallel = 0; parallel < quadsPerGore; ++parallel) {
             int nextParallel = parallel + 1;
             /*
              * Within each latitude band, quads are arranged by longitude,
              * starting from the +X meridian and proceeding counterclockwise
              * as seen from +Y.
              */
-            for (int meridian = 0; meridian < numGores; meridian++) {
+            for (int meridian = 0; meridian < numGores; ++meridian) {
                 int nextMeridian = (meridian + 1) % rimSamples;
                 int v0Index = parallel * rimSamples + meridian;
                 int v1Index = parallel * rimSamples + nextMeridian;
@@ -543,7 +543,7 @@ public class DomeMesh extends Mesh {
                     indexArray[baseIndex + 2] = (short) v1Index;
                 }
 
-                triIndex++;
+                ++triIndex;
                 baseIndex = vpt * triIndex;
                 logger.log(Level.FINE, "index {0}", triIndex);
                 indexArray[baseIndex] = (short) v0Index;
@@ -563,7 +563,7 @@ public class DomeMesh extends Mesh {
          */
         int parallel = quadsPerGore;
         int topIndex = vertexCount - 1;
-        for (int meridian = 0; meridian < numGores; meridian++) {
+        for (int meridian = 0; meridian < numGores; ++meridian) {
             int nextMeridian = (meridian + 1) % rimSamples;
             int v0Index = parallel * rimSamples + meridian;
             int v1Index = parallel * rimSamples + nextMeridian;
@@ -605,7 +605,7 @@ public class DomeMesh extends Mesh {
         FloatBuffer locationBuffer = getFloatBuffer(VertexBuffer.Type.Position);
         locationBuffer.rewind();
         float[] vertex = new float[numAxes];
-        for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+        for (int vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex) {
             locationBuffer.get(vertex, 0, numAxes);
             Vector3f normal = new Vector3f(vertex[0], vertex[1], vertex[2]);
             assert normal.isUnitVector() : normal;

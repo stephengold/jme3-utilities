@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@ final public class Noise {
         float amplitude = 1f;
         float frequency = fundamental;
         float total = 0f;
-        for (int octave = 0; octave < numOctaves; octave++) {
+        for (int octave = 0; octave < numOctaves; ++octave) {
             float sample = generator.sampleNormalized(sampleX * frequency,
                     sampleY * frequency);
             total += amplitude * sample;

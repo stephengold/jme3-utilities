@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ public class Permutation {
          * Initialize the permutation to identity.
          */
         indices = new int[length];
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; ++i) {
             indices[i] = i;
         }
         /*
@@ -76,7 +76,7 @@ public class Permutation {
          * pseudo-random swaps.
          */
         Random swapGenerator = new Random(seed);
-        for (int sequential = 0; sequential < length; sequential++) {
+        for (int sequential = 0; sequential < length; ++sequential) {
             int nextInt = swapGenerator.nextInt();
             int random = MyMath.modulo(nextInt, length);
             swapTableEntries(sequential, random);

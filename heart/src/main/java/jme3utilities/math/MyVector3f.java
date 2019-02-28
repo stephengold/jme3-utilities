@@ -1055,9 +1055,9 @@ public class MyVector3f {
         double largestSD = -1.0;
         Vector3f[] result = null;
 
-        for (int i = 0; i < locations.size(); i++) {
+        for (int i = 0; i < locations.size(); ++i) {
             Vector3f iVector = locations.get(i);
-            for (int j = i + 1; j < locations.size(); j++) {
+            for (int j = i + 1; j < locations.size(); ++j) {
                 Vector3f jVector = locations.get(j);
                 double squaredDistance = distanceSquared(iVector, jVector);
                 if (squaredDistance > largestSD) {

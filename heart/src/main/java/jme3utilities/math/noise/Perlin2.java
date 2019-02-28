@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -158,7 +158,7 @@ public class Perlin2 implements Noise2 {
         gradients = new Vector2f[numGradients];
         Random thetaGenerator = new Random(seed);
 
-        for (int index = 0; index < numGradients; index++) {
+        for (int index = 0; index < numGradients; ++index) {
             float theta = thetaGenerator.nextFloat() * FastMath.TWO_PI;
             float x = FastMath.cos(theta);
             float y = FastMath.sin(theta);
