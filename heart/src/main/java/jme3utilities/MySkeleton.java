@@ -298,16 +298,16 @@ public class MySkeleton {
         Field attachNodeField;
         try {
             attachNodeField = Bone.class.getDeclaredField("attachNode");
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException();
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException(exception);
         }
         attachNodeField.setAccessible(true);
 
         Node result;
         try {
             result = (Node) attachNodeField.get(bone);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException();
+        } catch (IllegalAccessException exception) {
+            throw new RuntimeException(exception);
         }
 
         return result;
