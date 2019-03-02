@@ -11,9 +11,7 @@ ext {
 
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
-
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
 }
 
 clean {
@@ -23,7 +21,6 @@ clean {
     dependsOn 'cleanShapeTextures'
     dependsOn 'cleanSkyTextures'
 }
-compileJava { dependsOn 'copySource' }
 
 // decompress the Yale Bright Star Catalog
 
@@ -35,7 +32,18 @@ task cleanCatalog(type: Delete) {
     delete file(bsc)
 }
 
-task copySource(type: Copy) {
+// copy source code from other sub-projects
+
+compileJava { dependsOn 'copyHeartSource', 'copySkySource' }
+task copyHeartSource(type: Copy) {
+    from('../heart/src/main/java/jme3utilities') {
+        include 'Misc.java', 'My*.java', 'Validate.java',
+         'math/*.java', 'math/noise/*.java',
+         'mesh/DomeMesh.java', 'mesh/RectangleMesh.java'
+    }
+    into 'src/main/java/jme3utilities'
+}
+task copySkySource(type: Copy) {
     from('../SkyControl/src/main/java/jme3utilities') {
         include 'sky/Constants.java', 'sky/DomeMesh.java', 'sky/LunarPhase.java'
     }

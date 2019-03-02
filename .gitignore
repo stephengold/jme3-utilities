@@ -15,6 +15,10 @@
 /tests/src/main/java/jme3test/
 /tests/Written Assets/
 /textures/build/
+/textures/src/main/java/jme3utilities/*.java
+/textures/src/main/java/jme3utilities/math/*.java
+/textures/src/main/java/jme3utilities/math/noise/*.java
+/textures/src/main/java/jme3utilities/mesh/*.java
 /textures/src/main/java/jme3utilities/sky/*.java
 /textures/src/main/resources/bsc5.dat
 /textures/src/main/resources/bsc5.dat.gz
