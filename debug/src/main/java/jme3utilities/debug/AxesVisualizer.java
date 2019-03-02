@@ -389,6 +389,7 @@ public class AxesVisualizer extends SubtreeControl {
         Node node2 = (Node) node.getChild(0);
         Node node3 = (Node) node2.getChild(0);
         Geometry geometry = (Geometry) node3.getChild(0);
+        subtree.attachChild(geometry);
 
         Vector3f xDir = direction.clone();
         Vector3f yDir = new Vector3f();
@@ -400,10 +401,9 @@ public class AxesVisualizer extends SubtreeControl {
         geometry.setName(name);
 
         Material material = MyAsset.createUnshadedMaterial(assetManager, color);
-        material.getAdditionalRenderState().setDepthTest(depthTest);
         geometry.setMaterial(material);
-
-        subtree.attachChild(geometry);
+        material.getAdditionalRenderState().setDepthTest(depthTest);
+        material.setName(name + "Material");
     }
 
     /**
@@ -424,12 +424,13 @@ public class AxesVisualizer extends SubtreeControl {
 
         Arrow mesh = new Arrow(direction);
         Geometry geometry = new Geometry(name, mesh);
+        subtree.attachChild(geometry);
 
         Material material
                 = MyAsset.createWireframeMaterial(assetManager, color);
-        material.getAdditionalRenderState().setDepthTest(depthTest);
         geometry.setMaterial(material);
-        subtree.attachChild(geometry);
+        material.getAdditionalRenderState().setDepthTest(depthTest);
+        material.setName(name + "Material");
     }
 
     /**
