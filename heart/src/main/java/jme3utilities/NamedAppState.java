@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -276,7 +276,7 @@ public class NamedAppState implements AppState {
 
     /**
      * Callback to update this state prior to rendering. (Invoked once per
-     * frame.)
+     * frame while the state is attached and enabled.)
      *
      * @param elapsedTime the time interval between frames (in seconds, &ge;0)
      */

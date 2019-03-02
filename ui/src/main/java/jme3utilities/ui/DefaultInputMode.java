@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -81,7 +81,7 @@ class DefaultInputMode extends InputMode {
             MyString.quote(actionString), ongoing
         });
         /*
-         * The action is not handled: forward it to the application class.
+         * Forward all actions to the ActionApplication subclass for processing.
          */
         actionApplication.onAction(actionString, ongoing, tpf);
     }
