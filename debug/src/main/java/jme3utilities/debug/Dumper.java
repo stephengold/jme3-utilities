@@ -104,6 +104,10 @@ public class Dumper {
      */
     private Describer describer;
     /**
+     * maximum number of children per Node to dump
+     */
+    private int maxChildren = Integer.MAX_VALUE;
+    /**
      * stream to use for output: set by constructor
      */
     final protected PrintStream stream;
@@ -442,14 +446,39 @@ public class Dumper {
         }
         stream.println();
         /*
-         * If the spatial is a node (but not a terrain node),
-         * dump its children with incremented indentation.
+         * If the spatial is a Node, dump its children
+         * with incremented indentation.
          */
-        if (spatial instanceof Node
-                && !spatial.getClass().getSimpleName().equals("TerrainQuad")) {
+        if (spatial instanceof Node) {
             Node node = (Node) spatial;
-            for (Spatial child : node.getChildren()) {
-                dump(child, indent + indentIncrement);
+            List<Spatial> children = node.getChildren();
+            int numChildren = children.size();
+            String childIndent = indent + indentIncrement;
+            if (numChildren <= maxChildren) {
+                /*
+                 * Dump all children.
+                 */
+                for (Spatial child : children) {
+                    dump(child, childIndent);
+                }
+            } else {
+                /*
+                 * Dump the head and tail of the list,
+                 * just the specified number.
+                 */
+                int numTail = maxChildren / 3;
+                int numHead = maxChildren - numTail;
+                for (int i = 0; i < numHead; ++i) {
+                    Spatial child = children.get(i);
+                    dump(child, childIndent);
+                }
+                int numSkipped = numChildren - numHead - numTail;
+                stream.printf("%s... %d child spatial%s skipped ...%n",
+                        childIndent, numSkipped, (numSkipped == 1) ? "" : "s");
+                for (int i = numChildren - numTail; i < numChildren; ++i) {
+                    Spatial child = children.get(i);
+                    dump(child, childIndent);
+                }
             }
         }
     }
@@ -605,6 +634,18 @@ public class Dumper {
     public Dumper setIndentIncrement(String newValue) {
         Validate.nonNull(newValue, "increment");
         indentIncrement = newValue;
+        return this;
+    }
+
+    /**
+     * Configure the maximum number of children per Node.
+     *
+     * @param newValue (not null)
+     * @return this instance for chaining
+     */
+    public Dumper setMaxChildren(int newValue) {
+        Validate.nonNegative(newValue, "newValue");
+        maxChildren = newValue;
         return this;
     }
 }
