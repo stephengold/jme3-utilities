@@ -28,6 +28,8 @@ package jme3utilities.debug;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
+import com.jme3.app.state.AppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.light.LightList;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
@@ -40,6 +42,8 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
@@ -131,6 +135,95 @@ public class Dumper {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Dump the specified AppState.
+     *
+     * @param appState the app state to dump (not null, unaffected)
+     * @param indent (not null)
+     */
+    public void dump(AppState appState, String indent) {
+        Validate.nonNull(indent, "indent");
+
+        String className = appState.getClass().getSimpleName();
+        stream.printf("%s", className);
+
+        if (appState.isEnabled()) {
+            stream.print(" enabled");
+        } else {
+            stream.print(" disabled");
+        }
+    }
+
+    /**
+     * Dump the specified AppStateManager.
+     *
+     * @param manager (not null, unaffected)
+     */
+    public void dump(AppStateManager manager) {
+        Method getInitializing, getStates, getTerminating;
+        try {
+            getInitializing
+                    = AppStateManager.class.getDeclaredMethod("getInitializing");
+            getStates = AppStateManager.class.getDeclaredMethod("getStates");
+            getTerminating
+                    = AppStateManager.class.getDeclaredMethod("getTerminating");
+        } catch (NoSuchMethodException exception) {
+            throw new RuntimeException(exception);
+        }
+        getInitializing.setAccessible(true);
+        getStates.setAccessible(true);
+        getTerminating.setAccessible(true);
+
+        AppState[] initializing, active, terminating;
+        try {
+            initializing = (AppState[]) getInitializing.invoke(manager);
+            active = (AppState[]) getStates.invoke(manager);
+            terminating = (AppState[]) getTerminating.invoke(manager);
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            throw new RuntimeException(exception);
+        }
+
+        String className = manager.getClass().getSimpleName();
+        int numInitializing = initializing.length;
+        int numActive = active.length;
+        int numTerminating = terminating.length;
+        int total = numInitializing + numActive + numTerminating;
+        stream.printf("%n%s with %d state", className, total);
+        if (total == 0) {
+            stream.println("s.");
+            return;
+        } else if (total == 1) {
+            stream.print(":");
+        } else {
+            stream.print("s:");
+            String separator = "";
+            if (numInitializing > 0) {
+                stream.printf(" %d initializing", numInitializing);
+                separator = ",";
+            }
+            if (numActive > 0) {
+                stream.printf("%s %d active", separator, numActive);
+            }
+            if (numTerminating > 0) {
+                stream.printf("%s %d terminating", separator, numTerminating);
+            }
+        }
+
+        for (int index = 0; index < numInitializing; ++index) {
+            stream.printf("%n initializing[%d]: ", index);
+            dump(initializing[index], indentIncrement);
+        }
+        for (int index = 0; index < numActive; ++index) {
+            stream.printf("%n active[%d]: ", index);
+            dump(active[index], indentIncrement);
+        }
+        for (int index = 0; index < numTerminating; ++index) {
+            stream.printf("%n terminating[%d]: ", index);
+            dump(terminating[index], indentIncrement);
+        }
+        stream.println();
+    }
 
     /**
      * Dump the specified bone, including its children.
