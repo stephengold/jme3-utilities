@@ -551,7 +551,7 @@ public class Dumper {
     /**
      * Configure dumping of render-queue bucket assignments.
      *
-     * @param newValue true to enable, false to disable
+     * @param newValue true to enable, false to disable (default=false)
      * @return this instance for chaining
      */
     public Dumper setDumpBucket(boolean newValue) {
@@ -562,7 +562,7 @@ public class Dumper {
     /**
      * Configure dumping of cull hints.
      *
-     * @param newValue true to enable, false to disable
+     * @param newValue true to enable, false to disable (default=false)
      * @return this instance for chaining
      */
     public Dumper setDumpCull(boolean newValue) {
@@ -573,7 +573,7 @@ public class Dumper {
     /**
      * Configure dumping of material parameters.
      *
-     * @param newValue true to enable, false to disable
+     * @param newValue true to enable, false to disable (default=false)
      * @return this instance for chaining
      */
     public Dumper setDumpMatParam(boolean newValue) {
@@ -584,7 +584,7 @@ public class Dumper {
     /**
      * Configure dumping of material-parameter overrides.
      *
-     * @param newValue true to enable, false to disable
+     * @param newValue true to enable, false to disable (default=false)
      * @return this instance for chaining
      */
     public Dumper setDumpOverride(boolean newValue) {
@@ -595,7 +595,7 @@ public class Dumper {
     /**
      * Configure dumping of shadow modes.
      *
-     * @param newValue true to enable, false to disable
+     * @param newValue true to enable, false to disable (default=false)
      * @return this instance for chaining
      */
     public Dumper setDumpShadow(boolean newValue) {
@@ -606,7 +606,7 @@ public class Dumper {
     /**
      * Configure dumping of location and scaling.
      *
-     * @param newValue true to enable, false to disable
+     * @param newValue true to enable, false to disable (default=false)
      * @return this instance for chaining
      */
     public Dumper setDumpTransform(boolean newValue) {
@@ -617,7 +617,7 @@ public class Dumper {
     /**
      * Configure dumping of user data.
      *
-     * @param newValue true to enable, false to disable
+     * @param newValue true to enable, false to disable (default=true)
      * @return this instance for chaining
      */
     public Dumper setDumpUser(boolean newValue) {
@@ -628,7 +628,7 @@ public class Dumper {
     /**
      * Configure the indent increment.
      *
-     * @param newValue (not null)
+     * @param newValue (not null, default=" ")
      * @return this instance for chaining
      */
     public Dumper setIndentIncrement(String newValue) {
@@ -640,12 +640,12 @@ public class Dumper {
     /**
      * Configure the maximum number of children per Node.
      *
-     * @param newValue (not null)
+     * @param newLimit the desired limit (&ge;0, default=MAX_VALUE)
      * @return this instance for chaining
      */
-    public Dumper setMaxChildren(int newValue) {
-        Validate.nonNegative(newValue, "newValue");
-        maxChildren = newValue;
+    public Dumper setMaxChildren(int newLimit) {
+        Validate.nonNegative(newLimit, "newLimit");
+        maxChildren = newLimit;
         return this;
     }
 }
