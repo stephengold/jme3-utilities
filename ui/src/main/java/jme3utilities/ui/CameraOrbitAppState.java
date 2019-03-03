@@ -92,7 +92,8 @@ public class CameraOrbitAppState extends ActionAppState {
             String cwSignalName) {
         super(true);
         Validate.nonNull(camera, "camera");
-        Validate.nonNegative(angularRate, "angular rate");
+        Validate.nonEmpty(ccwSignalName, "counter-clockwise signal name");
+        Validate.nonEmpty(cwSignalName, "clockwise signal name");
 
         this.camera = camera;
         this.ccwSignalName = ccwSignalName;
