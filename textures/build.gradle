@@ -9,14 +9,24 @@ ext {
     skies = '../SkyControl/src/main/resources/Textures/skies'
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir '../heart/src/main/java'
+            srcDir '../SkyControl/src/main/java'
+        }
+    }
+}
+
 dependencies {
     compile "com.beust:jcommander:$jcommanderVersion"
     compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
+    compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
 }
 
 clean {
     dependsOn 'cleanCatalog'
-    dependsOn 'cleanCopySource'
     dependsOn 'cleanDownload'
     dependsOn 'cleanShapeTextures'
     dependsOn 'cleanSkyTextures'
@@ -30,27 +40,6 @@ task catalog {
 }
 task cleanCatalog(type: Delete) {
     delete file(bsc)
-}
-
-// copy source code from other sub-projects
-
-compileJava { dependsOn 'copyHeartSource', 'copySkySource' }
-task copyHeartSource(type: Copy) {
-    from('../heart/src/main/java/jme3utilities') {
-        include 'Misc.java', 'My*.java', 'Validate.java',
-         'math/*.java', 'math/noise/*.java',
-         'mesh/DomeMesh.java', 'mesh/RectangleMesh.java'
-    }
-    into 'src/main/java/jme3utilities'
-}
-task copySkySource(type: Copy) {
-    from('../SkyControl/src/main/java/jme3utilities') {
-        include 'sky/Constants.java', 'sky/DomeMesh.java', 'sky/LunarPhase.java'
-    }
-    into 'src/main/java/jme3utilities'
-}
-task cleanCopySource(type: Delete) {
-    delete fileTree(dir: 'src/main/java', exclude: '**/textures/**')
 }
 
 // download gzipped Yale Bright Star Catalog
