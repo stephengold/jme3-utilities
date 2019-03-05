@@ -414,8 +414,13 @@ public class MyVector3f {
         String result;
         if (vector == null) {
             result = "null";
+
+        } else if (isScaleUniform(vector)) {
+            result = "xyz=" + MyString.describe(vector.x);
+
         } else {
             StringBuilder builder = new StringBuilder(40);
+
             builder.append("x=");
             String x = MyString.describe(vector.x);
             builder.append(x);
@@ -446,6 +451,7 @@ public class MyVector3f {
         String result;
         if (v == null) {
             result = "null";
+
         } else {
             StringBuilder builder = new StringBuilder(40);
 
