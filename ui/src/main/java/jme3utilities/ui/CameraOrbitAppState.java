@@ -208,8 +208,8 @@ public class CameraOrbitAppState extends ActionAppState {
         center.add(xzOffset, location);
         camera.setLocation(location);
 
-        Vector3f camDirection = cam.getDirection();
+        Vector3f camDirection = camera.getDirection();
         rotate.mult(camDirection, camDirection);
-        cam.lookAtDirection(camDirection, unitY);
+        camera.lookAtDirection(camDirection, unitY);
     }
 }
