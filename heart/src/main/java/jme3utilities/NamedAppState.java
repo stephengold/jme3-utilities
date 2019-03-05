@@ -282,7 +282,7 @@ public class NamedAppState implements AppState {
      */
     @Override
     public void update(float elapsedTime) {
-        Validate.nonNegative(elapsedTime, "interval");
+        Validate.nonNegative(elapsedTime, "elapsed time");
         if (!isInitialized()) {
             throw new IllegalStateException("should be initialized");
         }
