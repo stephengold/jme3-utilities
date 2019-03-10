@@ -498,7 +498,7 @@ public class SkeletonVisualizer extends SubtreeControl {
 
         int numBones = skeleton.getBoneCount();
         ColorRGBA[] colors = new ColorRGBA[numBones]; // TODO re-use the array
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < numBones; ++boneIndex) {
             colors[boneIndex] = copyHeadColor(boneIndex, null);
         }
 

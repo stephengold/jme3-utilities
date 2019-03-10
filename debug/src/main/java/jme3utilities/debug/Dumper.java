@@ -468,8 +468,8 @@ public class Dumper implements Cloneable {
                  */
                 int numTail = maxChildren / 3;
                 int numHead = maxChildren - numTail;
-                for (int i = 0; i < numHead; ++i) {
-                    Spatial child = children.get(i);
+                for (int childI = 0; childI < numHead; ++childI) {
+                    Spatial child = children.get(childI);
                     dump(child, childIndent);
                 }
                 int numSkipped = numChildren - numHead - numTail;

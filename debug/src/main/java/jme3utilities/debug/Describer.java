@@ -826,8 +826,8 @@ public class Describer implements Cloneable {
         boolean addSeparators = false;
 
         int count = spatial.getNumControls();
-        for (int i = 0; i < count; i++) {
-            Control control = spatial.getControl(i);
+        for (int controlI = 0; controlI < count; ++controlI) {
+            Control control = spatial.getControl(controlI);
             boolean isEnabled = isControlEnabled(control);
             if (isEnabled == enabled) {
                 if (addSeparators) {

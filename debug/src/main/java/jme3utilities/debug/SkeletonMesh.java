@@ -101,7 +101,7 @@ class SkeletonMesh extends Mesh {
              * Populate the index buffer.
              */
             shorts.clear(); // prepare for writing
-            for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+            for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
                 Bone child = skeleton.getBone(boneIndex); // skeleton != null
                 Bone parent = child.getParent();
                 if (parent != null) {
@@ -129,7 +129,7 @@ class SkeletonMesh extends Mesh {
         fColors.clear(); // prepare for writing
 
         int boneCount = colors.length;
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
             ColorRGBA color = colors[boneIndex];
             fColors.put(color.r);
             fColors.put(color.g);
@@ -156,7 +156,7 @@ class SkeletonMesh extends Mesh {
         } else {
             boneCount = skeleton.getBoneCount();
         }
-        for (int boneIndex = 0; boneIndex < boneCount; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
             Bone bone = skeleton.getBone(boneIndex); // skeleton != null
             Vector3f location = bone.getModelSpacePosition();
             floats.put(location.x);
