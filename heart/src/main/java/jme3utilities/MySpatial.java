@@ -884,42 +884,6 @@ public class MySpatial {
     }
 
     /**
-     * Enumerate all spatials of the specified type in the specified subtree of
-     * a scene graph. Note: recursive!
-     *
-     * @see com.jme3.scene.Node#descendantMatches(java.lang.Class)
-     *
-     * @param <T> subclass of Spatial
-     * @param subtree (not null, aliases created)
-     * @param spatialType the subclass of Spatial to search for
-     * @param addResult (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends Spatial> List<T> listSpatials(Spatial subtree,
-            Class<T> spatialType, List<T> addResult) {
-        Validate.nonNull(subtree, "subtree");
-        List<T> result = (addResult == null) ? new ArrayList<T>(50) : addResult;
-
-        if (spatialType.isAssignableFrom(subtree.getClass())) {
-            T spatial = (T) subtree;
-            if (!result.contains(spatial)) {
-                result.add(spatial);
-            }
-        }
-
-        if (subtree instanceof Node) {
-            Node node = (Node) subtree;
-            List<Spatial> children = node.getChildren();
-            for (Spatial child : children) {
-                listSpatials(child, spatialType, result);
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Enumerate all geometries using the specified material in the specified
      * subtree of a scene graph. Note: recursive!
      *
@@ -975,6 +939,42 @@ public class MySpatial {
             List<Spatial> children = node.getChildren();
             for (Spatial child : children) {
                 listMeshUsers(child, mesh, result);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Enumerate all spatials of the specified type in the specified subtree of
+     * a scene graph. Note: recursive!
+     *
+     * @see com.jme3.scene.Node#descendantMatches(java.lang.Class)
+     *
+     * @param <T> subclass of Spatial
+     * @param subtree (not null, aliases created)
+     * @param spatialType the subclass of Spatial to search for
+     * @param addResult (added to if not null)
+     * @return an expanded list (either storeResult or a new instance)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Spatial> List<T> listSpatials(Spatial subtree,
+            Class<T> spatialType, List<T> addResult) {
+        Validate.nonNull(subtree, "subtree");
+        List<T> result = (addResult == null) ? new ArrayList<T>(50) : addResult;
+
+        if (spatialType.isAssignableFrom(subtree.getClass())) {
+            T spatial = (T) subtree;
+            if (!result.contains(spatial)) {
+                result.add(spatial);
+            }
+        }
+
+        if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listSpatials(child, spatialType, result);
             }
         }
 
@@ -1284,6 +1284,28 @@ public class MySpatial {
     }
 
     /**
+     * Calculate the world scale of a spatial.
+     *
+     * @param spatial the spatial (not null)
+     * @param storeResult (modified if not null)
+     * @return the scale vector (in world coordinates, either storeResult or a
+     * new instance)
+     */
+    public static Vector3f worldScale(Spatial spatial, Vector3f storeResult) {
+        Validate.nonNull(spatial, "spatial");
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        if (isIgnoringTransforms(spatial)) {
+            result.set(1f, 1f, 1f);
+        } else {
+            Vector3f scale = spatial.getWorldScale();
+            result.set(scale);
+        }
+
+        return result;
+    }
+
+    /**
      * Calculate the world transform of a spatial.
      *
      * @param spatial the spatial (not null)
@@ -1301,28 +1323,6 @@ public class MySpatial {
         } else {
             Transform transform = spatial.getWorldTransform();
             result.set(transform);
-        }
-
-        return result;
-    }
-
-    /**
-     * Calculate the world scale of a spatial.
-     *
-     * @param spatial the spatial (not null)
-     * @param storeResult (modified if not null)
-     * @return the scale vector (in world coordinates, either storeResult or a
-     * new instance)
-     */
-    public static Vector3f worldScale(Spatial spatial, Vector3f storeResult) {
-        Validate.nonNull(spatial, "spatial");
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-
-        if (isIgnoringTransforms(spatial)) {
-            result.set(1f, 1f, 1f);
-        } else {
-            Vector3f scale = spatial.getWorldScale();
-            result.set(scale);
         }
 
         return result;
