@@ -1,6 +1,6 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
-## Version 0.9.12 released on TBD
+## Version 0.9.12 released on 10 March 2019
 
  + Made `Describer` and `Dumper` both `Cloneable`.
  + Added the capability to dump an `AppStateManager`.
