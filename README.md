@@ -2,18 +2,20 @@
 
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
-It contains 9 sub-projects:
+It contains 8 sub-projects:
 
  1. heart: the `jme3-utilities-heart` library of core classes
  2. SkyControl: the `SkyControl` library for sky simulation
  3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
- 4. debug: the `jme3-utilities-debug` library of debugging aids
- 5. tests: demos, examples, and test software
- 6. textures: generate textures used by `jme3-utilities-debug` and `SkyControl`
- 7. ui: the `jme3-utilities-ui` library for building user interfaces
- 8. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
+ 4. tests: demos, examples, and test software
+ 5. textures: generate textures used by `jme3-utilities-heart` and `SkyControl`
+ 6. ui: the `jme3-utilities-ui` library for building user interfaces
+ 7. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
     interfaces with jMonkeyEngine
- 9. x: the `jme3-utilities-x` library of experimental software
+ 8. x: the `jme3-utilities-x` library of experimental software
+
+The `jme3-utilities-debug` library, formerly a sub-project, has merged
+into the `jme3-utilities-heart` library.
 
 The `Minie` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Minie).

@@ -1,5 +1,8 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+The `jme3-utilities-debug` library, formerly a sub-project, merged
+into the `jme3-utilities-heart` library on 10 March 2019.
+
 ## Version 0.9.12 released on 10 March 2019
 
  + Made `Describer` and `Dumper` both `Cloneable`.
