@@ -1,5 +1,21 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.21.0 released on TBD
+
+ + The `jme3-utilities-debug` library merged into the
+   `jme3-utilities-heart` library.
+   All classes  in the `jme3utilities.debug` package except `DebugVersion`
+   were transferred to `jme3-utilities-heart`.
+   All resources in the `Textures.shapes` package and the
+   `Models.indicators.arrow` package were also transferred.
+ + Changed `MyVector3f.midpoint()` and `MyVector3f.projection()` to accept
+   caller-allocated storage.
+ + Added a `first()` method to the `Misc` class.
+ + Added a special case for uniform-scaling in `MyVector3f.describe()`.
+ + Changed `MyString` to accept `CharSequence` arguments in
+   `escape()`, `quote()` and `unescape()`.
+ + Made argument validation more friendly in `NameGenerator`.
+
 ## Version 2.20.0 released on 18 February 2019
 
 Added `localToWorld(Quaternion)` and
