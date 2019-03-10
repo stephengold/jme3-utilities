@@ -167,8 +167,8 @@ public class RectangularSolid implements Savable {
     public RectangularSolid(RectangularSolid otherSolid, Vector3f scaleFactors) {
         Validate.nonNegative(scaleFactors, "scale factors");
 
-        Vector3f center
-                = MyVector3f.midpoint(otherSolid.minima, otherSolid.maxima);
+        Vector3f center = MyVector3f.midpoint(otherSolid.minima,
+                otherSolid.maxima, null);
 
         otherSolid.maxima.subtract(center, maxima);
         maxima.multLocal(scaleFactors);

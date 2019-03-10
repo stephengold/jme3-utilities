@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,7 @@ public class TestMyVector3f {
                 System.out.printf(" w = %s%n", w.toString());
                 if (w.length() != 0f) {
                     System.out.printf("  v proj w = %s%n",
-                            MyVector3f.projection(v, w).toString());
+                            MyVector3f.projection(v, w, null).toString());
                 }
                 //System.out.printf("             %s%n",
                 //        v.project(w).toString());

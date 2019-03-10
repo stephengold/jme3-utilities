@@ -236,7 +236,7 @@ public class MyVector3f {
      * @param axisIndex 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      * @param length how long (ge;0)
      * @param storeResult storage for the result (modified if not null)
-     * @return vector (either storeResult or a new instance)
+     * @return an axis-aligned vector (either storeResult or a new instance)
      */
     public static Vector3f axisVector(int axisIndex, float length,
             Vector3f storeResult) {
@@ -1013,7 +1013,7 @@ public class MyVector3f {
      * @param collection the vectors to average (not null, not empty,
      * unaffected)
      * @param storeResult storage for the result (modified if not null)
-     * @return the mean (either storeResult or a new vector, not null)
+     * @return the mean (either storeResult or a new instance, not null)
      */
     public static Vector3f mean(Collection<Vector3f> collection,
             Vector3f storeResult) {
@@ -1036,15 +1036,37 @@ public class MyVector3f {
      * @param vector1 coordinates of 1st location (not null, unaffected)
      * @param vector2 coordinates of 2nd location (not null, unaffected)
      * @return a new coordinate vector
+     * @deprecated use
+     * {@link #midpoint(com.jme3.math.Vector3f, com.jme3.math.Vector3f, com.jme3.math.Vector3f)}
+     * instead
      */
+    @Deprecated
     public static Vector3f midpoint(Vector3f vector1, Vector3f vector2) {
+        return midpoint(vector1, vector2, null);
+    }
+
+    /**
+     * Calculate the midpoint between 2 locations.
+     *
+     * @param vector1 coordinates of 1st location (not null, unaffected unless
+     * it's storeResult)
+     * @param vector2 coordinates of 2nd location (not null, unaffected unless
+     * it's storeResult)
+     * @param storeResult storage for the result (modified if not null, may be
+     * vector1 or vector2)
+     * @return a coordinate vector (either storeResult or a new instance)
+     */
+    public static Vector3f midpoint(Vector3f vector1, Vector3f vector2,
+            Vector3f storeResult) {
         float x = (vector1.x + vector2.x) / 2f;
         float y = (vector1.y + vector2.y) / 2f;
         float z = (vector1.z + vector2.z) / 2f;
 
-        Vector3f result = new Vector3f(x, y, z);
-
-        return result;
+        if (storeResult == null) {
+            return new Vector3f(x, y, z);
+        } else {
+            return storeResult.set(x, y, z);
+        }
     }
 
     /**
@@ -1140,20 +1162,45 @@ public class MyVector3f {
     /**
      * Project vector1 onto vector2. Don't use
      * {@link com.jme3.math.Vector3f#project(Vector3f)} for this because (as of
-     * jME 3.0.10) it contained a logic bug which gives the wrong magnitude when
-     * vector2 has length != 1.
+     * jME 3.0.10) it contained a logic bug which gave the wrong magnitude when
+     * vector2 had length != 1.
      *
      * @param vector1 1st input vector (not null, unaffected)
      * @param vector2 2nd input vector (length&gt;0, unaffected)
      * @return a new vector with the same direction as vector2
+     * @deprecated use
+     * {@link #projection(com.jme3.math.Vector3f, com.jme3.math.Vector3f, com.jme3.math.Vector3f)}
+     * instead
      */
+    @Deprecated
     public static Vector3f projection(Vector3f vector1, Vector3f vector2) {
+        return projection(vector1, vector2, null);
+    }
+
+    /**
+     * Project vector1 onto vector2. Don't use
+     * {@link com.jme3.math.Vector3f#project(Vector3f)} for this because (as of
+     * jME 3.0.10) it contained a logic bug which gave the wrong magnitude when
+     * vector2 had length != 1.
+     *
+     * @param vector1 1st input vector (not null, unaffected unless it's
+     * storeResult)
+     * @param vector2 2nd input vector (length&gt;0, unaffected unless it's
+     * storeResult)
+     * @param storeResult storage for the result (modified if not null, may be
+     * vector1 or vector2)
+     * @return a vector with the same direction as vector2 (either storeResult
+     * or a new instance)
+     */
+    public static Vector3f projection(Vector3f vector1, Vector3f vector2,
+            Vector3f storeResult) {
+        Validate.nonNull(vector1, "vector1");
         Validate.nonZero(vector2, "vector2");
 
         double lengthSquared = lengthSquared(vector2);
         double dot = dot(vector1, vector2);
         double scaleFactor = dot / lengthSquared;
-        Vector3f projection = vector2.mult((float) scaleFactor);
+        Vector3f projection = vector2.mult((float) scaleFactor, storeResult);
 
         return projection;
     }
@@ -1181,8 +1228,8 @@ public class MyVector3f {
      *
      * @param input (not null, unaffected)
      * @param storeResult storage for the result (modified if not null)
-     * @return an equivalent vector without negative zeros (either storeResult
-     * or a new instance)
+     * @return an equivalent vector without any negative zero components (either
+     * storeResult or a new instance)
      */
     public static Vector3f standardize(Vector3f input, Vector3f storeResult) {
         Validate.nonNull(input, "input vector");

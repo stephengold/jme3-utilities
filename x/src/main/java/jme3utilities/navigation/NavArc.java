@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -146,7 +146,7 @@ public class NavArc implements Comparable<NavArc> {
     public Vector3f midpoint() {
         Vector3f p1 = fromVertex.copyLocation();
         Vector3f p2 = toVertex.copyLocation();
-        Vector3f result = MyVector3f.midpoint(p1, p2);
+        Vector3f result = MyVector3f.midpoint(p1, p2, null);
 
         return result;
     }

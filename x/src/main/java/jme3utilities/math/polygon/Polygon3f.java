@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -312,7 +312,7 @@ public class Polygon3f extends CornerSet3f {
         Vector3f corner1 = cornerLocations[sideIndex];
         int next = nextIndex(sideIndex);
         Vector3f corner2 = cornerLocations[next];
-        Vector3f result = MyVector3f.midpoint(corner1, corner2);
+        Vector3f result = MyVector3f.midpoint(corner1, corner2, null);
 
         assert onSide(result, sideIndex);
         return result;

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -434,7 +434,7 @@ public class SimplePolygon3f
          */
         if (MyVector3f.doCoincide(startLocation, joint, tolerance2)
                 || MyVector3f.doCoincide(endLocation, joint, tolerance2)) {
-            joint = MyVector3f.midpoint(startLocation, endLocation);
+            joint = MyVector3f.midpoint(startLocation, endLocation, null);
         }
         if (!contains(startLocation, joint)) {
             return false;

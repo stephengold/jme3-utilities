@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -354,7 +354,7 @@ public class Segment3f implements Locus3f {
     public Vector3f centroid() {
         Vector3f corner0 = cornerLocations[0];
         Vector3f corner1 = cornerLocations[1];
-        Vector3f midpoint = MyVector3f.midpoint(corner0, corner1);
+        Vector3f midpoint = MyVector3f.midpoint(corner0, corner1, null);
 
         return midpoint;
     }
