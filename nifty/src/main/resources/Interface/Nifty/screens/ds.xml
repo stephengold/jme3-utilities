@@ -34,42 +34,42 @@ Approximate minimum screen size: 370x140
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
     <screen id="ds" controller="jme3utilities.nifty.displaysettings.DsScreen">
         <layer childLayout="center"
-               backgroundColor="#444f">
+               backgroundColor="#aaaf">
             <panel childLayout="vertical"
                    height="136px"
                    width="366px">
 
                 <panel childLayout="horizontal" height="28px">
                     <control name="checkbox" id="fullscreenCheckBox"/>
-                    <control name="label" text="  full screen"/>
+                    <control name="label" text="  full screen" color="#000f"/>
                     <panel/>
-                    <control name="label" text="dimensions:  "/>
+                    <control name="label" text="dimensions:  " color="#000f"/>
                     <control name="button" id="displayDimensionsButton"
                              width="80px">
                         <interact onRelease="perform(set dimensions)"/>
                     </control>
                     <panel/>
                     <control name="checkbox" id="vSyncCheckBox"/>
-                    <control name="label" text="  vSync"/>
+                    <control name="label" text="  vSync" color="#000f"/>
                 </panel>
                 <panel childLayout="horizontal" height="28px">
                     <control name="checkbox" id="gammaCorrectionCheckBox"/>
-                    <control name="label" text="  gamma correction"/>
+                    <control name="label" text="  gamma correction" color="#000f"/>
                     <panel/>
-                    <control name="label" text="refresh rate:  "/>
+                    <control name="label" text="refresh rate:  " color="#000f"/>
                     <control name="button" id="refreshRateButton"
                              width="65px">
                         <interact onRelease="perform(set refreshRate)"/>
                     </control>
                 </panel>
                 <panel childLayout="horizontal" height="28px">
-                    <control name="label" text="MSAA factor:  "/>
+                    <control name="label" text="MSAA factor:  " color="#000f"/>
                     <control name="button" id="displayMsaaButton"
                              width="65px">
                         <interact onRelease="perform(select msaaFactor)"/>
                     </control>
                     <panel/>
-                    <control name="label" text="color depth:  "/>
+                    <control name="label" text="color depth:  " color="#000f"/>
                     <control name="button" id="colorDepthButton"
                              width="55px">
                         <interact onRelease="perform(select colorDepth)"/>
