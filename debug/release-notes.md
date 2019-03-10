@@ -1,5 +1,14 @@
 # Release notes for the jme3-utilities-debug library and related tests
 
+## Version 0.9.12 released on TBD
+
+ + Made `Describer` and `Dumper` both `Cloneable`.
+ + Added the capability to dump an `AppStateManager`.
+ + Added an option to limit the number of children per `Node` in `Dumper`.
+ + Terrain is no longer a special case in `Dumper`.
+ + Assigned names to geometries and materials in `AxesVisualizer`.
+ + Changed () to {} in `ViewPort` dumps.
+
 ## Version 0.9.11 released on 19 February 2019
 
  + Privatized the `SkeletonVisualizer.setSkeleton()` method. (API change)
