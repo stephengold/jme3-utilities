@@ -78,7 +78,7 @@ import jme3utilities.math.MyVector3f;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Describer {
+public class Describer implements Cloneable {
     // *************************************************************************
     // constants and loggers
 
@@ -886,5 +886,19 @@ public class Describer {
                 || MyControl.isEnabled(control);
 
         return result;
+    }
+    // *************************************************************************
+    // Cloneable methods
+
+    /**
+     * Create a copy of this Describer.
+     *
+     * @return a new instance, equivalent to this one
+     * @throws CloneNotSupportedException if the superclass isn't cloneable
+     */
+    @Override
+    public Describer clone() throws CloneNotSupportedException {
+        Describer clone = (Describer) super.clone();
+        return clone;
     }
 }

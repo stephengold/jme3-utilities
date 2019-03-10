@@ -59,7 +59,7 @@ import jme3utilities.math.MyColor;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Dumper {
+public class Dumper implements Cloneable {
     // *************************************************************************
     // constants and loggers
 
@@ -647,5 +647,22 @@ public class Dumper {
         Validate.nonNegative(newLimit, "newLimit");
         maxChildren = newLimit;
         return this;
+    }
+    // *************************************************************************
+    // Cloneable methods
+
+    /**
+     * Create a deep copy of this Dumper.
+     *
+     * @return a new instance, equivalent to this one, with its own Describer
+     * @throws CloneNotSupportedException if the superclass isn't cloneable
+     */
+    @Override
+    public Dumper clone() throws CloneNotSupportedException {
+        Dumper clone = (Dumper) super.clone();
+        describer = describer.clone();
+        // stream not cloned
+
+        return clone;
     }
 }
