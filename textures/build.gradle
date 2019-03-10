@@ -5,7 +5,7 @@
 description = 'generate texture assets used by jme3-utilities-debug and SkyControl'
 ext {
     bsc = 'src/main/resources/bsc5.dat'
-    shapes = '../debug/src/main/resources/Textures/shapes'
+    shapes = '../heart/src/main/resources/Textures/shapes'
     skies = '../SkyControl/src/main/resources/Textures/skies'
 }
 

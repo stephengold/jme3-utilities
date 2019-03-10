@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,6 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
 import jme3utilities.debug.AxesVisualizer;
-import jme3utilities.debug.DebugVersion;
 import jme3utilities.debug.Dumper;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.LibraryVersion;
@@ -187,8 +186,6 @@ public class PoseDemo extends GuiApplication {
                 MyString.quote(Misc.versionShort()));
         logger.log(Level.INFO, "SkyControl version is {0}",
                 MyString.quote(Constants.versionShort()));
-        logger.log(Level.INFO, "jme3-utilities-debug version is {0}",
-                MyString.quote(DebugVersion.versionShort()));
         logger.log(Level.INFO, "jme3-utilities-ui version is {0}",
                 MyString.quote(UiVersion.versionShort()));
         logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",

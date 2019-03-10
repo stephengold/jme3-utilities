@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018, Stephen Gold
+ Copyright (c) 2018-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -77,7 +77,7 @@ public class MakeRing {
      * filesystem path to the asset directory/folder for output
      */
     final private static String assetDirPath
-            = "../debug/src/main/resources";
+            = "../heart/src/main/resources";
     // *************************************************************************
     // new methods exposed
 

@@ -21,9 +21,6 @@ dependencies {
     //compile "jme3utilities:SkyControl:$skycontrolVersion"
     compile project(':SkyControl')
 
-    //compile "jme3utilities:jme3-utilities-debug:$jme3utilitiesdebugVersion"
-    compile project(':debug')
-
     //compile "jme3utilities:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
     compile project(':nifty')
 
