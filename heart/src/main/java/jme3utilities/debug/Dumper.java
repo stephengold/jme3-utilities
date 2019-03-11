@@ -537,6 +537,90 @@ public class Dumper implements Cloneable {
     }
 
     /**
+     * Read the indent increment.
+     *
+     * @return the indent text (not null)
+     */
+    public String indentIncrement() {
+        assert indentIncrement != null;
+        return indentIncrement;
+    }
+
+    /**
+     * Test whether render-queue bucket assignments will be dumped. TODO move to
+     * Dumper class
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpBucket() {
+        return dumpBucketFlag;
+    }
+
+    /**
+     * Test whether cull hints will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpCull() {
+        return dumpCullFlag;
+    }
+
+    /**
+     * Test whether material parameters will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpMatParam() {
+        return dumpMatParamFlag;
+    }
+
+    /**
+     * Test whether material-parameter overrides will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpOverride() {
+        return dumpOverrideFlag;
+    }
+
+    /**
+     * Test whether shadow modes will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpShadow() {
+        return dumpShadowFlag;
+    }
+
+    /**
+     * Test whether location and scaling will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpTransform() {
+        return dumpTransformFlag;
+    }
+
+    /**
+     * Test whether user data will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpUser() {
+        return dumpUserFlag;
+    }
+
+    /**
+     * Read the maximum number of children per Node.
+     *
+     * @return the current limit (&ge;0, default=MAX_VALUE)
+     */
+    public int maxChildren() {
+        assert maxChildren >= 0 : maxChildren;
+        return maxChildren;
+    }
+
+    /**
      * Alter which describer to use.
      *
      * @param newDescriber (not null, alias created)
