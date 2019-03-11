@@ -1,8 +1,8 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.22.0 released on TBD
+## Version 2.22.0 released on 11 March 2019
 
- + Added getters for the fields of a `Dumper`.
+Added getters for the fields of a `Dumper`.
 
 ## Version 2.21.0 released on 10 March 2019
 
