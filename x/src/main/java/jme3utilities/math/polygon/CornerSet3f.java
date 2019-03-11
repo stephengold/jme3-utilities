@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -451,12 +451,12 @@ public class CornerSet3f {
      * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param cornerIndex3 index of the 3rd corner (&ge;0, &lt;numCorners)
-     * @param storeMiddleIndex if not null and the result is true, used to store
-     * the index of the middle corner, if determined
+     * @param storeMiddleIndex if the result is true, used to store the index of
+     * the middle corner, if determined
      * @return true if collinear, otherwise false
      */
     protected boolean areCollinear(int cornerIndex1, int cornerIndex2,
-            int cornerIndex3, Integer storeMiddleIndex) {
+            int cornerIndex3, int[] storeMiddleIndex) {
         validateIndex(cornerIndex1, "index of 1st corner");
         validateIndex(cornerIndex2, "index of 2nd corner");
         validateIndex(cornerIndex3, "index of 3rd corner");
@@ -489,8 +489,8 @@ public class CornerSet3f {
         int middleIndex = corners.nextSetBit(0);
 
         boolean result = allCollinear(firstIndex, lastIndex, corners);
-        if (result && storeMiddleIndex != null) {
-            storeMiddleIndex = middleIndex;
+        if (result) {
+            storeMiddleIndex[0] = middleIndex;
         }
 
         return result;
