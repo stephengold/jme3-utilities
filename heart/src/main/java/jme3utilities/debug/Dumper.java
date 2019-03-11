@@ -150,7 +150,7 @@ public class Dumper implements Cloneable {
         Validate.nonNull(indent, "indent");
 
         String className = appState.getClass().getSimpleName();
-        stream.printf("%s", className);
+        stream.print(className);
 
         if (appState.isEnabled()) {
             stream.print(" enabled");
