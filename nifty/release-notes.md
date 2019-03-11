@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.2 released on TBD
+
+ + Base on version 2.21 of the jme3-utilities-heart library,
+
 ## Version 0.9.1 released on 13 February 2019
 
  + Revert to version 1.4.2 of Nifty to resolve some issues.
