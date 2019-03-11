@@ -1,5 +1,12 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.17 released on TBD
+
+Notable changes:
+ + prevent shadows from being cast by/on a FloorControl
+ + add LandscapeControl (from the debug library) to the tests
+ + base on version 2.21 of the heart library
+
 ## Version 0.9.16 released on 14 January 2018
 
 Notable changes:

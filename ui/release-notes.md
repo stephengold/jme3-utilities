@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.7.1 released on TBD
+
+ + Added a `CameraOrbitAppState` class based on the one in MinieExamples.
+ + Based on version 2.21 of the jme3-utilities-heart library.
+
 ## Version 0.7.0 released on 13 January 2019
 
  + Added a `DisplaySizeLimits` class.

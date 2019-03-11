@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-x library and related tests
 
+## Version 0.2.9 released on TBD
+
+Based on version 2.21 of the jme3-utilities-heart library.
+
 ## Version 0.2.8 released on 6 January 2019
 
  + Allow streaming audio with an `AudioControl`.
