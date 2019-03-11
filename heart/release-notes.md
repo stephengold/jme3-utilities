@@ -1,10 +1,14 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.22.0 released on TBD
+
+ + Added getters for the fields of a `Dumper`.
+
 ## Version 2.21.0 released on 10 March 2019
 
  + The `jme3-utilities-debug` library merged into the
    `jme3-utilities-heart` library.
-   All classes  in the `jme3utilities.debug` package except `DebugVersion`
+   All classes in the `jme3utilities.debug` package except `DebugVersion`
    were transferred to `jme3-utilities-heart`.
    All resources in the `Textures.shapes` package and the
    `Models.indicators.arrow` package were also transferred.
