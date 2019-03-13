@@ -37,9 +37,9 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
 import java.util.logging.Logger;
-import jme3utilities.mesh.LoopMesh;
 import jme3utilities.Validate;
 import jme3utilities.math.polygon.SimplePolygon3f;
+import jme3utilities.mesh.LoopMesh;
 
 /**
  * Utility methods for visualizing navigation graphs. Aside from test cases, all
