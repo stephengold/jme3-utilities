@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -134,7 +134,7 @@ final public class MyCamera {
             String locString = MyVector3f.describe(location);
             Vector3f direction = camera.getDirection();
             String dirString = MyVector3f.describeDirection(direction);
-            result = String.format("camera %s loc=[%s] dir=[%s]",
+            result = String.format("camera %s loc[%s] dir[%s]",
                     MyString.quote(name), locString, dirString);
         }
 
