@@ -104,17 +104,35 @@ public class MyString {
     }
 
     /**
+     * Determine the index of the named coordinate axis.
+     *
+     * @param axisName the name of the axis (not null, not empty)
+     * @return the index of the axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @see #axisName(int)
+     */
+    public static int axisIndex(String axisName) {
+        for (int axisIndex = 0; axisIndex < axisNames.length; ++axisIndex) {
+            if (axisNames[axisIndex].equals(axisName)) {
+                return axisIndex;
+            }
+        }
+        String quoted = MyString.quote(axisName);
+        throw new IllegalArgumentException(quoted);
+    }
+
+    /**
      * Describe a coordinate axis.
      *
      * @param axisIndex the index of the axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
      * @return a textual description (not null, not empty)
+     * @see #axisIndex(String)
      */
     public static String axisName(int axisIndex) {
         Validate.inRange(axisIndex, "axis index", MyVector3f.xAxis,
                 MyVector3f.zAxis);
 
-        String description = axisNames[axisIndex];
-        return description;
+        String axisName = axisNames[axisIndex];
+        return axisName;
     }
 
     /**
