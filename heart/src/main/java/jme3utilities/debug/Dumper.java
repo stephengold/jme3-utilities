@@ -281,6 +281,9 @@ public class Dumper implements Cloneable {
      * @param renderManager which render manager to dump (not null, unaffected)
      */
     public void dump(RenderManager renderManager) {
+        String className = renderManager.getClass().getSimpleName();
+        stream.printf("%n%s", className);
+
         List<ViewPort> pres = renderManager.getPreViews();
         int numPres = pres.size();
         List<ViewPort> mains = renderManager.getMainViews();
@@ -288,7 +291,7 @@ public class Dumper implements Cloneable {
         List<ViewPort> posts = renderManager.getPostViews();
         int numPosts = posts.size();
 
-        stream.printf("%nrender manager with %d preView%s, %d mainView%s, and ",
+        stream.printf(" with %d preView%s, %d mainView%s, and ",
                 numPres, (numPres == 1) ? "" : "s",
                 numMains, (numMains == 1) ? "" : "s");
         stream.printf("%d postView%s%n", numPosts, (numPosts == 1) ? "" : "s");
@@ -492,9 +495,9 @@ public class Dumper implements Cloneable {
     public void dump(ViewPort viewPort, String indent) {
         Validate.nonNull(indent, "indent");
 
-        stream.print(indent);
+        String className = viewPort.getClass().getSimpleName();
         String name = viewPort.getName();
-        stream.printf("view port %s ", MyString.quote(name));
+        stream.printf("%s%s %s ", indent, className, MyString.quote(name));
         if (viewPort.isEnabled()) {
             stream.print("enabled ");
 

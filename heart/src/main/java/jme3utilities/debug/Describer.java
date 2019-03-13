@@ -242,7 +242,9 @@ public class Describer implements Cloneable {
      *
      * @param axisIndex (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      * @return a description (not null, not empty)
+     * @deprecated use {@link jme3utilities.MyString#axisName(int)} instead
      */
+    @Deprecated
     public String describeAxis(int axisIndex) {
         Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
                 MyVector3f.lastAxis);
@@ -398,10 +400,10 @@ public class Describer implements Cloneable {
 
         Vector3f location = MySpatial.worldLocation(spatial, null);
         if (!MyVector3f.isZero(location)) {
-            result.append("loc=(");
+            result.append("loc[");
             String locText = MyVector3f.describe(location);
             result.append(locText);
-            result.append(")");
+            result.append("]");
         }
 
         return result.toString();
@@ -420,7 +422,7 @@ public class Describer implements Cloneable {
 
         Quaternion orientation = MySpatial.worldOrientation(spatial, null);
         if (!MyQuaternion.isRotationIdentity(orientation)) {
-            result.append("orient=[");
+            result.append("orient[");
             String orientText = MyQuaternion.describe(orientation);
             result.append(orientText);
             result.append("]");
@@ -508,18 +510,11 @@ public class Describer implements Cloneable {
         Validate.nonNull(vector, "vector");
         StringBuilder result = new StringBuilder(30);
 
-        if (!MyVector3f.isScaleUniform(vector)) {
-            result.append("scale=(");
+        if (!MyVector3f.isScaleIdentity(vector)) {
+            result.append("scale[");
             String vectorText = MyVector3f.describe(vector);
             result.append(vectorText);
-            result.append(")");
-        } else if (!MyVector3f.isScaleIdentity(vector)) {
-            /*
-             * uniform scaling
-             */
-            result.append("scale=");
-            String floatText = MyString.describe(vector.x);
-            result.append(floatText);
+            result.append("]");
         }
 
         return result.toString();
