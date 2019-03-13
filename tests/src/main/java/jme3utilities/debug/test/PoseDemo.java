@@ -115,21 +115,21 @@ public class PoseDemo extends GuiApplication {
      */
     static DirectionalLightShadowFilter dlsf = null;
     /**
-     * app state to manage the loaded model
+     * printer for scene dump
+     */
+    final private static Dumper dumper = new Dumper();
+    /**
+     * AppState to manage the loaded model
      */
     static ModelState modelState = new ModelState();
     /**
-     * app state to manage the camera
+     * AppState to manage the Camera
      */
     static PoseCameraState cameraState = new PoseCameraState();
     /**
      * heads-up display (HUD)
      */
     static PoseDemoHud hudState = new PoseDemoHud();
-    /**
-     * printer for scene dump
-     */
-    final private static Dumper dumper = new Dumper();
     // *************************************************************************
     // new methods exposed
 
