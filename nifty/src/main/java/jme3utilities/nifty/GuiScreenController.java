@@ -29,10 +29,13 @@ package jme3utilities.nifty;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
+import de.lessvoid.nifty.controls.CheckBoxStateChangedEvent;
 import de.lessvoid.nifty.controls.RadioButton;
 import de.lessvoid.nifty.controls.Slider;
+import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
@@ -262,6 +265,52 @@ public class GuiScreenController extends PopScreenController {
         Tool oldMapping = toolMap.put(toolName, controller);
         if (oldMapping != null) {
             throw new RuntimeException("Two tools with the same name.");
+        }
+    }
+
+    /**
+     * Callback handler that Nifty invokes after a check box changes.
+     *
+     * @param checkBoxId Nifty element ID of the check box (not null)
+     * @param event details of the event (not null)
+     */
+    @NiftyEventSubscriber(pattern = ".*CheckBox")
+    public void onCheckBoxChanged(final String checkBoxId,
+            final CheckBoxStateChangedEvent event) {
+        Validate.nonNull(checkBoxId, "check box ID");
+        Validate.nonNull(event, "event");
+        assert checkBoxId.endsWith("CheckBox");
+
+        if (!isIgnoreGuiChanges() && hasStarted()) {
+            String checkBoxName = MyString.removeSuffix(checkBoxId, "CheckBox");
+            Tool manager = findCheckBoxTool(checkBoxName);
+            boolean isChecked = event.isChecked();
+            manager.onCheckBoxChanged(checkBoxName, isChecked);
+        }
+    }
+
+    /**
+     * Callback handler that Nifty invokes after a slider changes.
+     *
+     * @param sliderId Nifty element ID of the slider (not null)
+     * @param event details of the event (not null, ignored)
+     */
+    @NiftyEventSubscriber(pattern = ".*Slider")
+    public void onSliderChanged(final String sliderId,
+            final SliderChangedEvent event) {
+        Validate.nonNull(sliderId, "slider ID");
+        assert sliderId.endsWith("Slider") : sliderId;
+        Validate.nonNull(event, "event");
+
+        if (!isIgnoreGuiChanges() && hasStarted()) {
+            String sliderName = MyString.removeSuffix(sliderId, "Slider");
+            Tool manager = findSliderTool(sliderName);
+            if (manager == null) {
+                logger.log(Level.WARNING, "Unknown slider, ID={0}",
+                        MyString.quote(sliderId));
+            } else {
+                manager.onSliderChanged(sliderName);
+            }
         }
     }
 
