@@ -550,8 +550,7 @@ public class Dumper implements Cloneable {
     }
 
     /**
-     * Test whether render-queue bucket assignments will be dumped. TODO move to
-     * Dumper class
+     * Test whether render-queue bucket assignments will be dumped.
      *
      * @return true if they'll be dumped, otherwise false
      */

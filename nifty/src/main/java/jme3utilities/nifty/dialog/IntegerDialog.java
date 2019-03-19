@@ -33,7 +33,8 @@ import java.util.regex.Pattern;
 import jme3utilities.Validate;
 
 /**
- * Controller for a text-entry dialog box used to input an integer value.
+ * Controller for a text-entry dialog box used to input an integer value. TODO
+ * accept MAX_VALUE and MIN_VALUE as inputs
  *
  * @author Stephen Gold sgold@sonic.net
  */
