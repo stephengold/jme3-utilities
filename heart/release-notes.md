@@ -1,5 +1,17 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.23.0 released on TBD
+
+ + Added an `axisIndex()` method to the `MyString` class
+   and deprecate `Describer.describeAxis()`.
+ + Added a float[]-based constructor for `RectangularSolid`.
+ + Added `covarianceVector3f()` and `meanVector3f()` methods to
+   the `MyArray` class.
+ + Handled the `TerrainQuad` case in `MySpatial.describeType()`.
+ + Tweaked output formatting in `MyCamera.describe()`, `Dumper`,
+   and `Describer`.
+ + Targeted jMonkeyEngine version 3.2.3-stable
+
 ## Version 2.22.0 released on 11 March 2019
 
 Added getters for the fields of a `Dumper`.
