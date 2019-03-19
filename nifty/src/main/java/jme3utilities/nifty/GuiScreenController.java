@@ -284,8 +284,10 @@ public class GuiScreenController extends PopScreenController {
         if (!isIgnoreGuiChanges() && hasStarted()) {
             String checkBoxName = MyString.removeSuffix(checkBoxId, "CheckBox");
             Tool manager = findCheckBoxTool(checkBoxName);
-            boolean isChecked = event.isChecked();
-            manager.onCheckBoxChanged(checkBoxName, isChecked);
+            if (manager != null) {
+                boolean isChecked = event.isChecked();
+                manager.onCheckBoxChanged(checkBoxName, isChecked);
+            }
         }
     }
 
@@ -541,7 +543,7 @@ public class GuiScreenController extends PopScreenController {
 
         Element element = getScreen().findElementById(elementId);
         if (element == null) {
-            logger.log(Level.INFO, "screen {0} lacks element {1}",
+            logger.log(Level.INFO, "screen {0} lacks element {1}", // TODO warn
                     new Object[]{
                         MyString.quote(getScreenId()),
                         MyString.quote(elementId)
