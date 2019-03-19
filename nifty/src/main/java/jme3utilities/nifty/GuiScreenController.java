@@ -307,10 +307,7 @@ public class GuiScreenController extends PopScreenController {
         if (!isIgnoreGuiChanges() && hasStarted()) {
             String sliderName = MyString.removeSuffix(sliderId, "Slider");
             Tool manager = findSliderTool(sliderName);
-            if (manager == null) {
-                logger.log(Level.WARNING, "Unknown slider, ID={0}",
-                        MyString.quote(sliderId));
-            } else {
+            if (manager != null) {
                 manager.onSliderChanged(sliderName);
             }
         }
