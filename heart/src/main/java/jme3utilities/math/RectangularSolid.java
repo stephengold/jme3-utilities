@@ -94,7 +94,7 @@ public class RectangularSolid implements Savable {
 
     /**
      * Instantiate a compact solid that bounds the specified collection of
-     * sample locations. TODO version with the locations in a FloatBuffer
+     * sample locations.
      *
      * @param sampleLocations the sample locations (not null, at least 2,
      * unaffected)
@@ -121,6 +121,45 @@ public class RectangularSolid implements Savable {
         Vector3f tempVector = new Vector3f();
         for (Vector3f world : sampleLocations) {
             worldToLocal.mult(world, tempVector);
+            MyVector3f.accumulateMaxima(maxima, tempVector);
+            MyVector3f.accumulateMinima(minima, tempVector);
+        }
+    }
+
+    /**
+     * Instantiate a compact solid that bounds 3-D vectors in a float array.
+     *
+     * @param inputArray the sample locations (not null, at least 6 elements,
+     * length a multiple of 3, unaffected)
+     */
+    public RectangularSolid(float[] inputArray) {
+        Validate.nonEmpty(inputArray, "input array");
+        int length = inputArray.length;
+        assert (length % 3 == 0) : length;
+        assert length >= 6 : length;
+        /*
+         * Orient local axes based on the eigenvectors of the covariance matrix.
+         */
+        Matrix3f covariance = MyArray.covarianceVector3f(inputArray, null);
+        Eigen3f eigen = new Eigen3f(covariance);
+        Vector3f[] basis = eigen.getEigenVectors();
+        localToWorld.fromAxes(basis);
+        /*
+         * Calculate the min and max for each local axis.
+         */
+        maxima.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY,
+                Float.NEGATIVE_INFINITY);
+        minima.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY);
+        Quaternion worldToLocal = localToWorld.inverse();
+        Vector3f tempVector = new Vector3f();
+        int vectorCount = length / 3;
+        for (int vectorIndex = 0; vectorIndex < vectorCount; ++vectorIndex) {
+            tempVector.x = inputArray[3 * vectorIndex];
+            tempVector.y = inputArray[3 * vectorIndex + 1];
+            tempVector.z = inputArray[3 * vectorIndex + 2];
+
+            worldToLocal.mult(tempVector, tempVector);
             MyVector3f.accumulateMaxima(maxima, tempVector);
             MyVector3f.accumulateMinima(minima, tempVector);
         }
