@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.23.0 released on TBD
+## Version 2.23.0 released on 18 March 2019
 
  + Added an `axisIndex()` method to the `MyString` class
    and deprecate `Describer.describeAxis()`.
