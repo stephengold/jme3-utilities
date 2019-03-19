@@ -26,6 +26,7 @@
  */
 package jme3utilities.math;
 
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,6 +57,57 @@ final public class MyArray {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Calculate the sample covariance of 3-D vectors in a float array.
+     *
+     * @param input the input array (not null, at least 6 elements, length a
+     * multiple of 3, unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the unbiased sample covariance (either storeResult or a new
+     * matrix, not null)
+     */
+    public static Matrix3f covarianceVector3f(float[] input, Matrix3f storeResult) {
+        Validate.nonEmpty(input, "input");
+        int length = input.length;
+        assert (length % 3 == 0) : length;
+        assert length >= 6 : length;
+        Matrix3f result = (storeResult == null) ? new Matrix3f() : storeResult;
+
+        Vector3f sampleMean = meanVector3f(input, null);
+        /*
+         * Accumulate sums in the upper triangle of the matrix.
+         */
+        result.zero();
+        float[] aboveMean = new float[3];
+        int vectorCount = length / 3;
+        for (int vectorIndex = 0; vectorIndex < vectorCount; ++vectorIndex) {
+            aboveMean[0] = input[3 * vectorIndex] - sampleMean.x;
+            aboveMean[1] = input[3 * vectorIndex + 1] - sampleMean.y;
+            aboveMean[2] = input[3 * vectorIndex + 2] - sampleMean.z;
+            for (int rowIndex = 0; rowIndex < 3; ++rowIndex) {
+                for (int columnIndex = rowIndex; columnIndex < 3; ++columnIndex) {
+                    float sum = result.get(rowIndex, columnIndex);
+                    sum += aboveMean[rowIndex] * aboveMean[columnIndex];
+                    result.set(rowIndex, columnIndex, sum);
+                }
+            }
+        }
+        /*
+         * Multiply sums by 1/(N-1) and fill in the lower triangle.
+         */
+        float nMinus1 = vectorCount - 1;
+        for (int rowIndex = 0; rowIndex < 3; ++rowIndex) {
+            for (int columnIndex = rowIndex; columnIndex < 3; ++columnIndex) {
+                float sum = result.get(rowIndex, columnIndex);
+                float element = sum / nMinus1;
+                result.set(rowIndex, columnIndex, element);
+                result.set(columnIndex, rowIndex, element);
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Count the number of distinct vectors in the specified array,
@@ -192,6 +244,32 @@ final public class MyArray {
                 }
             }
         }
+
+        return result;
+    }
+
+    /**
+     * Calculate the arithmetic mean of 3-D vectors in a float array.
+     *
+     * @param input the input array (not null, not empty, length a multiple of
+     * 3, unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the mean (either storeResult or a new vector, not null)
+     */
+    public static Vector3f meanVector3f(float[] input, Vector3f storeResult) {
+        Validate.nonEmpty(input, "input");
+        int length = input.length;
+        assert (length % 3 == 0) : length;
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.zero();
+        int vectorCount = length / 3;
+        for (int vectorIndex = 0; vectorIndex < vectorCount; ++vectorIndex) {
+            result.x += input[3 * vectorIndex];
+            result.y += input[3 * vectorIndex + 1];
+            result.z += input[3 * vectorIndex + 2];
+        }
+        result.divideLocal(vectorCount);
 
         return result;
     }

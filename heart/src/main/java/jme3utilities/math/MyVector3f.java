@@ -355,8 +355,7 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the sample covariance of a collection of sample vectors. TODO
-     * array/buffer versions
+     * Calculate the sample covariance of a collection of vectors.
      *
      * @param collection the sample vectors (not null, at least 2, unaffected)
      * @param storeResult storage for the result (modified if not null)
@@ -370,7 +369,7 @@ public class MyVector3f {
         assert numSamples > 1 : numSamples;
         Matrix3f result = (storeResult == null) ? new Matrix3f() : storeResult;
 
-        Vector3f sampleMean = MyVector3f.mean(collection, null);
+        Vector3f sampleMean = mean(collection, null);
         /*
          * Accumulate sums in the upper triangle of the matrix.
          */
@@ -998,7 +997,7 @@ public class MyVector3f {
             spatial.worldToLocal(worldDirection, result);
         }
 
-        double lengthSquared = MyVector3f.lengthSquared(result);
+        double lengthSquared = lengthSquared(result);
         double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
         result.multLocal((float) scaleFactor);
 
@@ -1007,8 +1006,7 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the arithmetic mean of a non-empty collection of vectors. TODO
-     * FloatBuffer version
+     * Calculate the arithmetic mean of a non-empty collection of vectors.
      *
      * @param collection the vectors to average (not null, not empty,
      * unaffected)
@@ -1126,7 +1124,7 @@ public class MyVector3f {
     public static void normalizeLocal(Vector3f input) {
         Validate.nonNull(input, "input");
 
-        double lengthSquared = MyVector3f.lengthSquared(input);
+        double lengthSquared = lengthSquared(input);
         double dScale = Math.sqrt(lengthSquared);
         float fScale = (float) dScale;
         if (fScale != 0f && fScale != 1f) {
