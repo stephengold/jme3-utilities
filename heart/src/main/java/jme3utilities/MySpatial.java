@@ -328,6 +328,8 @@ public class MySpatial {
             return 's';
         } else if (spatial instanceof StatsView) {
             return 'S';
+        } else if (spatial.getClass().getSimpleName().equals("TerrainQuad")) {
+            return 'q';
         } else if (spatial instanceof Geometry) {
             return 'g';
         } else if (spatial instanceof Node) {

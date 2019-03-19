@@ -858,13 +858,7 @@ public class Describer implements Cloneable {
      * @return a mnemonic character
      */
     protected char describeType(Spatial spatial) {
-        char result;
-        if (spatial.getClass().getSimpleName().equals("TerrainQuad")) {
-            result = 'q'; // TODO move to MySpatial
-        } else {
-            result = MySpatial.describeType(spatial);
-        }
-
+        char result = MySpatial.describeType(spatial);
         return result;
     }
 
