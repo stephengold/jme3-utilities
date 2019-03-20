@@ -447,6 +447,27 @@ public class MyString {
     }
 
     /**
+     * Generate a String consisting of a specified character sequence repeated a
+     * specified number of times.
+     *
+     * @param sequence the sequence to use (not null)
+     * @param numTimes the number of times (&ge;0)
+     * @return
+     */
+    public static String repeat(CharSequence sequence, int numTimes) {
+        Validate.nonNull(sequence, "sequence");
+        Validate.nonNegative(numTimes, "number of times");
+
+        int length = numTimes * sequence.length();
+        StringBuilder builder = new StringBuilder(length);
+        for (int index = 0; index < numTimes; ++index) {
+            builder.append(sequence);
+        }
+
+        return builder.toString();
+    }
+
+    /**
      * Find the length of the shared prefix of two strings.
      *
      * @param s1 1st string (not null)
