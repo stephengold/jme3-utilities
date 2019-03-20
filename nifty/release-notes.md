@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.3 released on TBD
+## Version 0.9.3 released on 19 March 2019
 
  + In `GuiScreenController`, add handlers for checkbox and slider events.
  + Base on version 3.2.3-stable of jMonkeyEngine,
