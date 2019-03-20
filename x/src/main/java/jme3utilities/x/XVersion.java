@@ -41,8 +41,8 @@ public class XVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            XVersion.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(XVersion.class.getName());
     // *************************************************************************
     // constructors
 
@@ -60,6 +60,6 @@ public class XVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.2.10";
+        return "master 0.2.10+1";
     }
 }

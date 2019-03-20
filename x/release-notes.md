@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.10 release on TBD
+## Version 0.2.10 release on 19 March 2019
 
  + Fixed a bug where `CornerSet3f.areCollinear()` didn't return the 
    middle index. (API change)
