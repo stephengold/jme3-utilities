@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -24,13 +24,14 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.test;
+package jme3utilities.math.test;
 
 import java.util.logging.Logger;
 import jme3utilities.MyString;
+import org.junit.Test;
 
 /**
- * Test cases for the MyString class.
+ * Test the MyString class.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -43,56 +44,52 @@ public class TestMyString {
      */
     final private static Logger logger = Logger.getLogger(
             TestMyString.class.getName());
+    /**
+     *
+     */
+    final private static String[] stringCases = new String[]{
+        "\"he\"",
+        "",
+        "-0",
+        "-900",
+        "-0.000",
+        "54.32100",
+        "0.1234",
+        "hello",
+        "he\\\\no\tgoodbye\n"
+    };
     // *************************************************************************
     // new methods exposed
 
-    /**
-     * Console application to test the MyString class.
-     *
-     * @param ignored command-line arguments
-     */
-    public static void main(String[] ignored) {
-        System.out.print("Test results for class MyString:\n\n");
+    @Test
+    public void testMyString() {
+        assert MyString.quote(stringCases[0]).equals("\"\\\"he\\\"\"");
+        assert MyString.quote(stringCases[1]).equals("\"\"");
+        assert MyString.quote(stringCases[2]).equals("\"-0\"");
+        assert MyString.quote(stringCases[8]).equals("\"he\\\\\\\\no\\tgoodbye\\n\"");
 
-        String[] stringCases = new String[]{
-            "\"he\"",
-            "",
-            "-0",
-            "-900",
-            "-0.000",
-            "54.32100",
-            "0.1234",
-            "hello",
-            "he\\\\no\tgoodbye\n"
-        };
+        assert MyString.trimFloat(stringCases[0]).equals(stringCases[0]);
+        assert MyString.trimFloat(stringCases[1]).equals(stringCases[1]);
+        assert MyString.trimFloat(stringCases[2]).equals("0");
+        assert MyString.trimFloat(stringCases[3]).equals("-900");
+        assert MyString.trimFloat(stringCases[4]).equals("0");
+        assert MyString.trimFloat(stringCases[5]).equals("54.321");
+        assert MyString.trimFloat(stringCases[6]).equals(stringCases[6]);
+        assert MyString.trimFloat(stringCases[7]).equals(stringCases[7]);
+        assert MyString.trimFloat(stringCases[8]).equals(stringCases[8]);
 
         for (String s : stringCases) {
-            System.out.printf("s = {%s}%n", s);
-
-            String q = MyString.quote(s);
-            System.out.printf(" quote(s) = {%s}%n", q);
-
-            String t = MyString.trimFloat(s);
-            System.out.printf(" trimFloat(s) = {%s}%n", t);
-
             String e = MyString.escape(s);
-            System.out.printf(" escape(s) = {%s}%n", e);
-
             String ue = MyString.unEscape(e);
-            System.out.printf(" unEscape(escape(s)) = {%s}%n", ue);
             assert (s.equals(ue));
-
-            System.out.println();
         }
 
         String[] a1 = {"a", "fistful", "of", "bytes"};
         String j1 = MyString.join(a1);
-        System.out.printf(" j1={%s}%n", j1);
+        assert j1.equals("a fistful of bytes");
 
         String[] a2 = {};
         String j2 = MyString.join(a2);
-        System.out.printf(" j2={%s}%n", j2);
-
-        System.out.println();
+        assert j2.equals("");
     }
 }
