@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -474,12 +474,12 @@ public class MyMath {
     }
 
     /**
-     * Find the maximum of three single-precision values.
+     * Find the maximum of 3 single-precision values.
      *
-     * @param a 1st input value
-     * @param b 2nd input value
-     * @param c 3rd input value
-     * @return greatest of the three values
+     * @param a the 1st input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
+     * @return the most positive of the 3 values
      * @see java.lang.Math#max(float, float)
      */
     public static float max(float a, float b, float c) {
@@ -493,12 +493,12 @@ public class MyMath {
     }
 
     /**
-     * Find the maximum of three double-precision values.
+     * Find the maximum of 3 double-precision values.
      *
-     * @param a 1st input value
-     * @param b 2nd input value
-     * @param c 3rd input value
-     * @return greatest of the three values
+     * @param a the 1st input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
+     * @return the most positive of the 3 values
      * @see java.lang.Math#max(double, double)
      */
     public static double max(double a, double b, double c) {
@@ -512,12 +512,64 @@ public class MyMath {
     }
 
     /**
-     * Find the minimum of three single-precision values.
+     * Find the median of 3 single-precision values.
      *
-     * @param a 1st input value
-     * @param b 2nd input value
-     * @param c 3rd input value
-     * @return least of the three values
+     * @param a the 1st input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
+     * @return the median of the 3 values
+     */
+    public static float mid(float a, float b, float c) {
+        if (a >= b) {
+            if (b >= c) {
+                return b; // a >= b >= c
+            } else if (a >= c) {
+                return c; // a >= c > b
+            } else {
+                return a; // c > a >= b
+            }
+        } else if (a >= c) {
+            return a; // b > a >= c
+        } else if (b >= c) {
+            return c; // b >= c > a
+        } else {
+            return b; // c > b > a
+        }
+    }
+
+    /**
+     * Find the median of 3 double-precision values.
+     *
+     * @param a the 1st input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
+     * @return the median of the 3 values
+     */
+    public static double mid(double a, double b, double c) {
+        if (a >= b) {
+            if (b >= c) {
+                return b; // a >= b >= c
+            } else if (a >= c) {
+                return c; // a >= c > b
+            } else {
+                return a; // c > a >= b
+            }
+        } else if (a >= c) {
+            return a; // b > a >= c
+        } else if (b >= c) {
+            return c; // b >= c > a
+        } else {
+            return b; // c > b > a
+        }
+    }
+
+    /**
+     * Find the minimum of 3 single-precision values.
+     *
+     * @param a the 1st input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
+     * @return the most negative of the 3 values
      * @see java.lang.Math#min(float, float)
      */
     public static float min(float a, float b, float c) {
@@ -531,12 +583,12 @@ public class MyMath {
     }
 
     /**
-     * Find the minimum of three double-precision values.
+     * Find the minimum of 3 double-precision values.
      *
-     * @param a 1st input value
-     * @param b 2nd input value
-     * @param c 3rd input value
-     * @return least of the three values
+     * @param a the 1st input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
+     * @return the most negative of the 3 values
      * @see java.lang.Math#min(double, double)
      */
     public static double min(double a, double b, double c) {
