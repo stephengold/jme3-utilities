@@ -56,7 +56,9 @@ public class TestMyString {
         "54.32100",
         "0.1234",
         "hello",
-        "he\\\\no\tgoodbye\n"
+        "he\\\\no\tgoodbye\n",
+        "1.0e10",
+        "1.0000e-20"
     };
     // *************************************************************************
     // new methods exposed
@@ -77,6 +79,8 @@ public class TestMyString {
         assert MyString.trimFloat(stringCases[6]).equals(stringCases[6]);
         assert MyString.trimFloat(stringCases[7]).equals(stringCases[7]);
         assert MyString.trimFloat(stringCases[8]).equals(stringCases[8]);
+        assert MyString.trimFloat(stringCases[9]).equals("1e10");
+        assert MyString.trimFloat(stringCases[10]).equals("1e-20");
 
         for (String s : stringCases) {
             String e = MyString.escape(s);

@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import jme3utilities.math.MyVector3f;
 
 /**
@@ -47,6 +49,10 @@ public class MyString {
      */
     final private static Logger logger
             = Logger.getLogger(MyString.class.getName());
+    /**
+     * pattern for matching a scientific-notation exponent
+     */
+    final private static Pattern sciPattern = Pattern.compile("[Ee][+-]?\\d+$");
     /**
      * names of the coordinate axes
      */
@@ -516,7 +522,14 @@ public class MyString {
      */
     public static String trimFloat(String input) {
         String result;
-        if (input.contains(".")) {
+        Matcher matcher = sciPattern.matcher(input);
+        if (matcher.find()) {
+            int suffixPos = matcher.start();
+            String suffix = input.substring(suffixPos);
+            String number = input.substring(0, suffixPos);
+            result = trimFloat(number) + suffix;
+
+        } else if (input.contains(".")) {
             int end = input.length();
             char[] chars = input.toCharArray();
             while (end >= 1 && chars[end - 1] == '0') {
