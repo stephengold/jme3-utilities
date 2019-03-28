@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.math.MyVector3f;
+import jme3utilities.math.VectorSet;
+import jme3utilities.math.VectorSetUsingBuffer;
 
 /**
  * Utility methods for meshes and mesh vertices.
@@ -235,6 +237,48 @@ public class MyMesh {
         }
 
         return storeResult;
+    }
+
+    /**
+     * Enumerate the world locations of all vertices in the specified subtree of
+     * a scene graph. Note: recursive!
+     *
+     * @param subtree (may be null)
+     * @param storeResult (added to if not null)
+     * @return the resulting set (either storeResult or a new instance)
+     */
+    public static VectorSet listVertexLocations(Spatial subtree,
+            VectorSet storeResult) {
+        VectorSet result;
+        if (storeResult == null) {
+            result = new VectorSetUsingBuffer(64);
+        } else {
+            result = storeResult;
+        }
+
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            int numVertices = mesh.getVertexCount();
+            Vector3f tempLocation = new Vector3f();
+            for (int vertexI = 0; vertexI < numVertices; ++vertexI) {
+                MyMesh.vertexVector3f(mesh, VertexBuffer.Type.Position, vertexI,
+                        tempLocation);
+                if (!geometry.isIgnoreTransform()) {
+                    geometry.localToWorld(tempLocation, tempLocation);
+                }
+                result.add(tempLocation);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                listVertexLocations(child, result);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -694,8 +738,8 @@ public class MyMesh {
      * Copy Vector3f data for the indexed vertex from the specified vertex
      * buffer.
      * <p>
-     * A software skin update is required BEFORE reading
-     * vertex positions/normals/tangents from an animated mesh
+     * A software skin update is required BEFORE reading vertex
+     * positions/normals/tangents from an animated mesh
      *
      * @param mesh subject mesh (not null)
      * @param bufferType which buffer to read (5 legal values)
