@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.24.0 released on TBD
+## Version 2.24.0 released on 28 March 2019
 
  + Bugfix: `MyString.trimFloat()` doesn't recognize scientific notation.
  + Added a `repeat()` method to the `MyString` class.
