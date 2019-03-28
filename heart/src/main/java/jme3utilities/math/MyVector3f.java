@@ -419,18 +419,27 @@ public class MyVector3f {
 
         } else {
             StringBuilder builder = new StringBuilder(40);
-
-            builder.append("x=");
-            String x = MyString.describe(vector.x);
-            builder.append(x);
-
-            builder.append(" y=");
-            String y = MyString.describe(vector.y);
-            builder.append(y);
-
-            builder.append(" z=");
-            String z = MyString.describe(vector.z);
-            builder.append(z);
+            if (vector.x != 0f) {
+                builder.append("x=");
+                String x = MyString.describe(vector.x);
+                builder.append(x);
+            }
+            if (vector.y != 0f) {
+                if (builder.length() > 0) {
+                    builder.append(' ');
+                }
+                builder.append("y=");
+                String y = MyString.describe(vector.y);
+                builder.append(y);
+            }
+            if (vector.z != 0f) {
+                if (builder.length() > 0) {
+                    builder.append(' ');
+                }
+                builder.append("z=");
+                String z = MyString.describe(vector.z);
+                builder.append(z);
+            }
 
             result = builder.toString();
         }
