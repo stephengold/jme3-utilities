@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.24.0 released on TBD
+
+ + Bugfix: `MyString.trimFloat()` doesn't recognize scientific notation.
+ + Added a `repeat()` method to the `MyString` class.
+ + Added `mid()` methods to the `MyMath` class.
+ + Omit zero components in the `MyVector3f.describe()` method.
+ + Initiated unit testing.
+
 ## Version 2.23.0 released on 18 March 2019
 
  + Added an `axisIndex()` method to the `MyString` class
