@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -74,7 +74,7 @@ public class MyVolume {
      * Compute the volume of a capsule with the specified radius and height.
      *
      * @param radius (&ge;0)
-     * @param height (&ge;0)
+     * @param height the height of the cylindrical portion (&ge;0)
      * @return the volume (&ge;0)
      */
     public static float capsuleVolume(float radius, float height) {

@@ -452,7 +452,7 @@ public class MyString {
      *
      * @param sequence the sequence to use (not null)
      * @param numTimes the number of times (&ge;0)
-     * @return
+     * @return a repetitious String
      */
     public static String repeat(CharSequence sequence, int numTimes) {
         Validate.nonNull(sequence, "sequence");
