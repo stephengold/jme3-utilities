@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -353,8 +353,8 @@ public class BindScreen
         ListBox<ActionItem> actionBox = getActionBox();
         List<ActionItem> list = actionBox.getItems();
         for (ActionItem item : list) {
-            String name = item.getActionName();
-            if (actionName.equals(name)) {
+            String itemName = item.getActionName();
+            if (actionName.equals(itemName)) {
                 return item;
             }
         }
