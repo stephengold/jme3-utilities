@@ -429,19 +429,12 @@ public class MyAnimation {
     public static boolean hasTrackForBone(Animation animation, int boneIndex) {
         Validate.nonNegative(boneIndex, "bone index");
 
-        boolean result = false;
-        Track[] tracks = animation.getTracks();
-        for (Track track : tracks) {
-            if (track instanceof BoneTrack) {
-                BoneTrack boneTrack = (BoneTrack) track;
-                int target = boneTrack.getTargetBoneIndex();
-                if (target == boneIndex) {
-                    result = true;
-                }
-            }
+        Track track = findBoneTrack(animation, boneIndex);
+        if (track == null) {
+            return false;
+        } else {
+            return true;
         }
-
-        return result;
     }
 
     /**
