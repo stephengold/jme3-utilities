@@ -427,7 +427,7 @@ public class Dumper implements Cloneable {
             if (!description.isEmpty()) {
                 stream.println();
                 stream.print(indent);
-                stream.printf(" material %s", description);
+                stream.printf(" mat%s", description);
                 if (dumpMatParamFlag) {
                     Collection<MatParam> matParams = material.getParams();
                     if (!matParams.isEmpty()) {
