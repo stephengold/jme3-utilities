@@ -37,7 +37,9 @@ import com.jme3.input.ChaseCamera;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -94,16 +96,21 @@ public class MyControl {
         String result = describeType(control);
 
         if (control instanceof AnimControl) {
-            AnimControl ac = (AnimControl) control;
-            Collection<String> nameCollection = ac.getAnimationNames();
-            String[] array = MyString.toArray(nameCollection);
-            for (int iAnimation = 0; iAnimation < array.length; ++iAnimation) {
-                String animationName = array[iAnimation];
-                Animation animation = ac.getAnim(animationName);
-                array[iAnimation] = MyAnimation.describe(animation, ac);
+            AnimControl animControl = (AnimControl) control;
+            Collection<String> nameCollection = animControl.getAnimationNames();
+            int numAnimations = nameCollection.size();
+            if (numAnimations > 2) {
+                result += String.format("[%d]", numAnimations);
+            } else {
+                List<String> descs = new ArrayList<>(numAnimations);
+                for (String animationName : nameCollection) {
+                    Animation animation = animControl.getAnim(animationName);
+                    String desc = MyAnimation.describe(animation, animControl);
+                    descs.add(desc);
+                }
+                String names = MyString.join(descs);
+                result += String.format("[%s]", names);
             }
-            String names = MyString.join(array);
-            result += String.format("[%s]", names);
 
         } else if (control instanceof SkeletonControl) {
             SkeletonControl skeletonControl = (SkeletonControl) control;
