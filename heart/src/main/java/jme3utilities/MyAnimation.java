@@ -111,7 +111,7 @@ public class MyAnimation {
         String result;
         int numTracks = tracks.length;
         if (numTracks > 2) {
-            result = String.format("%s[%d]", name, numTracks);
+            result = String.format("%s[%d]", MyString.quote(name), numTracks);
         } else {
             String[] trackDescriptions = new String[numTracks];
             for (int trackIndex = 0; trackIndex < numTracks; ++trackIndex) {
