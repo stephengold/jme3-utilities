@@ -148,7 +148,7 @@ public class Describer implements Cloneable {
             result.append(MyString.quote(name));
         }
 
-        result.append(" def=");
+        result.append(" matdef=");
         MaterialDef def = material.getMaterialDef();
         String defName = (def == null) ? null : def.getName();
         String description = MyString.quote(defName);
