@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.UncachedKey;
 import jme3utilities.Validate;
@@ -749,8 +750,7 @@ abstract public class InputMode
             if (parentDirectory != null && !parentDirectory.exists()) {
                 boolean success = parentDirectory.mkdirs();
                 if (!success) {
-                    String parentPath = parentDirectory.getAbsolutePath();
-                    parentPath = parentPath.replaceAll("\\\\", "/");
+                    String parentPath = Misc.fixedPath(parentDirectory);
                     String msg = String.format(
                             "Unable to create folder %s for hotkey bindings",
                             MyString.quote(parentPath));

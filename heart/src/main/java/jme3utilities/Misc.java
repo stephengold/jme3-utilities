@@ -179,15 +179,14 @@ public class Misc {
     /**
      * Construct a map from drive paths (roots) to file objects.
      *
-     * @return a new map of absolute filesystem paths to files
+     * @return a new map from canonical file-system paths to files
      */
     public static Map<String, File> driveMap() {
         Map<String, File> result = new TreeMap<>();
         File[] roots = File.listRoots();
         for (File root : roots) {
             if (root.isDirectory()) {
-                String absoluteDirPath = root.getAbsolutePath();
-                absoluteDirPath = absoluteDirPath.replaceAll("\\\\", "/");
+                String absoluteDirPath = fixedPath(root);
                 File oldFile = result.put(absoluteDirPath, root);
                 assert oldFile == null : oldFile;
             }
@@ -211,6 +210,43 @@ public class Misc {
             Object[] members = collection.toArray(new Object[size]);
             result = (T) members[0];
         }
+
+        return result;
+    }
+
+    /**
+     * Canonicalize a file's path and convert backslashes to slashes.
+     *
+     * @param inputFile the input file (not null, not empty)
+     * @return the fixed file path (not null, not empty)
+     */
+    public static String fixedPath(File inputFile) {
+        Validate.nonNull(inputFile, "input file");
+
+        String result;
+        try {
+            result = inputFile.getCanonicalPath();
+        } catch (IOException exception) {
+            result = inputFile.getAbsolutePath();
+        }
+        result = result.replaceAll("\\\\", "/");
+
+        assert result != null;
+        assert !result.isEmpty();
+        return result;
+    }
+
+    /**
+     * Canonicalize a file path and convert backslashes to slashes.
+     *
+     * @param inputPath the file path to fix (not null, not empty)
+     * @return the fixed file path (not null, not empty)
+     */
+    public static String fixPath(String inputPath) {
+        Validate.nonEmpty(inputPath, "input path");
+
+        File file = new File(inputPath);
+        String result = fixedPath(file);
 
         return result;
     }
@@ -292,21 +328,19 @@ public class Misc {
     }
 
     /**
-     * Generate an absolute filesystem path to the named file in the user's home
+     * Generate a canonical filesystem path to the named file in the user's home
      * directory.
      *
      * @param fileName file name to use (not null, not empty)
-     * @return filesystem path (not null, not empty)
+     * @return the file-system path (not null, not empty)
      */
     public static String homePath(String fileName) {
         Validate.nonEmpty(fileName, "file name");
 
         String homePath = System.getProperty("user.home");
         File file = new File(homePath, fileName);
-        String result = file.getAbsolutePath();
-        result = result.replaceAll("\\\\", "/");
+        String result = fixedPath(file);
 
-        assert !result.isEmpty();
         return result;
     }
 

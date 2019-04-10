@@ -38,6 +38,7 @@ import com.jme3.util.BufferUtils;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Misc;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 
@@ -105,18 +106,17 @@ abstract public class ActionApplication
     }
 
     /**
-     * Convert an asset path to an absolute filesystem path for writing the
+     * Convert an asset path to an canonical file-system path for writing the
      * asset.
      *
      * @param assetPath (not null)
-     * @return filesystem path (not null, not empty)
+     * @return the file-system path (not null, not empty)
      */
     public static String filePath(String assetPath) {
         Validate.nonNull(assetPath, "asset path");
 
         File file = new File(writtenAssetDir, assetPath);
-        String result = file.getAbsolutePath();
-        result = result.replaceAll("\\\\", "/");
+        String result = Misc.fixedPath(file);
 
         assert !result.isEmpty();
         return result;
@@ -181,15 +181,14 @@ abstract public class ActionApplication
     }
 
     /**
-     * Read the filesystem path to the folder/directory for writing assets.
+     * Determine the file-system path to the folder/directory for writing
+     * assets.
      *
-     * @return the absolute pathname (not null, not empty)
+     * @return the canonical pathname (not null, not empty)
      */
     public static String writtenAssetPath() {
-        String path = writtenAssetDir.getAbsolutePath();
-        path = path.replaceAll("\\\\", "/");
+        String path = Misc.fixedPath(writtenAssetDir);
 
-        assert path != null;
         assert !path.isEmpty();
         return path;
     }
