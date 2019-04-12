@@ -288,83 +288,6 @@ public class BasicScreenController
         listener = newListener;
     }
     // *************************************************************************
-    // AppState methods
-
-    /**
-     * Enable or disable this screen.
-     *
-     * @param newSetting true &rarr; enable, false &rarr; disable
-     */
-    @Override
-    final public void setEnabled(boolean newSetting) {
-        if (!isInitialized()) {
-            /*
-             * Defer until initialization.
-             */
-            enableDuringInitialization = newSetting;
-            return;
-        }
-        if (listener == null) {
-            throw new IllegalStateException("listener should be set");
-        }
-
-        if (newSetting && !isEnabled()) {
-            enable();
-        } else if (!newSetting && isEnabled()) {
-            disable();
-        }
-    }
-
-    /**
-     * Initialize this controller prior to its 1st update.
-     *
-     * @param stateManager (not null)
-     * @param application application which owns this screen (not null)
-     */
-    @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
-        super.initialize(stateManager, application);
-
-        nifty.registerScreenController(this);
-        validateAndLoad();
-        if (enableDuringInitialization) {
-            enable();
-        }
-
-        assert isInitialized();
-    }
-    // *************************************************************************
-    // ScreenController methods
-
-    /**
-     * A callback which Nifty invokes when the screen gets enabled for the first
-     * time, used for assertions only.
-     *
-     * @param nifty (not null)
-     * @param screen (not null)
-     */
-    @Override
-    public void bind(Nifty nifty, Screen screen) {
-        assert nifty == getNifty() : nifty;
-        assert screen == getScreen() : screen;
-    }
-
-    /**
-     * A callback from Nifty, unused.
-     */
-    @Override
-    public void onEndScreen() {
-    }
-
-    /**
-     * A callback from Nifty, invoked each time the screen starts up.
-     */
-    @Override
-    public void onStartScreen() {
-        hasStarted = true;
-    }
-    // *************************************************************************
     // new protected methods
 
     /**
@@ -406,6 +329,83 @@ public class BasicScreenController
 
         guiApplication.setEnabledScreen(this);
         super.setEnabled(true);
+    }
+    // *************************************************************************
+    // GuiAppState methods
+
+    /**
+     * Initialize this controller prior to its 1st update.
+     *
+     * @param stateManager (not null)
+     * @param application application which owns this screen (not null)
+     */
+    @Override
+    public void initialize(AppStateManager stateManager,
+            Application application) {
+        super.initialize(stateManager, application);
+
+        nifty.registerScreenController(this);
+        validateAndLoad();
+        if (enableDuringInitialization) {
+            enable();
+        }
+
+        assert isInitialized();
+    }
+
+    /**
+     * Enable or disable this screen.
+     *
+     * @param newSetting true &rarr; enable, false &rarr; disable
+     */
+    @Override
+    final public void setEnabled(boolean newSetting) {
+        if (!isInitialized()) {
+            /*
+             * Defer until initialization.
+             */
+            enableDuringInitialization = newSetting;
+            return;
+        }
+        if (listener == null) {
+            throw new IllegalStateException("listener should be set");
+        }
+
+        if (newSetting && !isEnabled()) {
+            enable();
+        } else if (!newSetting && isEnabled()) {
+            disable();
+        }
+    }
+    // *************************************************************************
+    // ScreenController methods
+
+    /**
+     * A callback which Nifty invokes when the screen gets enabled for the first
+     * time, used for assertions only.
+     *
+     * @param nifty (not null)
+     * @param screen (not null)
+     */
+    @Override
+    public void bind(Nifty nifty, Screen screen) {
+        assert nifty == getNifty() : nifty;
+        assert screen == getScreen() : screen;
+    }
+
+    /**
+     * A callback from Nifty, invoked each time the screen shuts down.
+     */
+    @Override
+    public void onEndScreen() {
+    }
+
+    /**
+     * A callback from Nifty, invoked each time the screen starts up.
+     */
+    @Override
+    public void onStartScreen() {
+        hasStarted = true;
     }
     // *************************************************************************
     // private methods
