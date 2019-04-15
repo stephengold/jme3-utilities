@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -164,8 +164,8 @@ public class Generator extends Random {
     /**
      * Pick a pseudo-random element from the specified array.
      *
-     * @param array array to select from (not null)
-     * @return element of array or null if it's empty
+     * @param array the array to select from (not null, may be empty)
+     * @return a pre-existing element of array, or null if it's empty
      */
     @SuppressWarnings("rawtypes")
     public Object pick(Object[] array) {
@@ -228,8 +228,8 @@ public class Generator extends Random {
     /**
      * Pick a pseudo-random element from the specified list.
      *
-     * @param list list to select from (not null)
-     * @return member of list or null if it's empty
+     * @param list the list to select from (not null, may be empty)
+     * @return a pre-existing element of list, or null if it's empty
      */
     @SuppressWarnings("rawtypes")
     public Object pick(List list) {
