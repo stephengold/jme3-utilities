@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.25.0 released on TBD
+
+ + Added `fixedPath()` and `fixPath()` methods to the `Misc` class.
+ + Made several improvements to describe/dump formatting.
+
 ## Version 2.24.0 released on 28 March 2019
 
  + Bugfix: `MyString.trimFloat()` doesn't recognize scientific notation.
