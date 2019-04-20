@@ -276,6 +276,8 @@ public class Describer implements Cloneable {
             result += " mag:" + mag.toString();
             Texture.MinFilter min = texture.getMinFilter();
             result += " min:" + min.toString();
+            int aniso = texture.getAnisotropicFilter();
+            result += " aniso:" + Integer.toString(aniso);
             if (texture instanceof Texture3D
                     || texture instanceof TextureCubeMap) {
                 Texture.WrapMode rWrap = texture.getWrap(Texture.WrapAxis.R);
