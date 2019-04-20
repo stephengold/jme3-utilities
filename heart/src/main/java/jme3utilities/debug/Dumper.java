@@ -44,8 +44,10 @@ import com.jme3.scene.Spatial;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -429,16 +431,7 @@ public class Dumper implements Cloneable {
                 stream.print(indent);
                 stream.printf(" mat%s", description);
                 if (dumpMatParamFlag) {
-                    Collection<MatParam> matParams = material.getParams();
-                    if (!matParams.isEmpty()) {
-                        stream.print(':');
-                    }
-                    for (MatParam matParam : matParams) {
-                        description = describer.describe(matParam);
-                        stream.println();
-                        stream.print(indent + "  ");
-                        stream.print(description);
-                    }
+                    dump(material.getParamsMap(), indent + indentIncrement);
                 }
             }
             Mesh mesh = geometry.getMesh();
@@ -750,5 +743,30 @@ public class Dumper implements Cloneable {
         // stream not cloned
 
         return clone;
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Dump a material-parameter map.
+     *
+     * @param map the map from names to parameters (not null, unaffected)
+     * @param indent (not null)
+     */
+    private void dump(Map<String, MatParam> map, String indent) {
+        if (!map.isEmpty()) {
+            stream.print(':');
+            /*
+             * Loop through the parameter names in order.
+             */
+            Set<String> names = new TreeSet<>(map.keySet());
+            for (String name : names) {
+                stream.println();
+                stream.print(indent);
+                MatParam matParam = map.get(name);
+                String description = describer.describe(matParam);
+                stream.print(description);
+            }
+        }
     }
 }
