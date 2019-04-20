@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -103,6 +103,15 @@ public class TimeOfDay extends NamedAppState {
     // new methods exposed
 
     /**
+     * Read the simulation rate.
+     *
+     * @return the simulation rate relative to real time (may be negative)
+     */
+    public float getRate() {
+        return rate;
+    }
+
+    /**
      * Calculate the simulated time of day in hours.
      *
      * @return hours since midnight (&lt;24, &ge;0)
@@ -144,13 +153,6 @@ public class TimeOfDay extends NamedAppState {
         timeOfDay = secondsPerHour * (double) newHour;
     }
 
-    /**
-     * @return simulation rate.
-     */
-    public float getRate() {
-        return rate;
-    }
- 
     /**
      * Alter the simulation rate.
      *
