@@ -145,6 +145,13 @@ public class TimeOfDay extends NamedAppState {
     }
 
     /**
+     * @return simulation rate.
+     */
+    public float getRate() {
+        return rate;
+    }
+ 
+    /**
      * Alter the simulation rate.
      *
      * @param newRate simulation rate relative to real time (may be negative)
