@@ -29,6 +29,7 @@ package jme3utilities.debug;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.asset.TextureKey;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -59,6 +60,9 @@ import com.jme3.shadow.PointLightShadowFilter;
 import com.jme3.shadow.PointLightShadowRenderer;
 import com.jme3.shadow.SpotLightShadowFilter;
 import com.jme3.shadow.SpotLightShadowRenderer;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture3D;
+import com.jme3.texture.TextureCubeMap;
 import com.jme3.util.IntMap;
 import java.util.Collection;
 import java.util.List;
@@ -189,6 +193,9 @@ public class Describer implements Cloneable {
         } else if (obj instanceof Float) {
             float value = (Float) obj;
             valueString = MyString.describe(value);
+        } else if (obj instanceof Texture) {
+            Texture texture = (Texture) obj;
+            valueString = describe(texture);
         } else {
             valueString = matParam.getValueAsString();
         }
@@ -246,6 +253,43 @@ public class Describer implements Cloneable {
         builder.append(rootsText);
 
         return builder.toString();
+    }
+
+    /**
+     * Describe a texture.
+     *
+     * @param texture the input texture (may be null, unaffected)
+     * @return a textual description (not null, not empty)
+     */
+    public String describe(Texture texture) {
+        String result = "null";
+
+        if (texture != null) {
+            TextureKey textureKey = (TextureKey) texture.getKey();
+            if (textureKey == null) {
+                result = "(no key)";
+            } else {
+                result = describe(textureKey);
+            }
+
+            Texture.MagFilter mag = texture.getMagFilter();
+            result += " mag:" + mag.toString();
+            Texture.MinFilter min = texture.getMinFilter();
+            result += " min:" + min.toString();
+            if (texture instanceof Texture3D
+                    || texture instanceof TextureCubeMap) {
+                Texture.WrapMode rWrap = texture.getWrap(Texture.WrapAxis.R);
+                result += " r:" + rWrap.toString();
+            }
+            Texture.WrapMode sWrap = texture.getWrap(Texture.WrapAxis.S);
+            result += " s:" + sWrap.toString();
+            Texture.WrapMode tWrap = texture.getWrap(Texture.WrapAxis.T);
+            result += " t:" + tWrap.toString();
+        }
+
+        assert result != null;
+        assert !result.isEmpty();
+        return result;
     }
 
     /**
@@ -815,6 +859,25 @@ public class Describer implements Cloneable {
             }
         }
 
+        return result;
+    }
+
+    /**
+     * Describe a texture key.
+     *
+     * @param textureKey (not null, unaffected)
+     * @return a textual description (not null, not empty)
+     */
+    protected String describe(TextureKey textureKey) {
+        String result = textureKey.toString();
+
+        int anisotropy = textureKey.getAnisotropy();
+        if (anisotropy != 0) {
+            result += String.format(" (Anisotropy%d)", anisotropy);
+        }
+
+        assert result != null;
+        assert !result.isEmpty();
         return result;
     }
 
