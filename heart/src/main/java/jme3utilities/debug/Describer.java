@@ -175,13 +175,24 @@ public class Describer implements Cloneable {
      * @return a description (not null, may be empty)
      */
     public String describe(MatParam matParam) {
-        StringBuilder result = new StringBuilder(20);
+        StringBuilder result = new StringBuilder(80);
         result.append(' ');
         String paramName = matParam.getName();
         result.append(paramName);
-        result.append('=');
-        String value = matParam.getValueAsString();
-        result.append(value);
+        result.append("= ");
+
+        String valueString;
+        Object obj = matParam.getValue();
+        if (obj instanceof ColorRGBA) {
+            ColorRGBA color = (ColorRGBA) obj;
+            valueString = "(" + MyColor.describe(color) + ")";
+        } else if (obj instanceof Float) {
+            float value = (Float) obj;
+            valueString = MyString.describe(value);
+        } else {
+            valueString = matParam.getValueAsString();
+        }
+        result.append(valueString);
 
         return result.toString();
     }
