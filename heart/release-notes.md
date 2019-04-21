@@ -1,5 +1,13 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.26.0 released on TBD
+
+ + In dumps, sort material parameters by name.
+ + Added a `MyRender` class.
+ + Improved descriptions of material parameters.
+ + Added `Renderer` information when dumping a `RenderManager`.
+ + Added a `getRate()` method to the `TimeOfDay` class.
+
 ## Version 2.25.0 released on 15 April 2019
 
  + Added `fixedPath()` and `fixPath()` methods to the `Misc` class.
