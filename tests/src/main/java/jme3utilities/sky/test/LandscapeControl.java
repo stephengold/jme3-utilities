@@ -390,8 +390,9 @@ public class LandscapeControl extends SubtreeControl {
      * @return a new instance (not null)
      */
     private AbstractHeightMap loadHeightMap() {
-        Texture heightTexture
-                = MyAsset.loadTexture(assetManager, heightMapAssetPath);
+        boolean mipmaps = false;
+        Texture heightTexture = MyAsset.loadTexture(assetManager,
+                heightMapAssetPath, mipmaps);
         Image heightImage = heightTexture.getImage();
         float heightScale = 1f;
         AbstractHeightMap heightMap

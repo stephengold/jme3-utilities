@@ -711,8 +711,9 @@ public class TestSkyControlRun
         /*
          * Set up a globe renderer for the Moon.
          */
+        boolean mipmaps = false;
         Texture moonTexture = MyAsset.loadTexture(assetManager,
-                "Textures/skies/moon/clementine.png");
+                "Textures/skies/moon/clementine.png", mipmaps);
         Material moonMaterial = MyAsset.createShadedMaterial(assetManager,
                 moonTexture);
         int equatorSamples = 12;

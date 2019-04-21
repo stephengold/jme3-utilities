@@ -174,8 +174,9 @@ public class SkeletonVisualizer extends SubtreeControl {
         lineState.setBlendMode(BlendMode.Alpha);
         lineState.setDepthTest(false);
 
-        Texture headShape
-                = MyAsset.loadTexture(assetManager, defaultShapeAssetPath);
+        boolean mipmaps = false;
+        Texture headShape = MyAsset.loadTexture(assetManager,
+                defaultShapeAssetPath, mipmaps);
 
         headMaterial = new Material(assetManager, matDefsAssetPath);
         headMaterial.setBoolean("UseVertexColor", true);

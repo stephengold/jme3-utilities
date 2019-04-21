@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018, Stephen Gold
+ Copyright (c) 2018-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -104,7 +104,9 @@ public class PointVisualizer extends Geometry {
         if (shapeName != null) {
             String shapePath
                     = String.format("Textures/shapes/%s.png", shapeName);
-            Texture texture = MyAsset.loadTexture(assetManager, shapePath);
+            boolean mipmaps = false;
+            Texture texture
+                    = MyAsset.loadTexture(assetManager, shapePath, mipmaps);
             material.setTexture("PointShape", texture);
         }
     }
@@ -172,7 +174,8 @@ public class PointVisualizer extends Geometry {
 
         String shapePath
                 = String.format("Textures/shapes/%s.png", shapeName);
-        Texture texture = MyAsset.loadTexture(assetManager, shapePath);
+        boolean mipmaps = false;
+        Texture texture = MyAsset.loadTexture(assetManager, shapePath, mipmaps);
         setShape(texture);
     }
 

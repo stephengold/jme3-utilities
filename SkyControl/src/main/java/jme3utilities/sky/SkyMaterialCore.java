@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -176,15 +176,17 @@ public class SkyMaterialCore extends Material {
      * path.
      *
      * @param layerIndex (&lt;maxCloudLayers, &ge;0)
-     * @param assetPath asset path to the alpha map (not null)
+     * @param assetPath the asset path to the alpha map (not null, not empty)
      */
     public void addClouds(int layerIndex, String assetPath) {
         validateLayerIndex(layerIndex);
-        Validate.nonNull(assetPath, "path");
+        Validate.nonEmpty(assetPath, "asset path");
 
         boolean firstTime = (cloudsRaster[layerIndex] == null);
 
-        Texture alphaMap = MyAsset.loadTexture(assetManager, assetPath);
+        boolean mipmaps = false;
+        Texture alphaMap
+                = MyAsset.loadTexture(assetManager, assetPath, mipmaps);
         alphaMap.setWrap(Texture.WrapMode.Repeat);
         String parameterName = String.format("Clouds%dAlphaMap", layerIndex);
         setTexture(parameterName, alphaMap);

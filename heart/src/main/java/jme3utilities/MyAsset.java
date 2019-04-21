@@ -516,18 +516,39 @@ final public class MyAsset {
     }
 
     /**
+     * Load a non-flipped texture asset in edge-clamp mode and without mipmaps.
+     *
+     * @param assetManager (not null)
+     * @param assetPath to the texture asset (not null, not empty)
+     * @return the texture that was loaded (not null)
+     * @deprecated use
+     * {@link #loadTexture(com.jme3.asset.AssetManager, java.lang.String, boolean)}
+     * instead
+     */
+    @Deprecated
+    public static Texture loadTexture(AssetManager assetManager,
+            String assetPath) {
+        Validate.nonEmpty(assetPath, "path");
+        Texture result = loadTexture(assetManager, assetPath, false);
+        return result;
+    }
+
+    /**
      * Load a non-flipped texture asset in edge-clamp mode.
      *
      * @param assetManager (not null)
      * @param assetPath to the texture asset (not null, not empty)
-     * @return texture which was loaded (not null)
+     * @param generateMips true&rarr;generate mipmaps, false&rarr;don't generate
+     * them
+     * @return the texture that was loaded (not null)
      */
     public static Texture loadTexture(AssetManager assetManager,
-            String assetPath) {
+            String assetPath, boolean generateMips) {
         Validate.nonEmpty(assetPath, "path");
 
         boolean flipY = false;
         TextureKey key = new TextureKey(assetPath, flipY);
+        key.setGenerateMips(generateMips);
         Texture texture = assetManager.loadTexture(key);
         // edge-clamp mode is the default
 

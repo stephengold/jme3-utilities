@@ -320,8 +320,9 @@ public class PoseDemo extends GuiApplication {
         Mesh platformMesh = new Box(radius, platformThickness, radius);
         Spatial platform = new Geometry(platformName, platformMesh);
 
+        boolean mipmaps = true;
         Texture dirt = MyAsset.loadTexture(assetManager,
-                platformTextureAssetPath);
+                platformTextureAssetPath, mipmaps);
         Material mat = MyAsset.createShadedMaterial(assetManager, dirt);
         platform.setMaterial(mat);
 

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -178,12 +178,14 @@ public class SkyMaterial extends SkyMaterialCore {
      * Add horizon haze to this material using the specified alpha map asset
      * path.
      *
-     * @param assetPath asset path to the alpha map (not null)
+     * @param assetPath asset path to the alpha map (not null, not empty)
      */
     public void addHaze(String assetPath) {
-        Validate.nonNull(assetPath, "path");
+        Validate.nonEmpty(assetPath, "asset path");
 
-        Texture alphaMap = MyAsset.loadTexture(assetManager, assetPath);
+        boolean mipmaps = false;
+        Texture alphaMap
+                = MyAsset.loadTexture(assetManager, assetPath, mipmaps);
         setTexture("HazeAlphaMap", alphaMap);
         setHazeColor(ColorRGBA.White);
     }
@@ -193,13 +195,15 @@ public class SkyMaterial extends SkyMaterialCore {
      * asset.
      *
      * @param objectIndex (&lt;maxObjects, &ge;0)
-     * @param assetPath asset path to the color map (not null)
+     * @param assetPath the asset path to the color map (not null, not empty)
      */
     public void addObject(int objectIndex, String assetPath) {
         validateObjectIndex(objectIndex);
-        Validate.nonNull(assetPath, "path");
+        Validate.nonEmpty(assetPath, "asset path");
 
-        Texture colorMap = MyAsset.loadTexture(assetManager, assetPath);
+        boolean mipmaps = false;
+        Texture colorMap
+                = MyAsset.loadTexture(assetManager, assetPath, mipmaps);
         addObject(objectIndex, colorMap);
     }
 
@@ -213,12 +217,14 @@ public class SkyMaterial extends SkyMaterialCore {
     /**
      * Add stars to this material using the specified color map asset.
      *
-     * @param assetPath (not null)
+     * @param assetPath the asset path to the color map (not null, not empty)
      */
     public void addStars(String assetPath) {
-        Validate.nonNull(assetPath, "path");
+        Validate.nonEmpty(assetPath, "asset path");
 
-        Texture colorMap = MyAsset.loadTexture(assetManager, assetPath);
+        boolean mipmaps = false;
+        Texture colorMap
+                = MyAsset.loadTexture(assetManager, assetPath, mipmaps);
         setTexture("StarsColorMap", colorMap);
     }
 
