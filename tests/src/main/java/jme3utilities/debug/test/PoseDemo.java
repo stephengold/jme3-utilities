@@ -255,7 +255,7 @@ public class PoseDemo extends GuiApplication {
                     bindScreen.activate(im);
                     return;
                 case "print scene":
-                    dumper.dump(rootNode);
+                    dumper.dump(renderManager);
                     return;
                 case "toggle hud":
                     cameraState.toggleHud();
