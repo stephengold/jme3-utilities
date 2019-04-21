@@ -26,8 +26,12 @@
  */
 package jme3utilities;
 
+import com.jme3.renderer.Caps;
+import com.jme3.renderer.opengl.GL;
+import com.jme3.renderer.opengl.GLExt;
 import com.jme3.renderer.opengl.GLRenderer;
 import java.lang.reflect.Field;
+import java.util.EnumSet;
 import java.util.logging.Logger;
 
 /**
@@ -80,6 +84,50 @@ final public class MyRender {
         }
 
         assert result >= 1 : result;
+        return result;
+    }
+
+    /**
+     * Access the baseline OpenGL interface of the specified renderer.
+     *
+     * @param renderer which renderer (not null, unaffected)
+     * @return the pre-existing interface (not null)
+     */
+    public static GL getGL(GLRenderer renderer) {
+        Field field;
+        try {
+            field = GLRenderer.class.getDeclaredField("gl");
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException(exception);
+        }
+        field.setAccessible(true);
+
+        GL result;
+        try {
+            result = (GL) field.get(renderer);
+        } catch (IllegalAccessException exception) {
+            throw new RuntimeException(exception);
+        }
+
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * Test whether alpha-to-coverage is enabled for the specified renderer. A
+     * partial workaround for JME issue #1074.
+     *
+     * @param renderer which renderer (not null, unaffected)
+     * @return true if enabled, otherwise false
+     */
+    public static boolean isAlphaToCoverage(GLRenderer renderer) {
+        boolean result = false;
+        EnumSet caps = renderer.getCaps();
+        if (caps.contains(Caps.Multisample)) {
+            GL gl = getGL(renderer);
+            result = gl.glIsEnabled(GLExt.GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
+        }
+
         return result;
     }
 }
