@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.26.0 released on TBD
+## Version 2.26.0 released on 20 April 2019
 
  + In dumps, sort material parameters by name.
  + Added a `MyRender` class.
