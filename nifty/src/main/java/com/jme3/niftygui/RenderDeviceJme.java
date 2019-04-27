@@ -209,7 +209,7 @@ public class RenderDeviceJme implements RenderDevice {
         } else if (blendMode == BlendMode.BLEND) {
             return RenderState.BlendMode.Alpha;
         } else if (blendMode == BlendMode.MULIPLY) {
-            return RenderState.BlendMode.Modulate;
+            return RenderState.BlendMode.Alpha;
         } else {
             throw new UnsupportedOperationException();
         }

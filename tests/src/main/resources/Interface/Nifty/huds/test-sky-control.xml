@@ -40,7 +40,6 @@
                    childLayout="vertical"
                    width="208">
                 <control name="scrollPanel"
-                         style="bats-scroll-panel"
                          horizontal="false">
                     <panel childLayout="vertical"
                            padding="10"

@@ -723,7 +723,6 @@ public class PopScreenController extends BasicScreenController {
                                 parameter("horizontal", "false");
                                 parameter("pageSizeY", "200");
                                 parameter("stepSizeY", "50");
-                                style("bats-scroll-panel");
 
                                 panel(new PanelBuilder() {
                                     {
