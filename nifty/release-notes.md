@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.4 released on TBD
+## Version 0.9.4 released on 28 April 2019
 
 Implemented an experimental fix for JME issue #99.
 
