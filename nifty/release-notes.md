@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.4 released on TBD
+
+Implemented an experimental fix for JME issue #99.
+
 ## Version 0.9.3 released on 19 March 2019
 
  + In `GuiScreenController`, add handlers for checkbox and slider events.
@@ -15,7 +19,7 @@ Base on version 2.21 of the jme3-utilities-heart library.
 
  + Revert to version 1.4.2 of Nifty to resolve some issues.
  + Add a `TestMultipleWindows` example app.
- + Correct the width of the "Bind" button in `BindScreen`.
+ + Adjust the width of the "Bind" button in `BindScreen`.
 
 ## Version 0.9.0 released on 13 January 2019
 
