@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.27.0 released on TBD
+## Version 2.27.0 released on 29 April 2019
 
  + Added a `mipmaps` argument to `MyAsset.loadTexture()`.
  + Provided more detailed descriptions of vertex buffers in `Describer`.
