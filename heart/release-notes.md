@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.27.0 released on TBD
+
+ + Added a `mipmaps` argument to `MyAsset.loadTexture()`.
+ + Provided more detailed descriptions of vertex buffers in `Describer`.
+ + Tweaked the `SkeletonVisualizer` class to generate less garbage.
+
 ## Version 2.26.0 released on 20 April 2019
 
  + In dumps, sort material parameters by name.
