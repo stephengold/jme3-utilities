@@ -233,6 +233,20 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
+     * Count the bones in the skeleton that's being visualized.
+     *
+     * @return the count (&ge;0)
+     */
+    public int countBones() {
+        int result = 0;
+        if (skeleton != null) {
+            result = skeleton.getBoneCount();
+        }
+
+        return result;
+    }
+
+    /**
      * Read the size for bone heads (in pixels).
      *
      * @return size (in pixels, &ge;1)
@@ -497,22 +511,16 @@ public class SkeletonVisualizer extends SubtreeControl {
         }
         MySpatial.setWorldTransform(subtree, worldTransform);
 
-        int numBones = skeleton.getBoneCount();
-        ColorRGBA[] colors = new ColorRGBA[numBones]; // TODO re-use the array
-        for (int boneIndex = 0; boneIndex < numBones; ++boneIndex) {
-            colors[boneIndex] = copyHeadColor(boneIndex, null);
-        }
-
         Geometry headsGeometry
                 = (Geometry) subtree.getChild(headsChildPosition);
         SkeletonMesh headsMesh = (SkeletonMesh) headsGeometry.getMesh();
-        headsMesh.updateColors(colors);
+        headsMesh.updateColors(this);
         headsMesh.updatePositions(skeleton);
 
         Geometry linksGeometry
                 = (Geometry) subtree.getChild(linksChildPosition);
         SkeletonMesh linksMesh = (SkeletonMesh) linksGeometry.getMesh();
-        linksMesh.updateColors(colors);
+        linksMesh.updateColors(this);
         linksMesh.updatePositions(skeleton);
 
         if (effectiveLineWidth >= 1f) {

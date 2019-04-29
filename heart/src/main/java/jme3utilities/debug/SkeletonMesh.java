@@ -124,13 +124,14 @@ class SkeletonMesh extends Mesh {
      *
      * @param colors color for each bone (not null, unaffected)
      */
-    void updateColors(ColorRGBA[] colors) {
+    void updateColors(SkeletonVisualizer sv) {
         FloatBuffer fColors = getFloatBuffer(Type.Color);
         fColors.clear(); // prepare for writing
 
-        int boneCount = colors.length;
+        int boneCount = sv.countBones();
+        ColorRGBA color = new ColorRGBA();
         for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
-            ColorRGBA color = colors[boneIndex];
+            sv.copyHeadColor(boneIndex, color);
             fColors.put(color.r);
             fColors.put(color.g);
             fColors.put(color.b);
