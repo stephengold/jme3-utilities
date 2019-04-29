@@ -211,7 +211,7 @@ public class Describer implements Cloneable {
      * @return a description (not null, not empty)
      */
     public String describe(Mesh mesh) {
-        StringBuilder result = new StringBuilder(20);
+        StringBuilder result = new StringBuilder(80);
         boolean addSeparators = false;
 
         String name = mesh.getClass().getSimpleName();
@@ -230,8 +230,8 @@ public class Describer implements Cloneable {
                 addSeparators = true;
             }
             VertexBuffer buffer = bufferEntry.getValue();
-            VertexBuffer.Type type = buffer.getBufferType();
-            result.append(type);
+            String desc = describe(buffer);
+            result.append(desc);
         }
 
         return result.toString();
@@ -245,6 +245,7 @@ public class Describer implements Cloneable {
      */
     public String describe(Skeleton skeleton) {
         StringBuilder builder = new StringBuilder(30);
+
         builder.append("Skeleton");
         Bone[] rootBones = skeleton.getRoots();
         int numRoots = rootBones.length;
@@ -291,6 +292,24 @@ public class Describer implements Cloneable {
 
         assert result != null;
         assert !result.isEmpty();
+        return result;
+    }
+
+    /**
+     * Generate a compact texture description of a VertexBuffer.
+     *
+     * @param buffer the buffer to describe (not null, unaffected)
+     * @return a textual description (not null, not empty)
+     */
+    public String describe(VertexBuffer buffer) {
+        VertexBuffer.Type type = buffer.getBufferType();
+        VertexBuffer.Format format = buffer.getFormat();
+        String formatString = format.toString();
+        formatString = formatString.toLowerCase();
+        formatString = formatString.replace("float", "f");
+        formatString = formatString.replace("unsigned", "u");
+        String result = type + "%" + formatString;
+
         return result;
     }
 
