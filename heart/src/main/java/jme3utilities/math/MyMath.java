@@ -279,14 +279,14 @@ public class MyMath {
     /**
      * Compute sqrt(x^2 + y^2 + z^2).
      *
-     * @param x 1st input value
-     * @param y 2nd input value
-     * @param z 3nd input value
+     * @param x the first input value
+     * @param y the 2nd input value
+     * @param z the 3nd input value
      * @return the positive square root of the sum of squares (&ge;0)
      * @see java.lang.Math#hypot(double, double)
      */
     public static double hypotenuse(double x, double y, double z) {
-        Validate.finite(x, "1st input value");
+        Validate.finite(x, "first input value");
         Validate.finite(y, "2nd input value");
         Validate.finite(z, "3rd input value");
 
@@ -301,7 +301,7 @@ public class MyMath {
      * Compute the hypotenuse of a right triangle using the Pythagorean Theorem.
      * This method accepts negative arguments.
      *
-     * @param legA length of the 1st leg (may be negative)
+     * @param legA length of the first leg (may be negative)
      * @param legB length of the 2nd leg (may be negative)
      * @return length of the hypotenuse (&ge;0)
      * @see #sumOfSquares(float,float)
@@ -318,9 +318,9 @@ public class MyMath {
     /**
      * Test whether b is between a and c.
      *
-     * @param a 1st input value
-     * @param b 2nd input value
-     * @param c 3rd input value
+     * @param a the first input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
      * @return true if b is between a and c (inclusive), otherwise false
      */
     public static boolean isBetween(int a, int b, int c) {
@@ -337,9 +337,9 @@ public class MyMath {
     /**
      * Test whether b is between a and c.
      *
-     * @param a 1st input value
-     * @param b 2nd input value
-     * @param c 3rd input value
+     * @param a the first input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
      * @return true if b is between a and c (inclusive), otherwise false
      */
     public static boolean isBetween(float a, float b, float c) {
@@ -357,9 +357,9 @@ public class MyMath {
     /**
      * Test whether b is between a and c.
      *
-     * @param a 1st input value
-     * @param b 2nd input value
-     * @param c 3rd input value
+     * @param a the first input value
+     * @param b the 2nd input value
+     * @param c the 3rd input value
      * @return true if b is between a and c (inclusive), otherwise false
      */
     public static boolean isBetween(double a, double b, double c) {
@@ -476,7 +476,7 @@ public class MyMath {
     /**
      * Find the maximum of 3 single-precision values.
      *
-     * @param a the 1st input value
+     * @param a the first input value
      * @param b the 2nd input value
      * @param c the 3rd input value
      * @return the most positive of the 3 values
@@ -495,7 +495,7 @@ public class MyMath {
     /**
      * Find the maximum of 3 double-precision values.
      *
-     * @param a the 1st input value
+     * @param a the first input value
      * @param b the 2nd input value
      * @param c the 3rd input value
      * @return the most positive of the 3 values
@@ -514,7 +514,7 @@ public class MyMath {
     /**
      * Find the median of 3 single-precision values.
      *
-     * @param a the 1st input value
+     * @param a the first input value
      * @param b the 2nd input value
      * @param c the 3rd input value
      * @return the median of the 3 values
@@ -540,7 +540,7 @@ public class MyMath {
     /**
      * Find the median of 3 double-precision values.
      *
-     * @param a the 1st input value
+     * @param a the first input value
      * @param b the 2nd input value
      * @param c the 3rd input value
      * @return the median of the 3 values
@@ -566,7 +566,7 @@ public class MyMath {
     /**
      * Find the minimum of 3 single-precision values.
      *
-     * @param a the 1st input value
+     * @param a the first input value
      * @param b the 2nd input value
      * @param c the 3rd input value
      * @return the most negative of the 3 values
@@ -585,7 +585,7 @@ public class MyMath {
     /**
      * Find the minimum of 3 double-precision values.
      *
-     * @param a the 1st input value
+     * @param a the first input value
      * @param b the 2nd input value
      * @param c the 3rd input value
      * @return the most negative of the 3 values
@@ -749,11 +749,11 @@ public class MyMath {
     }
 
     /**
-     * Compute the sum-of-squares of two single-precision values. Double
-     * precision arithmetic is used to reduce the risk of overflow.
+     * Compute the sum-of-squares of 2 single-precision values. Double precision
+     * arithmetic is used to reduce the risk of overflow.
      *
-     * @param firstValue 1st input value
-     * @param secondValue 2nd input value
+     * @param firstValue the first input value
+     * @param secondValue the 2nd input value
      * @return sum of squares (&ge;0)
      */
     public static double sumOfSquares(float firstValue, float secondValue) {

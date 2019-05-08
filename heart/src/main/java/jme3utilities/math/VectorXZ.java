@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -257,10 +257,10 @@ public class VectorXZ
     }
 
     /**
-     * Convert this vector to one of the four cardinal directions. If this
+     * Convert this vector to one of the 4 cardinal directions. If this
      * vector is zero, return a zero vector.
      *
-     * @return a unit vector (four possible values) or a zero vector
+     * @return a unit vector (4 possible values) or a zero vector
      */
     @Override
     public ReadXZ cardinalize() {
@@ -546,7 +546,7 @@ public class VectorXZ
     }
 
     /**
-     * Mirror (or reflect) this vector to the 1st quadrant.
+     * Mirror (or reflect) this vector to the first quadrant.
      *
      * @return a mirrored vector with the same length, both components &ge;0
      */
@@ -609,7 +609,7 @@ public class VectorXZ
     }
 
     /**
-     * Test whether this vector is in the 1st quadrant.
+     * Test whether this vector is in the first quadrant.
      *
      * @return true if both components are &ge;0, false otherwise
      * @see MyVector3f#isAllNonNegative(com.jme3.math.Vector3f)
@@ -829,7 +829,7 @@ public class VectorXZ
      * Subtract from (inverse translate) this vector.
      *
      * @param decrement vector to be subtracted from this vector (not null)
-     * @return a vector equal to the difference of the two vectors
+     * @return a vector equal to the difference of the 2 vectors
      * @see com.jme3.math.Vector3f#subtract(com.jme3.math.Vector3f)
      */
     @Override
@@ -868,9 +868,9 @@ public class VectorXZ
     }
 
     /**
-     * Create an equivalent 3D vector.
+     * Create an equivalent 3-D vector.
      *
-     * @return a new 3D vector with y=0
+     * @return a new 3-D vector with y=0
      */
     @Override
     public Vector3f toVector3f() {
@@ -879,10 +879,10 @@ public class VectorXZ
     }
 
     /**
-     * Create an equivalent 3D vector with a specified y value.
+     * Create an equivalent 3-D vector with a specified y value.
      *
      * @param y y-coordinate
-     * @return a new 3D vector
+     * @return a new 3-D vector
      */
     @Override
     public Vector3f toVector3f(float y) {

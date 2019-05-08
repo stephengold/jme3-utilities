@@ -134,8 +134,8 @@ public class MyLight {
     }
 
     /**
-     * Find the 1st instance of a light with the specified name in the specified
-     * subtree. Note: recursive!
+     * Find the first instance of a light with the specified name in the
+     * specified subtree. Note: recursive!
      *
      * @param lightName light name to find (not null, unaffected)
      * @param subtree subtree to traverse (may be null, unaffected)

@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A 3D, static, lineloop-mode mesh which renders a circle or polygon.
+ * A 3-D, static, lineloop-mode mesh that renders a circle or polygon.
  *
  * @author Stephen Gold sgold@sonic.net
  */

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,8 @@ import com.jme3.scene.VertexBuffer;
 import java.util.logging.Logger;
 
 /**
- * A 2D, static, lineloop-mode mesh which renders the outline of a rectangle in
- * the XY plane.
+ * A 2-D, static, lineloop-mode mesh that renders the outline of a rectangle in
+ * the X-Y plane.
  * <p>
  * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0).
  *
@@ -51,8 +51,8 @@ public class RectangleOutlineMesh extends Mesh {
     // constructors
 
     /**
-     * Instantiate an axis-aligned unit square with its 1st vertex at the local
-     * origin.
+     * Instantiate an axis-aligned unit square with its first vertex at the
+     * local origin.
      */
     public RectangleOutlineMesh() {
         this(0f, 1f, 0f, 1f);
@@ -61,9 +61,9 @@ public class RectangleOutlineMesh extends Mesh {
     /**
      * Instantiate an axis-aligned rectangle.
      *
-     * @param x1 local X coordinate of the 1st and 2nd vertices
+     * @param x1 local X coordinate of the first and 2nd vertices
      * @param x2 local X coordinate of the 3rd and 4th vertices
-     * @param y1 local Y coordinate of the 1st and 4th vertices
+     * @param y1 local Y coordinate of the first and 4th vertices
      * @param y2 local Y coordinate of the 2nd and 3rd vertices
      */
     public RectangleOutlineMesh(float x1, float x2, float y1, float y2) {

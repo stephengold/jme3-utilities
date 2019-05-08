@@ -189,22 +189,22 @@ public class MyVector3f {
     }
 
     /**
-     * Test whether three locations are collinear.
+     * Test whether 3 locations are collinear.
      *
-     * @param point1 coordinates of 1st location (not null, unaffected)
-     * @param point2 coordinates of 2nd location (not null, unaffected)
-     * @param point3 coordinates of 3rd location (not null, unaffected)
+     * @param point1 coordinates of the first location (not null, unaffected)
+     * @param point2 coordinates of the 2nd location (not null, unaffected)
+     * @param point3 coordinates of the 3rd location (not null, unaffected)
      * @param tolerance2 for coincidence (in squared units, &ge;0)
      * @return true if collinear, otherwise false
      */
     public static boolean areCollinear(Vector3f point1, Vector3f point2,
             Vector3f point3, float tolerance2) {
-        Validate.nonNull(point1, "1st location");
+        Validate.nonNull(point1, "first location");
         Validate.nonNull(point2, "2nd location");
         Validate.nonNegative(tolerance2, "tolerance");
         /*
          * Shortcut:
-         * If point1 and point3 coincide, then the three points are collinear.
+         * If point1 and point3 coincide, then the 3 points are collinear.
          */
         Vector3f offset3 = point3.subtract(point1);
         double normSquared3 = lengthSquared(offset3);
@@ -223,7 +223,7 @@ public class MyVector3f {
         Vector3f projection = offset3.mult((float) scaleFactor);
         /*
          * If the projection coincides with offset2,
-         * then the three points are collinear.
+         * then the 3 points are collinear.
          */
         boolean result = doCoincide(projection, offset2, tolerance2);
 
@@ -302,11 +302,11 @@ public class MyVector3f {
     }
 
     /**
-     * Compare two vectors lexicographically, with the X-component having
+     * Compare 2 vectors lexicographically, with the X-component having
      * priority, then the Y-component. For this purpose, 0 and -0 are distinct.
      *
-     * @param v1 1st input vector (not null, unaffected)
-     * @param v2 2nd input vector (not null, unaffected)
+     * @param v1 the first input vector (not null, unaffected)
+     * @param v2 the 2nd input vector (not null, unaffected)
      * @return 0 if v1 is equal to v2; negative if v1 comes before v2; positive
      * if v1 comes after v2
      */
@@ -484,12 +484,12 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the squared distance between two vectors. Unlike
+     * Calculate the squared distance between 2 vectors. Unlike
      * {@link com.jme3.math.Vector3f#distanceSquared(Vector3f)}, this method
      * returns a double-precision value for precise comparison of distances.
      *
-     * @param vector1 1st input vector (not null, unaffected)
-     * @param vector2 2nd input vector (not null, unaffected)
+     * @param vector1 the first input vector (not null, unaffected)
+     * @param vector2 the 2nd input vector (not null, unaffected)
      * @return the squared distance (&ge;0)
      */
     public static double distanceSquared(Vector3f vector1, Vector3f vector2) {
@@ -552,9 +552,9 @@ public class MyVector3f {
     }
 
     /**
-     * Test whether two locations coincide.
+     * Test whether 2 locations coincide.
      *
-     * @param point1 coordinates of the 1st location (not null, unaffected)
+     * @param point1 coordinates of the first location (not null, unaffected)
      * @param point2 coordinates of the 2nd location (not null, unaffected)
      * @param tolerance2 for coincidence (in squared units, &ge;0)
      * @return true if they coincide, otherwise false
@@ -574,12 +574,12 @@ public class MyVector3f {
     }
 
     /**
-     * Calculate the dot (scalar) product of two vectors. Unlike
+     * Calculate the dot (scalar) product of 2 vectors. Unlike
      * {@link com.jme3.math.Vector3f#dot(Vector3f)}, this method returns a
      * double-precision value for precise calculation of angles.
      *
-     * @param vector1 1st input vector (not null, unaffected)
-     * @param vector2 2nd input vector (not null, unaffected)
+     * @param vector1 the first input vector (not null, unaffected)
+     * @param vector2 the 2nd input vector (not null, unaffected)
      * @return the dot product
      */
     public static double dot(Vector3f vector1, Vector3f vector2) {
@@ -595,14 +595,14 @@ public class MyVector3f {
     }
 
     /**
-     * Test whether two vectors are distinct, without distinguishing 0 from -0.
+     * Test whether 2 vectors are distinct, without distinguishing 0 from -0.
      *
-     * @param v1 1st input vector (not null, unaffected)
-     * @param v2 2nd input vector (not null, unaffected)
+     * @param v1 the first input vector (not null, unaffected)
+     * @param v2 the 2nd input vector (not null, unaffected)
      * @return true if equal, otherwise false
      */
     public static boolean eq(Vector3f v1, Vector3f v2) {
-        Validate.nonNull(v1, "1st input vector");
+        Validate.nonNull(v1, "first input vector");
         Validate.nonNull(v2, "2nd input vector");
 
         boolean result = v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
@@ -629,8 +629,8 @@ public class MyVector3f {
     /**
      * Generate an orthonormal basis that includes the specified vector.
      *
-     * @param in1 input direction for 1st basis vector (not null, not zero,
-     * modified)
+     * @param in1 input direction for the first basis vector (not null, not
+     * zero, modified)
      * @param store2 storage for the 2nd basis vector (not null, modified)
      * @param store3 storage for the 3nd basis vector (not null, modified)
      */
@@ -683,25 +683,25 @@ public class MyVector3f {
     /**
      * Calculate where (if at all) 2 line segments intersect.
      *
-     * @param start1 coordinates of start of 1st segment (not null)
-     * @param end1 coordinates of end of 1st segment (not null)
-     * @param start2 coordinates of start of 2nd segment (not null)
-     * @param end2 coordinates of end of 2nd segment (not null)
+     * @param start1 coordinates of start of the first segment (not null)
+     * @param end1 coordinates of end of the first segment (not null)
+     * @param start2 coordinates of start of the 2nd segment (not null)
+     * @param end2 coordinates of end of the 2nd segment (not null)
      * @param tolerance2 for coincidence (in squared units, &ge;0)
      * @return a new coordinate vector, or null if no intersection found
      */
     public static Vector3f intersectSegments(Vector3f start1, Vector3f end1,
             Vector3f start2, Vector3f end2, float tolerance2) {
-        Validate.nonNull(start1, "start of 1st segment");
+        Validate.nonNull(start1, "start of first segment");
         Validate.nonNull(start2, "start of 2nd segment");
         Validate.nonNull(end2, "end of 2nd segment");
         Validate.nonNegative(tolerance2, "tolerance2");
         /*
-         * Calculate direction of the 1st segment.
+         * Calculate direction of the first segment.
          */
         Vector3f offset1 = end1.subtract(start1);
         /*
-         * If the 1st segment has zero length, test its start for coincidence
+         * If the first segment has zero length, test its start for coincidence
          * with the 2nd segment.
          */
         double ls1 = lengthSquared(offset1);
@@ -720,7 +720,7 @@ public class MyVector3f {
         Vector3f offset2 = end2.subtract(start2);
         /*
          * If the 2nd segment has zero length, test its start for coincidence
-         * with the 1st segment.
+         * with the first segment.
          */
         double ls2 = lengthSquared(offset1);
         if (ls2 == 0.0) {
@@ -1040,8 +1040,8 @@ public class MyVector3f {
     /**
      * Calculate the midpoint between 2 locations.
      *
-     * @param vector1 coordinates of 1st location (not null, unaffected)
-     * @param vector2 coordinates of 2nd location (not null, unaffected)
+     * @param vector1 coordinates of the first location (not null, unaffected)
+     * @param vector2 coordinates of the 2nd location (not null, unaffected)
      * @return a new coordinate vector
      * @deprecated use
      * {@link #midpoint(com.jme3.math.Vector3f, com.jme3.math.Vector3f, com.jme3.math.Vector3f)}
@@ -1055,10 +1055,10 @@ public class MyVector3f {
     /**
      * Calculate the midpoint between 2 locations.
      *
-     * @param vector1 coordinates of 1st location (not null, unaffected unless
-     * it's storeResult)
-     * @param vector2 coordinates of 2nd location (not null, unaffected unless
-     * it's storeResult)
+     * @param vector1 coordinates of the first location (not null, unaffected
+     * unless it's storeResult)
+     * @param vector2 coordinates of the 2nd location (not null, unaffected
+     * unless it's storeResult)
      * @param storeResult storage for the result (modified if not null, may be
      * vector1 or vector2)
      * @return a coordinate vector (either storeResult or a new instance)
@@ -1110,14 +1110,14 @@ public class MyVector3f {
     }
 
     /**
-     * Test whether two vectors are distinct, without distinguishing 0 from -0.
+     * Test whether 2 vectors are distinct, without distinguishing 0 from -0.
      *
-     * @param v1 1st input vector (not null, unaffected)
-     * @param v2 2nd input vector (not null, unaffected)
+     * @param v1 the first input vector (not null, unaffected)
+     * @param v2 the 2nd input vector (not null, unaffected)
      * @return true if distinct, otherwise false
      */
     public static boolean ne(Vector3f v1, Vector3f v2) {
-        Validate.nonNull(v1, "1st input vector");
+        Validate.nonNull(v1, "first input vector");
         Validate.nonNull(v2, "2nd input vector");
 
         boolean result = v1.x != v2.x || v1.y != v2.y || v1.z != v2.z;
@@ -1172,8 +1172,8 @@ public class MyVector3f {
      * jME 3.0.10) it contained a logic bug which gave the wrong magnitude when
      * vector2 had length != 1.
      *
-     * @param vector1 1st input vector (not null, unaffected)
-     * @param vector2 2nd input vector (length&gt;0, unaffected)
+     * @param vector1 the first input vector (not null, unaffected)
+     * @param vector2 the 2nd input vector (length&gt;0, unaffected)
      * @return a new vector with the same direction as vector2
      * @deprecated use
      * {@link #projection(com.jme3.math.Vector3f, com.jme3.math.Vector3f, com.jme3.math.Vector3f)}
@@ -1190,9 +1190,9 @@ public class MyVector3f {
      * jME 3.0.10) it contained a logic bug which gave the wrong magnitude when
      * vector2 had length != 1.
      *
-     * @param vector1 1st input vector (not null, unaffected unless it's
+     * @param vector1 the first input vector (not null, unaffected unless it's
      * storeResult)
-     * @param vector2 2nd input vector (length&gt;0, unaffected unless it's
+     * @param vector2 the 2nd input vector (length&gt;0, unaffected unless it's
      * storeResult)
      * @param storeResult storage for the result (modified if not null, may be
      * vector1 or vector2)
@@ -1215,8 +1215,8 @@ public class MyVector3f {
     /**
      * Project vector1 onto vector2.
      *
-     * @param vector1 1st input vector (not null, unaffected)
-     * @param vector2 2nd input vector (length&gt;0, unaffected)
+     * @param vector1 the first input vector (not null, unaffected)
+     * @param vector2 the 2nd input vector (length&gt;0, unaffected)
      * @return the scalar projection of vector1 onto vector2
      */
     public static float scalarProjection(Vector3f vector1, Vector3f vector2) {
@@ -1301,7 +1301,7 @@ public class MyVector3f {
         for (Vector3f middle : list) {
             assert middle != null;
             /*
-             * Calculate the offset of the middle location from the 1st.
+             * Calculate the offset of the middle location from the first.
              */
             Vector3f fm = middle.subtract(first);
             /*
@@ -1330,10 +1330,13 @@ public class MyVector3f {
      * intersect.
      *
      * @param ext coordinates of an outer endpoint (not null, unaffected)
-     * @param start1 coordinates of start of 1st segment (not null, unaffected)
-     * @param end1 coordinates of end of 1st segment (not null, unaffected)
-     * @param start2 coordinates of start of 2nd segment (not null, unaffected)
-     * @param end2 coordinates of end of 2nd segment (not null, unaffected)
+     * @param start1 coordinates of start of the first segment (not null,
+     * unaffected)
+     * @param end1 coordinates of end of the first segment (not null,
+     * unaffected)
+     * @param start2 coordinates of start of the 2nd segment (not null,
+     * unaffected)
+     * @param end2 coordinates of end of the 2nd segment (not null, unaffected)
      * @return a new coordinate vector, or null if no overlap
      */
     private static Vector3f intersectCollinearSegments(Vector3f ext,
@@ -1387,10 +1390,10 @@ public class MyVector3f {
      * Helper method to determine where (if at all) 2 parallel segments
      * intersect.
      *
-     * @param start1 coordinates of start of 1st segment (not null)
-     * @param end1 coordinates of end of 1st segment (not null)
-     * @param start2 coordinates of start of 2nd segment (not null)
-     * @param end2 coordinates of end of 2nd segment (not null)
+     * @param start1 coordinates of start of the first segment (not null)
+     * @param end1 coordinates of end of the first segment (not null)
+     * @param start2 coordinates of start of the 2nd segment (not null)
+     * @param end2 coordinates of end of the 2nd segment (not null)
      * @param tolerance2 for coincidence (in squared units, &ge;0)
      * @return a new coordinate vector, or null if no overlap found
      */

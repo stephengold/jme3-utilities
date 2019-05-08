@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A 2-D, static, fan-mode mesh which renders an axis-aligned rectangle in the
+ * A 2-D, static, fan-mode mesh that renders an axis-aligned rectangle in the
  * X-Y plane.
  * <p>
  * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0) with
@@ -59,8 +59,8 @@ public class RectangleMesh extends Mesh {
     // constructors
 
     /**
-     * Instantiate an axis-aligned unit square with right-handed normals and the
-     * 1st vertex at the local origin.
+     * Instantiate an axis-aligned unit square with right-handed normals and its
+     * first vertex at the local origin.
      */
     public RectangleMesh() {
         this(0f, 1f, 0f, 1f, 1f);
@@ -69,8 +69,8 @@ public class RectangleMesh extends Mesh {
     /**
      * Instantiate an axis-aligned rectangle with default texture coordinates.
      *
-     * @param rect location of 1st vertex and dimensions of the rectangle (not
-     * null)
+     * @param rect the location of the first vertex and the dimensions of the
+     * rectangle (not null)
      * @param zNorm the Z component of the normal vector (must be +1 or -1)
      */
     public RectangleMesh(Rectangle rect, float zNorm) {
@@ -83,10 +83,10 @@ public class RectangleMesh extends Mesh {
     /**
      * Instantiate an axis-aligned rectangle with default texture coordinates.
      *
-     * @param x1 local X coordinate of the 1st and 2nd vertices
-     * @param x2 local X coordinate of the 3rd and 4th vertices
-     * @param y1 local Y coordinate of the 1st and 4th vertices
-     * @param y2 local Y coordinate of the 2nd and 3rd vertices
+     * @param x1 the local X coordinate of the first and 2nd vertices
+     * @param x2 the local X coordinate of the 3rd and 4th vertices
+     * @param y1 the local Y coordinate of the first and 4th vertices
+     * @param y2 the local Y coordinate of the 2nd and 3rd vertices
      * @param zNorm the Z component of the normal vector (must be +1 or -1)
      */
     public RectangleMesh(float x1, float x2, float y1, float y2, float zNorm) {
@@ -96,14 +96,14 @@ public class RectangleMesh extends Mesh {
     /**
      * Instantiate an axis-aligned rectangle with the specified parameters.
      *
-     * @param s1 1st texture coordinate of the 1st and 2nd vertices
-     * @param s2 1st texture coordinate of the 3rd and 4th vertices
-     * @param t1 2nd texture coordinate of the 1st and 4th vertices
-     * @param t2 2nd texture coordinate of the 2nd and 3rd vertices
-     * @param x1 local X coordinate of the 1st and 2nd vertices
-     * @param x2 local X coordinate of the 3rd and 4th vertices
-     * @param y1 local Y coordinate of the 1st and 4th vertices
-     * @param y2 local Y coordinate of the 2nd and 3rd vertices
+     * @param s1 the first (U) texture coordinate of the first and 2nd vertices
+     * @param s2 the first (U) texture coordinate of the 3rd and 4th vertices
+     * @param t1 the 2nd (V) texture coordinate of the first and 4th vertices
+     * @param t2 the 2nd (V) texture coordinate of the 2nd and 3rd vertices
+     * @param x1 the local X coordinate of the first and 2nd vertices
+     * @param x2 the local X coordinate of the 3rd and 4th vertices
+     * @param y1 the local Y coordinate of the first and 4th vertices
+     * @param y2 the local Y coordinate of the 2nd and 3rd vertices
      * @param zNorm the Z component of the normal vector (must be +1 or -1)
      */
     public RectangleMesh(float s1, float s2, float t1, float t2,

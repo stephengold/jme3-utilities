@@ -87,7 +87,7 @@ public class MySpatial {
     // new methods exposed
 
     /**
-     * Re-parent a spatial, keeping its world scale unchanged.
+     * Re-parent the specified spatial, keeping its world scale unchanged.
      *
      * NOTE: This method may yield incorrect results in the presence of zero
      * scaling.
@@ -239,7 +239,7 @@ public class MySpatial {
     }
 
     /**
-     * Count all uses of the specified material in the specified subtree of a
+     * Count all uses of the specified Material in the specified subtree of a
      * scene graph. Note: recursive!
      *
      * @param subtree (may be null, unaffected)
@@ -294,7 +294,7 @@ public class MySpatial {
     }
 
     /**
-     * Generate a single-character description of a spatial.
+     * Generate a single-character description of a Spatial.
      *
      * @param spatial the spatial to describe (unaffected, may be null)
      * @return a mnemonic character
@@ -369,7 +369,8 @@ public class MySpatial {
     }
 
     /**
-     * Find a node's 1st child that is assignable from the specified class.
+     * Find the first child of the specified Node that's assignable from the
+     * specified class.
      *
      * @param <T> subtype of {@link com.jme3.scene.Spatial}
      * @param node node to search (not null)
@@ -389,7 +390,7 @@ public class MySpatial {
     }
 
     /**
-     * Find the 1st child of the specified node with the specified name. The
+     * Find the first child of the specified node with the specified name. The
      * search is case-sensitive and looks only at the node's immediate children,
      * not all its descendents.
      *
@@ -474,11 +475,11 @@ public class MySpatial {
     }
 
     /**
-     * Find a spatial's 1st local light that is assignable from the specified
-     * class.
+     * Find the first local light of the specified Spatial that is assignable
+     * from the specified class.
      *
      * @param <T> subtype of {@link com.jme3.light.Light}
-     * @param spatial the spatial to search (not null)
+     * @param spatial the Spatial to search (not null)
      * @param lightClass type of Light to search for (not null)
      * @return a pre-existing instance, or null if none found
      */
@@ -497,9 +498,10 @@ public class MySpatial {
     }
 
     /**
-     * Find the 1st local light with the specified name.
+     * Find the first local light of the specified Spatial with the specified
+     * name.
      *
-     * @param spatial spatial to search (not null, unaffected)
+     * @param spatial the Spatial to search (not null, unaffected)
      * @param lightName name to search for (not null)
      * @return a pre-existing instance, or null if none found
      */

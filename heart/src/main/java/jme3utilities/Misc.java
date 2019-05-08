@@ -196,7 +196,7 @@ public class Misc {
     }
 
     /**
-     * Access the 1st member of a collection.
+     * Access the first member of a collection.
      *
      * @param <T> the type of the member
      * @param collection the collection to access (not null)
@@ -379,7 +379,7 @@ public class Misc {
      * Set the specified pixel to the specified brightness and opacity.
      *
      * @param graphics rendering context of the pixel (not null)
-     * @param x pixel's 1st coordinate (&lt;width, &ge;0)
+     * @param x pixel's first coordinate (&lt;width, &ge;0)
      * @param y pixel's 2nd coordinate (&lt;height, &ge;0)
      * @param brightness (&le;1, &ge;0, 0 &rarr; black, 1 &rarr; white)
      * @param opacity (&le;1, &ge;0, 0 &rarr; transparent, 1 &rarr; opaque)

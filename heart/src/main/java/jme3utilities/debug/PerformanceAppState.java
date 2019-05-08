@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ import jme3utilities.SimpleAppState;
 import jme3utilities.Validate;
 
 /**
- * App state which implements a latency-oriented performance monitor for
+ * App state that implements a latency-oriented performance monitor for
  * jMonkeyEngine3. It displays the duration of the longest update during the
  * preceding measurement interval.
  * <p>
@@ -146,7 +146,7 @@ public class PerformanceAppState extends SimpleAppState {
     }
 
     /**
-     * Initialize this performance monitor prior to its 1st update. Should be
+     * Initialize this performance monitor prior to its first update. Should be
      * invoked only by a subclass or by the AppStateManager.
      *
      * @param stateManager the manager for this state (not null)

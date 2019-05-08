@@ -329,7 +329,7 @@ public class AxesVisualizer extends SubtreeControl {
     public void setEnabled(boolean newState) {
         if (newState && subtree == null) {
             /*
-             * Before enabling this control for the 1st time,
+             * Before enabling this control for the first time,
              * create the subtree.
              */
             subtree = new Node(subtreeName);

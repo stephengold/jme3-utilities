@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -293,15 +293,15 @@ public class MyQuaternion {
     }
 
     /**
-     * Test whether two quaternions are distinct, without distinguishing 0 from
+     * Test whether 2 quaternions are distinct, without distinguishing 0 from
      * -0.
      *
-     * @param a 1st input quaternion (not null, unaffected)
-     * @param b 2nd input quaternion (not null, unaffected)
+     * @param a the first input quaternion (not null, unaffected)
+     * @param b the 2nd input quaternion (not null, unaffected)
      * @return true if distinct, otherwise false
      */
     public static boolean ne(Quaternion a, Quaternion b) {
-        Validate.nonNull(a, "1st input quaternion");
+        Validate.nonNull(a, "first input quaternion");
         Validate.nonNull(b, "2nd input quaternion");
 
         boolean result = a.getW() != b.getW()
@@ -406,8 +406,8 @@ public class MyQuaternion {
      *
      * @param t descaled parameter value (&ge;0, &le;1)
      * @param p function value at t=0 (not null, unaffected, norm=1)
-     * @param a 1st control point (not null, unaffected, norm=1)
-     * @param b 2nd control point (not null, unaffected, norm=1)
+     * @param a the first control point (not null, unaffected, norm=1)
+     * @param b the 2nd control point (not null, unaffected, norm=1)
      * @param q function value at t=1 (not null, unaffected, norm=1)
      * @param storeResult (modified if not null)
      * @return interpolated unit quaternion (either storeResult or a new
@@ -431,7 +431,7 @@ public class MyQuaternion {
     }
 
     /**
-     * Calculate Squad parameter "a" for a continuous 1st derivative at the
+     * Calculate Squad parameter "a" for a continuous first derivative at the
      * middle point of 3 specified control points.
      *
      * @param q0 previous control point (not null, unaffected, norm=1)

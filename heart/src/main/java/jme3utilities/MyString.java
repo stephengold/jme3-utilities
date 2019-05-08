@@ -96,7 +96,7 @@ public class MyString {
     }
 
     /**
-     * Test two strings for lexicographic order.
+     * Test 2 strings for lexicographic order.
      *
      * @param a string that should precede (not null)
      * @param b string that should follow (not null)
@@ -474,10 +474,10 @@ public class MyString {
     }
 
     /**
-     * Find the length of the shared prefix of two strings.
+     * Find the length of the shared prefix of 2 text sequences.
      *
-     * @param s1 1st string (not null)
-     * @param s2 2nd string (not null)
+     * @param s1 the first string (not null)
+     * @param s2 the 2nd string (not null)
      * @return number of characters in shared prefix (&ge;0)
      */
     public static int sharedPrefixLength(CharSequence s1, CharSequence s2) {

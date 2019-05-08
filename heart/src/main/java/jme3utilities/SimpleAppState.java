@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -153,8 +153,8 @@ public class SimpleAppState extends NamedAppState {
     // NamedAppState methods
 
     /**
-     * Initialize this state on the 1st update after it gets attached. Should be
-     * invoked only by a subclass or by the AppStateManager.
+     * Initialize this state during the first update after it gets attached.
+     * Should be invoked only by a subclass or by the AppStateManager.
      *
      * @param sm the manager for this state (not null)
      * @param app the application which owns this state (not null)

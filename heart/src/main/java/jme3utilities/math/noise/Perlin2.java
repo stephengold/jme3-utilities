@@ -35,7 +35,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Two-dimensional Perlin noise generator.
+ * 2-dimensional Perlin noise generator.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -91,8 +91,8 @@ public class Perlin2 implements Noise2 {
     /**
      * Sample the noise function at a specified point.
      *
-     * @param sampleX 1st coordinate of the sample point
-     * @param sampleY 2nd coordinate of the sample point
+     * @param sampleX the first coordinate of the sample point
+     * @param sampleY the 2nd coordinate of the sample point
      * @return noise value (&le;sqrt(0.5), &ge;-sqrt(0.5))
      */
     @Override
@@ -110,7 +110,7 @@ public class Perlin2 implements Noise2 {
         float n10 = gradient(squareX + 1, squareY, sampleX, sampleY);
         float n11 = gradient(squareX + 1, squareY + 1, sampleX, sampleY);
         /*
-         * 2-D interpolation between the four corners of the square.
+         * 2-D interpolation between the 4 corners of the square.
          */
         float fadeX = MyMath.fade(sampleX - squareX);
         float nx0 = FastMath.interpolateLinear(fadeX, n00, n10);
@@ -126,8 +126,8 @@ public class Perlin2 implements Noise2 {
      * Sample the noise function at a specified point and normalize it to the
      * range [-1, 1].
      *
-     * @param sampleX 1st coordinate of the sample point
-     * @param sampleY 2nd coordinate of the sample point
+     * @param sampleX the first coordinate of the sample point
+     * @param sampleY the 2nd coordinate of the sample point
      * @return normalized noise value (&le;1, &ge;-1)
      */
     @Override
@@ -169,10 +169,10 @@ public class Perlin2 implements Noise2 {
     /**
      * Compute the contribution of a specified grid point to a noise sample.
      *
-     * @param gridX 1st coordinate of the grid point
-     * @param gridY 2nd coordinate of the grid point
-     * @param sampleX 1st coordinate of the sample point
-     * @param sampleY 2nd coordinate of the sample point
+     * @param gridX the first coordinate of the grid point
+     * @param gridY the 2nd coordinate of the grid point
+     * @param sampleX the first coordinate of the sample point
+     * @param sampleY the 2nd coordinate of the sample point
      */
     private float gradient(int gridX, int gridY, double sampleX,
             double sampleY) {

@@ -104,7 +104,7 @@ final public class MyAsset {
         new Vector3f(0f, 0f, 1f)
     };
     /**
-     * Direction vector for 1st (+U) texture coordinate of each cube face.
+     * Direction vector for first (+U) texture coordinate of each cube face.
      */
     final private static Vector3f[] uDirection = {
         new Vector3f(0f, 0f, 1f),
@@ -148,8 +148,8 @@ final public class MyAsset {
     }
 
     /**
-     * Copy the direction of the 1st (+U) texture axis of the specified face of
-     * a sky cube.
+     * Copy the direction of the first (+U) texture axis of the specified face
+     * of a sky cube.
      *
      * @param faceIndex (&ge;0, &lt;6)
      * @return a new unit vector

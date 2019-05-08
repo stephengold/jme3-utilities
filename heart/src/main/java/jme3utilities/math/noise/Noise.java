@@ -61,13 +61,13 @@ final public class Noise {
     // new methods exposed
 
     /**
-     * Sample fractional Brownian motion (FBM) noise in two dimensions.
+     * Sample fractional Brownian motion (FBM) noise in 2 dimensions.
      *
      * @param generator base noise generator (not null)
-     * @param sampleX 1st coordinate of the sample point
-     * @param sampleY 2nd coordinate of the sample point
+     * @param sampleX the first coordinate of the sample point
+     * @param sampleY the 2nd coordinate of the sample point
      * @param numOctaves number of noise components (&gt;0)
-     * @param fundamental frequency for the 1st component (&gt;0)
+     * @param fundamental frequency for the first component (&gt;0)
      * @param gain amplitude ratio between octaves (&gt;0, &lt;1)
      * @param lacunarity frequency ratio between octaves (&gt;1)
      * @return noise value (range depends on parameters)

@@ -138,8 +138,8 @@ public class NamedAppState implements AppState {
     // AppState methods
 
     /**
-     * Clean up this state on the 1st update after it gets detached. Should be
-     * invoked only by a subclass or by the AppStateManager.
+     * Clean up this state during the first update after it gets detached.
+     * Should be invoked only by a subclass or by the AppStateManager.
      */
     @Override
     public void cleanup() {
@@ -151,8 +151,8 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Initialize this state on the 1st update after it gets attached. Should be
-     * invoked only by a subclass or by the AppStateManager.
+     * Initialize this state during the first update after it gets attached.
+     * Should be invoked only by a subclass or by the AppStateManager.
      *
      * @param sm the application's state manager (not null)
      * @param app the application which owns this state (not null)
@@ -275,8 +275,8 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Callback to update this state prior to rendering. (Invoked once per
-     * frame while the state is attached and enabled.)
+     * Callback to update this state prior to rendering. (Invoked once per frame
+     * while the state is attached and enabled.)
      *
      * @param elapsedTime the time interval between frames (in seconds, &ge;0)
      */

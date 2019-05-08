@@ -50,7 +50,7 @@ public class Permutation {
     // fields
 
     /**
-     * indices which make up the permutation
+     * indices that make up the permutation
      */
     private int[] indices = null;
     // *************************************************************************
@@ -103,10 +103,10 @@ public class Permutation {
     // private methods
 
     /**
-     * Swap two elements in the permutation.
+     * Swap 2 elements in the permutation.
      *
-     * @param first index of the 1st element (&lt;length, &ge;0)
-     * @param second index of the 2nd element (&lt;length, &ge;0)
+     * @param first the index of the first element (&lt;length, &ge;0)
+     * @param second the index of the 2nd element (&lt;length, &ge;0)
      */
     private void swapTableEntries(int first, int second) {
         int savedValue = indices[first];

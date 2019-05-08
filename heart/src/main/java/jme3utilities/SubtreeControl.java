@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Traverse this control's subtree in depth-1st order.
+     * Traverse this control's subtree in depth-first order.
      *
      * @param visitor method invoked on each spatial (not null)
      */

@@ -135,7 +135,7 @@ public class MyVolume {
     /**
      * Calculate the volume of the specified tetrahedron.
      *
-     * @param v1 location of the 1st vertex (not null, unaffected)
+     * @param v1 location of the first vertex (not null, unaffected)
      * @param v2 location of the 2nd vertex (not null, unaffected)
      * @param v3 location of the 3rd vertex (not null, unaffected)
      * @param v4 location of the 4th vertex (not null, unaffected)
@@ -143,7 +143,7 @@ public class MyVolume {
      */
     public static double tetrahedronVolume(Vector3f v1, Vector3f v2,
             Vector3f v3, Vector3f v4) {
-        Validate.finite(v1, "1st vertex");
+        Validate.finite(v1, "first vertex");
         Validate.finite(v2, "2nd vertex");
         Validate.finite(v3, "3rd vertex");
         Validate.finite(v4, "4th vertex");

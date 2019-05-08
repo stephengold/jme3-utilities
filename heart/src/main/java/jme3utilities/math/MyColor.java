@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -109,13 +109,13 @@ final public class MyColor {
     }
 
     /**
-     * Interpolate linearly between two colors (with no side effect).
+     * Interpolate linearly between 2 colors (with no side effect).
      * <p>
      * Use instead of ColorRGBA.interpolate(), which got renamed in JME 3.1.
      *
      * @param fraction (&le;1, &ge;0)
-     * @param start 1st input color (not null, unaffected)
-     * @param end 2nd input color (not null, unaffected)
+     * @param start the first input color (not null, unaffected)
+     * @param end the 2nd input color (not null, unaffected)
      * @return new color, start*(1-fraction) + end*fraction
      */
     public static ColorRGBA interpolateLinear(float fraction, ColorRGBA start,

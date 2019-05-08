@@ -57,6 +57,8 @@ import jme3utilities.math.MyMath;
  * The projection to texture space is an "azimuthal equidistant projection". The
  * dome's equator maps to a circle of radius uvScale centered at (topU,topV).
  * The +X direction maps to +U, and the +Z direction maps to -V.
+ * <p>
+ * TODO override JmeCloneable methods and test load/save/clone
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -65,11 +67,11 @@ public class DomeMesh extends Mesh {
     // constants and loggers
 
     /**
-     * default for 1st (U) texture coordinate of the top of the dome
+     * default for the first (U) texture coordinate at the top of the dome
      */
     final public static float defaultTopU = 0.5f;
     /**
-     * default for 2nd (V) texture coordinate of the top of the dome
+     * default for the 2nd (V) texture coordinate at the top of the dome
      */
     final public static float defaultTopV = 0.5f;
     /**
@@ -250,8 +252,8 @@ public class DomeMesh extends Mesh {
      * Compute the elevation angle of a point on this mesh, given its texture
      * coordinates.
      *
-     * @param u 1st texture coordinate (&le;1, &ge;0)
-     * @param v 2nd texture coordinate (&le;1, &ge;0)
+     * @param u the first texture coordinate (&le;1, &ge;0)
+     * @param v the 2nd texture coordinate (&le;1, &ge;0)
      * @return angle in radians (&le;Pi/2)
      */
     public float elevationAngle(float u, float v) {
@@ -333,8 +335,7 @@ public class DomeMesh extends Mesh {
      * @throws IOException from importer
      */
     @Override
-    public void read(JmeImporter importer)
-            throws IOException {
+    public void read(JmeImporter importer) throws IOException {
         super.read(importer);
 
         InputCapsule capsule = importer.getCapsule(this);
@@ -360,8 +361,7 @@ public class DomeMesh extends Mesh {
      * @throws IOException from exporter
      */
     @Override
-    public void write(JmeExporter exporter)
-            throws IOException {
+    public void write(JmeExporter exporter) throws IOException {
         super.write(exporter);
 
         OutputCapsule capsule = exporter.getCapsule(this);
@@ -412,7 +412,7 @@ public class DomeMesh extends Mesh {
          */
         Vector2f[] texCoordArray = new Vector2f[vertexCount];
         /*
-         * Compute the non-polar vertices 1st. Vertices are arranged 1st
+         * Compute the non-polar vertices first. Vertices are arranged first
          * by latitude (starting from the rim).
          */
         float quadHeight = verticalAngle / (quadrantSamples - 1); // radians
@@ -502,7 +502,7 @@ public class DomeMesh extends Mesh {
         short[] indexArray = new short[vpt * triangleCount];
         /*
          * If the dome is incomplete, leave a gap between the last rim sample
-         * and the 1st.
+         * and the first.
          */
         int numGores;
         if (complete) {
@@ -511,7 +511,7 @@ public class DomeMesh extends Mesh {
             numGores = rimSamples - 1;
         }
         /*
-         * Compute the quad triangles 1st. Quads are arranged 1st
+         * Compute the quad triangles first. Quads are arranged first
          * and foremost by latitude, starting at the rim.
          */
         int quadsPerGore = quadrantSamples - 2;
@@ -529,7 +529,7 @@ public class DomeMesh extends Mesh {
                 int v2Index = nextParallel * rimSamples + meridian;
                 int v3Index = nextParallel * rimSamples + nextMeridian;
                 /*
-                 * Each quad consists of two triangles.
+                 * Each quad consists of 2 triangles.
                  */
                 int triIndex = 2 * v0Index;
                 int baseIndex = vpt * triIndex;

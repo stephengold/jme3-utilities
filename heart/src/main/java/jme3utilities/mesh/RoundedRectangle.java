@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A 2-D, static, fan-mode mesh which renders an axis-aligned rounded rectangle
+ * A 2-D, static, fan-mode mesh that renders an axis-aligned rounded rectangle
  * in the X-Y plane.
  * <p>
  * In local space, X extends from x1 to x2 and Y extends from y1 to y2, with
