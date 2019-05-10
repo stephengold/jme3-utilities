@@ -45,8 +45,9 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * Custom mesh for a dome (or a pie-cut segment thereof) with radius=1, centered
- * at the origin, with its top at (0,1,0) and its equator in the XZ plane.
+ * A 3-D, static, triangle-mode mesh for a dome (or a pie-cut segment thereof)
+ * with radius=1, centered at the origin, with its top at (0,1,0) and its
+ * equator in the X-Z plane.
  * <p>
  * The key differences between this class and com.jme3.scene.shape.Dome are:<ol>
  * <li> the radius and center ARE NOT configurable,
