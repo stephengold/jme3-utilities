@@ -38,7 +38,7 @@ import jme3utilities.Validate;
  */
 final public class Noise {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

@@ -39,7 +39,7 @@ import jme3utilities.math.MyMath;
  */
 public class Permutation {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

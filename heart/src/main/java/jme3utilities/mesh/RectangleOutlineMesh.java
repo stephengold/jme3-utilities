@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  */
 public class RectangleOutlineMesh extends Mesh {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -51,8 +51,8 @@ public class RectangleOutlineMesh extends Mesh {
     // constructors
 
     /**
-     * Instantiate an axis-aligned unit square with its first vertex at the
-     * local origin.
+     * Instantiate an axis-aligned unit square with its first vertex at the mesh
+     * origin.
      */
     public RectangleOutlineMesh() {
         this(0f, 1f, 0f, 1f);

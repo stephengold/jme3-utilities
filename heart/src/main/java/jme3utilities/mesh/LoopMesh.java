@@ -49,7 +49,7 @@ import jme3utilities.Validate;
  */
 public class LoopMesh extends Mesh {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * number of axes in a vector
@@ -82,8 +82,8 @@ public class LoopMesh extends Mesh {
     }
 
     /**
-     * Instantiate a regular polygon (or circle) in the XZ plane, centered at
-     * the local origin, with radius=1 and the specified number of vertices.
+     * Instantiate a regular polygon (or circle) in the X-Z plane, centered at
+     * the mesh origin, with radius=1 and the specified number of vertices.
      *
      * @param vertexCount (&ge;3)
      */

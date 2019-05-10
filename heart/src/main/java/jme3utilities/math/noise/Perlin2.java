@@ -41,7 +41,7 @@ import jme3utilities.math.MyMath;
  */
 public class Perlin2 implements Noise2 {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class

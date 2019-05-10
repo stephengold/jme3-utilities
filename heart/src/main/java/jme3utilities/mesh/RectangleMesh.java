@@ -60,7 +60,7 @@ public class RectangleMesh extends Mesh {
 
     /**
      * Instantiate an axis-aligned unit square with right-handed normals and its
-     * first vertex at the local origin.
+     * first vertex at the mesh origin.
      */
     public RectangleMesh() {
         this(0f, 1f, 0f, 1f, 1f);
