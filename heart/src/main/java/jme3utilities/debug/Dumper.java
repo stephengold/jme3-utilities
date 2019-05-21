@@ -117,7 +117,7 @@ public class Dumper implements Cloneable {
      */
     final protected PrintStream stream;
     /**
-     * indentation for each level of a dump
+     * indentation increment for each level of a dump
      */
     private String indentIncrement = "  ";
     // *************************************************************************
@@ -149,7 +149,7 @@ public class Dumper implements Cloneable {
      * Dump the specified AppState.
      *
      * @param appState the app state to dump (not null, unaffected)
-     * @param indent (not null)
+     * @param indent the indent text (not null, may be empty)
      */
     public void dump(AppState appState, String indent) {
         Validate.nonNull(indent, "indent");
@@ -238,7 +238,7 @@ public class Dumper implements Cloneable {
      * Dump the specified bone, including its children.
      *
      * @param bone (not null, unaffected)
-     * @param indent (not null)
+     * @param indent the indent text (not null, may be empty)
      */
     public void dump(Bone bone, String indent) {
         Validate.nonNull(bone, "bone");
@@ -260,7 +260,7 @@ public class Dumper implements Cloneable {
      *
      * @param sceneList the root nodes of the scenes to dump (not null,
      * unaffected)
-     * @param indent (not null)
+     * @param indent the indent text (not null, may be empty)
      */
     public void dump(List<Spatial> sceneList, String indent) {
         Validate.nonNull(indent, "indent");
@@ -330,7 +330,7 @@ public class Dumper implements Cloneable {
      * Dump a skeleton and all its bones.
      *
      * @param skeleton the skeleton to dump (not null, unaffected)
-     * @param indent (not null)
+     * @param indent the indent text (not null, may be empty)
      */
     public void dump(Skeleton skeleton, String indent) {
         Validate.nonNull(skeleton, "skeleton");
@@ -364,7 +364,7 @@ public class Dumper implements Cloneable {
      * Dump a subtree of the scene graph. Note: recursive!
      *
      * @param spatial root of the subtree (may be null, unaffected)
-     * @param indent (not null)
+     * @param indent the indent text (not null, may be empty)
      */
     public void dump(Spatial spatial, String indent) {
         Validate.nonNull(indent, "indent");
@@ -377,12 +377,8 @@ public class Dumper implements Cloneable {
         int elementCount = spatial.getTriangleCount();
         stream.printf("%c[%d] ", describer.describeType(spatial), elementCount);
 
-        String name = spatial.getName();
-        if (name == null) {
-            stream.print("(no name)");
-        } else {
-            stream.print(MyString.quote(spatial.getName()));
-        }
+        String name = MyString.quoteName(spatial.getName());
+        stream.print(name);
 
         String description = describer.describeControls(spatial);
         if (!description.isEmpty()) {
@@ -497,14 +493,14 @@ public class Dumper implements Cloneable {
      * Dump the specified view port.
      *
      * @param viewPort the view port to dump (not null, unaffected)
-     * @param indent (not null)
+     * @param indent the indent text (not null, may be empty)
      */
     public void dump(ViewPort viewPort, String indent) {
         Validate.nonNull(indent, "indent");
 
         String className = viewPort.getClass().getSimpleName();
         String name = viewPort.getName();
-        stream.printf("%s%s %s ", indent, className, MyString.quote(name));
+        stream.printf("%s%s %s ", indent, className, MyString.quoteName(name));
         if (viewPort.isEnabled()) {
             stream.print("enabled ");
 
@@ -549,7 +545,7 @@ public class Dumper implements Cloneable {
     /**
      * Read the indent increment.
      *
-     * @return the indent text (not null)
+     * @return (not null, may be empty)
      */
     public String indentIncrement() {
         assert indentIncrement != null;
@@ -765,7 +761,7 @@ public class Dumper implements Cloneable {
      * Dump a material-parameter map.
      *
      * @param map the map from names to parameters (not null, unaffected)
-     * @param indent (not null)
+     * @param indent the indent text (not null, may be empty)
      */
     private void dump(Map<String, MatParam> map, String indent) {
         if (!map.isEmpty()) {

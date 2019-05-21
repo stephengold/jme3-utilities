@@ -367,8 +367,8 @@ public class MyString {
      * Enclose the specified text in quotation marks and escape all tab, quote,
      * newline, and backslash characters.
      *
-     * @param text input text to quote
-     * @return quoted string, or "null" if the input was null
+     * @param text the input text to quote
+     * @return a quoted string, or "null" if the input was null
      */
     public static String quote(CharSequence text) {
         String result;
@@ -376,6 +376,24 @@ public class MyString {
             result = "null";
         } else {
             result = "\"" + escape(text) + "\"";
+        }
+
+        return result;
+    }
+
+    /**
+     * Enclose the specified name in quotation marks and escape all tab, quote,
+     * newline, and backslash characters.
+     *
+     * @param name the name to quote
+     * @return a quoted string, or "(no name)" if the name was null
+     */
+    public static String quoteName(CharSequence name) {
+        String result;
+        if (name == null) {
+            result = "(no name)";
+        } else {
+            result = "\"" + escape(name) + "\"";
         }
 
         return result;
