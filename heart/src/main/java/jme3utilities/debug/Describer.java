@@ -143,16 +143,12 @@ public class Describer implements Cloneable {
         if (material == null) {
             return "";
         }
-        StringBuilder result = new StringBuilder(20);
+        StringBuilder result = new StringBuilder(80);
 
         String name = material.getName();
-        if (name == null) {
-            result.append("(no name)");
-        } else {
-            result.append(MyString.quote(name));
-        }
+        result.append(MyString.quoteName(name));
 
-        result.append(" matdef=");
+        result.append(" matdef");
         MaterialDef def = material.getMaterialDef();
         String defName = (def == null) ? null : def.getName();
         String description = MyString.quote(defName);
@@ -183,13 +179,13 @@ public class Describer implements Cloneable {
         result.append(' ');
         String paramName = matParam.getName();
         result.append(paramName);
-        result.append("= ");
+        result.append(' ');
 
         String valueString;
         Object obj = matParam.getValue();
         if (obj instanceof ColorRGBA) {
             ColorRGBA color = (ColorRGBA) obj;
-            valueString = "(" + MyColor.describe(color) + ")";
+            valueString = MyColor.describe(color);
         } else if (obj instanceof Float) {
             float value = (Float) obj;
             valueString = MyString.describe(value);
@@ -738,7 +734,7 @@ public class Describer implements Cloneable {
         if (light == null) {
             result = "null";
         } else {
-            String name = MyString.quote(light.getName());
+            String name = MyString.quoteName(light.getName());
             ColorRGBA color = light.getColor();
             String rgb = MyColor.describe(color);
             if (light instanceof AmbientLight) {
