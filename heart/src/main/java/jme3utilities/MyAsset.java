@@ -453,7 +453,8 @@ final public class MyAsset {
     }
 
     /**
-     * Create a wireframe material with a point size of 1.
+     * Create a wireframe material with default point shape and a point size of
+     * 1. (Points are visible only with a point-mode mesh.)
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
@@ -469,8 +470,8 @@ final public class MyAsset {
     }
 
     /**
-     * Create a wireframe material with the specified point size. (Points are
-     * visible only with a point-mode mesh.)
+     * Create a wireframe material with the default point shape and specified
+     * point size. (Points are visible only with a point-mode mesh.)
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
