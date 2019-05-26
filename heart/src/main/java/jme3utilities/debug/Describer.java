@@ -829,7 +829,7 @@ public class Describer implements Cloneable {
      * @return a description (not null, not empty)
      */
     protected String describe(RenderState state) {
-        StringBuilder result = new StringBuilder(20);
+        StringBuilder result = new StringBuilder(30);
 
         if (!state.isDepthTest()) {
             result.append("NO");
@@ -845,6 +845,12 @@ public class Describer implements Cloneable {
             result.append("NO");
         }
         result.append("wireframe");
+
+        RenderState.FaceCullMode faceCullMode = state.getFaceCullMode();
+        if (faceCullMode != RenderState.FaceCullMode.Back) {
+            result.append(",faceCull=");
+            result.append(faceCullMode);
+        }
 
         return result.toString();
     }
