@@ -99,9 +99,10 @@ public class Describer implements Cloneable {
     // new methods exposed
 
     /**
-     * Generate a textual description of a bone, not including its children.
+     * Generate a textual description of the specified Bone, not including its
+     * children.
      *
-     * @param bone (not null, unaffected)
+     * @param bone the Bone to describe (not null, unaffected)
      * @return a description (not null, not empty)
      */
     public String describe(Bone bone) {
@@ -133,10 +134,10 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a material, not including its
-     * parameters.
+     * Generate a textual description of the specified Material, not including
+     * its parameters.
      *
-     * @param material material to describe (may be null, unaffected)
+     * @param material the Material to describe (may be null, unaffected)
      * @return a description (not null, may be empty)
      */
     public String describe(Material material) {
@@ -169,7 +170,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a material parameter.
+     * Generate a textual description of the specified material parameter.
      *
      * @param matParam the material parameter to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -201,9 +202,9 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a mesh.
+     * Generate a textual description of the specified Mesh.
      *
-     * @param mesh the mesh to describe (may be null, unaffected)
+     * @param mesh the Mesh to describe (may be null, unaffected)
      * @return a description (not null, not empty)
      */
     public String describe(Mesh mesh) {
@@ -234,9 +235,10 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a skeleton, not including its bones.
+     * Generate a textual description of the specified Skeleton, not including
+     * its bones.
      *
-     * @param skeleton (not null, unaffected)
+     * @param skeleton the Skeleton to describe (not null, unaffected)
      * @return a description (not null, not empty)
      */
     public String describe(Skeleton skeleton) {
@@ -253,9 +255,9 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Describe a texture.
+     * Describe the specified Texture.
      *
-     * @param texture the input texture (may be null, unaffected)
+     * @param texture the Texture to describe (may be null, unaffected)
      * @return a textual description (not null, not empty)
      */
     public String describe(Texture texture) {
@@ -292,7 +294,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a compact texture description of a VertexBuffer.
+     * Generate a compact texture description of the specified VertexBuffer.
      *
      * @param buffer the buffer to describe (not null, unaffected)
      * @return a textual description (not null, not empty)
@@ -310,7 +312,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of an axisIndex.
+     * Generate a textual description of the indexed axis.
      *
      * @param axisIndex (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
      * @return a description (not null, not empty)
@@ -324,10 +326,10 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Describe the render-queue bucket to which the specified spatial is
+     * Describe the render-queue bucket to which the specified Spatial is
      * assigned.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, not empty)
      */
     public String describeBucket(Spatial spatial) {
@@ -352,9 +354,9 @@ public class Describer implements Cloneable {
 
     /**
      * Generate a textual description for all controls added to the specified
-     * spatial.
+     * Spatial.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
      */
     public String describeControls(Spatial spatial) {
@@ -383,9 +385,9 @@ public class Describer implements Cloneable {
 
     /**
      * Generate a textual description of the view-frustum culling hints
-     * associated with the specified spatial.
+     * associated with the specified Spatial.
      *
-     * @param spatial the spatial describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, not empty)
      */
     public String describeCull(Spatial spatial) {
@@ -433,9 +435,10 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description the flags associated with a view port.
+     * Generate a textual description the flags associated with the specified
+     * ViewPort.
      *
-     * @param viewPort the view port to describe (not null, unaffected)
+     * @param viewPort the ViewPort to describe (not null, unaffected)
      * @return a description (not null, not empty)
      */
     public String describeFlags(ViewPort viewPort) {
@@ -461,9 +464,9 @@ public class Describer implements Cloneable {
 
     /**
      * Generate a textual description of the world location of the specified
-     * spatial.
+     * Spatial.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
      */
     public String describeLocation(Spatial spatial) {
@@ -483,9 +486,9 @@ public class Describer implements Cloneable {
 
     /**
      * Generate a textual description of the world orientation of the specified
-     * spatial.
+     * Spatial.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
      */
     public String describeOrientation(Spatial spatial) {
@@ -505,9 +508,9 @@ public class Describer implements Cloneable {
 
     /**
      * Generate a textual description of the material-parameter overrides of the
-     * specified spatial.
+     * specified Spatial.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, not empty)
      */
     public String describeOverrides(Spatial spatial) {
@@ -535,7 +538,7 @@ public class Describer implements Cloneable {
     /**
      * Generate a textual description of a viewport's scene processors.
      *
-     * @param viewPort the view port to describe (not null, unaffected)
+     * @param viewPort the ViewPort to describe (not null, unaffected)
      * @return a description (not null, may be empty)
      */
     public String describeProcessors(ViewPort viewPort) {
@@ -560,7 +563,7 @@ public class Describer implements Cloneable {
      * Generate a textual description of the world scale of the specified
      * spatial.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
      */
     public String describeScale(Spatial spatial) {
@@ -820,9 +823,9 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a render state.
+     * Generate a textual description of a RenderState.
      *
-     * @param state the view port to describe (not null, unaffected)
+     * @param state the RenderState to describe (not null, unaffected)
      * @return a description (not null, not empty)
      */
     protected String describe(RenderState state) {
@@ -847,7 +850,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a scene processor.
+     * Generate a textual description of a SceneProcessor.
      *
      * @param processor the processor to describe (may be null, unaffected)
      * @return a description (not null, not empty)
@@ -880,7 +883,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Describe a texture key.
+     * Describe a TextureKey.
      *
      * @param textureKey (not null, unaffected)
      * @return a textual description (not null, not empty)
@@ -900,9 +903,9 @@ public class Describer implements Cloneable {
 
     /**
      * Generate a textual description for a subset of the controls added to the
-     * specified spatial.
+     * specified Spatial.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @param enabled if true, describe only the enabled controls; if false,
      * describe only the disabled controls
      * @return a description (not null, may be empty)
@@ -930,7 +933,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate additional textual description of a camera.
+     * Generate additional textual description of a Camera.
      *
      * @param camera the camera to describe (not null, unaffected)
      * @return a description (not null, not empty)
