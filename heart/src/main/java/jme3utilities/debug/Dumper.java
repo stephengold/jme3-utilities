@@ -235,7 +235,7 @@ public class Dumper implements Cloneable {
     }
 
     /**
-     * Dump the specified bone, including its children.
+     * Dump the specified Bone, including its children.
      *
      * @param bone (not null, unaffected)
      * @param indent the indent text (not null, may be empty)
@@ -281,9 +281,9 @@ public class Dumper implements Cloneable {
     }
 
     /**
-     * Dump the specified render manager.
+     * Dump the specified RenderManager.
      *
-     * @param renderManager which render manager to dump (not null, unaffected)
+     * @param renderManager which RenderManager to dump (not null, unaffected)
      */
     public void dump(RenderManager renderManager) {
         String className = renderManager.getClass().getSimpleName();
@@ -490,9 +490,21 @@ public class Dumper implements Cloneable {
     }
 
     /**
-     * Dump the specified view port.
+     * Dump the specified ViewPort.
      *
-     * @param viewPort the view port to dump (not null, unaffected)
+     * @param viewPort which ViewPort to dump (not null, unaffected)
+     */
+    public void dump(ViewPort viewPort) {
+        Validate.nonNull(viewPort, "view port");
+
+        dump(viewPort, "");
+        stream.flush();
+    }
+
+    /**
+     * Dump the specified ViewPort.
+     *
+     * @param viewPort which ViewPort to dump (not null, unaffected)
      * @param indent the indent text (not null, may be empty)
      */
     public void dump(ViewPort viewPort, String indent) {
@@ -533,7 +545,7 @@ public class Dumper implements Cloneable {
     }
 
     /**
-     * Access the describer used by this dumper.
+     * Access the Describer used by this dumper.
      *
      * @return the pre-existing instance (not null)
      */
