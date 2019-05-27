@@ -179,7 +179,10 @@ final public class MyAsset {
      */
     public static Material createDebugMaterial(AssetManager assetManager) {
         Validate.nonNull(assetManager, "asset manager");
+
         Material material = new Material(assetManager, debugMaterialAssetPath);
+        material.setName("debug");
+
         return material;
     }
 
