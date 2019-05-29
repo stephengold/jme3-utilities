@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.28.0 released on TBD
+
+ + Added a `quoteName()` method to the `MyString` class.
+ + Added a method to `Dumper` to dump a `ViewPort` without specifying
+   indentation.
+ + Minor improvements to dump formatting.
+
 ## Version 2.27.0 released on 29 April 2019
 
  + Added a `mipmaps` argument to `MyAsset.loadTexture()`.
