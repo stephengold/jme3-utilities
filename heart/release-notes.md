@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.28.0 released on TBD
+## Version 2.28.0 released on 28 May 2019
 
  + Added a `quoteName()` method to the `MyString` class.
  + Added a method to `Dumper` to dump a `ViewPort` without specifying
