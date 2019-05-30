@@ -300,12 +300,17 @@ public class Describer implements Cloneable {
      * @return a textual description (not null, not empty)
      */
     public String describe(VertexBuffer buffer) {
-        VertexBuffer.Type type = buffer.getBufferType();
         VertexBuffer.Format format = buffer.getFormat();
-        String formatString = format.toString();
-        formatString = formatString.toLowerCase();
-        formatString = formatString.replace("float", "f");
-        formatString = formatString.replace("unsigned", "u");
+        String formatString;
+        if (format == null) {
+            formatString = "nofmt";
+        } else {
+            formatString = format.toString();
+            formatString = formatString.toLowerCase();
+            formatString = formatString.replace("float", "f");
+            formatString = formatString.replace("unsigned", "u");
+        }
+        VertexBuffer.Type type = buffer.getBufferType();
         String result = type + "%" + formatString;
 
         return result;
