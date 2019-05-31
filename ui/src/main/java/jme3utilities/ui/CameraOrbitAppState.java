@@ -136,6 +136,16 @@ public class CameraOrbitAppState extends ActionAppState {
     }
 
     /**
+     * Read the rate of orbiting.
+     *
+     * @return the angular rate (in radians/second, &ge;0, default=1)
+     */
+    public float rate() {
+        assert angularRate >= 0f : angularRate;
+        return angularRate;
+    }
+
+    /**
      * Alter the center of the orbit.
      *
      * @param desiredCenter the desired center (in world coordinates, not null,
@@ -144,16 +154,6 @@ public class CameraOrbitAppState extends ActionAppState {
     public void setCenter(ReadXZ desiredCenter) {
         Validate.nonNull(desiredCenter, "desired center");
         centerXZ = desiredCenter;
-    }
-
-    /**
-     * Read the rate of orbiting.
-     *
-     * @return the angular rate (in radians/second, &ge;0, default=1)
-     */
-    public float rate() {
-        assert angularRate >= 0f : angularRate;
-        return angularRate;
     }
 
     /**
