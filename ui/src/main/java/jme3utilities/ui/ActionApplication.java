@@ -306,7 +306,7 @@ abstract public class ActionApplication
     }
 
     /**
-     * Callback invoked once per frame.
+     * Callback invoked once per frame. TODO make final?
      *
      * @param tpf time interval between frames (in seconds, &ge;0)
      */
@@ -317,9 +317,10 @@ abstract public class ActionApplication
          * DefaultInputMode.initialize().
          */
         if (flyCam != null && flyCam.isEnabled()) {
+            float realTpf = tpf / speed;
             for (String signalName : flycamNames) {
                 if (signals.test(signalName)) {
-                    flyCam.onAnalog(signalName, tpf, tpf);
+                    flyCam.onAnalog(signalName, realTpf, realTpf);
                 }
             }
         }
