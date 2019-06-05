@@ -177,7 +177,7 @@ public class MyMesh {
     /**
      * Test whether a mesh has texture (U-V) coordinates.
      *
-     * @param mesh mesh to test (not null)
+     * @param mesh mesh to test (not null, unaffected)
      * @return true if the mesh has texture coordinates, otherwise false
      */
     public static boolean hasUV(Mesh mesh) {
@@ -711,7 +711,6 @@ public class MyMesh {
     public static Vector2f vertexVector2f(Mesh mesh,
             VertexBuffer.Type bufferType, int vertexIndex,
             Vector2f storeResult) {
-        Validate.nonNull(mesh, "mesh");
         assert bufferType == VertexBuffer.Type.TexCoord
                 || bufferType == VertexBuffer.Type.TexCoord2
                 || bufferType == VertexBuffer.Type.TexCoord3
@@ -750,7 +749,6 @@ public class MyMesh {
     public static Vector3f vertexVector3f(Mesh mesh,
             VertexBuffer.Type bufferType, int vertexIndex,
             Vector3f storeResult) {
-        Validate.nonNull(mesh, "mesh");
         assert bufferType == VertexBuffer.Type.BindPoseNormal
                 || bufferType == VertexBuffer.Type.BindPosePosition
                 || bufferType == VertexBuffer.Type.Binormal
@@ -784,7 +782,6 @@ public class MyMesh {
     public static Vector4f vertexVector4f(Mesh mesh,
             VertexBuffer.Type bufferType, int vertexIndex,
             Vector4f storeResult) {
-        Validate.nonNull(mesh, "mesh");
         assert bufferType == VertexBuffer.Type.BindPoseTangent
                 || bufferType == VertexBuffer.Type.BoneWeight
                 || bufferType == VertexBuffer.Type.Color
@@ -819,7 +816,6 @@ public class MyMesh {
     public static Vector3f vertexWorldLocation(Geometry geometry,
             int vertexIndex, Matrix4f[] skinningMatrices,
             Vector3f storeResult) {
-        Validate.nonNull(geometry, "geometry");
         Validate.nonNegative(vertexIndex, "vertex index");
         Validate.nonNull(skinningMatrices, "skinning matrices");
         if (storeResult == null) {
