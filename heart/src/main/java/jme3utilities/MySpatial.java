@@ -97,6 +97,7 @@ public class MySpatial {
      * @throws IllegalArgumentException if the child is a geometry with
      * ignoreTransform=true
      */
+    @Deprecated
     public static void adopt(Node newParent, Spatial child) {
         if (isIgnoringTransforms(child)) {
             throw new IllegalArgumentException("transform ignored");
@@ -1338,6 +1339,7 @@ public class MySpatial {
      * @param geometry the surface to measure (not null)
      * @return the elevation of the surface (in world coordinates)
      */
+    @Deprecated
     public static float yLevel(Geometry geometry) {
         Validate.nonNull(geometry, "geometry");
 
