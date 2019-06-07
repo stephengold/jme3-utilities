@@ -116,6 +116,7 @@ final public class MyArray {
      * @param array input (not null, unaffected)
      * @return count (&ge;0)
      */
+    @Deprecated
     public static int countDistinct(Vector3f[] array) {
         int length = array.length;
         Set<Vector3f> distinct = new HashSet<>(length);
@@ -231,6 +232,7 @@ final public class MyArray {
      * @param array input (not null, unaffected)
      * @return true if multiple values found, otherwise false
      */
+    @Deprecated
     public static boolean hasDistinct(float[] array) {
         Validate.nonNull(array, "array");
 
@@ -300,6 +302,7 @@ final public class MyArray {
      *
      * @param dataset data to normalize (not null, modified)
      */
+    @Deprecated
     public static void normalize(float[] dataset) {
         Validate.nonNull(dataset, "dataset");
 
