@@ -1234,7 +1234,8 @@ public class MyVector3f {
      * Standardize a vector in preparation for hashing.
      *
      * @param input (not null, unaffected)
-     * @param storeResult storage for the result (modified if not null)
+     * @param storeResult storage for the result (modified if not null, may be
+     * input)
      * @return an equivalent vector without any negative zero components (either
      * storeResult or a new instance)
      */
@@ -1254,7 +1255,7 @@ public class MyVector3f {
      * azimuths, which is why its rotation angle convention is non-standard.
      *
      * @param input (not null, unaffected)
-     * @param angle clockwise (LH) angle of rotation in radians
+     * @param angle the clockwise (LH) angle of rotation in radians
      * @return a new vector
      */
     public static Vector3f yRotate(Vector3f input, float angle) {
