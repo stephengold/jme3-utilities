@@ -1,5 +1,20 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.28.1 released on TBD
+
+ + Bugfix: NPE while describing a buffer with no format.
+ + Made the default build Java 7 compatible.
+ + Deprecated 9 unused utility methods:
+   + `MyArray.countDistinct()`
+   + `MyArray.hasDistinct()`
+   + `MyArray.normalize()`
+   + `MyMath.localizeRay()`
+   + `MyMesh.maxWeight()`
+   + `MySkeleton.worldLocation()`
+   + `MySpatial.adopt()`
+   + `MySpatial.yLevel()`
+   + `MyString.areLexOrdered()`
+
 ## Version 2.28.0 released on 28 May 2019
 
  + Added a `quoteName()` method to the `MyString` class.
