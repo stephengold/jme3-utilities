@@ -288,6 +288,7 @@ public class MyMesh {
      * @param boneIndex which bone (&ge;0)
      * @return bone weight, or 0f if no influence found
      */
+    @Deprecated
     public static float maxWeight(Mesh mesh, int boneIndex) {
         Validate.nonNegative(boneIndex, "bone index");
 
