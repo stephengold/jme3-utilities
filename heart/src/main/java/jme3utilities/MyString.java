@@ -102,6 +102,7 @@ public class MyString {
      * @param b string that should follow (not null)
      * @return true if a precedes or equals b, false otherwise
      */
+    @Deprecated
     public static boolean areLexOrdered(String a, String b) {
         Validate.nonNull(b, "string");
 
