@@ -436,6 +436,7 @@ public class MyMath {
      * @param spatial which spatial (not null)
      * @return a new instance, or null if error
      */
+    @Deprecated
     public static Ray localizeRay(Ray worldRay, Spatial spatial) {
         Vector3f worldVertex = worldRay.getOrigin();
         Vector3f worldDirection = worldRay.getDirection();
