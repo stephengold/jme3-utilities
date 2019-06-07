@@ -608,6 +608,7 @@ public class MySkeleton {
      * @return the location (in world coordinates, either storeResult or a new
      * instance)
      */
+    @Deprecated
     public static Vector3f worldLocation(Spatial spatial, String boneName,
             Vector3f storeResult) {
         Validate.nonNull(spatial, "spatial");
