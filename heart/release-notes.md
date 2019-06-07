@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.28.1 released on TBD
+## Version 2.28.1 released on 7 June 2019
 
  + Bugfix: NPE while describing a buffer with no format.
  + Made the default build Java 7 compatible.
