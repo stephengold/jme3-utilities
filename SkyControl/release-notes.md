@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.18 released on TBD
+## Version 0.9.18 released on 7 June 2019
 
 Notable changes:
  + base on version 2.28.1 of the heart library and target JME 3.2.3-stable
