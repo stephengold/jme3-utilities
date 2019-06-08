@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.7.3 released on TBD
+
+ + Changed `ActionApplication` to feed a de-scaled `tpf` to `flyCam`.
+ + Based on version 2.28.1 of the jme3-utilities-heart library.
+
 ## Version 0.7.2 released on 19 March 2019
 
 Based on version 2.23 of the jme3-utilities-heart library.
