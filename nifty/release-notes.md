@@ -1,8 +1,16 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.5 released on TBD
+
+ + Turn on Java 7 compatibility.
+ + Base on version 1.4.3 of nifty and nifty-default-controls libraries,
+   version 2.28.1 of jme3-utilities-heart library
+   and version 0.7.3 of the jme3-utilities-ui library.
+
 ## Version 0.9.4 released on 28 April 2019
 
-Implemented an experimental fix for JME issue #99.
+ + Implement an experimental fix for JME issue #99.
+ + Build using Gradle v5.3.1 .
 
 ## Version 0.9.3 released on 19 March 2019
 
