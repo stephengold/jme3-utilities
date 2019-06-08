@@ -52,6 +52,8 @@ import jme3utilities.debug.Dumper;
 import jme3utilities.debug.SkeletonVisualizer;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.SliderTransform;
+import jme3utilities.nifty.dialog.DialogController;
+import jme3utilities.nifty.dialog.TextEntryDialog;
 
 /**
  * Controller for the HUD for the PoseDemo application.
@@ -259,14 +261,18 @@ public class PoseDemoHud
 
                 case "rename animation":
                     String oldAnimName = PoseDemo.modelState.getAnimationName();
+                    DialogController controller = new TextEntryDialog("Rename");
                     showTextEntryDialog("Enter new name for animation:",
-                            oldAnimName, "Rename", animationDialogPrefix, null);
+                            oldAnimName, "Rename", animationDialogPrefix,
+                            controller);
                     return;
 
                 case "rename bone":
                     String oldBoneName = PoseDemo.modelState.getBoneName();
+                    DialogController controller2
+                            = new TextEntryDialog("Rename");
                     showTextEntryDialog("Enter new name for bone:", oldBoneName,
-                            "Rename", boneDialogPrefix, null);
+                            "Rename", boneDialogPrefix, controller2);
                     return;
 
                 case "reset bone":
