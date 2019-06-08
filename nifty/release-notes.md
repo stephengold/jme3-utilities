@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.5 released on TBD
+## Version 0.9.5 released on 7 June 2019
 
  + Turn on Java 7 compatibility.
  + Base on version 1.4.3 of nifty and nifty-default-controls libraries,
