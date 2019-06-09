@@ -26,10 +26,12 @@
  */
 package jme3utilities.math;
 
+import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -57,6 +59,43 @@ final public class MyArray {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Calculate the minimal axis-aligned bounding box for a non-empty array of
+     * vectors.
+     *
+     * @see com.jme3.bounding.BoundingBox#containAABB(java.nio.FloatBuffer)
+     *
+     * @param array the vectors (not null, not empty, all finite, unaffected)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the BoundingBox (either storeResult or a new instance, not null)
+     */
+    public static BoundingBox aabb(Vector3f[] array, BoundingBox storeResult) {
+        Validate.nonEmpty(array, "array");
+
+        Vector3f maxima = new Vector3f(Float.NEGATIVE_INFINITY,
+                Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+        Vector3f minima = new Vector3f(Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+        for (Vector3f tempVector : array) {
+            if (!Vector3f.isValidVector(tempVector)) {
+                logger.log(Level.WARNING, "Invalid vector {0} in array",
+                        tempVector);
+            }
+            MyVector3f.accumulateMinima(minima, tempVector);
+            MyVector3f.accumulateMaxima(maxima, tempVector);
+        }
+
+        BoundingBox result;
+        if (storeResult == null) {
+            result = new BoundingBox(minima, maxima);
+        } else {
+            storeResult.setMinMax(minima, maxima);
+            result = storeResult;
+        }
+
+        return result;
+    }
 
     /**
      * Calculate the sample covariance of 3-D vectors in a float array.

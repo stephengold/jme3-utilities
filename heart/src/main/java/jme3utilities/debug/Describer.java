@@ -30,6 +30,7 @@ import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.TextureKey;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -129,6 +130,28 @@ public class Describer implements Cloneable {
                     (numChildren == 1 ? "" : "ren"));
             builder.append(childText);
         }
+
+        return builder.toString();
+    }
+
+    /**
+     * Generate a textual description for a BoundingBox.
+     *
+     * @param aabb the box to describe (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describe(BoundingBox aabb) {
+        StringBuilder builder = new StringBuilder(80);
+
+        builder.append("loc[");
+        Vector3f location = aabb.getCenter();
+        String desc = MyVector3f.describe(location);
+        builder.append(desc);
+        builder.append("]");
+
+        Vector3f he = aabb.getExtent(null);
+        desc = describeHalfExtents(he);
+        builder.append(desc);
 
         return builder.toString();
     }
@@ -941,6 +964,19 @@ public class Describer implements Cloneable {
         }
 
         return result.toString();
+    }
+
+    /**
+     * Describe the specified half extents.
+     *
+     * @param he the half extent for each axis (not null, unaffected)
+     * @return a bracketed description (not null, not empty)
+     */
+    private String describeHalfExtents(Vector3f he) {
+        String desc = MyVector3f.describe(he);
+        String result = String.format(" he[%s]", desc);
+
+        return result;
     }
 
     /**
