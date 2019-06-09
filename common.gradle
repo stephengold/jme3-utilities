@@ -1,7 +1,6 @@
 // Gradle settings and tasks common to all subprojects
 
 apply plugin: 'java'
-apply plugin: 'maven'
 
 group = 'jme3utilities'
 
@@ -56,8 +55,7 @@ task javadocJar(type: Jar, dependsOn: javadoc, description: 'Create a jar of jav
     from javadoc.destinationDir
 }
 
+// add javadoc/source jar tasks as artifacts
 artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
+    archives sourcesJar, javadocJar
 }

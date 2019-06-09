@@ -5,32 +5,32 @@
 description = 'demos, examples, and tests that do not generate reports'
 
 dependencies {
-    compile "com.beust:jcommander:$jcommanderVersion"
-    runtime 'com.github.nifty-gui:nifty-style-black:1.4.3'
-    runtime "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
-    runtime "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
-    runtime "org.jmonkeyengine:jme3-lwjgl3:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
-    runtime 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
+    implementation "com.beust:jcommander:$jcommanderVersion"
+    runtimeOnly 'com.github.nifty-gui:nifty-style-black:1.4.3'
+    runtimeOnly "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
+    implementation "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
+    runtimeOnly "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
+    runtimeOnly "org.jmonkeyengine:jme3-lwjgl3:$jmonkeyengineVersion"
+    implementation "org.jmonkeyengine:jme3-plugins:$jmonkeyengineVersion"
+    implementation "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
+    runtimeOnly 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    //implementation "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    implementation project(':heart')
 
-    //compile "jme3utilities:SkyControl:$skycontrolVersion"
-    compile project(':SkyControl')
+    //implementation "jme3utilities:SkyControl:$skycontrolVersion"
+    implementation project(':SkyControl')
 
-    //compile "jme3utilities:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
-    compile project(':nifty')
+    //implementation "jme3utilities:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
+    implementation project(':nifty')
 
-    //compile "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
-    compile project(':ui')
+    //implementation "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
+    implementation project(':ui')
 
-    //compile "jme3utilities:jme3-utilities-x:$jme3utilitiesxVersion"
-    compile project(':x')
+    //implementation "jme3utilities:jme3-utilities-x:$jme3utilitiesxVersion"
+    implementation project(':x')
 
-    runtime project(':moon-ccbysa')
+    runtimeOnly project(':moon-ccbysa')
 }
 
 // cleanup tasks

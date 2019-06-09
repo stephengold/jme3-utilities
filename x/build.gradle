@@ -2,6 +2,11 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
+plugins {
+    id 'java-library'
+    id 'maven'
+}
+
 description = 'experimental library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-x'
@@ -15,8 +20,8 @@ javadocJar { baseName project.ext.baseName }
 sourcesJar { baseName project.ext.baseName }
 
 dependencies {
-    //compile "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    compile project(':heart')
+    //api "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    api project(':heart')
 }
 
 task pom {

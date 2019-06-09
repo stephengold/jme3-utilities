@@ -2,6 +2,11 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
+plugins {
+    id 'java-library'
+    id 'maven'
+}
+
 description = 'core utilities library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-heart'
@@ -19,8 +24,8 @@ sourcesJar { baseName project.ext.baseName }
 processResources.dependsOn(':textures:shapeTextures')
 
 dependencies {
-    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
-    testCompile 'junit:junit:4.12'
+    api "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
+    testImplementation 'junit:junit:4.12'
 }
 
 task pom {
