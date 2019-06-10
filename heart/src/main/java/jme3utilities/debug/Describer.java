@@ -31,6 +31,8 @@ import com.jme3.animation.Skeleton;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.TextureKey;
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bounding.BoundingSphere;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -147,13 +149,53 @@ public class Describer implements Cloneable {
         Vector3f location = aabb.getCenter();
         String desc = MyVector3f.describe(location);
         builder.append(desc);
-        builder.append("]");
+        builder.append(']');
 
         Vector3f he = aabb.getExtent(null);
         desc = describeHalfExtents(he);
         builder.append(desc);
 
         return builder.toString();
+    }
+
+    /**
+     * Generate a textual description for a BoundingSphere.
+     *
+     * @param sphere the sphere to describe (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describe(BoundingSphere sphere) {
+        StringBuilder builder = new StringBuilder(80);
+
+        builder.append("r=");
+        float radius = sphere.getRadius();
+        String desc = MyString.describe(radius);
+        builder.append(desc);
+        builder.append(' ');
+        Vector3f location = sphere.getCenter();
+        desc = MyVector3f.describe(location);
+        builder.append(desc);
+
+        return builder.toString();
+    }
+
+    /**
+     * Generate a textual description for a BoundingVolume.
+     *
+     * @param boundingVolume the sphere to describe (not null, unaffected)
+     * @return description (not null, not empty)
+     */
+    public String describe(BoundingVolume boundingVolume) {
+        String result;
+        if (boundingVolume == null) {
+            result = "null";
+        } else if (boundingVolume instanceof BoundingSphere) {
+            result = describe((BoundingSphere) boundingVolume);
+        } else {
+            BoundingBox aabb = (BoundingBox) boundingVolume;
+            result = describe(aabb);
+        }
+        return result;
     }
 
     /**
@@ -506,7 +548,7 @@ public class Describer implements Cloneable {
             result.append("loc[");
             String locText = MyVector3f.describe(location);
             result.append(locText);
-            result.append("]");
+            result.append(']');
         }
 
         return result.toString();
@@ -528,7 +570,7 @@ public class Describer implements Cloneable {
             result.append("orient[");
             String orientText = MyQuaternion.describe(orientation);
             result.append(orientText);
-            result.append("]");
+            result.append(']');
         }
 
         return result.toString();
@@ -617,7 +659,7 @@ public class Describer implements Cloneable {
             result.append("scale[");
             String vectorText = MyVector3f.describe(vector);
             result.append(vectorText);
-            result.append("]");
+            result.append(']');
         }
 
         return result.toString();
