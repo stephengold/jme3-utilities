@@ -163,10 +163,11 @@ public class Dumper implements Cloneable {
         stream.print(className);
 
         if (appState.isEnabled()) {
-            stream.print(" enabled");
+            stream.print(" en");
         } else {
-            stream.print(" disabled");
+            stream.print(" dis");
         }
+        stream.printf("abled%n%s", indent);
     }
 
     /**
