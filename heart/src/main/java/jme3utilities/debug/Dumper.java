@@ -30,6 +30,7 @@ import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.light.LightList;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
@@ -76,6 +77,10 @@ public class Dumper implements Cloneable {
     // *************************************************************************
     // fields
 
+    /**
+     * enable dumping of world bounds (for spatials)
+     */
+    private boolean dumpBoundsFlag = false;
     /**
      * enable dumping of render-queue bucket assignments (for spatials)
      */
@@ -408,6 +413,14 @@ public class Dumper implements Cloneable {
             }
         }
 
+        if (dumpBoundsFlag) {
+            stream.print(" bound[");
+            BoundingVolume worldBound = spatial.getWorldBound();
+            String desc = describer.describe(worldBound);
+            stream.print(desc);
+            stream.print(']');
+        }
+
         if (dumpUserFlag) {
             description = describer.describeUserData(spatial);
             if (!description.isEmpty()) {
@@ -565,6 +578,15 @@ public class Dumper implements Cloneable {
     }
 
     /**
+     * Test whether world bounds will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpBounds() {
+        return dumpBoundsFlag;
+    }
+
+    /**
      * Test whether render-queue bucket assignments will be dumped.
      *
      * @return true if they'll be dumped, otherwise false
@@ -646,6 +668,17 @@ public class Dumper implements Cloneable {
     public Dumper setDescriber(Describer newDescriber) {
         Validate.nonNull(newDescriber, "new describer");
         describer = newDescriber;
+        return this;
+    }
+
+    /**
+     * Configure dumping of world bounds.
+     *
+     * @param newValue true to enable, false to disable (default=false)
+     * @return this instance for chaining
+     */
+    public Dumper setDumpBounds(boolean newValue) {
+        dumpBoundsFlag = newValue;
         return this;
     }
 
