@@ -57,6 +57,9 @@ public class PointVisualizer extends Geometry {
     // *************************************************************************
     // fields
 
+    /**
+     * for loading texture assets
+     */
     private AssetManager assetManager;
     // *************************************************************************
     // constructors
@@ -73,7 +76,7 @@ public class PointVisualizer extends Geometry {
      * Instantiate an enabled visualizer with the specified size and color and
      * the named shape.
      *
-     * @param assetManager for loading assets (not null)
+     * @param assetManager for loading texture assets (not null)
      * @param size the desired size (in pixels, &gt;0)
      * @param color the desired color (unaffected) or null for the default
      * @param shapeName the name of a sprite texture (either "cross", "lozenge",
@@ -93,6 +96,7 @@ public class PointVisualizer extends Geometry {
         setMaterial(mat);
 
         material.setFloat("PointSize", size);
+        material.setName("point");
 
         if (color != null) {
             material.setColor("Color", color.clone());
@@ -102,12 +106,7 @@ public class PointVisualizer extends Geometry {
         renderState.setDepthTest(false);
 
         if (shapeName != null) {
-            String shapePath
-                    = String.format("Textures/shapes/%s.png", shapeName);
-            boolean mipmaps = false;
-            Texture texture
-                    = MyAsset.loadTexture(assetManager, shapePath, mipmaps);
-            material.setTexture("PointShape", texture);
+            setShape(shapeName);
         }
     }
     // *************************************************************************
@@ -146,7 +145,8 @@ public class PointVisualizer extends Geometry {
      * @param desiredColor the desired color (not null, unaffected)
      */
     public void setColor(ColorRGBA desiredColor) {
-        material.setColor("Color", desiredColor.clone());
+        ColorRGBA colorClone = desiredColor.clone();
+        material.setColor("Color", colorClone);
     }
 
     /**
@@ -172,8 +172,7 @@ public class PointVisualizer extends Geometry {
     public void setShape(String shapeName) {
         Validate.nonEmpty(shapeName, "shape name");
 
-        String shapePath
-                = String.format("Textures/shapes/%s.png", shapeName);
+        String shapePath = String.format("Textures/shapes/%s.png", shapeName);
         boolean mipmaps = false;
         Texture texture = MyAsset.loadTexture(assetManager, shapePath, mipmaps);
         setShape(texture);
@@ -186,7 +185,7 @@ public class PointVisualizer extends Geometry {
      * created)
      */
     public void setShape(Texture desiredTexture) {
-        Validate.nonNull(desiredTexture, "shape texture");
+        Validate.nonNull(desiredTexture, "desired texture");
         material.setTexture("PointShape", desiredTexture);
     }
 
@@ -196,7 +195,7 @@ public class PointVisualizer extends Geometry {
      * @param desiredSize the desired size (in pixels, &gt;0)
      */
     public void setSize(int desiredSize) {
-        Validate.positive(desiredSize, "size");
+        Validate.positive(desiredSize, "desired size");
         material.setFloat("PointSize", desiredSize);
     }
 
