@@ -197,18 +197,21 @@ final public class MyAsset {
 
         Material material = createUnshadedMaterial(assetManager);
         material.setColor("Color", new ColorRGBA(0f, 0f, 0f, 0f));
+        material.setName("invisible");
+
         RenderState additional = material.getAdditionalRenderState();
         additional.setBlendMode(RenderState.BlendMode.Alpha);
         additional.setDepthWrite(false);
+        additional.setFaceCullMode(RenderState.FaceCullMode.FrontAndBack);
 
         return material;
     }
 
     /**
-     * Create a particle material with the specified texture.
+     * Create a particle material with the specified Texture.
      *
      * @param assetManager (not null)
-     * @param texture (not null)
+     * @param texture (not null, alias created)
      * @return a new instance
      */
     public static Material createParticleMaterial(AssetManager assetManager,
@@ -247,7 +250,7 @@ final public class MyAsset {
      * Create a non-shiny shaded material with the specified diffuse texture.
      *
      * @param assetManager (not null)
-     * @param texture (not null)
+     * @param texture (not null, alias created)
      * @return a new instance
      */
     public static Material createShadedMaterial(AssetManager assetManager,
