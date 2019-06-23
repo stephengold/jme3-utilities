@@ -214,7 +214,7 @@ public class Describer implements Cloneable {
         String name = material.getName();
         result.append(MyString.quoteName(name));
 
-        result.append(" matdef");
+        result.append(" def");
         MaterialDef def = material.getMaterialDef();
         String defName = (def == null) ? null : def.getName();
         String description = MyString.quote(defName);
@@ -227,7 +227,7 @@ public class Describer implements Cloneable {
 
         Collection<MatParam> params = material.getParams();
         int numParams = params.size();
-        String count = String.format(" %d parameter%s", numParams,
+        String count = String.format(" with %d parm%s", numParams,
                 (numParams == 1) ? "" : "s");
         result.append(count);
 
