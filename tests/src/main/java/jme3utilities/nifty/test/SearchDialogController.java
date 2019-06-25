@@ -26,6 +26,7 @@
  */
 package jme3utilities.nifty.test;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 import jme3utilities.nifty.dialog.TextEntryDialog;
 
@@ -63,7 +64,7 @@ class SearchDialogController extends TextEntryDialog {
      */
     @Override
     protected String feedback(String inputText) {
-        String lc = inputText.toLowerCase();
+        String lc = inputText.toLowerCase(Locale.ROOT);
         String msg;
         if (lc.contains("a") || lc.contains("e") || lc.contains("i")
                 || lc.contains("o") || lc.contains("u")) {
