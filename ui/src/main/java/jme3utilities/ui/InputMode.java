@@ -135,7 +135,7 @@ abstract public class InputMode
     /**
      * terse name for this mode: set by constructor
      */
-    final protected String shortName;
+    final private String shortName;
     // *************************************************************************
     // constructors
 
