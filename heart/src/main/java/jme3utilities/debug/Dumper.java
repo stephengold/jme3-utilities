@@ -31,6 +31,7 @@ import com.jme3.animation.Skeleton;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.bounding.BoundingVolume;
+import com.jme3.font.BitmapText;
 import com.jme3.light.LightList;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
@@ -434,6 +435,12 @@ public class Dumper implements Cloneable {
             addDescription(description);
         }
 
+        if (spatial instanceof BitmapText) {
+            stream.print(" text=");
+            String text = ((BitmapText) spatial).getText();
+            stream.print(MyString.quote(text));
+        }
+
         if (spatial instanceof Geometry) {
             Geometry geometry = (Geometry) spatial;
             Material material = geometry.getMaterial();
@@ -446,6 +453,7 @@ public class Dumper implements Cloneable {
                     dump(material.getParamsMap(), indent + indentIncrement);
                 }
             }
+
             Mesh mesh = geometry.getMesh();
             description = describer.describe(mesh);
             stream.println();
