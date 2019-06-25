@@ -88,7 +88,7 @@ abstract public class InputMode
     /*
      * action-string prefix for a signal action
      */
-    final static String signalActionPrefix = "signal ";
+    final public static String signalActionPrefix = "signal ";
     /**
      * message logger for this class
      */
