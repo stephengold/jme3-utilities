@@ -387,31 +387,21 @@ public class Dumper implements Cloneable {
         stream.print(name);
 
         String description = describer.describeControls(spatial);
-        if (!description.isEmpty()) {
-            stream.printf(" %s", description);
-        }
+        addDescription(description);
 
         LightList lights = spatial.getLocalLightList();
         description = describer.describe(lights);
-        if (!description.isEmpty()) {
-            stream.printf(" %s", description);
-        }
+        addDescription(description);
 
         if (dumpTransformFlag) {
             description = describer.describeLocation(spatial);
-            if (!description.isEmpty()) {
-                stream.printf(" %s", description);
-            }
+            addDescription(description);
 
             description = describer.describeOrientation(spatial);
-            if (!description.isEmpty()) {
-                stream.printf(" %s", description);
-            }
+            addDescription(description);
 
             description = describer.describeScale(spatial);
-            if (!description.isEmpty()) {
-                stream.printf(" %s", description);
-            }
+            addDescription(description);
         }
 
         if (dumpBoundsFlag) {
@@ -424,26 +414,24 @@ public class Dumper implements Cloneable {
 
         if (dumpUserFlag) {
             description = describer.describeUserData(spatial);
-            if (!description.isEmpty()) {
-                stream.printf(" %s", description);
-            }
+            addDescription(description);
         }
 
         if (dumpBucketFlag) {
             description = describer.describeBucket(spatial);
-            stream.printf(" %s", description);
+            addDescription(description);
         }
         if (dumpShadowFlag) {
             description = describer.describeShadow(spatial);
-            stream.printf(" %s", description);
+            addDescription(description);
         }
         if (dumpCullFlag) {
             description = describer.describeCull(spatial);
-            stream.printf(" %s", description);
+            addDescription(description);
         }
         if (dumpOverrideFlag) {
             description = describer.describeOverrides(spatial);
-            stream.printf(" %s", description);
+            addDescription(description);
         }
 
         if (spatial instanceof Geometry) {
@@ -462,7 +450,7 @@ public class Dumper implements Cloneable {
             description = describer.describe(mesh);
             stream.println();
             stream.print(indent);
-            stream.printf(" %s", description);
+            addDescription(description);
         }
         stream.println();
         /*
@@ -782,6 +770,22 @@ public class Dumper implements Cloneable {
         Validate.nonNegative(newLimit, "newLimit");
         maxChildren = newLimit;
         return this;
+    }
+    // *************************************************************************
+    // new protected methods
+
+    /**
+     * If the specified description is non-empty, print it to the stream,
+     * prefixed by a blank.
+     *
+     * @param description (not null)
+     */
+    protected void addDescription(String description) {
+        Validate.nonNull(description, "description");
+        if (!description.isEmpty()) {
+            stream.print(' ');
+            stream.print(description);
+        }
     }
     // *************************************************************************
     // Cloneable methods
