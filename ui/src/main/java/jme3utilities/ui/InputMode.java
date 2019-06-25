@@ -443,33 +443,13 @@ abstract public class InputMode
         }
     }
     // *************************************************************************
-    // AbstractAppState methods
+    // new protected methods
 
     /**
-     * Enable or disable this mode.
-     *
-     * @param newState true to enable, false to disable
+     * Add the default hotkey bindings. The bindings to be used if no custom
+     * bindings are found.
      */
-    @Override
-    public void setEnabled(boolean newState) {
-        logger.log(Level.FINE, "mode={0} newState={1}", new Object[]{
-            shortName, newState
-        });
-        assert !isSuspended;
-        if (!isInitialized()) {
-            startEnabled = newState;
-            return;
-        }
-
-        if (!isEnabled() && newState) {
-            activate();
-        } else if (isEnabled() && !newState) {
-            assert activeMode == this : activeMode;
-            deactivate();
-        }
-
-        super.setEnabled(newState);
-    }
+    abstract protected void defaultBindings();
     // *************************************************************************
     // ActionAppState methods
 
@@ -502,6 +482,32 @@ abstract public class InputMode
 
         setEnabled(startEnabled);
     }
+
+    /**
+     * Enable or disable this mode.
+     *
+     * @param newState true to enable, false to disable
+     */
+    @Override
+    public void setEnabled(boolean newState) {
+        logger.log(Level.FINE, "mode={0} newState={1}", new Object[]{
+            shortName, newState
+        });
+        assert !isSuspended;
+        if (!isInitialized()) {
+            startEnabled = newState;
+            return;
+        }
+
+        if (!isEnabled() && newState) {
+            activate();
+        } else if (isEnabled() && !newState) {
+            assert activeMode == this : activeMode;
+            deactivate();
+        }
+
+        super.setEnabled(newState);
+    }
     // *************************************************************************
     // Object methods
 
@@ -527,14 +533,6 @@ abstract public class InputMode
 
         return result;
     }
-    // *************************************************************************
-    // new protected methods
-
-    /**
-     * Add the default hotkey bindings. The bindings to be used if no custom
-     * bindings are found.
-     */
-    abstract protected void defaultBindings();
     // *************************************************************************
     // private methods
 
