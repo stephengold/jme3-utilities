@@ -69,6 +69,7 @@ import com.jme3.texture.TextureCubeMap;
 import com.jme3.util.IntMap;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyControl;
@@ -371,7 +372,7 @@ public class Describer implements Cloneable {
             formatString = "nofmt";
         } else {
             formatString = format.toString();
-            formatString = formatString.toLowerCase();
+            formatString = formatString.toLowerCase(Locale.ROOT);
             formatString = formatString.replace("float", "f");
             formatString = formatString.replace("unsigned", "u");
         }
