@@ -40,8 +40,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -96,9 +98,9 @@ abstract public class InputMode
     // fields
 
     /**
-     * list of initialized modes
+     * map from short names to initialized input modes
      */
-    final private static ArrayList<InputMode> modes = new ArrayList<>(3);
+    final private static Map<String, InputMode> modes = new TreeMap<>();
     /**
      * true if the mode is suspended (enabled but temporarily deactivated)
      */
@@ -276,13 +278,8 @@ abstract public class InputMode
      */
     public static InputMode findMode(String shortName) {
         Validate.nonNull(shortName, "name");
-
-        for (InputMode mode : modes) {
-            if (mode.shortName.equals(shortName)) {
-                return mode;
-            }
-        }
-        return null;
+        InputMode result = modes.get(shortName);
+        return result;
     }
 
     /**
@@ -487,8 +484,8 @@ abstract public class InputMode
             Application application) {
         super.initialize(stateManager, application);
 
-        boolean changed = modes.add(this);
-        assert changed;
+        InputMode prior = modes.put(shortName, this);
+        assert prior == null : shortName;
         /*
          * Load the intitial hotkey bindings.
          */
