@@ -148,7 +148,7 @@ class DefaultInputMode extends InputMode {
         assert signalName != null;
         assert !signalName.isEmpty();
 
-        String actionName = String.format("signal %s", signalName);
+        String actionName = InputMode.signalActionPrefix + signalName;
         bind(actionName, keyCode);
     }
 
