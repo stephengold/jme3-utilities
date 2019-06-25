@@ -98,10 +98,6 @@ abstract public class InputMode
     // fields
 
     /**
-     * map from short names to initialized input modes
-     */
-    final private static Map<String, InputMode> modes = new TreeMap<>();
-    /**
      * true if the mode is suspended (enabled but temporarily deactivated)
      */
     private boolean isSuspended = false;
@@ -117,6 +113,10 @@ abstract public class InputMode
      * appearance of the mouse pointer/cursor in this mode (null means hidden)
      */
     private JmeCursor cursor = null;
+    /**
+     * map from short names to initialized input modes
+     */
+    final private static Map<String, InputMode> modes = new TreeMap<>();
     /**
      * bindings from hotkeys to action names: needed because the InputManager
      * doesn't provide access to its mappings and also so that the hotkey
