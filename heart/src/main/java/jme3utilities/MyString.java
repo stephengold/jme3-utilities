@@ -29,6 +29,8 @@ package jme3utilities;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -274,6 +276,26 @@ public class MyString {
         }
 
         return longest.toString();
+    }
+
+    /**
+     * Invert the specified String-to-String map.
+     *
+     * @param input (not null, unaffected)
+     * @return a new String-to-String map
+     */
+    public static Map<String, String> invert(Map<String, String> input) {
+        Map<String, String> result = new TreeMap<>();
+        for (Map.Entry<String, String> entry : input.entrySet()) {
+            String key = entry.getKey();
+            if (result.containsKey(key)) {
+                throw new IllegalArgumentException("Non-invertible map.");
+            }
+            String value = entry.getValue();
+            result.put(value, key);
+        }
+
+        return result;
     }
 
     /**
