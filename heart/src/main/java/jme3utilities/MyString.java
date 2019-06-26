@@ -29,6 +29,7 @@ package jme3utilities;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -276,6 +277,24 @@ public class MyString {
         }
 
         return longest.toString();
+    }
+
+    /**
+     * Convert the first character of the specified String to lower case.
+     *
+     * @param input the input string (not null)
+     * @return the converted String (not null)
+     */
+    public static String firstToLower(String input) {
+        String result = input;
+        if (!input.isEmpty()) {
+            String first = input.substring(0, 1);
+            first = first.toLowerCase(Locale.ROOT);
+            String rest = input.substring(1);
+            result = first + rest;
+        }
+
+        return result;
     }
 
     /**
