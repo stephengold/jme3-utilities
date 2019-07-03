@@ -43,8 +43,8 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyArray;
 
 /**
- * Utility methods for manipulating animations and tracks. All methods should be
- * static.
+ * Utility methods for manipulating pre-3.3 animations and tracks. All methods
+ * should be static.
  *
  * @author Stephen Gold sgold@sonic.net
  */
