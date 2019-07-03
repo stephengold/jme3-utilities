@@ -26,6 +26,8 @@
  */
 package jme3utilities;
 
+import com.jme3.anim.Armature;
+import com.jme3.anim.Joint;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
@@ -483,10 +485,10 @@ public class MySkeleton {
 
     /**
      * Enumerate all bones in a pre-order, depth-first traversal of the
-     * skeleton, such that child bones never precede their ancestors.
+     * specified Skeleton, such that child bones never precede their ancestors.
      *
-     * @param skeleton the skeleton to traverse (not null, unaffected)
-     * @return a new list of bones
+     * @param skeleton the Skeleton to traverse (not null, unaffected)
+     * @return a new list of pre-existing bones
      */
     public static List<Bone> preOrderBones(Skeleton skeleton) {
         int numBones = skeleton.getBoneCount();
@@ -497,6 +499,25 @@ public class MySkeleton {
         }
 
         assert result.size() == numBones : result.size();
+        return result;
+    }
+
+    /**
+     * Enumerate all joints in a pre-order, depth-first traversal of the
+     * specified Armature, such that child joints never precede their ancestors.
+     *
+     * @param armature the Armature to traverse (not null, unaffected)
+     * @return a new list of pre-existing joints
+     */
+    public static List<Joint> preOrderJoints(Armature armature) {
+        int numJoints = armature.getJointCount();
+        List<Joint> result = new ArrayList<>(numJoints);
+        Joint[] rootJoints = armature.getRoots();
+        for (Joint rootJoint : rootJoints) {
+            addPreOrderJoints(rootJoint, result);
+        }
+
+        assert result.size() == numJoints : result.size();
         return result;
     }
 
@@ -632,12 +653,12 @@ public class MySkeleton {
     // private methods
 
     /**
-     * Helper method: append the specified bone and all its descendants to the
-     * specified list, using a pre-order, depth-first traversal of the skeleton,
+     * Helper method: append the specified Bone and all its descendants to the
+     * specified List, using a pre-order, depth-first traversal of the Skeleton,
      * such that child bones never precede their ancestors. Note: recursive!
      *
-     * @param bone bone to add (not null, unaffected)
-     * @param addResult the list to append to (modified)
+     * @param bone the Bone to add (not null, unaffected)
+     * @param addResult the List to append to (modified)
      */
     private static void addPreOrderBones(Bone bone, List<Bone> addResult) {
         assert bone != null;
@@ -645,6 +666,23 @@ public class MySkeleton {
         List<Bone> children = bone.getChildren();
         for (Bone child : children) {
             addPreOrderBones(child, addResult);
+        }
+    }
+
+    /**
+     * Helper method: append the specified Joint and all its descendants to the
+     * specified List, using a pre-order, depth-first traversal of the Armature,
+     * such that child joints never precede their ancestors. Note: recursive!
+     *
+     * @param joint the Joint to add (not null, unaffected)
+     * @param addResult the List to append to (modified)
+     */
+    private static void addPreOrderJoints(Joint joint, List<Joint> addResult) {
+        assert joint != null;
+        addResult.add(joint);
+        List<Joint> children = joint.getChildren();
+        for (Joint child : children) {
+            addPreOrderJoints(child, addResult);
         }
     }
 }
