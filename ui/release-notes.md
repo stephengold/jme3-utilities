@@ -1,9 +1,9 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.7.4for33 released on TBD
+## Version 0.7.4for33 released on 5 July 2019
 
  + Privatized the `shortName` field and publicized the
-   `signalActionPrefix` field.
+   `signalActionPrefix` field of the `InputMode` class.
  + Based on version 2.29 of the jme3-utilities-heart library and
    version 3.3.0-alpha2 of the jme3-core library.
 
