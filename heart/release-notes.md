@@ -1,5 +1,17 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.29.0for32 released on TBD
+
+ + Bugfix: NPEs in `PoseDemo` while renaming a bone or animation.
+ + Terminate each `AppState` dump with a newline.
+ + Specify `Locale` for portable `toLowerCase()`.
+ + Added a `Dumper` flag to describe the world bounds of spatials.
+ + Dump the text of a `BitmapText`.
+ + Added `Describer` methods for bounding volumes.
+ + Added `firstToLower()` and `invert()` methods to the `MyString` class.
+ + Added an `aabb()` method to the `MyArray` class.
+ + Added names to generated materials.
+
 ## Version 2.28.1 released on 7 June 2019
 
  + Bugfix: NPE while describing a buffer with no format.
