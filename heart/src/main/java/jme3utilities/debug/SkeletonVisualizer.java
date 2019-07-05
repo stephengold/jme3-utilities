@@ -159,7 +159,7 @@ public class SkeletonVisualizer extends SubtreeControl {
      * Instantiate a disabled control.
      *
      * @param assetManager for loading material definitions (not null)
-     * @param subject the skeleton control to visualize (may be null)
+     * @param subject the SkeletonControl to visualize (may be null)
      */
     public SkeletonVisualizer(AssetManager assetManager,
             SkeletonControl subject) {
@@ -354,10 +354,12 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     final public void setSubject(SkeletonControl subject) {
         if (subject == null) {
-            skeleton = null;
+            setSkeleton(null);
             transformSpatial = null;
         } else {
-            setSkeleton(subject.getSkeleton());
+            SkeletonControl sc = (SkeletonControl) subject;
+            Skeleton newSkeleton = sc.getSkeleton();
+            setSkeleton(newSkeleton);
             Spatial controlledSpatial = subject.getSpatial();
             Spatial animatedGeometry
                     = MySpatial.findAnimatedGeometry(controlledSpatial);
@@ -432,7 +434,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
 
-        if (skeleton == null || skeleton.getBoneCount() == 0) {
+        if (countBones() == 0) {
             subtree.detachAllChildren();
         } else if (subtree.getQuantity() == 0) {
             addGeometries();
@@ -470,12 +472,14 @@ public class SkeletonVisualizer extends SubtreeControl {
     private void addGeometries() {
         assert subtree.getQuantity() == 0;
 
-        SkeletonMesh headsMesh = new SkeletonMesh(skeleton, Mesh.Mode.Points);
+        SkeletonMesh headsMesh
+                = new SkeletonMesh(skeleton, Mesh.Mode.Points);
         Geometry headsGeometry = new Geometry(headsName, headsMesh);
         headsGeometry.setMaterial(headMaterial);
         subtree.attachChildAt(headsGeometry, headsChildPosition);
 
-        SkeletonMesh linksMesh = new SkeletonMesh(skeleton, Mesh.Mode.Lines);
+        SkeletonMesh linksMesh
+                = new SkeletonMesh(skeleton, Mesh.Mode.Lines);
         Geometry linksGeometry = new Geometry(linksName, linksMesh);
         linksGeometry.setMaterial(lineMaterial);
         subtree.attachChildAt(linksGeometry, linksChildPosition);
