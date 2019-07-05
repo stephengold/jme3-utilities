@@ -26,6 +26,8 @@
  */
 package jme3utilities.debug;
 
+import com.jme3.anim.Armature;
+import com.jme3.anim.Joint;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.math.ColorRGBA;
@@ -42,8 +44,9 @@ import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
 
 /**
- * A Mesh used to visualize a Skeleton. Each vertex corresponds to a skeleton
- * bone and follows that bone's head. Lines connect children with their parents.
+ * A Mesh used to visualize an Armature or Skeleton. Each vertex corresponds to
+ * an armature joint (or skeleton bone) and follows that object's head. Lines
+ * connect children with their parents.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -64,14 +67,20 @@ class SkeletonMesh extends Mesh {
     // constructors
 
     /**
-     * Instantiate a Mesh to visualize the specified Skeleton.
+     * Instantiate a Mesh to visualize the specified Armature or Skeleton.
      *
+     * @param armature the Armature to visualize (may be null, unaffected)
      * @param skeleton the Skeleton to visualize (may be null, unaffected)
      * @param mode mode for the Mesh (Mode.Lines or Mode.Points)
      */
-    SkeletonMesh(Skeleton skeleton, Mode mode) {
+    SkeletonMesh(Armature armature, Skeleton skeleton, Mode mode) {
+        assert armature == null || skeleton == null;
+
         int boneCount = 0, numRoots = 0;
-        if (skeleton != null) {
+        if (armature != null) {
+            boneCount = armature.getJointCount();
+            numRoots = MySkeleton.countRootJoints(armature);
+        } else if (skeleton != null) {
             boneCount = skeleton.getBoneCount();
             numRoots = MySkeleton.countRootBones(skeleton);
         }
@@ -87,12 +96,23 @@ class SkeletonMesh extends Mesh {
              */
             shorts.clear(); // prepare for writing
             for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
-                Bone child = skeleton.getBone(boneIndex); // skeleton != null
-                Bone parent = child.getParent();
-                if (parent != null) {
-                    short parentIndex = (short) skeleton.getBoneIndex(parent);
-                    short childIndex = (short) boneIndex;
-                    shorts.put(parentIndex).put(childIndex);
+                if (armature == null) {
+                    Bone child = skeleton.getBone(boneIndex);// skeleton != null
+                    Bone parent = child.getParent();
+                    if (parent != null) {
+                        short parentIndex
+                                = (short) skeleton.getBoneIndex(parent);
+                        short childIndex = (short) boneIndex;
+                        shorts.put(parentIndex).put(childIndex);
+                    }
+                } else {
+                    Joint child = armature.getJoint(boneIndex);
+                    Joint parent = child.getParent();
+                    if (parent != null) {
+                        short parentIndex = (short) parent.getId();
+                        short childIndex = (short) boneIndex;
+                        shorts.put(parentIndex).put(childIndex);
+                    }
                 }
             }
             shorts.flip(); // prepare for reading
@@ -127,20 +147,30 @@ class SkeletonMesh extends Mesh {
     /**
      * Update the position of each vertex in the Mesh.
      *
+     * @param armature the Armature to visualize (may be null, unaffected)
      * @param skeleton the Skeleton to visualize (may be null, unaffected)
      */
-    void updatePositions(Skeleton skeleton) {
+    void updatePositions(Armature armature, Skeleton skeleton) {
         FloatBuffer floats = getFloatBuffer(Type.Position);
         floats.clear(); // prepare for writing
 
         int boneCount = 0;
-        if (skeleton != null) {
+        if (armature != null) {
+            boneCount = armature.getJointCount();
+        } else if (skeleton != null) {
             boneCount = skeleton.getBoneCount();
         }
 
         for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
-            Bone bone = skeleton.getBone(boneIndex); // skeleton != null
-            Vector3f location = bone.getModelSpacePosition();
+            Vector3f location;
+            if (armature == null) {
+                Bone bone = skeleton.getBone(boneIndex); // skeleton != null
+                location = bone.getModelSpacePosition();
+            } else {
+                Joint joint = armature.getJoint(boneIndex);
+                location = joint.getModelTransform().getTranslation();
+            }
+
             floats.put(location.x).put(location.y).put(location.z);
         }
         floats.flip(); // prepare for reading

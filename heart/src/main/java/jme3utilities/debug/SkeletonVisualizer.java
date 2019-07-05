@@ -26,6 +26,8 @@
  */
 package jme3utilities.debug;
 
+import com.jme3.anim.Armature;
+import com.jme3.anim.SkinningControl;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetManager;
@@ -40,6 +42,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.AbstractControl;
 import com.jme3.texture.Texture;
 import com.jme3.util.clone.Cloner;
 import java.util.Map;
@@ -125,6 +128,10 @@ public class SkeletonVisualizer extends SubtreeControl {
     // fields
 
     /**
+     * Armature being visualized, or null for none
+     */
+    private Armature armature = null;
+    /**
      * general color for bone heads
      */
     private ColorRGBA headColor = defaultHeadColor.clone();
@@ -159,10 +166,11 @@ public class SkeletonVisualizer extends SubtreeControl {
      * Instantiate a disabled control.
      *
      * @param assetManager for loading material definitions (not null)
-     * @param subject the SkeletonControl to visualize (may be null)
+     * @param subject the SkeletonControl or SkinningControl to visualize (may
+     * be null)
      */
     public SkeletonVisualizer(AssetManager assetManager,
-            SkeletonControl subject) {
+            AbstractControl subject) {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
@@ -239,7 +247,9 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     public int countBones() {
         int result = 0;
-        if (skeleton != null) {
+        if (armature != null) {
+            result = armature.getJointCount();
+        } else if (skeleton != null) {
             result = skeleton.getBoneCount();
         }
 
@@ -347,19 +357,26 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Configure the Skeleton and transform spatial based on the specified
-     * SkeletonControl.
+     * Configure the Armature (or Skeleton) and transform spatial based on the
+     * specified Control.
      *
-     * @param subject the SkeletonControl to analyze (may be null)
+     * @param subject the SkeletonControl or SkinningControl to analyze (may be
+     * null)
      */
-    final public void setSubject(SkeletonControl subject) {
+    final public void setSubject(AbstractControl subject) {
         if (subject == null) {
-            setSkeleton(null);
+            setSkeleton(null, null);
             transformSpatial = null;
         } else {
-            SkeletonControl sc = (SkeletonControl) subject;
-            Skeleton newSkeleton = sc.getSkeleton();
-            setSkeleton(newSkeleton);
+            if (subject instanceof SkeletonControl) {
+                SkeletonControl sc = (SkeletonControl) subject;
+                Skeleton newSkeleton = sc.getSkeleton();
+                setSkeleton(null, newSkeleton);
+            } else {
+                SkinningControl sc = (SkinningControl) subject;
+                Armature newArmature = sc.getArmature();
+                setSkeleton(newArmature, null);
+            }
             Spatial controlledSpatial = subject.getSpatial();
             Spatial animatedGeometry
                     = MySpatial.findAnimatedGeometry(controlledSpatial);
@@ -417,6 +434,7 @@ public class SkeletonVisualizer extends SubtreeControl {
             customColors.put(boneIndex, copyColor);
         }
 
+        armature = cloner.clone(armature);
         headColor = cloner.clone(headColor);
         headMaterial = cloner.clone(headMaterial);
         lineMaterial = cloner.clone(lineMaterial);
@@ -473,13 +491,13 @@ public class SkeletonVisualizer extends SubtreeControl {
         assert subtree.getQuantity() == 0;
 
         SkeletonMesh headsMesh
-                = new SkeletonMesh(skeleton, Mesh.Mode.Points);
+                = new SkeletonMesh(armature, skeleton, Mesh.Mode.Points);
         Geometry headsGeometry = new Geometry(headsName, headsMesh);
         headsGeometry.setMaterial(headMaterial);
         subtree.attachChildAt(headsGeometry, headsChildPosition);
 
         SkeletonMesh linksMesh
-                = new SkeletonMesh(skeleton, Mesh.Mode.Lines);
+                = new SkeletonMesh(armature, skeleton, Mesh.Mode.Lines);
         Geometry linksGeometry = new Geometry(linksName, linksMesh);
         linksGeometry.setMaterial(lineMaterial);
         subtree.attachChildAt(linksGeometry, linksChildPosition);
@@ -488,15 +506,17 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter which Skeleton is visualized.
+     * Alter which Armature or Skeleton is visualized.
      *
+     * @param newArmature the Armature to visualize (may be null, alias created)
      * @param newSkeleton the Skeleton to visualize (may be null, alias created)
      */
-    private void setSkeleton(Skeleton newSkeleton) {
-        if (skeleton != newSkeleton) {
+    private void setSkeleton(Armature newArmature, Skeleton newSkeleton) {
+        if (armature != newArmature || skeleton != newSkeleton) {
             if (subtree != null) {
                 subtree.detachAllChildren();
             }
+            armature = newArmature;
             skeleton = newSkeleton;
         }
     }
@@ -519,13 +539,13 @@ public class SkeletonVisualizer extends SubtreeControl {
                 = (Geometry) subtree.getChild(headsChildPosition);
         SkeletonMesh headsMesh = (SkeletonMesh) headsGeometry.getMesh();
         headsMesh.updateColors(this);
-        headsMesh.updatePositions(skeleton);
+        headsMesh.updatePositions(armature, skeleton);
 
         Geometry linksGeometry
                 = (Geometry) subtree.getChild(linksChildPosition);
         SkeletonMesh linksMesh = (SkeletonMesh) linksGeometry.getMesh();
         linksMesh.updateColors(this);
-        linksMesh.updatePositions(skeleton);
+        linksMesh.updatePositions(armature, skeleton);
 
         if (effectiveLineWidth >= 1f) {
             assert lineMaterial == linksGeometry.getMaterial();
