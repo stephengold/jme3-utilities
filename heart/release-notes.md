@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.29.0for33 released on TBD
+## Version 2.29.0for33 released on 5 July 2019
 
  + Removed the `PoseDemo` application.
  + Targeted jMonkeyEngine version 3.3.0-alpha2.
