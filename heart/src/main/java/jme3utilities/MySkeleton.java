@@ -75,31 +75,31 @@ public class MySkeleton {
     // new methods exposed
 
     /**
-     * Cancel the attachments node (if any) of the specified bone. The invoker
-     * is responsible for removing the node from the scene graph.
+     * Cancel the attachments node (if any) of the specified Bone. The invoker
+     * is responsible for removing the Node from the scene graph.
      *
-     * @param bone which bone (not null, modified)
+     * @param bone the Bone to modify (not null, modified)
      */
     public static void cancelAttachments(Bone bone) {
         Field attachNodeField;
         try {
             attachNodeField = Bone.class.getDeclaredField("attachNode");
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException exception) {
             throw new RuntimeException();
         }
         attachNodeField.setAccessible(true);
 
         try {
             attachNodeField.set(bone, null);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException exception) {
             throw new RuntimeException();
         }
     }
 
     /**
-     * Copy the bind transform of the specified bone.
+     * Copy the bind transform of the specified Bone.
      *
-     * @param bone which bone to use (not null, unaffected)
+     * @param bone which Bone to read (not null, unaffected)
      * @param storeResult (modified if not null)
      * @return the bone's bind transform (in its parent's coordinates, either
      * storeResult or a new instance)
@@ -126,9 +126,9 @@ public class MySkeleton {
     }
 
     /**
-     * Copy the transform of the specified bone relative to its parent.
+     * Copy the transform of the specified Bone relative to its parent.
      *
-     * @param bone which bone to use (not null, unaffected)
+     * @param bone which Bone to read (not null, unaffected)
      * @param storeResult (modified if not null)
      * @return the bone's transform (in its parent's coordinates, either
      * storeResult or a new instance)
@@ -151,9 +151,9 @@ public class MySkeleton {
     }
 
     /**
-     * Copy the transform of the specified bone relative to its mesh(es).
+     * Copy the transform of the specified Bone relative to its mesh(es).
      *
-     * @param bone which bone to use (not null, unaffected)
+     * @param bone which Bone to read (not null, unaffected)
      * @param storeResult (modified if not null)
      * @return the bone transform (in mesh coordinates, either storeResult or a
      * new instance)
@@ -177,10 +177,10 @@ public class MySkeleton {
     }
 
     /**
-     * Count the leaf bones in the specified skeleton.
+     * Count the leaf bones in the specified Skeleton.
      *
-     * @param skeleton (not null, unaffected)
-     * @return count (&ge;0)
+     * @param skeleton the Skeleton to read (not null, unaffected)
+     * @return the count (&ge;0)
      */
     public static int countLeafBones(Skeleton skeleton) {
         int boneCount = skeleton.getBoneCount();
@@ -197,10 +197,10 @@ public class MySkeleton {
     }
 
     /**
-     * Count the root bones in the specified skeleton.
+     * Count the root bones in the specified Skeleton.
      *
-     * @param skeleton (not null, unaffected)
-     * @return count (&ge;0)
+     * @param skeleton the Skeleton to read (not null, unaffected)
+     * @return the count (&ge;0)
      */
     public static int countRootBones(Skeleton skeleton) {
         Bone[] roots = skeleton.getRoots();
@@ -211,12 +211,12 @@ public class MySkeleton {
 
     /**
      * Test whether the indexed bone descends from the indexed ancestor in the
-     * specified skeleton.
+     * specified Skeleton.
      *
-     * @param boneIndex index of bone to test (&ge;0)
-     * @param ancestorIndex index of ancestor bone (&ge;0)
-     * @param skeleton (not null, unaffected)
-     * @return true if descended from the parent, otherwise false
+     * @param boneIndex the index of Bone to test (&ge;0)
+     * @param ancestorIndex the index of the ancestor Bone (&ge;0)
+     * @param skeleton the Skeleton to read (not null, unaffected)
+     * @return true if descends from the ancestor, otherwise false
      */
     public static boolean descendsFrom(int boneIndex, int ancestorIndex,
             Skeleton skeleton) {
@@ -236,11 +236,12 @@ public class MySkeleton {
     }
 
     /**
-     * Find a named bone in a skeletonized spatial.
+     * Find a named Bone in a skeletonized Spatial.
      *
-     * @param spatial skeletonized spatial to search (not null, alias created)
-     * @param boneName name of the bone to access (not null)
-     * @return a pre-existing instance (or null if not found)
+     * @param spatial the skeletonized Spatial to search (not null, alias
+     * created)
+     * @param boneName the name of the Bone to access (not null)
+     * @return a pre-existing instance, or null if not found
      */
     public static Bone findBone(Spatial spatial, String boneName) {
         Validate.nonNull(spatial, "spatial");
@@ -261,9 +262,9 @@ public class MySkeleton {
     }
 
     /**
-     * Find a skeleton of the specified spatial.
+     * Find a Skeleton of the specified Spatial.
      *
-     * @param spatial which spatial to search (not null, alias created)
+     * @param spatial the Spatial to search (not null, alias created)
      * @return a pre-existing instance, or null if none found
      */
     public static Skeleton findSkeleton(Spatial spatial) {
@@ -285,13 +286,13 @@ public class MySkeleton {
     }
 
     /**
-     * Access the attachments node of the specified bone.
+     * Access the attachments node of the specified Bone.
      * <p>
      * Unlike
      * {@link com.jme3.animation.SkeletonControl#getAttachmentsNode(java.lang.String)}
      * this won't add a node to the scene graph.
      *
-     * @param bone which bone (not null, unaffected)
+     * @param bone the Bone to read (not null, unaffected)
      * @return the pre-existing instance, or null if none
      */
     public static Node getAttachments(Bone bone) {
@@ -316,8 +317,8 @@ public class MySkeleton {
     /**
      * Enumerate all named bones in the specified skeleton.
      *
-     * @param skeleton which skeleton (not null, unaffected)
-     * @param addResult (added to if not null)
+     * @param skeleton the skeleton to search (not null, unaffected)
+     * @param addResult storage for results (added to if not null)
      * @return a list of names in arbitrary order, without any duplicates
      * (either addResult or a new list)
      */
@@ -370,7 +371,7 @@ public class MySkeleton {
      * graph. Note: recursive!
      *
      * @param subtree (not null, aliases created)
-     * @param addResult (added to if not null)
+     * @param addResult storage for results (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
     public static List<Skeleton> listSkeletons(Spatial subtree,
@@ -403,8 +404,8 @@ public class MySkeleton {
     /**
      * Map all attachments in the specified skeleton.
      *
-     * @param skeleton (not null, unaffected)
-     * @param storeResult (added to if not null)
+     * @param skeleton the skeleton to search (not null, unaffected)
+     * @param storeResult storage for results (added to if not null)
      * @return an expanded map (either storeResult or a new instance)
      */
     public static Map<Bone, Spatial> mapAttachments(Skeleton skeleton,
@@ -437,7 +438,7 @@ public class MySkeleton {
      * Map all attachments nodes in the specified subtree of a scene graph.
      *
      * @param subtree (not null, unaffected)
-     * @param storeResult (added to if not null)
+     * @param storeResult storage for results (added to if not null)
      * @return an expanded map (either storeResult or a new instance)
      */
     public static Map<Bone, Spatial> mapAttachments(Spatial subtree,
@@ -458,10 +459,10 @@ public class MySkeleton {
     }
 
     /**
-     * Count the leaf bones in the specified skeleton.
+     * Count the leaf bones in the specified Skeleton.
      *
-     * @param skeleton (not null, unaffected)
-     * @return count (&ge;0)
+     * @param skeleton the Skeleton to search (not null, unaffected)
+     * @return the count (&ge;0)
      * @deprecated use {@link #countLeafBones(com.jme3.animation.Skeleton)}
      */
     @Deprecated
@@ -470,10 +471,10 @@ public class MySkeleton {
     }
 
     /**
-     * Count the root bones in the specified skeleton.
+     * Count the root bones in the specified Skeleton.
      *
-     * @param skeleton (not null, unaffected)
-     * @return count (&ge;0)
+     * @param skeleton the Skeleton to seach (not null, unaffected)
+     * @return the count (&ge;0)
      * @deprecated use {@link #countRootBones(com.jme3.animation.Skeleton)}
      */
     @Deprecated
@@ -483,10 +484,10 @@ public class MySkeleton {
 
     /**
      * Enumerate all bones in a pre-order, depth-first traversal of the
-     * skeleton, such that child bones never precede their ancestors.
+     * specified Skeleton, such that child bones never precede their ancestors.
      *
-     * @param skeleton the skeleton to traverse (not null, unaffected)
-     * @return a new list of bones
+     * @param skeleton the Skeleton to traverse (not null, unaffected)
+     * @return a new list of pre-existing bones
      */
     public static List<Bone> preOrderBones(Skeleton skeleton) {
         int numBones = skeleton.getBoneCount();
@@ -504,15 +505,15 @@ public class MySkeleton {
      * Rename of the specified bone. The caller is responsible for avoiding
      * duplicate names.
      *
-     * @param bone bone to change (not null, modified)
-     * @param newName name to apply
+     * @param bone the Bone to rename (not null, modified)
+     * @param newName the desired name
      * @return true if successful, otherwise false
      */
     public static boolean setName(Bone bone, String newName) {
         Field nameField;
         try {
             nameField = Bone.class.getDeclaredField("name");
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException exception) {
             return false;
         }
         nameField.setAccessible(true);
@@ -569,10 +570,11 @@ public class MySkeleton {
     }
 
     /**
-     * Alter all the user-control flags in the specified skeleton.
+     * Alter all the user-control flags in the specified Skeleton.
      *
-     * @param skeleton skeleton to alter (not null, modified)
-     * @param newSetting true to enable user control, false to disable it
+     * @param skeleton the Skeleton to alter (not null, modified)
+     * @param newSetting true to select user control, false to select animation
+     * control
      */
     public static void setUserControl(Skeleton skeleton, boolean newSetting) {
         int boneCount = skeleton.getBoneCount();
@@ -599,12 +601,12 @@ public class MySkeleton {
     }
 
     /**
-     * Calculate the world location of (the tail/origin of) a named bone.
+     * Calculate the world location of (the tail/origin of) the named Bone.
      *
-     * @param spatial skeletonized spatial that contains the bone (not null,
+     * @param spatial a skeletonized Spatial that contains the Bone (not null,
      * unaffected)
-     * @param boneName (not null)
-     * @param storeResult (modified if not null)
+     * @param boneName the name of the Bone to read (not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the location (in world coordinates, either storeResult or a new
      * instance)
      */
@@ -632,12 +634,12 @@ public class MySkeleton {
     // private methods
 
     /**
-     * Helper method: append the specified bone and all its descendants to the
-     * specified list, using a pre-order, depth-first traversal of the skeleton,
+     * Helper method: append the specified Bone and all its descendants to the
+     * specified List, using a pre-order, depth-first traversal of the Skeleton,
      * such that child bones never precede their ancestors. Note: recursive!
      *
-     * @param bone bone to add (not null, unaffected)
-     * @param addResult the list to append to (modified)
+     * @param bone the next Bone to append (not null, unaffected)
+     * @param addResult the List to append to (modified)
      */
     private static void addPreOrderBones(Bone bone, List<Bone> addResult) {
         assert bone != null;
