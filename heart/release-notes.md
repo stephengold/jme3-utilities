@@ -1,5 +1,20 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.29.0for33 released on TBD
+
+ + Removed the `PoseDemo` application.
+ + Targeted jMonkeyEngine version 3.3.0-alpha2.
+ + Added support for the `com.jme3.anim` animation system to
+   `MySkeleton` and `SkeletonVisualizer`.
+ + Terminate each `AppState` dump with a newline.
+ + Specify `Locale` for portable `toLowerCase()`.
+ + Added a `Dumper` flag to describe the world bounds of spatials.
+ + Dump the text of a `BitmapText`.
+ + Added `Describer` methods for bounding volumes.
+ + Added `firstToLower()` and `invert()` methods to the `MyString` class.
+ + Added an `aabb()` method to the `MyArray` class.
+ + Added names to generated materials.
+
 ## Version 2.28.1 released on 7 June 2019
 
  + Bugfix: NPE while describing a buffer with no format.
