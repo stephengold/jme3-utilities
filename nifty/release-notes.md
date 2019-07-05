@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.6for32 released on TBD
+
+Base on version 2.29 of the jme3-utilities-heart library.
+
 ## Version 0.9.5 released on 7 June 2019
 
  + Turn on Java 7 compatibility.
