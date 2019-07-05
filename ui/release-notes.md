@@ -1,5 +1,12 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.7.4for33 released on TBD
+
+ + Privatized the `shortName` field and publicized the
+   `signalActionPrefix` field.
+ + Based on version 2.29 of the jme3-utilities-heart library and
+   version 3.3.0-alpha2 of the jme3-core library.
+
 ## Version 0.7.3 released on 7 June 2019
 
  + Changed `ActionApplication` to feed a de-scaled `tpf` to `flyCam`.
