@@ -48,7 +48,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Utility methods for manipulating skeletonized spatials, skeletons, and bones.
+ * Utility methods for manipulating skeletonized spatials, armatures, armature
+ * joints, skeletons, and skeleton bones.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -93,6 +94,28 @@ public class MySkeleton {
 
         try {
             attachNodeField.set(bone, null);
+        } catch (IllegalAccessException exception) {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * Cancel the attachments node (if any) of the specified Joint. The invoker
+     * is responsible for removing the Node from the scene graph.
+     *
+     * @param joint the Joint to modify (not null, modified)
+     */
+    public static void cancelAttachments(Joint joint) {
+        Field attachedNodeField;
+        try {
+            attachedNodeField = Joint.class.getDeclaredField("attachedNode");
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException();
+        }
+        attachedNodeField.setAccessible(true);
+
+        try {
+            attachedNodeField.set(joint, null);
         } catch (IllegalAccessException exception) {
             throw new RuntimeException();
         }
@@ -212,6 +235,19 @@ public class MySkeleton {
     }
 
     /**
+     * Count the root joints in the specified Armature.
+     *
+     * @param armature the Armature to read (not null, unaffected)
+     * @return the count (&ge;0)
+     */
+    public static int countRootJoints(Armature armature) {
+        Joint[] roots = armature.getRoots();
+        int result = roots.length;
+
+        return result;
+    }
+
+    /**
      * Test whether the indexed bone descends from the indexed ancestor in the
      * specified Skeleton.
      *
@@ -309,6 +345,35 @@ public class MySkeleton {
         Node result;
         try {
             result = (Node) attachNodeField.get(bone);
+        } catch (IllegalAccessException exception) {
+            throw new RuntimeException(exception);
+        }
+
+        return result;
+    }
+
+    /**
+     * Access the attachments node of the specified Joint.
+     * <p>
+     * Unlike
+     * {@link com.jme3.anim.Joint#getAttachmentsNode(int, com.jme3.util.SafeArrayList)}
+     * this won't add a node to the scene graph.
+     *
+     * @param joint the Joint to read (not null, unaffected)
+     * @return the pre-existing instance, or null if none
+     */
+    public static Node getAttachments(Joint joint) {
+        Field attachedNodeField;
+        try {
+            attachedNodeField = Joint.class.getDeclaredField("attachedNode");
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException(exception);
+        }
+        attachedNodeField.setAccessible(true);
+
+        Node result;
+        try {
+            result = (Node) attachedNodeField.get(joint);
         } catch (IllegalAccessException exception) {
             throw new RuntimeException(exception);
         }
