@@ -42,9 +42,8 @@ import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
 
 /**
- * A mesh used to visualize a skeleton. Each vertex corresponds to a bone in the
- * skeleton and follows that bone's head. Lines connect child bones with their
- * parents.
+ * A Mesh used to visualize a Skeleton. Each vertex corresponds to a skeleton
+ * bone and follows that bone's head. Lines connect children with their parents.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -65,38 +64,24 @@ class SkeletonMesh extends Mesh {
     // constructors
 
     /**
-     * Instantiate a mesh for the specified skeleton.
+     * Instantiate a Mesh to visualize the specified Skeleton.
      *
-     * @param skeleton the skeleton to visualize (may be null, unaffected)
-     * @param mode mode for the mesh (Mode.Lines or Mode.Points)
+     * @param skeleton the Skeleton to visualize (may be null, unaffected)
+     * @param mode mode for the Mesh (Mode.Lines or Mode.Points)
      */
     SkeletonMesh(Skeleton skeleton, Mode mode) {
-        int boneCount, numConnections;
-        if (skeleton == null) {
-            boneCount = 0;
-            numConnections = 0;
-        } else {
+        int boneCount = 0, numRoots = 0;
+        if (skeleton != null) {
             boneCount = skeleton.getBoneCount();
-            int numRoots = MySkeleton.countRootBones(skeleton);
-            numConnections = boneCount - numRoots;
+            numRoots = MySkeleton.countRootBones(skeleton);
         }
+        int numConnections = boneCount - numRoots;
 
-        FloatBuffer floats = BufferUtils.createFloatBuffer(numAxes * boneCount);
-        VertexBuffer positions = new VertexBuffer(Type.Position);
-        positions.setupData(Usage.Stream, numAxes, Format.Float, floats);
-        setBuffer(positions);
-
-        FloatBuffer fColors = BufferUtils.createFloatBuffer(4 * boneCount);
-        VertexBuffer vColors = new VertexBuffer(Type.Color);
-        vColors.setupData(Usage.Stream, 4, Format.Float, fColors);
-        setBuffer(vColors);
+        createColors(boneCount);
+        createPositions(boneCount);
 
         if (mode == Mode.Lines) {
-            int numIndices = 2 * numConnections;
-            ShortBuffer shorts = BufferUtils.createShortBuffer(numIndices);
-            VertexBuffer indices = new VertexBuffer(Type.Index);
-            indices.setupData(Usage.Static, 2, Format.UnsignedShort, shorts);
-            setBuffer(indices);
+            ShortBuffer shorts = createLineIndices(numConnections);
             /*
              * Populate the index buffer.
              */
@@ -106,9 +91,8 @@ class SkeletonMesh extends Mesh {
                 Bone parent = child.getParent();
                 if (parent != null) {
                     short parentIndex = (short) skeleton.getBoneIndex(parent);
-                    shorts.put(parentIndex);
                     short childIndex = (short) boneIndex;
-                    shorts.put(childIndex);
+                    shorts.put(parentIndex).put(childIndex);
                 }
             }
             shorts.flip(); // prepare for reading
@@ -120,9 +104,9 @@ class SkeletonMesh extends Mesh {
     // new methods exposed
 
     /**
-     * Update the color of each vertex in the mesh.
+     * Update the color of each vertex in the Mesh.
      *
-     * @param colors color for each bone (not null, unaffected)
+     * @param sv the visualizer to provide the colors (not null, unaffected)
      */
     void updateColors(SkeletonVisualizer sv) {
         FloatBuffer fColors = getFloatBuffer(Type.Color);
@@ -132,10 +116,7 @@ class SkeletonMesh extends Mesh {
         ColorRGBA color = new ColorRGBA();
         for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
             sv.copyHeadColor(boneIndex, color);
-            fColors.put(color.r);
-            fColors.put(color.g);
-            fColors.put(color.b);
-            fColors.put(color.a);
+            fColors.put(color.r).put(color.g).put(color.b).put(color.a);
         }
         fColors.flip(); // prepare for reading
 
@@ -144,25 +125,23 @@ class SkeletonMesh extends Mesh {
     }
 
     /**
-     * Update the position of each vertex in the mesh.
+     * Update the position of each vertex in the Mesh.
      *
-     * @param skeleton the skeleton to visualize (may be null, unaffected)
+     * @param skeleton the Skeleton to visualize (may be null, unaffected)
      */
     void updatePositions(Skeleton skeleton) {
         FloatBuffer floats = getFloatBuffer(Type.Position);
         floats.clear(); // prepare for writing
-        int boneCount;
-        if (skeleton == null) {
-            boneCount = 0;
-        } else {
+
+        int boneCount = 0;
+        if (skeleton != null) {
             boneCount = skeleton.getBoneCount();
         }
+
         for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
             Bone bone = skeleton.getBone(boneIndex); // skeleton != null
             Vector3f location = bone.getModelSpacePosition();
-            floats.put(location.x);
-            floats.put(location.y);
-            floats.put(location.z);
+            floats.put(location.x).put(location.y).put(location.z);
         }
         floats.flip(); // prepare for reading
 
@@ -185,5 +164,53 @@ class SkeletonMesh extends Mesh {
     public SkeletonMesh clone() {
         SkeletonMesh clone = (SkeletonMesh) super.clone();
         return clone;
+    }
+    // *************************************************************************
+    // private methods
+
+    /**
+     * Create and add the color buffer.
+     *
+     * @param numVertices (&ge;0)
+     */
+    private void createColors(int numVertices) {
+        assert numVertices >= 0 : numVertices;
+
+        FloatBuffer floats = BufferUtils.createFloatBuffer(4 * numVertices);
+        VertexBuffer vColors = new VertexBuffer(Type.Color);
+        vColors.setupData(Usage.Stream, 4, Format.Float, floats);
+        setBuffer(vColors);
+    }
+
+    /**
+     * Create and add the indices buffer for a Lines-mode mesh.
+     *
+     * @param numLines (&ge;0)
+     */
+    private ShortBuffer createLineIndices(int numLines) {
+        assert numLines >= 0 : numLines;
+
+        int numIndices = 2 * numLines;
+        ShortBuffer shorts = BufferUtils.createShortBuffer(numIndices);
+        VertexBuffer indices = new VertexBuffer(Type.Index);
+        indices.setupData(Usage.Static, 2, Format.UnsignedShort, shorts);
+        setBuffer(indices);
+
+        return shorts;
+    }
+
+    /**
+     * Create and add the positions buffer.
+     *
+     * @param numVertices (&ge;0)
+     */
+    private void createPositions(int numVertices) {
+        assert numVertices >= 0 : numVertices;
+
+        FloatBuffer floats
+                = BufferUtils.createFloatBuffer(numAxes * numVertices);
+        VertexBuffer positions = new VertexBuffer(Type.Position);
+        positions.setupData(Usage.Stream, numAxes, Format.Float, floats);
+        setBuffer(positions);
     }
 }
