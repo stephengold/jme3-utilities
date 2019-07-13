@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.29.1for32 released on TBD
+## Version 2.29.1for32 released on 13 July 2019
 
 Targeted jMonkeyEngine version 3.2.4-stable
 
