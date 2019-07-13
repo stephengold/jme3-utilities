@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.29.1for32 released on TBD
+
+Targeted jMonkeyEngine version 3.2.4-stable
+
 ## Version 2.29.0for32 released on 5 July 2019
 
  + Bugfix: NPEs in `PoseDemo` while renaming a bone or animation.
@@ -80,36 +84,36 @@ Added getters for the fields of a `Dumper`.
 ## Version 2.21.0 released on 10 March 2019
 
  + The `jme3-utilities-debug` library merged into the
-   `jme3-utilities-heart` library.
+   `jme3-utilities-heart` library
    All classes in the `jme3utilities.debug` package except `DebugVersion`
-   were transferred to `jme3-utilities-heart`.
+   were transferred to `jme3-utilities-heart`
    All resources in the `Textures.shapes` package and the
-   `Models.indicators.arrow` package were also transferred.
+   `Models.indicators.arrow` package were also transferred
  + Changed `MyVector3f.midpoint()` and `MyVector3f.projection()` to accept
-   caller-allocated storage.
- + Added a `first()` method to the `Misc` class.
- + Added a special case for uniform-scaling in `MyVector3f.describe()`.
+   caller-allocated storage
+ + Added a `first()` method to the `Misc` class
+ + Added a special case for uniform-scaling in `MyVector3f.describe()`
  + Changed `MyString` to accept `CharSequence` arguments in
-   `escape()`, `quote()` and `unescape()`.
- + Made argument validation more friendly in `NameGenerator`.
+   `escape()`, `quote()` and `unescape()`
+ + Made argument validation more friendly in `NameGenerator`
 
 ## Version 2.20.0 released on 18 February 2019
 
 Added `localToWorld(Quaternion)` and
 `RectangularSolid(RectangularSolid, Vector3f)` methods to the
-`RectangularSolid` class.
+`RectangularSolid` class
 
 ## Version 2.19.0 released on 17 February 2019
 
  + Moved the `countDistinct()` and `countNe()` methods from `MyVector3f` to the
-   `MyArray` class.
- + Renamed `MySkeleton.numLeafBones()` to `countLeafBones()`.
- + Renamed `MySkeleton.numRootBones()` to `countRootBones()`.
- + Added a `createDebugMaterial()` method to the `MyAsset` class.
- + Added `SkeletonControl` skinning modes to `MyControl.describe()`.
- + Added a `boneWeightMaterial()` method to the `MyMesh` class.
- + Added a `visualizeBoneWeights()` method to the `MySpatial` class.
- + Added a `listCorners()` method to the `RectangularSolid` class.
+   `MyArray` class
+ + Renamed `MySkeleton.numLeafBones()` to `countLeafBones()`
+ + Renamed `MySkeleton.numRootBones()` to `countRootBones()`
+ + Added a `createDebugMaterial()` method to the `MyAsset` class
+ + Added `SkeletonControl` skinning modes to `MyControl.describe()`
+ + Added a `boneWeightMaterial()` method to the `MyMesh` class
+ + Added a `visualizeBoneWeights()` method to the `MySpatial` class
+ + Added a `listCorners()` method to the `RectangularSolid` class
 
 ## Version 2.18.0 released on 5 January 2019
 
