@@ -14,7 +14,7 @@ ext {
     baseName = "$artifact-$version"
 }
 
-build { dependsOn 'pom' }
+build.dependsOn('pom')
 jar {
     baseName project.ext.baseName
     exclude('**/arrow.blend')
