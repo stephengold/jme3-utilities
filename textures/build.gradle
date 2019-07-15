@@ -20,9 +20,9 @@ sourceSets {
 }
 
 dependencies {
-    compile "com.beust:jcommander:$jcommanderVersion"
-    compile "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
-    compile "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
+    implementation "com.beust:jcommander:$jcommanderVersion"
+    implementation "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
+    implementation "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
 }
 
 clean {
