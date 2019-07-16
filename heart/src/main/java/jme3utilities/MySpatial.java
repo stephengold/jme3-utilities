@@ -863,6 +863,7 @@ public class MySpatial {
      * @param subtree (may be null, aliases created)
      * @param storeResult (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
+     * @see MyMesh#listMeshes(com.jme3.scene.Spatial, java.util.List)
      */
     public static List<Material> listMaterials(Spatial subtree,
             List<Material> storeResult) {
