@@ -79,7 +79,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
-            String message = String.format("%s must be a finite number.", what);
+            String message = what + " must be a finite number.";
             throw new IllegalArgumentException(message);
         }
 
@@ -103,7 +103,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
-            String message = String.format("%s must be a finite number.", what);
+            String message = what + " must be a finite number.";
             throw new IllegalArgumentException(message);
         }
 
@@ -131,8 +131,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format(
-                    "%s must have all components be finite numbers.", what);
+            String message = what + " must have all components finite.";
             throw new IllegalArgumentException(message);
         }
 
@@ -338,7 +337,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be empty.", what);
+            String message = what + " must not be empty.";
             throw new IllegalArgumentException(message);
         }
 
@@ -364,7 +363,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be empty.", what);
+            String message = what + " must not be empty.";
             throw new IllegalArgumentException(message);
         }
 
@@ -390,7 +389,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be empty.", what);
+            String message = what + " must not be empty.";
             throw new IllegalArgumentException(message);
         }
 
@@ -416,7 +415,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be empty.", what);
+            String message = what + " must not be empty.";
             throw new IllegalArgumentException(message);
         }
 
@@ -440,7 +439,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, iValue});
-            String message = String.format("%s must not be negative.", what);
+            String message = what + " must not be negative.";
             throw new IllegalArgumentException(message);
         }
 
@@ -464,7 +463,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
-            String message = String.format("%s must not be negative.", what);
+            String message = what + " must not be negative.";
             throw new IllegalArgumentException(message);
         }
 
@@ -488,7 +487,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
-            String message = String.format("%s must not be negative.", what);
+            String message = what + " must not be negative.";
             throw new IllegalArgumentException(message);
         }
 
@@ -514,8 +513,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format(
-                    "%s must not have a negative component.", what);
+            String message = what + " must not have a negative component.";
             throw new IllegalArgumentException(message);
         }
 
@@ -543,7 +541,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be null.", what);
+            String message = what + " must not be null.";
             throw new NullPointerException(message);
         }
 
@@ -566,7 +564,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be zero.", what);
+            String message = what + " must not be zero.";
             throw new IllegalArgumentException(message);
         }
 
@@ -589,7 +587,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be zero.", what);
+            String message = what + " must not be zero.";
             throw new IllegalArgumentException(message);
         }
 
@@ -612,7 +610,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be zero.", what);
+            String message = what + " must not be zero.";
             throw new IllegalArgumentException(message);
         }
 
@@ -638,7 +636,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be zero.", what);
+            String message = what + " must not be zero.";
             throw new IllegalArgumentException(message);
         }
 
@@ -664,7 +662,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must not be zero.", what);
+            String message = what + " must not be zero.";
             throw new IllegalArgumentException(message);
         }
 
@@ -687,7 +685,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must be a number.", what);
+            String message = what + " must be a number.";
             throw new IllegalArgumentException(message);
         }
 
@@ -710,7 +708,7 @@ final public class Validate {
             } else {
                 what = description;
             }
-            String message = String.format("%s must be a number.", what);
+            String message = what + " must be a number.";
             throw new IllegalArgumentException(message);
         }
 
@@ -734,7 +732,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, iValue});
-            String message = String.format("%s must be positive.", what);
+            String message = what + " must be positive.";
             throw new IllegalArgumentException(message);
         }
 
@@ -758,7 +756,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, fValue});
-            String message = String.format("%s must be positive.", what);
+            String message = what + " must be positive.";
             throw new IllegalArgumentException(message);
         }
 
@@ -782,7 +780,7 @@ final public class Validate {
                 what = description;
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
-            String message = String.format("%s must be positive.", what);
+            String message = what + " must be positive.";
             throw new IllegalArgumentException(message);
         }
 
