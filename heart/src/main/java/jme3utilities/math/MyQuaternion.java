@@ -239,6 +239,21 @@ public class MyQuaternion {
     }
 
     /**
+     * Test for a zero Quaternion.
+     *
+     * @param q the input (not null, unaffected)
+     * @return true if the Quaternion equals (0,0,0,0), false otherwise
+     */
+    public static boolean isZero(Quaternion q) {
+        if (q.getX() == 0f && q.getY() == 0f && q.getZ() == 0f
+                && q.getW() == 0f) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Calculate the squared length of a quaternion. Unlike
      * {@link com.jme3.math.Quaternion#norm()}, this method returns a
      * double-precision value for precise comparison of lengths.
