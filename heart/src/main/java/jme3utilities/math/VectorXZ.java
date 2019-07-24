@@ -257,8 +257,8 @@ public class VectorXZ
     }
 
     /**
-     * Convert this vector to one of the 4 cardinal directions. If this
-     * vector is zero, return a zero vector.
+     * Convert this vector to one of the 4 cardinal directions. If this vector
+     * is zero, return a zero vector.
      *
      * @return a unit vector (4 possible values) or a zero vector
      */
@@ -849,13 +849,31 @@ public class VectorXZ
 
     /**
      * Treating this vector as a rotation (from north), generate an equivalent
-     * quaternion.
+     * Quaternion.
      *
-     * @return a new quaternion
+     * @return a new Quaternion
      */
     @Override
     public Quaternion toQuaternion() {
-        Quaternion result = new Quaternion();
+        Quaternion result = toQuaternion(null);
+        return result;
+    }
+
+    /**
+     * Treating this vector as a rotation (from north), generate an equivalent
+     * Quaternion.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a Quaternion (either storeResult or a new instance, not null)
+     */
+    @Override
+    public Quaternion toQuaternion(Quaternion storeResult) {
+        Quaternion result;
+        if (storeResult == null) {
+            result = new Quaternion();
+        } else {
+            result = storeResult;
+        }
         /*
          * Vector3f.lookAt() orients the Z-axis, whereas VectorXZ.rotate()
          * orients the X-axis, so a 90-degree tranformation of coordinates is
@@ -874,19 +892,38 @@ public class VectorXZ
      */
     @Override
     public Vector3f toVector3f() {
-        Vector3f result = new Vector3f(x, 0f, z);
+        Vector3f result = toVector3f(0f, null);
         return result;
     }
 
     /**
-     * Create an equivalent 3-D vector with a specified y value.
+     * Create an equivalent 3-D vector with the specified y value.
      *
-     * @param y y-coordinate
+     * @param y the y-coordinate
      * @return a new 3-D vector
      */
     @Override
     public Vector3f toVector3f(float y) {
-        Vector3f result = new Vector3f(x, y, z);
+        Vector3f result = toVector3f(y, null);
+        return result;
+    }
+
+    /**
+     * Create an equivalent 3-D vector with the specified y value.
+     *
+     * @param y the y-coordinate
+     * @param storeResult storage for the result (modified if not null)
+     * @return a 3-D vector (either storeResult or a new instance, not null)
+     */
+    @Override
+    public Vector3f toVector3f(float y, Vector3f storeResult) {
+        Vector3f result;
+        if (storeResult == null) {
+            result = new Vector3f(x, y, z);
+        } else {
+            result = storeResult.set(x, y, z);
+        }
+
         return result;
     }
     // *************************************************************************

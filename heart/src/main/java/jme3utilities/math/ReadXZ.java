@@ -69,8 +69,8 @@ public interface ReadXZ {
     float azimuth();
 
     /**
-     * Convert this vector to one of the 4 cardinal directions. If this
-     * vector is zero, return a zero vector.
+     * Convert this vector to one of the 4 cardinal directions. If this vector
+     * is zero, return a zero vector.
      *
      * @return a unit vector (4 possible values) or a zero vector
      */
@@ -323,11 +323,20 @@ public interface ReadXZ {
 
     /**
      * Treating this vector as a rotation (from north), generate an equivalent
-     * quaternion.
+     * Quaternion.
      *
-     * @return a new quaternion
+     * @return a new Quaternion
      */
     Quaternion toQuaternion();
+
+    /**
+     * Treating this vector as a rotation (from north), generate an equivalent
+     * Quaternion.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a Quaternion (either storeResult or a new instance, not null)
+     */
+    Quaternion toQuaternion(Quaternion storeResult);
 
     /**
      * Create an equivalent 3-D vector.
@@ -337,10 +346,19 @@ public interface ReadXZ {
     Vector3f toVector3f();
 
     /**
-     * Create an equivalent 3-D vector with a specified y value.
+     * Create an equivalent 3-D vector with the specified y value.
      *
-     * @param y y-coordinate
+     * @param y the y-coordinate
      * @return a new 3-D vector
      */
     Vector3f toVector3f(float y);
+
+    /**
+     * Create an equivalent 3-D vector with the specified y value.
+     *
+     * @param y the y-coordinate
+     * @param storeResult storage for the result (modified if not null)
+     * @return a 3-D vector (either storeResult or a new instance, not null)
+     */
+    Vector3f toVector3f(float y, Vector3f storeResult);
 }
