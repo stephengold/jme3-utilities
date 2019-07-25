@@ -85,7 +85,7 @@ public class MyMesh {
     // new methods exposed
 
     /**
-     * Generate a material to visualize the bone weights in the specified mesh.
+     * Generate a material to visualize the bone weights in the specified Mesh.
      *
      * @param mesh the subject mesh (not null, animated, modified)
      * @param boneIndexToColor map bone indices to colors (not null, unaffected)
@@ -134,11 +134,11 @@ public class MyMesh {
     }
 
     /**
-     * Estimate the number of bones in the specified mesh by reading its
+     * Estimate the number of bones in the specified Mesh by reading its
      * bone-index buffers.
      *
-     * @param mesh mesh to examine (not null)
-     * @return estimated number of bones (&ge;0)
+     * @param mesh the Mesh to examine (not null)
+     * @return an estimated number of bones (&ge;0)
      */
     public static int countBones(Mesh mesh) {
         int maxWeightsPerVert = mesh.getMaxNumWeights();
@@ -175,10 +175,10 @@ public class MyMesh {
     }
 
     /**
-     * Test whether a mesh has texture (U-V) coordinates.
+     * Test whether the specified Mesh has texture (U-V) coordinates.
      *
-     * @param mesh mesh to test (not null, unaffected)
-     * @return true if the mesh has texture coordinates, otherwise false
+     * @param mesh the Mesh to test (not null, unaffected)
+     * @return true if the Mesh has texture coordinates, otherwise false
      */
     public static boolean hasUV(Mesh mesh) {
         VertexBuffer buffer = mesh.getBuffer(VertexBuffer.Type.TexCoord);
@@ -190,10 +190,10 @@ public class MyMesh {
     }
 
     /**
-     * Test whether the specified mesh is animated. Unlike mesh.isAnimated()
+     * Test whether the specified Mesh is animated. Unlike Mesh.isAnimated()
      * this method checks for bone weights and ignores HW buffers.
      *
-     * @param mesh which mesh to test (not null, unaffected)
+     * @param mesh which Mesh to test (not null, unaffected)
      * @return true if animated, otherwise false
      */
     public static boolean isAnimated(Mesh mesh) {
@@ -244,7 +244,7 @@ public class MyMesh {
      * a scene graph. Note: recursive!
      *
      * @param subtree (may be null)
-     * @param storeResult (added to if not null)
+     * @param storeResult storage for the result (added to if not null)
      * @return the resulting set (either storeResult or a new instance)
      */
     public static VectorSet listVertexLocations(Spatial subtree,
@@ -282,9 +282,9 @@ public class MyMesh {
     }
 
     /**
-     * Find the largest weight in the specified mesh for the indexed bone.
+     * Find the largest weight in the specified Mesh for the indexed bone.
      *
-     * @param mesh which mesh (not null, possibly modified)
+     * @param mesh the Mesh to search (not null, possibly modified)
      * @param boneIndex which bone (&ge;0)
      * @return bone weight, or 0f if no influence found
      */
@@ -326,10 +326,10 @@ public class MyMesh {
     }
 
     /**
-     * Count how many vertices in the specified mesh are directly influenced by
+     * Count how many vertices in the specified Mesh are directly influenced by
      * the indexed bone.
      *
-     * @param mesh which mesh (not null, possibly modified)
+     * @param mesh the Mesh to analyze (not null, possibly modified)
      * @param boneIndex which bone (&ge;0)
      * @return count (&ge;0)
      */
@@ -370,9 +370,9 @@ public class MyMesh {
     }
 
     /**
-     * Read an index from a buffer.
+     * Read an index from a Buffer and advance the buffer's position.
      *
-     * @param buffer a buffer of bytes or shorts (not null)
+     * @param buffer a Buffer of bytes or shorts (not null)
      * @return index (&ge;0)
      */
     public static int readIndex(Buffer buffer) {
@@ -385,8 +385,8 @@ public class MyMesh {
             ShortBuffer shortBuffer = (ShortBuffer) buffer;
             short s = shortBuffer.get();
             result = 0xffff & s;
-        } else {
-            throw new IllegalArgumentException();
+        } else { // TODO handle IntBuffer case
+            throw new IllegalArgumentException(); // TODO message
         }
 
         assert result >= 0 : result;
@@ -396,9 +396,9 @@ public class MyMesh {
     /**
      * Copy the bone indices for the indexed vertex.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the data vector (either storeResult or a new instance)
      */
     public static int[] vertexBoneIndices(Mesh mesh,
@@ -437,13 +437,13 @@ public class MyMesh {
     /**
      * Copy the bone weights for the indexed vertex.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null, unaffected)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the data vector (either storeResult or a new instance)
      */
-    public static float[] vertexBoneWeights(Mesh mesh,
-            int vertexIndex, float[] storeResult) {
+    public static float[] vertexBoneWeights(Mesh mesh, int vertexIndex,
+            float[] storeResult) {
         Validate.nonNull(mesh, "mesh");
         Validate.nonNegative(vertexIndex, "vertex index");
         if (storeResult == null) {
@@ -459,9 +459,9 @@ public class MyMesh {
 
         VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
         FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
-        weightBuffer.position(maxWeights * vertexIndex);
+        int startIndex = maxWeights * vertexIndex;
         for (int wIndex = 0; wIndex < maxWeightsPerVert; ++wIndex) {
-            storeResult[wIndex] = weightBuffer.get();
+            storeResult[wIndex] = weightBuffer.get(startIndex + wIndex);
         }
         /*
          * Fill with 0s.
@@ -477,9 +477,9 @@ public class MyMesh {
     /**
      * Copy the color of the indexed vertex from the color buffer.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null, unaffected)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
     public static ColorRGBA vertexColor(Mesh mesh, int vertexIndex,
@@ -492,11 +492,11 @@ public class MyMesh {
 
         VertexBuffer vertexBuffer = mesh.getBuffer(VertexBuffer.Type.Color);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
-        floatBuffer.position(4 * vertexIndex);
-        storeResult.r = floatBuffer.get();
-        storeResult.g = floatBuffer.get();
-        storeResult.b = floatBuffer.get();
-        storeResult.a = floatBuffer.get();
+        int floatIndex = 4 * vertexIndex;
+        storeResult.r = floatBuffer.get(floatIndex);
+        storeResult.g = floatBuffer.get(floatIndex + 1);
+        storeResult.b = floatBuffer.get(floatIndex + 2);
+        storeResult.a = floatBuffer.get(floatIndex + 3);
 
         return storeResult;
     }
@@ -505,10 +505,10 @@ public class MyMesh {
      * Calculate the location of the indexed vertex in mesh space using the
      * skinning matrices provided.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
      * @param skinningMatrices (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return mesh coordinates (either storeResult or a new instance)
      */
     public static Vector3f vertexLocation(Mesh mesh, int vertexIndex,
@@ -565,10 +565,10 @@ public class MyMesh {
      * Calculate the normal of the indexed vertex in mesh space using the
      * skinning matrices provided.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
      * @param skinningMatrices (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a unit vector in mesh space (either storeResult or a new
      * instance)
      */
@@ -623,7 +623,7 @@ public class MyMesh {
     /**
      * Read the size of the indexed vertex from the size buffer.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null, unaffected)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
      * @return the size (in pixels)
      */
@@ -633,8 +633,7 @@ public class MyMesh {
 
         VertexBuffer vertexBuffer = mesh.getBuffer(VertexBuffer.Type.Size);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
-        floatBuffer.position(vertexIndex);
-        float result = floatBuffer.get();
+        float result = floatBuffer.get(vertexIndex);
 
         return result;
     }
@@ -643,7 +642,7 @@ public class MyMesh {
      * Calculate the tangent of the indexed vertex in mesh space using the
      * skinning matrices provided.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
      * @param skinningMatrices (not null, unaffected)
      * @param storeResult (modified if not null)
@@ -703,7 +702,7 @@ public class MyMesh {
      * Copy texture coordinates of the indexed vertex from the specified vertex
      * buffer.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null, unaffected)
      * @param bufferType which buffer to read (8 legal values)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
      * @param storeResult (modified if not null)
@@ -727,24 +726,24 @@ public class MyMesh {
 
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
-        floatBuffer.position(2 * vertexIndex);
-        storeResult.x = floatBuffer.get();
-        storeResult.y = floatBuffer.get();
+        int floatIndex = 2 * vertexIndex;
+        storeResult.x = floatBuffer.get(floatIndex);
+        storeResult.y = floatBuffer.get(floatIndex + 1);
 
         return storeResult;
     }
 
     /**
-     * Copy Vector3f data for the indexed vertex from the specified vertex
-     * buffer.
+     * Copy Vector3f data for the indexed vertex from the specified
+     * VertexBuffer.
      * <p>
      * A software skin update is required BEFORE reading vertex
      * positions/normals/tangents from an animated mesh
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null, unaffected)
      * @param bufferType which buffer to read (5 legal values)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the data vector (either storeResult or a new instance)
      */
     public static Vector3f vertexVector3f(Mesh mesh,
@@ -762,10 +761,10 @@ public class MyMesh {
 
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
-        floatBuffer.position(MyVector3f.numAxes * vertexIndex);
-        storeResult.x = floatBuffer.get();
-        storeResult.y = floatBuffer.get();
-        storeResult.z = floatBuffer.get();
+        int floatIndex = MyVector3f.numAxes * vertexIndex;
+        storeResult.x = floatBuffer.get(floatIndex);
+        storeResult.y = floatBuffer.get(floatIndex + 1);
+        storeResult.z = floatBuffer.get(floatIndex + 2);
 
         return storeResult;
     }
@@ -774,10 +773,10 @@ public class MyMesh {
      * Copy Vector4f data for the indexed vertex from the specified vertex
      * buffer.
      *
-     * @param mesh subject mesh (not null)
+     * @param mesh the subject mesh (not null, unaffected)
      * @param bufferType which buffer to read (5 legal values)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the data vector (either storeResult or a new instance)
      */
     public static Vector4f vertexVector4f(Mesh mesh,
@@ -795,11 +794,11 @@ public class MyMesh {
 
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
-        floatBuffer.position(4 * vertexIndex);
-        storeResult.x = floatBuffer.get();
-        storeResult.y = floatBuffer.get();
-        storeResult.z = floatBuffer.get();
-        storeResult.w = floatBuffer.get();
+        int floatIndex = 4 * vertexIndex;
+        storeResult.x = floatBuffer.get(floatIndex);
+        storeResult.y = floatBuffer.get(floatIndex + 1);
+        storeResult.z = floatBuffer.get(floatIndex + 2);
+        storeResult.w = floatBuffer.get(floatIndex + 3);
 
         return storeResult;
     }
@@ -808,11 +807,12 @@ public class MyMesh {
      * Calculate the location of the indexed vertex in world space using the
      * skinning matrices provided.
      *
-     * @param geometry geometry containing the subject mesh (not null)
+     * @param geometry Geometry containing the subject mesh (not null)
      * @param vertexIndex index into the geometry's vertices (&ge;0)
      * @param skinningMatrices (not null, unaffected)
-     * @param storeResult (modified if not null)
-     * @return world coordinates (either storeResult or a new instance)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the location in world coordinates (either storeResult or a new
+     * instance)
      */
     public static Vector3f vertexWorldLocation(Geometry geometry,
             int vertexIndex, Matrix4f[] skinningMatrices,
