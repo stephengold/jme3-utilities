@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.30.0for32 released on TBD
+## Version 2.30.0for32 released on 26 July 2019
 
  + When dumping a parented `Spatial`, flag it if it's not indented.
  + Changed all `Validate` methods to return `true`, so they can be used
