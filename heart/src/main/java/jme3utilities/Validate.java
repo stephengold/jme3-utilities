@@ -528,7 +528,8 @@ final public class Validate {
      * <p>
      * While it might seem more logical to throw an IllegalArgumentException in
      * the case of a method argument, the javadoc for NullPointerException says,
-     * "Applications should throw instances of this class..."
+     * "Applications should throw instances of this class to indicate other
+     * illegal uses of the null object."
      *
      * @param object reference to validate (not null, unaffected)
      * @param description description of the object
@@ -545,6 +546,40 @@ final public class Validate {
             }
             String message = what + " must not be null.";
             throw new NullPointerException(message);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate an array of non-null objects.
+     * <p>
+     * While it might seem more logical to throw an IllegalArgumentException in
+     * the case of a method argument, the javadoc for NullPointerException says,
+     * "Applications should throw instances of this class to indicate other
+     * illegal uses of the null object."
+     *
+     * @param array reference to validate (not null, unaffected)
+     * @param description description of the object
+     * @return true
+     * @throws NullPointerException if the array is null or contains a null
+     * element
+     */
+    public static boolean nonNullArray(Object[] array, String description) {
+        nonNull(array, description);
+
+        for (int index = 0; index < array.length; ++index) {
+            if (array[index] == null) {
+                String what;
+                if (description == null) {
+                    what = "Array argument";
+                } else {
+                    what = description;
+                }
+                String message = String.format(
+                        "element[%d] of %s must not be null.", index, what);
+                throw new NullPointerException(message);
+            }
         }
 
         return true;
