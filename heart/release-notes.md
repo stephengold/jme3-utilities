@@ -1,5 +1,16 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 2.30.0for32 released on TBD
+
+ + When dumping a parented `Spatial`, flag it if it's not indented.
+ + Changed all `Validate` methods to return `true`, so they can be used
+   in assertions.
+ + Added a `nonZero()` method for quaternions and a `nonNullArray()` method
+   to the `Validate` class.
+ + Added an `isZero()` method to the `MyQuaternion` class.
+ + Added 2 methods using caller-allocated storage to the `ReadXZ` class.
+ + Avoid some unnecessary modifications of buffer positions in `MyMesh`.
+
 ## Version 2.29.1for32 released on 13 July 2019
 
 Targeted jMonkeyEngine version 3.2.4-stable
