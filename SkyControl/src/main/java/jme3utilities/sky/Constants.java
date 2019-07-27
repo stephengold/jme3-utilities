@@ -107,6 +107,6 @@ final public class Constants {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "for_jME3.2 0.9.19for32";
+        return "for_jME3.2 0.9.19for32+1";
     }
 }

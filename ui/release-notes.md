@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.7.5for32 released on TBD
+## Version 0.7.5for32 released on 26 July 2019
 
  + Corrected the branch name in `versionShort()`.
  + Based on version 2.30 of the jme3-utilities-heart library.
