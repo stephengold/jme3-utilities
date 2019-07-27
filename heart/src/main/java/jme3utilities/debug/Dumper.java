@@ -168,7 +168,8 @@ public class Dumper implements Cloneable {
         } else {
             stream.print(" dis");
         }
-        stream.printf("abled%n%s", indent);
+        stream.println("abled");
+        stream.print(indent);
     }
 
     /**
@@ -200,17 +201,22 @@ public class Dumper implements Cloneable {
             throw new RuntimeException(exception);
         }
 
+        stream.println();
         String className = manager.getClass().getSimpleName();
+        stream.print(className);
+
         int numInitializing = initializing.length;
         int numActive = active.length;
         int numTerminating = terminating.length;
         int total = numInitializing + numActive + numTerminating;
-        stream.printf("%n%s with %d state", className, total);
+        stream.printf(" with %d state", total);
         if (total == 0) {
             stream.println("s.");
             return;
-        } else if (total == 1) {
-            stream.print(":");
+        }
+
+        if (total == 1) {
+            stream.print(':');
         } else {
             stream.print("s:");
             String separator = "";
@@ -252,8 +258,7 @@ public class Dumper implements Cloneable {
 
         stream.print(indent);
         String description = describer.describe(bone);
-        stream.print(description);
-        stream.println();
+        stream.println(description);
 
         List<Bone> children = bone.getChildren();
         String moreIndent = indent + indentIncrement;
@@ -294,11 +299,13 @@ public class Dumper implements Cloneable {
      */
     public void dump(RenderManager renderManager) {
         String className = renderManager.getClass().getSimpleName();
-        stream.printf("%n%s", className);
+        stream.println();
+        stream.print(className);
 
         Renderer renderer = renderManager.getRenderer();
         className = renderer.getClass().getSimpleName();
-        stream.printf(" renderer=%s", className);
+        stream.print(" renderer=");
+        stream.print(className);
         if (renderer instanceof GLRenderer) {
             GLRenderer glRenderer = (GLRenderer) renderer;
             int factor = MyRender.defaultAnisotropicFilter(glRenderer);
@@ -448,7 +455,8 @@ public class Dumper implements Cloneable {
             if (!description.isEmpty()) {
                 stream.println();
                 stream.print(indent);
-                stream.printf(" mat%s", description);
+                stream.print(" mat");
+                stream.print(description);
                 if (dumpMatParamFlag) {
                     dump(material.getParamsMap(), indent + indentIncrement);
                 }
@@ -466,8 +474,7 @@ public class Dumper implements Cloneable {
          * with incremented indentation.
          */
         if (spatial instanceof Node) {
-            Node node = (Node) spatial;
-            List<Spatial> children = node.getChildren();
+            List<Spatial> children = ((Node) spatial).getChildren();
             int numChildren = children.size();
             String childIndent = indent + indentIncrement;
             if (numChildren <= maxChildren) {
@@ -489,8 +496,9 @@ public class Dumper implements Cloneable {
                     dump(child, childIndent);
                 }
                 int numSkipped = numChildren - numHead - numTail;
-                stream.printf("%s... %d child spatial%s skipped ...%n",
+                stream.printf("%s... %d child spatial%s",
                         childIndent, numSkipped, (numSkipped == 1) ? "" : "s");
+                stream.println(" skipped ...");
                 for (int i = numChildren - numTail; i < numChildren; ++i) {
                     Spatial child = children.get(i);
                     dump(child, childIndent);
@@ -533,7 +541,9 @@ public class Dumper implements Cloneable {
                 stream.printf(" bg(%s)", MyColor.describe(backColor));
             }
             String descP = describer.describeProcessors(viewPort);
-            stream.printf(" procs={%s}%n", descP);
+            stream.print(" procs={");
+            stream.print(descP);
+            stream.println('}');
 
             stream.print(indent);
             stream.print(" ");
@@ -545,7 +555,9 @@ public class Dumper implements Cloneable {
                 stream.printf("%n%s  %s", indent, desc2);
             }
 
-            stream.printf("%n%s with ", indent);
+            stream.println();
+            stream.print(indent);
+            stream.print(" with ");
             List<Spatial> scenes = viewPort.getScenes();
             dump(scenes, indent);
 
