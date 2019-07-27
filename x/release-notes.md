@@ -1,10 +1,14 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.11 release on 7 June 2019
+## Version 0.2.12for32 released on TBD
+
+Based on version 2.30 of the jme3-utilities-heart library.
+
+## Version 0.2.11 released on 7 June 2019
 
 Based on version 2.28.1 of the jme3-utilities-heart library.
 
-## Version 0.2.10 release on 19 March 2019
+## Version 0.2.10 released on 19 March 2019
 
  + Fixed a bug where `CornerSet3f.areCollinear()` didn't return the 
    middle index. (API change)

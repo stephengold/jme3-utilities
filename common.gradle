@@ -31,10 +31,10 @@ ext {
     jcommanderVersion = '1.74'
     jme3utilitiesheartVersion = '2.30.0for32'
     jme3utilitiesniftyVersion = '0.9.6for32'
-    jme3utilitiesuiVersion = '0.7.4for32'
-    jme3utilitiesxVersion = '0.2.11'
+    jme3utilitiesuiVersion = '0.7.5for32'
+    jme3utilitiesxVersion = '0.2.12for32'
     jmonkeyengineVersion = '3.2.4-stable'
-    skycontrolVersion = '0.9.18'
+    skycontrolVersion = '0.9.19for32'
 }
 
 repositories {
