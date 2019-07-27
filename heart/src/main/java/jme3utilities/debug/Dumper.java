@@ -394,6 +394,10 @@ public class Dumper implements Cloneable {
         String name = MyString.quoteName(spatial.getName());
         stream.print(name);
 
+        if (indent.isEmpty() && spatial.getParent() != null) {
+            stream.print(" (has parent)");
+        }
+
         String description = describer.describeControls(spatial);
         addDescription(description);
 
