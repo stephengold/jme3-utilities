@@ -61,6 +61,16 @@ public interface VectorSet {
     Matrix3f covariance(Matrix3f storeResult);
 
     /**
+     * Find the maximum absolute coordinate for each axis among the Vector3f
+     * values in this set.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the half extent for each axis (either storeResult or a new
+     * instance)
+     */
+    Vector3f maxAbs(Vector3f storeResult);
+
+    /**
      * Find the length of the longest Vector3f value in this set.
      *
      * @return the length (&ge;0)

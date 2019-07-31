@@ -213,6 +213,32 @@ public class VectorSetUsingBuffer implements VectorSet {
     }
 
     /**
+     * Find the maximum absolute coordinate for each axis among the Vector3f
+     * values in this set.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the half extent for each axis (either storeResult or a new
+     * instance)
+     */
+    @Override
+    public Vector3f maxAbs(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.zero();
+        buffer.rewind();
+        while (buffer.hasRemaining()) {
+            float x = buffer.get();
+            float y = buffer.get();
+            float z = buffer.get();
+            result.x = Math.max(result.x, Math.abs(x));
+            result.y = Math.max(result.y, Math.abs(y));
+            result.z = Math.max(result.z, Math.abs(z));
+        }
+
+        return result;
+    }
+
+    /**
      * Find the length of the longest Vector3f value in this set.
      *
      * @return the length (&ge;0)
