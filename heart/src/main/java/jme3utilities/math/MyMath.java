@@ -672,7 +672,8 @@ public class MyMath {
      * storeResult)
      * @param t1 function value at t=1 (not null, unaffected unless it's also
      * storeResult)
-     * @param storeResult (modified if not null, may be t0 or t1)
+     * @param storeResult storage for the result (modified if not null, may be
+     * t0 or t1)
      * @return an interpolated transform (either storeResult or a new instance)
      */
     public static Transform slerp(float t, Transform t0, Transform t1,

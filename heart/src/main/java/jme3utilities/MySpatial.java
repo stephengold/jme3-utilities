@@ -792,7 +792,7 @@ public class MySpatial {
      * Note: recursive!
      *
      * @param subtree which subtree (aliases created)
-     * @param storeResult (added to if not null)
+     * @param storeResult storage for results (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
     public static List<Mesh> listAnimatedMeshes(Spatial subtree,
@@ -826,7 +826,7 @@ public class MySpatial {
      * @param <T> subclass of Control
      * @param subtree which subtree (not null, aliases created)
      * @param controlType the subclass of Control to search for
-     * @param storeResult (added to if not null)
+     * @param storeResult storage for results (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
     @SuppressWarnings("unchecked")
@@ -861,7 +861,7 @@ public class MySpatial {
      * recursive!
      *
      * @param subtree (may be null, aliases created)
-     * @param storeResult (added to if not null)
+     * @param storeResult storage for results (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      * @see MyMesh#listMeshes(com.jme3.scene.Spatial, java.util.List)
      */
@@ -1246,7 +1246,7 @@ public class MySpatial {
      * Calculate the world location of a spatial's center.
      *
      * @param spatial spatial to locate (not null)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the location vector (in world coordinates, either storeResult or
      * a new instance)
      */
@@ -1269,7 +1269,7 @@ public class MySpatial {
      * Calculate the world orientation of a spatial.
      *
      * @param spatial spatial to orient (not null)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the orientation (in world coordinates, either storeResult or a
      * new instance)
      */
@@ -1293,7 +1293,7 @@ public class MySpatial {
      * Calculate the world scale of a spatial.
      *
      * @param spatial the spatial (not null)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the scale vector (in world coordinates, either storeResult or a
      * new instance)
      */
@@ -1315,7 +1315,7 @@ public class MySpatial {
      * Calculate the world transform of a spatial.
      *
      * @param spatial the spatial (not null)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the transform (in world coordinates, either storeResult or a new
      * instance)
      */

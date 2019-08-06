@@ -206,7 +206,7 @@ public class SkeletonVisualizer extends SubtreeControl {
      * Copy the color for the head of the indexed Bone.
      *
      * @param boneIndex which Bone (&ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
     public ColorRGBA copyHeadColor(int boneIndex, ColorRGBA storeResult) {
@@ -226,7 +226,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     /**
      * Copy the color for link lines.
      *
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
     public ColorRGBA copyLineColor(ColorRGBA storeResult) {
