@@ -299,6 +299,9 @@ public class MyVector3f {
      * if v1 comes after v2
      */
     public static int compare(Vector3f v1, Vector3f v2) {
+        Validate.nonNull(v1, "v1");
+        Validate.nonNull(v2, "v2");
+
         int result = Float.compare(v1.x, v2.x);
         if (result == 0) {
             result = Float.compare(v1.y, v2.y);
@@ -999,6 +1002,29 @@ public class MyVector3f {
         result.multLocal((float) scaleFactor);
 
         assert result.isUnitVector();
+        return result;
+    }
+
+    /**
+     * Calculate the component-wise maximum of absolute values of 2 vectors.
+     *
+     * @param vector1 the first input vector (not null, unaffected)
+     * @param vector2 the 2nd input vector (not null, unaffected)
+     * @param storeResult storage for the result (modified if not null, may be
+     * vector1 or vector2)
+     * @return the max magnitude for each axis (either storeResult or a new
+     * vector)
+     */
+    public static Vector3f maxAbs(Vector3f vector1, Vector3f vector2,
+            Vector3f storeResult) {
+        Validate.nonNull(vector1, "vector1");
+        Validate.nonNull(vector2, "vector2");
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.x = Math.max(Math.abs(vector1.x), Math.abs(vector2.x));
+        result.y = Math.max(Math.abs(vector1.y), Math.abs(vector2.y));
+        result.x = Math.max(Math.abs(vector1.z), Math.abs(vector2.z));
+
         return result;
     }
 
