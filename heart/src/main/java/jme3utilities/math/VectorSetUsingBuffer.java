@@ -128,7 +128,8 @@ public class VectorSetUsingBuffer implements VectorSet {
     // VectorSet methods
 
     /**
-     * Add the value of the specified Vector3f to this set.
+     * Add the value of the specified Vector3f to this set, if it's not already
+     * present.
      *
      * @param vector the value to add (not null, unaffected)
      */
@@ -151,7 +152,7 @@ public class VectorSetUsingBuffer implements VectorSet {
     }
 
     /**
-     * Test whether this set contains the value of the specified Vector3f.
+     * Test whether this set contains the specified value.
      *
      * @param vector the value to find (not null, unaffected)
      * @return true if found, otherwise false
@@ -165,7 +166,7 @@ public class VectorSetUsingBuffer implements VectorSet {
     }
 
     /**
-     * Calculate the sample covariance of the Vector3f values in this set.
+     * Calculate the sample covariance of the values in this set.
      *
      * @param storeResult storage for the result (modified if not null)
      * @return the unbiased sample covariance (either storeResult or a new
@@ -173,126 +174,52 @@ public class VectorSetUsingBuffer implements VectorSet {
      */
     @Override
     public Matrix3f covariance(Matrix3f storeResult) {
-        Matrix3f result = (storeResult == null) ? new Matrix3f() : storeResult;
-        int numSamples = numVectors();
-        assert numSamples > 1 : numSamples;
-
-        Vector3f sampleMean = mean(null);
-        /*
-         * Accumulate sums in the upper triangle of the matrix.
-         */
-        result.zero();
-        float[] aboveMean = new float[numAxes];
-        buffer.rewind();
-        while (buffer.hasRemaining()) {
-            aboveMean[0] = buffer.get() - sampleMean.x;
-            aboveMean[1] = buffer.get() - sampleMean.y;
-            aboveMean[2] = buffer.get() - sampleMean.z;
-            for (int rowI = 0; rowI < numAxes; ++rowI) {
-                for (int columnI = rowI; columnI < numAxes; ++columnI) {
-                    float sum = result.get(rowI, columnI);
-                    sum += aboveMean[rowI] * aboveMean[columnI];
-                    result.set(rowI, columnI, sum);
-                }
-            }
-        }
-        /*
-         * Multiply sums by 1/(N-1) and fill in the lower triangle.
-         */
-        float nMinus1 = numSamples - 1;
-        for (int rowI = 0; rowI < numAxes; ++rowI) {
-            for (int columnI = rowI; columnI < numAxes; ++columnI) {
-                float sum = result.get(rowI, columnI);
-                float element = sum / nMinus1;
-                result.set(rowI, columnI, element);
-                result.set(columnI, rowI, element);
-            }
-        }
-
+        Matrix3f result
+                = MyBuffer.covariance(buffer, 0, buffer.limit(), storeResult);
         return result;
     }
 
     /**
-     * Find the length of the longest Vector3f value in this set.
+     * Find the magnitude of the longest value in this set.
      *
-     * @return the length (&ge;0)
+     * @return the magnitude (&ge;0)
      */
     @Override
     public float maxLength() {
-        double maxLengthSquared = 0.0;
-        Vector3f tempVector = new Vector3f();
-
-        buffer.rewind();
-        while (buffer.hasRemaining()) {
-            tempVector.x = buffer.get();
-            tempVector.y = buffer.get();
-            tempVector.z = buffer.get();
-            double lengthSquared = MyVector3f.lengthSquared(tempVector);
-            if (lengthSquared > maxLengthSquared) {
-                maxLengthSquared = lengthSquared;
-            }
-        }
-
-        float length = (float) Math.sqrt(maxLengthSquared);
-        assert length >= 0f : length;
+        float length = MyBuffer.maxLength(buffer, 0, buffer.limit());
         return length;
     }
 
     /**
-     * Find the maximum and minimum coordinates for each axis among the Vector3f
-     * values in this set.
+     * Find the maximum and minimum coordinates for each axis among the values
+     * in this set.
      *
-     * @param storeMaxima (not null, modified)
-     * @param storeMinima (not null, modified)
+     * @param storeMaxima storage for the maxima (not null, modified)
+     * @param storeMinima storage for the minima (not null, modified)
      */
     @Override
     public void maxMin(Vector3f storeMaxima, Vector3f storeMinima) {
-        storeMaxima.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY,
-                Float.NEGATIVE_INFINITY);
-        storeMinima.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY,
-                Float.POSITIVE_INFINITY);
-        Vector3f tempVector = new Vector3f();
+        Validate.nonNull(storeMaxima, "store maxima");
+        Validate.nonNull(storeMinima, "store minima");
 
-        buffer.rewind();
-        while (buffer.hasRemaining()) {
-            tempVector.x = buffer.get();
-            tempVector.y = buffer.get();
-            tempVector.z = buffer.get();
-            MyVector3f.accumulateMinima(storeMinima, tempVector);
-            MyVector3f.accumulateMaxima(storeMaxima, tempVector);
-        }
+        MyBuffer.maxMin(buffer, 0, buffer.limit(), storeMaxima, storeMinima);
     }
 
     /**
-     * Calculate the sample mean for each axis over the Vector3f values in this
-     * set.
+     * Calculate the sample mean for each axis among the values in this set.
      *
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the sample mean for each axis (either storeResult or a new
      * Vector3f)
      */
     @Override
     public Vector3f mean(Vector3f storeResult) {
-        int numVectors = numVectors();
-        assert numVectors > 0 : numVectors;
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-
-        result.zero();
-
-        buffer.rewind();
-        while (buffer.hasRemaining()) {
-            float x = buffer.get();
-            float y = buffer.get();
-            float z = buffer.get();
-            result.addLocal(x, y, z);
-        }
-        result.divideLocal(numVectors);
-
+        Vector3f result = MyBuffer.mean(buffer, 0, buffer.limit(), storeResult);
         return result;
     }
 
     /**
-     * Calculate the number of Vector3f values in this set.
+     * Determine the number of values in this set.
      *
      * @return the count (&ge;0)
      */
@@ -308,10 +235,10 @@ public class VectorSetUsingBuffer implements VectorSet {
     }
 
     /**
-     * Access the buffer containing all the Vector3f values in this set. No
-     * further add() is allowed.
+     * Access a Buffer containing all values in this set. No further add() is
+     * allowed.
      *
-     * @return the pre-existing buffer, flipped but possibly not rewound
+     * @return the pre-existing Buffer, flipped but possibly not rewound
      */
     @Override
     public FloatBuffer toBuffer() {
