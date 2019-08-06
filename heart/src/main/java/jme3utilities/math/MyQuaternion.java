@@ -73,7 +73,7 @@ public class MyQuaternion {
     /**
      * Accumulate a linear combination of quaternions.
      *
-     * @param total sum of the scaled inputs so far (not null, updated)
+     * @param total sum of the scaled inputs so far (not null, modified)
      * @param input the quaternion to scale and add (not null, unaffected)
      * @param scale scale factor to apply to the input
      */
@@ -130,11 +130,11 @@ public class MyQuaternion {
     }
 
     /**
-     * Calculate the conjugate of a quaternion. For unit quaternions, the
+     * Calculate the conjugate of a Quaternion. For unit quaternions, the
      * conjugate is a faster way to calculate the inverse.
      *
      * @param q input value (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a conjugate quaternion (either storeResult or a new instance)
      */
     public static Quaternion conjugate(Quaternion q, Quaternion storeResult) {
@@ -187,10 +187,10 @@ public class MyQuaternion {
     }
 
     /**
-     * Calculate the exponential of a pure quaternion.
+     * Calculate the exponential of a pure Quaternion.
      *
      * @param q input value (not null, unaffected, w=0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a unit quaternion (either storeResult or a new instance)
      */
     public static Quaternion exp(Quaternion q, Quaternion storeResult) {
@@ -276,7 +276,7 @@ public class MyQuaternion {
      * logarithm isn't itself a unit.
      *
      * @param q input value (not null, unaffected, norm=1)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a pure quaternion (either storeResult or a new instance)
      */
     public static Quaternion log(Quaternion q, Quaternion storeResult) {
@@ -331,7 +331,7 @@ public class MyQuaternion {
      *
      * @param base input value (not null, unaffected, norm=1)
      * @param exponent the exponent
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a unit quaternion (either storeResult or a new instance)
      */
     public static Quaternion pow(Quaternion base, float exponent,
@@ -376,7 +376,8 @@ public class MyQuaternion {
      * storeResult, norm=1)
      * @param q1 function value at t=1 (not null, unaffected unless it's also
      * storeResult, norm=1)
-     * @param storeResult (modified if not null, may be q0 or q1)
+     * @param storeResult storage for the result (modified if not null, may be
+     * q0 or q1)
      * @return an interpolated unit quaternion (either storeResult or a new
      * instance)
      */
@@ -424,7 +425,7 @@ public class MyQuaternion {
      * @param a the first control point (not null, unaffected, norm=1)
      * @param b the 2nd control point (not null, unaffected, norm=1)
      * @param q function value at t=1 (not null, unaffected, norm=1)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return interpolated unit quaternion (either storeResult or a new
      * instance)
      */
@@ -452,7 +453,7 @@ public class MyQuaternion {
      * @param q0 previous control point (not null, unaffected, norm=1)
      * @param q1 current control point (not null, unaffected, norm=1)
      * @param q2 following control point (not null, unaffected, norm=1)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return a unit quaternion for use as a Squad parameter (either
      * storeResult or a new instance)
      */
@@ -482,7 +483,7 @@ public class MyQuaternion {
      * Standardize a quaternion in preparation for hashing.
      *
      * @param input (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return an equivalent quaternion without negative zeros (either
      * storeResult or a new instance)
      */

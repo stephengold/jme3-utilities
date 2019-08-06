@@ -100,7 +100,7 @@ public class MySkeleton {
      * Copy the bind transform of the specified Bone.
      *
      * @param bone which Bone to read (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the bone's bind transform (in its parent's coordinates, either
      * storeResult or a new instance)
      */
@@ -129,7 +129,7 @@ public class MySkeleton {
      * Copy the transform of the specified Bone relative to its parent.
      *
      * @param bone which Bone to read (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the bone's transform (in its parent's coordinates, either
      * storeResult or a new instance)
      */
@@ -154,7 +154,7 @@ public class MySkeleton {
      * Copy the transform of the specified Bone relative to its mesh(es).
      *
      * @param bone which Bone to read (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the bone transform (in mesh coordinates, either storeResult or a
      * new instance)
      */

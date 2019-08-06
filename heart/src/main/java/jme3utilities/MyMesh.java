@@ -228,7 +228,7 @@ public class MyMesh {
      * recursive!
      *
      * @param subtree (may be null, aliases created)
-     * @param storeResult (added to if not null)
+     * @param storeResult storage for results (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
     public static List<Mesh> listMeshes(Spatial subtree,
@@ -260,7 +260,7 @@ public class MyMesh {
      * a scene graph. Note: recursive!
      *
      * @param subtree (may be null)
-     * @param storeResult storage for the result (added to if not null)
+     * @param storeResult storage for results (added to if not null)
      * @return the resulting set (either storeResult or a new instance)
      */
     public static VectorSet listVertexLocations(Spatial subtree,
@@ -426,8 +426,8 @@ public class MyMesh {
      * @param storeResult storage for the result (modified if not null)
      * @return the data vector (either storeResult or a new instance)
      */
-    public static int[] vertexBoneIndices(Mesh mesh,
-            int vertexIndex, int[] storeResult) {
+    public static int[] vertexBoneIndices(Mesh mesh, int vertexIndex,
+            int[] storeResult) {
         Validate.nonNull(mesh, "mesh");
         Validate.nonNegative(vertexIndex, "vertex index");
         if (storeResult == null) {
@@ -670,7 +670,7 @@ public class MyMesh {
      * @param mesh the subject mesh (not null)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
      * @param skinningMatrices (not null, unaffected)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the tangent vector (either storeResult or a new instance)
      */
     public static Vector4f vertexTangent(Mesh mesh, int vertexIndex,
@@ -730,7 +730,7 @@ public class MyMesh {
      * @param mesh the subject mesh (not null, unaffected)
      * @param bufferType which buffer to read (8 legal values)
      * @param vertexIndex index into the mesh's vertices (&ge;0)
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the texture coordinates (either storeResult or a new instance)
      */
     public static Vector2f vertexVector2f(Mesh mesh,

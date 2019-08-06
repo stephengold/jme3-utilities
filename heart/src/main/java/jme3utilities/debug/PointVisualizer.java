@@ -115,7 +115,7 @@ public class PointVisualizer extends Geometry {
     /**
      * Copy the color.
      *
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the color (either storeResult or a new instance)
      */
     public ColorRGBA copyColor(ColorRGBA storeResult) {

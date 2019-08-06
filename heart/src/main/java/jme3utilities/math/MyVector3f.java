@@ -119,7 +119,7 @@ public class MyVector3f {
      * Accumulate maximum coordinates.
      *
      * @param maxima the highest coordinate so far for each axis (not null,
-     * updated)
+     * modified)
      * @param input vector to compare (not null, unaffected)
      */
     public static void accumulateMaxima(Vector3f maxima, Vector3f input) {
@@ -138,7 +138,7 @@ public class MyVector3f {
      * Accumulate minimum coordinates.
      *
      * @param minima the lowest coordinate so far for each axis (not null,
-     * updated)
+     * modified)
      * @param input vector to compare (not null, unaffected)
      */
     public static void accumulateMinima(Vector3f minima, Vector3f input) {
@@ -156,7 +156,7 @@ public class MyVector3f {
     /**
      * Accumulate a linear combination of vectors.
      *
-     * @param total sum of the scaled inputs so far (not null, updated)
+     * @param total sum of the scaled inputs so far (not null, modified)
      * @param input the vector to scale and add (not null, unaffected)
      * @param scale scale factor to apply to the input
      */
@@ -495,8 +495,8 @@ public class MyVector3f {
      * @param location coordinates of input location (not null, unaffected)
      * @param segStart coordinates of start of segment (not null, unaffected)
      * @param segEnd coordinates of end of segment (not null, unaffected)
-     * @param storeClosest if not null, used to store the coordinates of the
-     * closest location on the segment (updated)
+     * @param storeClosest storage for the coordinates of the closest location
+     * on the segment (modified if not null)
      * @return the squared distance (&ge;0)
      */
     public static double distanceSquaredToSegment(Vector3f location,

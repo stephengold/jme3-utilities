@@ -199,7 +199,7 @@ public class MyLight {
      * @param <T> subclass of Light
      * @param subtree (not null)
      * @param lightType the subclass of Light to search for
-     * @param storeResult (added to if not null)
+     * @param storeResult storage for results (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
      */
     @SuppressWarnings("unchecked")
