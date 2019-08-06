@@ -245,19 +245,7 @@ public class MyVector3f {
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
         result.zero();
-        switch (axisIndex) {
-            case xAxis:
-                result.x = length;
-                break;
-            case yAxis:
-                result.y = length;
-                break;
-            case zAxis:
-                result.z = length;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        result.set(axisIndex, length);
 
         return result;
     }
