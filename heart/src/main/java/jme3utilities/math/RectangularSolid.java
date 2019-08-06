@@ -37,6 +37,7 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -53,6 +54,10 @@ public class RectangularSolid implements Savable {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * number of axes in a vector
+     */
+    final private static int numAxes = 3;
     /**
      * message logger for this class
      */
@@ -127,16 +132,18 @@ public class RectangularSolid implements Savable {
     }
 
     /**
-     * Instantiate a compact solid that bounds 3-D vectors in a float array.
+     * Instantiate a compact solid that bounds the sample locations in the
+     * specified float array.
      *
      * @param inputArray the sample locations (not null, at least 6 elements,
      * length a multiple of 3, unaffected)
      */
     public RectangularSolid(float[] inputArray) {
         Validate.nonEmpty(inputArray, "input array");
-        int length = inputArray.length;
-        assert (length % 3 == 0) : length;
-        assert length >= 6 : length;
+        int numFloats = inputArray.length;
+        assert (numFloats % numAxes == 0) : numFloats;
+        int numVectors = numFloats / numAxes;
+        assert numVectors >= 2 : numVectors;
         /*
          * Orient local axes based on the eigenvectors of the covariance matrix.
          */
@@ -153,15 +160,66 @@ public class RectangularSolid implements Savable {
                 Float.POSITIVE_INFINITY);
         Quaternion worldToLocal = localToWorld.inverse();
         Vector3f tempVector = new Vector3f();
-        int vectorCount = length / 3;
-        for (int vectorIndex = 0; vectorIndex < vectorCount; ++vectorIndex) {
-            tempVector.x = inputArray[3 * vectorIndex];
-            tempVector.y = inputArray[3 * vectorIndex + 1];
-            tempVector.z = inputArray[3 * vectorIndex + 2];
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            tempVector.x = inputArray[vectorIndex * numAxes + MyVector3f.xAxis];
+            tempVector.y = inputArray[vectorIndex * numAxes + MyVector3f.yAxis];
+            tempVector.z = inputArray[vectorIndex * numAxes + MyVector3f.zAxis];
 
             worldToLocal.mult(tempVector, tempVector);
             MyVector3f.accumulateMaxima(maxima, tempVector);
             MyVector3f.accumulateMinima(minima, tempVector);
+        }
+    }
+
+    /**
+     * Instantiate a compact solid that bounds the sample locations in the
+     * specified FloatBuffer range.
+     *
+     * @param buffer the buffer that contains the vectors (not null, unaffected)
+     * @param startPosition the position at which the vectors start (&ge;0,
+     * &le;endPosition-6)
+     * @param endPosition the position at which the vectors end
+     * (&ge;startPosition+6, &le;capacity)
+     */
+    public RectangularSolid(FloatBuffer buffer, int startPosition,
+            int endPosition) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.inRange(startPosition, "start position", 0,
+                endPosition - 2 * numAxes);
+        Validate.inRange(endPosition, "end position",
+                startPosition + 2 * numAxes, buffer.capacity());
+
+        int numFloats = endPosition - startPosition;
+        assert (numFloats % numAxes == 0) : numFloats;
+        int numVectors = numFloats / numAxes;
+        assert numVectors >= 2 : numVectors;
+        /*
+         * Orient local axes based on the eigenvectors of the covariance matrix.
+         */
+        Matrix3f covariance = MyBuffer.covariance(buffer, 0, numFloats, null);
+        Eigen3f eigen = new Eigen3f(covariance);
+        Vector3f[] basis = eigen.getEigenVectors();
+        localToWorld.fromAxes(basis);
+        /*
+         * Calculate the min and max for each local axis.
+         */
+        maxima.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY,
+                Float.NEGATIVE_INFINITY);
+        minima.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY);
+        Quaternion worldToLocal = localToWorld.inverse();
+        Vector3f tmpVector = new Vector3f();
+
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            int position = vectorIndex * numAxes;
+
+            tmpVector.x = buffer.get(position + MyVector3f.xAxis);
+            tmpVector.y = buffer.get(position + MyVector3f.yAxis);
+            tmpVector.z = buffer.get(position + MyVector3f.zAxis);
+
+            worldToLocal.mult(tmpVector, tmpVector);
+            MyVector3f.accumulateMaxima(maxima, tmpVector);
+            MyVector3f.accumulateMinima(minima, tmpVector);
         }
     }
 
