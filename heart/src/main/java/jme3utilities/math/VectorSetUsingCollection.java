@@ -78,7 +78,8 @@ public class VectorSetUsingCollection implements VectorSet {
     // VectorSet methods
 
     /**
-     * Add the value of the specified Vector3f to this set.
+     * Add the value of the specified Vector3f to this set, if it's not already
+     * present.
      *
      * @param vector the value to add (not null, unaffected)
      */
@@ -89,7 +90,7 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Test whether this set contains the value of the specified Vector3f.
+     * Test whether this set contains the specified value.
      *
      * @param vector the value to find (not null, unaffected)
      * @return true if found, otherwise false
@@ -101,7 +102,7 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Calculate the sample covariance of the Vector3f values in this set.
+     * Calculate the sample covariance of the values in this set.
      *
      * @param storeResult storage for the result (modified if not null)
      * @return the unbiased sample covariance (either storeResult or a new
@@ -148,9 +149,9 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Find the length of the longest Vector3f value in this set.
+     * Find the magnitude of the longest value in this set.
      *
-     * @return the length (&ge;0)
+     * @return the magnitude (&ge;0)
      */
     @Override
     public float maxLength() {
@@ -168,11 +169,11 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Find the maximum and minimum coordinates for each axis among the Vector3f
-     * values in this set.
+     * Find the maximum and minimum coordinates for each axis among the values
+     * in this set.
      *
-     * @param storeMaxima (not null, modified)
-     * @param storeMinima (not null, modified)
+     * @param storeMaxima storage for the maxima (not null, modified)
+     * @param storeMinima storage for the minima (not null, modified)
      */
     @Override
     public void maxMin(Vector3f storeMaxima, Vector3f storeMinima) {
@@ -188,10 +189,9 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Calculate the sample mean for each axis over the Vector3f values in this
-     * set.
+     * Calculate the sample mean for each axis among the values in this set.
      *
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the sample mean for each axis (either storeResult or a new
      * Vector3f)
      */
@@ -211,7 +211,7 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Calculate the number of Vector3f values in this set.
+     * Determine the number of values in this set.
      *
      * @return the count (&ge;0)
      */
@@ -223,10 +223,10 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Access the buffer containing all the Vector3f values in this set. No
-     * further add() is allowed.
+     * Access a Buffer containing all values in this set. No further add() is
+     * allowed.
      *
-     * @return a new buffer, flipped
+     * @return a new Buffer, flipped and rewound
      */
     @Override
     public FloatBuffer toBuffer() {

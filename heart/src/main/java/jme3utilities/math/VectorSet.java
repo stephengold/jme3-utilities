@@ -37,14 +37,15 @@ import java.nio.FloatBuffer;
  */
 public interface VectorSet {
     /**
-     * Add the value of the specified Vector3f to this set.
+     * Add the value of the specified Vector3f to this set, if it's not already
+     * present.
      *
      * @param vector the value to add (not null, unaffected)
      */
     void add(Vector3f vector);
 
     /**
-     * Test whether this set contains the value of the specified Vector3f.
+     * Test whether this set contains the specified value.
      *
      * @param vector the value to find (not null, unaffected)
      * @return true if found, otherwise false
@@ -52,7 +53,7 @@ public interface VectorSet {
     boolean contains(Vector3f vector);
 
     /**
-     * Calculate the sample covariance of the Vector3f values in this set.
+     * Calculate the sample covariance of the values in this set.
      *
      * @param storeResult storage for the result (modified if not null)
      * @return the unbiased sample covariance (either storeResult or a new
@@ -61,43 +62,42 @@ public interface VectorSet {
     Matrix3f covariance(Matrix3f storeResult);
 
     /**
-     * Find the length of the longest Vector3f value in this set.
+     * Find the magnitude of the longest value in this set.
      *
-     * @return the length (&ge;0)
+     * @return the magnitude (&ge;0)
      */
     float maxLength();
 
     /**
-     * Find the maximum and minimum coordinates for each axis among the Vector3f
-     * values in this set.
+     * Find the maximum and minimum coordinates for each axis among the values
+     * in this set.
      *
-     * @param storeMaxima (not null, modified)
-     * @param storeMinima (not null, modified)
+     * @param storeMaxima storage for the maxima (not null, modified)
+     * @param storeMinima storage for the minima (not null, modified)
      */
     void maxMin(Vector3f storeMaxima, Vector3f storeMinima);
 
     /**
-     * Calculate the sample mean for each axis over the Vector3f values in this
-     * set.
+     * Calculate the sample mean for each axis among the values in this set.
      *
-     * @param storeResult (modified if not null)
+     * @param storeResult storage for the result (modified if not null)
      * @return the sample mean for each axis (either storeResult or a new
      * Vector3f)
      */
     Vector3f mean(Vector3f storeResult);
 
     /**
-     * Calculate the number of Vector3f values in this set.
+     * Determine the number of values in this set.
      *
      * @return the count (&ge;0)
      */
     public int numVectors();
 
     /**
-     * Access the buffer containing all the Vector3f values in this set. No
-     * further add() is allowed.
+     * Access a Buffer containing all values in this set. No further add() is
+     * allowed.
      *
-     * @return a buffer, flipped but possibly not rewound
+     * @return a Buffer, flipped but possibly not rewound
      */
     public FloatBuffer toBuffer();
 }

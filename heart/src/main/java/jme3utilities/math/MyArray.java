@@ -61,8 +61,8 @@ final public class MyArray {
     // new methods exposed
 
     /**
-     * Calculate the minimal axis-aligned bounding box for a non-empty array of
-     * vectors.
+     * Calculate the smallest axis-aligned bounding box for the vectors in the
+     * specified array.
      *
      * @see com.jme3.bounding.BoundingBox#containAABB(java.nio.FloatBuffer)
      *
@@ -98,7 +98,8 @@ final public class MyArray {
     }
 
     /**
-     * Calculate the sample covariance of 3-D vectors in a float array.
+     * Calculate the sample covariance of the 3-D vectors in the specified float
+     * array.
      *
      * @param input the input array (not null, at least 6 elements, length a
      * multiple of 3, unaffected)
@@ -214,8 +215,8 @@ final public class MyArray {
     }
 
     /**
-     * Find the index of the last value &le; the specified one in a sorted
-     * array, using binary search.
+     * Find the index of the last value &le; the specified one in the specified
+     * sorted float array, using binary search.
      *
      * @param value value to search for
      * @param array array to search (not null, strictly monotonic increasing
@@ -250,7 +251,7 @@ final public class MyArray {
     }
 
     /**
-     * Find the index of the first true element in the input array.
+     * Find the index of the first true element in the specified boolean array.
      *
      * @param array input (not null, unaffected)
      * @return index (&ge;0, &lt;length) or -1 if no true element found
@@ -265,8 +266,8 @@ final public class MyArray {
     }
 
     /**
-     * Test whether the specified array contains more than one distinct value,
-     * distinguishing 0 from -0.
+     * Test whether the specified float array contains more than one distinct
+     * value, distinguishing 0 from -0.
      *
      * @param array input (not null, unaffected)
      * @return true if multiple values found, otherwise false
@@ -290,7 +291,8 @@ final public class MyArray {
     }
 
     /**
-     * Calculate the arithmetic mean of 3-D vectors in a float array.
+     * Calculate the arithmetic mean of the 3-D vectors in the specified float
+     * array.
      *
      * @param input the input array (not null, not empty, length a multiple of
      * 3, unaffected)
