@@ -175,6 +175,21 @@ public class MyMesh {
     }
 
     /**
+     * Test whether the specified Mesh has vertex normals.
+     *
+     * @param mesh the Mesh to test (not null, unaffected)
+     * @return true if the Mesh has vertex normals, otherwise false
+     */
+    public static boolean hasNormals(Mesh mesh) {
+        VertexBuffer buffer = mesh.getBuffer(VertexBuffer.Type.Normal);
+        if (buffer == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Test whether the specified Mesh has texture (U-V) coordinates.
      *
      * @param mesh the Mesh to test (not null, unaffected)
@@ -762,9 +777,9 @@ public class MyMesh {
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
         int floatIndex = MyVector3f.numAxes * vertexIndex;
-        storeResult.x = floatBuffer.get(floatIndex);
-        storeResult.y = floatBuffer.get(floatIndex + 1);
-        storeResult.z = floatBuffer.get(floatIndex + 2);
+        storeResult.x = floatBuffer.get(floatIndex + MyVector3f.xAxis);
+        storeResult.y = floatBuffer.get(floatIndex + MyVector3f.yAxis);
+        storeResult.z = floatBuffer.get(floatIndex + MyVector3f.zAxis);
 
         return storeResult;
     }
