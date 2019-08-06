@@ -127,6 +127,66 @@ final public class MyBuffer {
     }
 
     /**
+     * Find the the radius of a bounding cylinder for the specified FloatBuffer
+     * range.
+     *
+     * @param buffer the buffer that contains the vectors (not null, unaffected)
+     * @param startPosition the position at which the vectors start (&ge;0,
+     * &le;endPosition)
+     * @param endPosition the position at which the vectors end
+     * (&ge;startPosition, &le;capacity)
+     * @param axisIndex the cylinder's height axis: 0&rarr;X, 1&rarr;Y, 2&rarr;Z
+     * @return the radius of the minimum bounding cylinder centered at the
+     * origin (&ge;0)
+     */
+    public static float cylinderRadius(FloatBuffer buffer, int startPosition,
+            int endPosition, int axisIndex) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.inRange(startPosition, "start position", 0, endPosition);
+        Validate.inRange(endPosition, "end position", startPosition,
+                buffer.capacity());
+        Validate.inRange(axisIndex, "axis index", MyVector3f.xAxis,
+                MyVector3f.zAxis);
+
+        int numFloats = endPosition - startPosition;
+        assert (numFloats % numAxes == 0) : numFloats;
+        double maxRadiusSquared = 0.0;
+        Vector3f tmpVector = new Vector3f();
+        int numVectors = numFloats / numAxes;
+
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            int position = startPosition + vectorIndex * numAxes;
+
+            float x = buffer.get(position + MyVector3f.xAxis);
+            float y = buffer.get(position + MyVector3f.yAxis);
+            float z = buffer.get(position + MyVector3f.zAxis);
+            float radiusSquared;
+            switch (axisIndex) {
+                case MyVector3f.xAxis:
+                    radiusSquared = y * y + z * z;
+                    break;
+                case MyVector3f.yAxis:
+                    radiusSquared = x * x + z * z;
+                    break;
+                case MyVector3f.zAxis:
+                    radiusSquared = x * x + y * y;
+                    break;
+                default:
+                    String message = Integer.toString(axisIndex);
+                    throw new RuntimeException(message);
+            }
+
+            if (radiusSquared > maxRadiusSquared) {
+                maxRadiusSquared = radiusSquared;
+            }
+        }
+
+        float result = (float) Math.sqrt(maxRadiusSquared);
+        assert result >= 0f : result;
+        return result;
+    }
+
+    /**
      * Find the magnitude of the longest 3-D vector in the specified FloatBuffer
      * range.
      *
@@ -135,7 +195,8 @@ final public class MyBuffer {
      * &le;endPosition)
      * @param endPosition the position at which the vectors end
      * (&ge;startPosition, &le;capacity)
-     * @return the magnitude (&ge;0)
+     * @return the radius of the minimum bounding sphere centered at the origin
+     * (&ge;0)
      */
     public static float maxLength(FloatBuffer buffer, int startPosition,
             int endPosition) {
