@@ -91,7 +91,7 @@ public interface VectorSet {
      *
      * @return the count (&ge;0)
      */
-    public int numVectors();
+    int numVectors();
 
     /**
      * Access a Buffer containing all values in this set. No further add() is
@@ -99,5 +99,5 @@ public interface VectorSet {
      *
      * @return a Buffer, flipped but possibly not rewound
      */
-    public FloatBuffer toBuffer();
+    FloatBuffer toBuffer();
 }
