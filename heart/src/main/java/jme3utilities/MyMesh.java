@@ -43,6 +43,7 @@ import com.jme3.util.BufferUtils;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -391,17 +392,26 @@ public class MyMesh {
      * @return index (&ge;0)
      */
     public static int readIndex(Buffer buffer) {
+        Validate.nonNull(buffer, "buffer");
+
         int result;
         if (buffer instanceof ByteBuffer) {
             ByteBuffer byteBuffer = (ByteBuffer) buffer;
             byte b = byteBuffer.get();
             result = 0xff & b;
+
+        } else if (buffer instanceof IntBuffer) {
+            IntBuffer intBuffer = (IntBuffer) buffer;
+            result = intBuffer.get();
+
         } else if (buffer instanceof ShortBuffer) {
             ShortBuffer shortBuffer = (ShortBuffer) buffer;
             short s = shortBuffer.get();
             result = 0xffff & s;
-        } else { // TODO handle IntBuffer case
-            throw new IllegalArgumentException(); // TODO message
+
+        } else {
+            String message = buffer.getClass().getName();
+            throw new IllegalArgumentException(message);
         }
 
         assert result >= 0 : result;
