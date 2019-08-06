@@ -175,10 +175,11 @@ public class RectangularSolid implements Savable {
      * Instantiate a compact solid that bounds the sample locations in the
      * specified FloatBuffer range.
      *
-     * @param buffer the buffer that contains the vectors (not null, unaffected)
-     * @param startPosition the position at which the vectors start (&ge;0,
-     * &le;endPosition-6)
-     * @param endPosition the position at which the vectors end
+     * @param buffer the buffer that contains the sample locations (not null,
+     * unaffected)
+     * @param startPosition the position at which the sample locations start
+     * (&ge;0, &le;endPosition-6)
+     * @param endPosition the position at which the sample locations end
      * (&ge;startPosition+6, &le;capacity)
      */
     public RectangularSolid(FloatBuffer buffer, int startPosition,
