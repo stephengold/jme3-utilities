@@ -72,7 +72,7 @@ public interface VectorSet {
     Vector3f maxAbs(Vector3f storeResult);
 
     /**
-     * Find the length of the longest Vector3f value in this set.
+     * Find the magnitude of the longest value in this set.
      *
      * @return the magnitude (&ge;0)
      */
