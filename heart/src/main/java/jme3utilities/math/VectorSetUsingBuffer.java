@@ -52,10 +52,6 @@ public class VectorSetUsingBuffer implements VectorSet {
      */
     final private static Logger logger
             = Logger.getLogger(VectorSetUsingBuffer.class.getName());
-    /**
-     * local copy of {@link com.jme3.math.Vector3f#ZERO}
-     */
-    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
