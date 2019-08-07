@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.31.0for32 released on TBD
+## Version 2.31.0for32 released on 7 August 2019
 
  + Added support for `IntBuffer` in `MyMesh.readIndex()`.
  + Added a `MyBuffer` utility class.
