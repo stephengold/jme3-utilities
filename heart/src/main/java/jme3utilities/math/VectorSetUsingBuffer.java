@@ -193,15 +193,8 @@ public class VectorSetUsingBuffer implements VectorSet {
      */
     @Override
     public Vector3f maxAbs(Vector3f storeResult) {
-        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-
-        Vector3f maxima = new Vector3f();
-        Vector3f minima = result;
-        maxMin(maxima, result);
-        MyVector3f.accumulateMaxima(maxima, translateIdentity);
-        MyVector3f.accumulateMaxima(minima, translateIdentity);
-        MyVector3f.maxAbs(maxima, minima, result);
-
+        Vector3f result
+                = MyBuffer.maxAbs(buffer, 0, buffer.limit(), storeResult);
         return result;
     }
 

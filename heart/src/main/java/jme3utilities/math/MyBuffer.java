@@ -187,6 +187,45 @@ final public class MyBuffer {
     }
 
     /**
+     * Find the maximum absolute coordinate for each axis in the specified
+     * FloatBuffer range.
+     *
+     * @param buffer the buffer that contains the vectors (not null, unaffected)
+     * @param startPosition the position at which the vectors start (&ge;0,
+     * &le;endPosition)
+     * @param endPosition the position at which the vectors end
+     * (&ge;startPosition, &le;capacity)
+     * @param storeResult storage for the result (modified if not null)
+     * @return the half extent for each axis (either storeResult or a new
+     * instance)
+     */
+    public static Vector3f maxAbs(FloatBuffer buffer, int startPosition,
+            int endPosition, Vector3f storeResult) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.inRange(startPosition, "start position", 0, endPosition);
+        Validate.inRange(endPosition, "end position", startPosition,
+                buffer.capacity());
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        int numFloats = endPosition - startPosition;
+        assert (numFloats % numAxes == 0) : numFloats;
+        int numVectors = numFloats / numAxes;
+        result.zero();
+
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            int position = startPosition + vectorIndex * numAxes;
+            float x = buffer.get(position + MyVector3f.xAxis);
+            float y = buffer.get(position + MyVector3f.yAxis);
+            float z = buffer.get(position + MyVector3f.zAxis);
+            result.x = Math.max(result.x, Math.abs(x));
+            result.y = Math.max(result.y, Math.abs(y));
+            result.z = Math.max(result.z, Math.abs(z));
+        }
+
+        return result;
+    }
+
+    /**
      * Find the magnitude of the longest 3-D vector in the specified FloatBuffer
      * range.
      *
