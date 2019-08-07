@@ -52,6 +52,10 @@ public class VectorSetUsingBuffer implements VectorSet {
      */
     final private static Logger logger
             = Logger.getLogger(VectorSetUsingBuffer.class.getName());
+    /**
+     * local copy of {@link com.jme3.math.Vector3f#ZERO}
+     */
+    final private static Vector3f translateIdentity = new Vector3f(0f, 0f, 0f);
     // *************************************************************************
     // fields
 
@@ -180,7 +184,29 @@ public class VectorSetUsingBuffer implements VectorSet {
     }
 
     /**
-     * Find the magnitude of the longest value in this set.
+     * Find the maximum absolute coordinate for each axis among the Vector3f
+     * values in this set.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the half extent for each axis (either storeResult or a new
+     * instance)
+     */
+    @Override
+    public Vector3f maxAbs(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        Vector3f maxima = new Vector3f();
+        Vector3f minima = result;
+        maxMin(maxima, result);
+        MyVector3f.accumulateMaxima(maxima, translateIdentity);
+        MyVector3f.accumulateMaxima(minima, translateIdentity);
+        MyVector3f.maxAbs(maxima, minima, result);
+
+        return result;
+    }
+
+    /**
+     * Find the length of the longest Vector3f value in this set.
      *
      * @return the magnitude (&ge;0)
      */

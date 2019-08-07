@@ -149,7 +149,29 @@ public class VectorSetUsingCollection implements VectorSet {
     }
 
     /**
-     * Find the magnitude of the longest value in this set.
+     * Find the maximum absolute coordinate for each axis among the Vector3f
+     * values in this set.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return the half extent for each axis (either storeResult or a new
+     * instance)
+     */
+    @Override
+    public Vector3f maxAbs(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
+        result.zero();
+        for (Vector3f tempVector : set) {
+            result.x = Math.max(result.x, Math.abs(tempVector.x));
+            result.y = Math.max(result.y, Math.abs(tempVector.y));
+            result.z = Math.max(result.z, Math.abs(tempVector.z));
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the length of the longest Vector3f value in this set.
      *
      * @return the magnitude (&ge;0)
      */
