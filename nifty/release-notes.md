@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.8for33 released on TBD
+
+Base on version 2.31 of the jme3-utilities-heart library
+and version 0.7.6 of the jme3-utilities-ui library.
+
 ## Version 0.9.6for33 released on 5 July 2019
 
 Base on version 3.3.0-alpha2 of jMonkeyEngine,
