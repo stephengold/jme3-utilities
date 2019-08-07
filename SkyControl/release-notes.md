@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.20for32 released on TBD
+## Version 0.9.20for32 released on 7 August 2019
 
 Notable changes:
  + base on version 2.31 of the heart library.
