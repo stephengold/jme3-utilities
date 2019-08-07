@@ -126,9 +126,9 @@ public class MySpatial {
      * scene graph. Note: recursive!
      *
      * @param <T> subclass of Control
-     * @param subtree subtree to traverse (may be null, unaffected)
+     * @param subtree the subtree to analyze (may be null, unaffected)
      * @param controlType the subclass of Control to search for
-     * @return number of scene-graph controls (&ge;0)
+     * @return the count (&ge;0)
      */
     public static <T extends Control> int countControls(Spatial subtree,
             Class<T> controlType) {
@@ -160,8 +160,8 @@ public class MySpatial {
      * Estimate the number of bones in the specified subtree by reading its mesh
      * index buffers.
      *
-     * @param subtree (may be null)
-     * @return estimated number (&ge;0)
+     * @param subtree the subtree to analyze (may be null)
+     * @return the estimated count (&ge;0)
      */
     public static int countMeshBones(Spatial subtree) {
         int result = 0;
@@ -189,9 +189,9 @@ public class MySpatial {
      * scene graph. Note: recursive!
      *
      * @param <T> subclass of Spatial
-     * @param subtree subtree to traverse (may be null, unaffected)
+     * @param subtree the subtree to analyze (may be null, unaffected)
      * @param spatialType the subclass of Spatial to search for
-     * @return number of spatials (&ge;0)
+     * @return the count (&ge;0)
      */
     public static <T extends Spatial> int countSpatials(Spatial subtree,
             Class<T> spatialType) {
@@ -218,8 +218,8 @@ public class MySpatial {
      * Count all user data in the specified subtree of a scene graph. Note:
      * recursive!
      *
-     * @param subtree subtree to traverse (may be null, unaffected)
-     * @return the number of user data (&ge;0)
+     * @param subtree the subtree to analyze (may be null, unaffected)
+     * @return the count (&ge;0)
      */
     public static int countUserData(Spatial subtree) {
         int result = 0;
@@ -243,7 +243,7 @@ public class MySpatial {
      * Count all uses of the specified Material in the specified subtree of a
      * scene graph. Note: recursive!
      *
-     * @param subtree (may be null, unaffected)
+     * @param subtree the subtree to analyze (may be null, unaffected)
      * @param material (unaffected)
      * @return the use count (&ge;0)
      */
@@ -272,7 +272,7 @@ public class MySpatial {
      * Count how many mesh vertices are contained in the specified subtree of a
      * scene graph. Note: recursive!
      *
-     * @param subtree subtree to traverse (may be null, unaffected)
+     * @param subtree the subtree to analyze (may be null, unaffected)
      * @return the number of vertices (&ge;0)
      */
     public static int countVertices(Spatial subtree) {
@@ -297,7 +297,7 @@ public class MySpatial {
     /**
      * Generate a single-character description of a Spatial.
      *
-     * @param spatial the spatial to describe (unaffected, may be null)
+     * @param spatial the Spatial to describe (unaffected, may be null)
      * @return a mnemonic character
      */
     public static char describeType(Spatial spatial) {
@@ -340,11 +340,11 @@ public class MySpatial {
     }
 
     /**
-     * Find an animated geometry in the specified subtree of the scene graph.
+     * Find an animated geometry in the specified subtree of a scene graph.
      * Note: recursive!
      *
-     * @param subtree where to search (not null, unaffected)
-     * @return a pre-existing instance, or null if none
+     * @param subtree the subtree to search (not null, unaffected)
+     * @return a pre-existing Geometry, or null if none
      */
     public static Geometry findAnimatedGeometry(Spatial subtree) {
         Geometry result = null;
@@ -374,7 +374,7 @@ public class MySpatial {
      * specified class.
      *
      * @param <T> subtype of {@link com.jme3.scene.Spatial}
-     * @param node node to search (not null)
+     * @param node the Node to search (not null)
      * @param spatialType type of Spatial to search for (not null)
      * @return a pre-existing instance, or null if none found
      */
@@ -391,13 +391,13 @@ public class MySpatial {
     }
 
     /**
-     * Find the first child of the specified node with the specified name. The
+     * Find the first child of the specified Node with the specified name. The
      * search is case-sensitive and looks only at the node's immediate children,
      * not all its descendents.
      *
-     * @param node node to search (not null)
-     * @param childName name to search for (not null)
-     * @return a pre-existing instance, or null if none found
+     * @param node the Node to search (not null)
+     * @param childName the name to search for (not null)
+     * @return a pre-existing Spatial, or null if none found
      *
      * @see com.jme3.scene.Node#getChild(java.lang.String)
      */
@@ -415,12 +415,12 @@ public class MySpatial {
     }
 
     /**
-     * Find a spatial controlled by the specified S-G control in the specified
-     * subtree of the scene graph. Note: recursive!
+     * Find a Spatial controlled by the specified S-G control in the specified
+     * subtree of a scene graph. Note: recursive!
      *
      * @param sgc which scene-graph control (not null, unaffected)
-     * @param subtree which subtree (not null, unaffected)
-     * @return the pre-existing controlled spatial, or null if none found
+     * @param subtree the subtree to search (not null, unaffected)
+     * @return a pre-existing Spatial, or null if none found
      */
     public static Spatial findControlledSpatial(Control sgc, Spatial subtree) {
         Validate.nonNull(sgc, "control");
@@ -452,10 +452,10 @@ public class MySpatial {
 
     /**
      * Find the index of the specified scene-graph control in the specified
-     * spatial.
+     * Spatial.
      *
-     * @param spatial the spatial to search (not null, unaffected)
-     * @param sgc the control to search for (not null, unaffected)
+     * @param spatial the Spatial to search (not null, unaffected)
+     * @param sgc the Control to search for (not null, unaffected)
      * @return the index (&ge;0) or -1 if not found
      */
     public static int findIndex(Spatial spatial, Control sgc) {
@@ -503,8 +503,8 @@ public class MySpatial {
      * name.
      *
      * @param spatial the Spatial to search (not null, unaffected)
-     * @param lightName name to search for (not null)
-     * @return a pre-existing instance, or null if none found
+     * @param lightName the name to search for (not null)
+     * @return a pre-existing Light, or null if none found
      */
     public static Light findLight(Spatial spatial, String lightName) {
         Validate.nonNull(lightName, "light name");
@@ -520,13 +520,13 @@ public class MySpatial {
     }
 
     /**
-     * Find the minimum and maximum coordinates of a geometry.
+     * Find the minimum and maximum coordinates of a Geometry.
      *
-     * @param geometry mesh geometry to measure (not null)
+     * @param geometry the Geometry to measure (not null)
      * @param useWorld true &rarr; use world coordinates, false &rarr; use mesh
      * coordinates
-     * @return array consisting of array[0]: the lowest coordinate for each axis
-     * and array[1]: the highest coordinate for each axis
+     * @return a new array consisting of array[0]: the lowest coordinate for
+     * each axis and array[1]: the highest coordinate for each axis
      */
     public static Vector3f[] findMinMaxCoords(Geometry geometry,
             boolean useWorld) {
@@ -559,13 +559,13 @@ public class MySpatial {
     }
 
     /**
-     * Find the minimum and maximum coordinates in a subtree of the scene graph.
+     * Find the minimum and maximum coordinates in a subtree of a scene graph.
      * Note: recursive!
      *
      * @param subtree subtree to measure (not null)
      * @return a new array consisting of array[0]: the lowest coordinate for
-     * each axis and array[1]: the highest coordinate for each axis (in world
-     * coordinates, not null)
+     * each world axis and array[1]: the highest coordinate for each world axis
+     * (not null)
      */
     public static Vector3f[] findMinMaxCoords(Spatial subtree) {
         Vector3f[] result;
@@ -595,12 +595,12 @@ public class MySpatial {
     }
 
     /**
-     * Find a named spatial in the specified subtree of the scene graph. Note:
+     * Find the named Spatial in the specified subtree of a scene graph. Note:
      * recursive!
      *
-     * @param subtree where to search (not null, unaffected)
-     * @param name (not null)
-     * @return a pre-existing instance, or null if none
+     * @param subtree the subtree to search in (not null, unaffected)
+     * @param name the name to search for (not null)
+     * @return a pre-existing Spatial, or null if none
      */
     public static Spatial findNamed(Spatial subtree, String name) {
         Spatial result = null;
@@ -622,11 +622,11 @@ public class MySpatial {
     }
 
     /**
-     * Access the named M-P override in the specified spatial.
+     * Find a named M-P override in the specified Spatial.
      *
-     * @param spatial the spatial to search (not null)
-     * @param parameterName which override (not null, not empty)
-     * @return the pre-existing instance, or null if not found
+     * @param spatial the Spatial to search in (not null)
+     * @param parameterName the name of the M-P override (not null, not empty)
+     * @return a pre-existing instance, or null if not found
      */
     public static MatParamOverride findOverride(Spatial spatial,
             String parameterName) {
@@ -647,11 +647,11 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world scale factor of a uniformly scaled spatial.
+     * Calculate the world scale factor of a uniformly scaled Spatial.
      *
-     * @param spatial spatial to measure (not null, unaffected)
+     * @param spatial the Spatial to analyze (not null, unaffected)
      * @return scale factor
-     * @throws IllegalArgumentException if the spatial is scaled non-uniformly
+     * @throws IllegalArgumentException if the Spatial is scaled non-uniformly
      * @deprecated use {@link #uniformScale(com.jme3.scene.Spatial)}
      */
     @Deprecated
@@ -662,7 +662,7 @@ public class MySpatial {
     /**
      * Calculate the world location of a spatial's center.
      *
-     * @param spatial spatial to locate (not null, unaffected)
+     * @param spatial the Spatial to analyze (not null, unaffected)
      * @return a new location vector (in world coordinates)
      * @deprecated use
      * {@link #worldLocation(com.jme3.scene.Spatial, com.jme3.math.Vector3f)}
@@ -673,10 +673,10 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world orientation of a spatial.
+     * Calculate the world orientation of the specified Spatial.
      *
-     * @param spatial spatial to orient (not null, unaffected)
-     * @return a new quaternion (in world coordinates)
+     * @param spatial the Spatial to analyze (not null, unaffected)
+     * @return a new Quaternion (in world coordinates)
      * @deprecated use
      * {@link #worldOrientation(com.jme3.scene.Spatial, com.jme3.math.Quaternion)}
      */
@@ -686,9 +686,9 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world scale of a spatial.
+     * Calculate the world scale of the specified Spatial.
      *
-     * @param spatial which spatial (not null)
+     * @param spatial the Spatial to analyze (not null)
      * @return a new scale vector (in world coordinates)
      * @deprecated use
      * {@link #worldScale(com.jme3.scene.Spatial, com.jme3.math.Vector3f)}
@@ -699,9 +699,9 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world elevation of a perfectly horizontal geometry.
+     * Calculate the world elevation of a perfectly horizontal Geometry.
      *
-     * @param geometry the surface to measure (not null)
+     * @param geometry the Geometry to analyze (not null)
      * @return elevation of the surface (in world coordinates)
      * @deprecated use {@link #yLevel(com.jme3.scene.Geometry)}
      */
@@ -720,10 +720,11 @@ public class MySpatial {
     }
 
     /**
-     * Test whether a spatial has a specific light in its local list.
+     * Test whether the specified Spatial has the specified Light in its local
+     * list.
      *
-     * @param spatial spatial to search (not null, unaffected)
-     * @param light light to search for (not null, unaffected)
+     * @param spatial the Spatial to analyze (not null, unaffected)
+     * @param light the Light to search for (not null, unaffected)
      * @return true if found, false if not found
      */
     public static boolean hasLight(Spatial spatial, Light light) {
@@ -739,14 +740,13 @@ public class MySpatial {
     }
 
     /**
-     * Construct the inverse of a spatial's world orientation, the quaternion
+     * Construct the inverse of a spatial's world orientation, the Quaternion
      * that undoes all its rotations.
      *
-     * @param spatial spatial to analyze (not null, unaffected)
+     * @param spatial the Spatial to analyze (not null, unaffected)
      * @return new instance
      * @throws IllegalArgumentException if the spatial's world orientation is
      * not invertible
-     *
      */
     public static Quaternion inverseOrientation(Spatial spatial) {
         Quaternion forward = spatial.getWorldRotation();
@@ -759,10 +759,10 @@ public class MySpatial {
     }
 
     /**
-     * Test whether a spatial is a geometry with ignoreTransform=true.
+     * Test whether a Spatial is a Geometry with ignoreTransform=true.
      *
-     * @param spatial spatial to test (unaffected)
-     * @return true if the spatial ignores transforms, otherwise false
+     * @param spatial the Spatial to test (unaffected)
+     * @return true if the Spatial ignores transforms, otherwise false
      */
     public static boolean isIgnoringTransforms(Spatial spatial) {
         boolean result = false;
@@ -777,10 +777,10 @@ public class MySpatial {
     }
 
     /**
-     * Test whether a spatial is an orphan (has no parent node).
+     * Test whether a Spatial is an orphan or root (has no parent node).
      *
-     * @param spatial spatial to test (not null, unaffected)
-     * @return true if the spatial is an orphan, otherwise false
+     * @param spatial the Spatial to test (not null, unaffected)
+     * @return true if the Spatial is an orphan, otherwise false
      */
     public static boolean isOrphan(Spatial spatial) {
         Node parent = spatial.getParent();
@@ -791,9 +791,9 @@ public class MySpatial {
      * Enumerate all animated meshes in the specified subtree of a scene graph.
      * Note: recursive!
      *
-     * @param subtree which subtree (aliases created)
+     * @param subtree the subtree to analyze (may be null, aliases created)
      * @param storeResult storage for results (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
+     * @return an expanded List (either storeResult or a new List)
      */
     public static List<Mesh> listAnimatedMeshes(Spatial subtree,
             List<Mesh> storeResult) {
@@ -824,10 +824,10 @@ public class MySpatial {
      * a scene graph. Note: recursive!
      *
      * @param <T> subclass of Control
-     * @param subtree which subtree (not null, aliases created)
+     * @param subtree the subtree to analyze (not null, aliases created)
      * @param controlType the subclass of Control to search for
      * @param storeResult storage for results (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
+     * @return an expanded List (either storeResult or a new List)
      */
     @SuppressWarnings("unchecked")
     public static <T extends Control> List<T> listControls(Spatial subtree,
@@ -860,9 +860,9 @@ public class MySpatial {
      * Enumerate all materials in the specified subtree of a scene graph. Note:
      * recursive!
      *
-     * @param subtree (may be null, aliases created)
+     * @param subtree the subtree to analyze (may be null, aliases created)
      * @param storeResult storage for results (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
+     * @return an expanded List (either storeResult or a new List)
      * @see MyMesh#listMeshes(com.jme3.scene.Spatial, java.util.List)
      */
     public static List<Material> listMaterials(Spatial subtree,
@@ -890,13 +890,13 @@ public class MySpatial {
     }
 
     /**
-     * Enumerate all geometries using the specified material in the specified
+     * Enumerate all geometries using the specified Material in the specified
      * subtree of a scene graph. Note: recursive!
      *
-     * @param subtree (may be null, aliases created)
-     * @param material the material to search for (may be null, unaffected)
-     * @param addResult (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
+     * @param subtree the subtree to analyze (may be null, aliases created)
+     * @param material the Material to search for (may be null, unaffected)
+     * @param addResult storage for results (added to if not null)
+     * @return an expanded List (either storeResult or a new List)
      */
     public static List<Geometry> listMaterialUsers(Spatial subtree,
             Material material, List<Geometry> addResult) {
@@ -921,13 +921,13 @@ public class MySpatial {
     }
 
     /**
-     * Enumerate all geometries using the specified mesh in the specified
+     * Enumerate all geometries using the specified Mesh in the specified
      * subtree of a scene graph. Note: recursive!
      *
      * @param subtree (may be null, aliases created)
-     * @param mesh the mesh to search for (may be null, unaffected)
-     * @param addResult (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
+     * @param mesh the Mesh to search for (may be null, unaffected)
+     * @param addResult storage for results (added to if not null)
+     * @return an expanded List (either storeResult or a new List)
      */
     public static List<Geometry> listMeshUsers(Spatial subtree, Mesh mesh,
             List<Geometry> addResult) {
@@ -960,8 +960,8 @@ public class MySpatial {
      * @param <T> subclass of Spatial
      * @param subtree (not null, aliases created)
      * @param spatialType the subclass of Spatial to search for
-     * @param addResult (added to if not null)
-     * @return an expanded list (either storeResult or a new instance)
+     * @param addResult storage for results (added to if not null)
+     * @return an expanded List (either storeResult or a new List)
      */
     @SuppressWarnings("unchecked")
     public static <T extends Spatial> List<T> listSpatials(Spatial subtree,
@@ -1010,7 +1010,7 @@ public class MySpatial {
     }
 
     /**
-     * Remove all controls from the specified subtree of the scene graph. Note:
+     * Remove all controls from the specified subtree of a scene graph. Note:
      * recursive!
      *
      * @param subtree (not null)
@@ -1034,7 +1034,7 @@ public class MySpatial {
      *
      * @param spatial spatial to relocate (not null)
      * @param worldLocation desired world location (not null, unaffected)
-     * @throws IllegalArgumentException if the spatial is a geometry with
+     * @throws IllegalArgumentException if the Spatial is a Geometry with
      * ignoreTransform=true
      */
     public static void setWorldLocation(Spatial spatial,
@@ -1058,7 +1058,7 @@ public class MySpatial {
      *
      * @param spatial spatial to reorient (not null)
      * @param worldOrientation desired world orientation (not null, unaffected)
-     * @throws IllegalArgumentException if the spatial is a geometry with
+     * @throws IllegalArgumentException if the Spatial is a Geometry with
      * ignoreTransform=true OR the parent's world orientation is not invertible
      */
     public static void setWorldOrientation(Spatial spatial,
@@ -1083,7 +1083,7 @@ public class MySpatial {
      *
      * @param spatial spatial to rescale (not null)
      * @param worldScale desired world scale (&gt;0)
-     * @throws IllegalArgumentException if the spatial is a geometry with
+     * @throws IllegalArgumentException if the Spatial is a Geometry with
      * ignoreTransform=true OR the spatial's parent has a zero in its world
      * scale
      */
@@ -1114,7 +1114,7 @@ public class MySpatial {
      *
      * @param spatial spatial to alter (not null)
      * @param worldTransform desired world transform (not null, unaffected)
-     * @throws IllegalArgumentException if the spatial is a geometry with
+     * @throws IllegalArgumentException if the Spatial is a Geometry with
      * ignoreTransform=true OR the spatial's parent has a zero in its world
      * scale OR the parent's world orientation is not invertible
      */
@@ -1195,9 +1195,9 @@ public class MySpatial {
     /**
      * Calculate the world scale factor of a uniformly scaled spatial.
      *
-     * @param spatial the spatial to measure (not null, unaffected)
+     * @param spatial the Spatial to analyze (not null, unaffected)
      * @return the scale factor
-     * @throws IllegalArgumentException if the spatial is scaled non-uniformly
+     * @throws IllegalArgumentException if the Spatial is scaled non-uniformly
      */
     public static float uniformScale(Spatial spatial) {
         Validate.nonNull(spatial, "spatial");
@@ -1268,7 +1268,7 @@ public class MySpatial {
     /**
      * Calculate the world orientation of a spatial.
      *
-     * @param spatial spatial to orient (not null)
+     * @param spatial the Spatial to analyze (not null)
      * @param storeResult storage for the result (modified if not null)
      * @return the orientation (in world coordinates, either storeResult or a
      * new instance)
@@ -1292,7 +1292,7 @@ public class MySpatial {
     /**
      * Calculate the world scale of a spatial.
      *
-     * @param spatial the spatial (not null)
+     * @param spatial the Spatial to analyze (not null)
      * @param storeResult storage for the result (modified if not null)
      * @return the scale vector (in world coordinates, either storeResult or a
      * new instance)
@@ -1312,17 +1312,18 @@ public class MySpatial {
     }
 
     /**
-     * Calculate the world transform of a spatial.
+     * Calculate the world transform of a Spatial.
      *
-     * @param spatial the spatial (not null)
+     * @param spatial the Spatial to analyze (not null)
      * @param storeResult storage for the result (modified if not null)
-     * @return the transform (in world coordinates, either storeResult or a new
+     * @return the Transform (in world coordinates, either storeResult or a new
      * instance)
      */
     public static Transform worldTransform(Spatial spatial,
             Transform storeResult) {
         Validate.nonNull(spatial, "spatial");
-        Transform result = (storeResult == null) ? new Transform() : storeResult;
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
 
         if (isIgnoringTransforms(spatial)) {
             result.loadIdentity();
