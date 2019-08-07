@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 2.31.0for33 released on TBD
+## Version 2.31.0for33 released on 6 August 2019
 
  + When dumping a parented `Spatial`, flag it if it's not indented.
  + Changed all `Validate` methods to return `true`, so they can be used
@@ -14,7 +14,7 @@
  + Added a `hasNormals()` method to the `MyMesh` class.
  + Added an `isZero()` method to the `MyQuaternion` class.
  + Added 2 methods using caller-allocated storage to the `ReadXZ` class.
- + Avoid some unnecessary modifications of buffer positions in `MyMesh`.
+ + Avoided some unnecessary modifications of buffer positions in `MyMesh`.
 
 ## Version 2.29.0for33 released on 5 July 2019
 
