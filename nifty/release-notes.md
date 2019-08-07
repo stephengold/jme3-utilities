@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.8for32 released on TBD
+
+Base on version 2.31 of the jme3-utilities-heart library
+and version 0.7.6 of the jme3-utilities-ui library.
+
 ## Version 0.9.7for32 released on 26 July 2019
 
 Base on version 2.30 of the jme3-utilities-heart library
