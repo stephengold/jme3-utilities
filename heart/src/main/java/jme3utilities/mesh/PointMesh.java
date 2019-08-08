@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -95,7 +95,7 @@ public class PointMesh extends Mesh {
      * @param newLocation coordinates in mesh space (not null, unaffected)
      */
     public void setLocation(Vector3f newLocation) {
-        Validate.nonNull(newLocation, "new location");
+        Validate.finite(newLocation, "new location");
 
         fPositions.clear();
         fPositions.put(newLocation.x);

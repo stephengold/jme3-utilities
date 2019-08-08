@@ -353,7 +353,7 @@ public class RectangularSolid implements Savable {
      * vector, not null)
      */
     public Vector3f localToWorld(Vector3f local, Vector3f storeResult) {
-        Validate.nonNull(local, "local");
+        Validate.finite(local, "local");
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
         localToWorld.mult(local, result);
