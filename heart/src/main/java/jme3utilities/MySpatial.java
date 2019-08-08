@@ -1039,7 +1039,7 @@ public class MySpatial {
      */
     public static void setWorldLocation(Spatial spatial,
             Vector3f worldLocation) {
-        Validate.nonNull(worldLocation, "world location");
+        Validate.finite(worldLocation, "world location");
         if (isIgnoringTransforms(spatial)) {
             throw new IllegalArgumentException("transform ignored");
         }

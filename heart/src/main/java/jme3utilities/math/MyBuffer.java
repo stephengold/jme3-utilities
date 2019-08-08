@@ -406,7 +406,7 @@ final public class MyBuffer {
         Validate.inRange(startPosition, "start position", 0, endPosition);
         Validate.inRange(endPosition, "end position", startPosition,
                 buffer.capacity());
-        Validate.nonNull(offsetVector, "offset vector");
+        Validate.finite(offsetVector, "offset vector");
 
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
