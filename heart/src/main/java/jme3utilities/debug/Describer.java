@@ -923,6 +923,30 @@ public class Describer implements Cloneable {
             result.append(faceCullMode);
         }
 
+        result.append(",blend=");
+        RenderState.BlendMode blendMode = state.getBlendMode();
+        result.append(blendMode);
+
+        if (blendMode == RenderState.BlendMode.Custom) {
+            RenderState.BlendEquation equation = state.getBlendEquation();
+            result.append("[eq=").append(equation);
+
+            RenderState.BlendEquationAlpha eqA = state.getBlendEquationAlpha();
+            result.append(",eqA=").append(eqA);
+
+            RenderState.BlendFunc dAlpha = state.getCustomDfactorAlpha();
+            result.append(",dAlpha=").append(dAlpha);
+
+            RenderState.BlendFunc dRGB = state.getCustomDfactorRGB();
+            result.append(",dRGB=").append(dRGB);
+
+            RenderState.BlendFunc sAlpha = state.getCustomSfactorAlpha();
+            result.append(",sAlpha=").append(sAlpha);
+
+            RenderState.BlendFunc sRGB = state.getCustomSfactorRGB();
+            result.append(",sRGB=").append(sRGB).append(']');
+        }
+
         return result.toString();
     }
 
