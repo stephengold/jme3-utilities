@@ -77,9 +77,9 @@ final public class MyCamera {
     // new methods exposed
 
     /**
-     * Calculate the azimuth angle of the specified camera.
+     * Calculate the azimuth angle of the specified Camera.
      *
-     * @param camera camera to measure (not null, unaffected)
+     * @param camera the Camera to analyze (not null, unaffected)
      * @return radians east of north
      */
     public static float azimuth(Camera camera) {
@@ -90,7 +90,7 @@ final public class MyCamera {
     }
 
     /**
-     * Test whether the bounds of the specified view port contain the specified
+     * Test whether the bounds of the specified ViewPort contain the specified
      * screen position.
      *
      * @param viewPort (not null, unaffected)
@@ -118,9 +118,9 @@ final public class MyCamera {
     }
 
     /**
-     * Generate a textual description of a camera.
+     * Generate a textual description of the specified Camera.
      *
-     * @param camera instance to describe (may be null, unaffected)
+     * @param camera the Camera to describe (may be null, unaffected)
      * @return description (not null, not empty)
      * @see #describeMore(com.jme3.renderer.Camera)
      */
@@ -142,9 +142,9 @@ final public class MyCamera {
     }
 
     /**
-     * Generate additional textual description of a camera.
+     * Generate additional textual description of a Camera.
      *
-     * @param camera camera to describe (not null, unaffected)
+     * @param camera the Camera to describe (not null, unaffected)
      * @return description (not null, not empty)
      * @see #describe(com.jme3.renderer.Camera)
      */
@@ -179,7 +179,7 @@ final public class MyCamera {
     /**
      * Calculate the aspect ratio of the display.
      *
-     * @param camera camera to use (not null, unaffected)
+     * @param camera the Camera to use (not null, unaffected)
      * @return width divided by height (&gt;0)
      */
     public static float displayAspectRatio(Camera camera) {
@@ -200,9 +200,9 @@ final public class MyCamera {
     }
 
     /**
-     * Calculate the vertical field-of-view angle of the specified camera.
+     * Calculate the vertical field-of-view angle of the specified Camera.
      *
-     * @param camera camera to measure (not null, unaffected)
+     * @param camera the Camera to analyze (not null, unaffected)
      * @return radians from bottom of frustum to top of frustum (&ge;0)
      */
     public static float fovY(Camera camera) {
@@ -217,13 +217,13 @@ final public class MyCamera {
     /**
      * Calculate the aspect ratio of the specified camera's frustum.
      *
-     * @param camera camera to measure (not null, unaffected)
+     * @param camera the Camera to analyze (not null, unaffected)
      * @return width divided by height (&gt;0)
      */
     public static float frustumAspectRatio(Camera camera) {
         /*
          * Note: camera.getHeight() returns the height of the display,
-         * not the height of the camera!  The display and the camera frustum
+         * not the height of the Camera!  The display and the camera frustum
          * often have the same aspect ratio, but not always.
          */
         float height = camera.getFrustumTop() - camera.getFrustumBottom();
@@ -239,9 +239,9 @@ final public class MyCamera {
     }
 
     /**
-     * Test whether the specified camera has a full-width view port.
+     * Test whether the specified Camera has a full-width ViewPort.
      *
-     * @param camera which camera to test (not null, unaffected)
+     * @param camera the Camera to test (not null, unaffected)
      * @return true if full width, otherwise false
      */
     public static boolean isFullWidth(Camera camera) {
@@ -256,7 +256,7 @@ final public class MyCamera {
      * Enumerate all view ports that contain the specified screen position.
      *
      * @param screenXY (in pixels, not null, unaffected)
-     * @param renderManager (not null)
+     * @param renderManager (not null, aliases created)
      *
      * @return a new list of pre-existing view ports
      */
@@ -291,10 +291,10 @@ final public class MyCamera {
     }
 
     /**
-     * Rotate a camera without changing its location, setting its "up" direction
-     * automatically.
+     * Rotate the specified Camera without changing its location, setting its
+     * "up" direction automatically.
      *
-     * @param camera camera to rotate (not null)
+     * @param camera the Camera to rotate (not null, modified)
      * @param direction (length&gt;0, unaffected)
      */
     public static void look(Camera camera, Vector3f direction) {
@@ -313,7 +313,7 @@ final public class MyCamera {
     /**
      * Convert the mouse-pointer location into a line.
      *
-     * @param camera (not null, unaffected)
+     * @param camera the Camera to use (not null, unaffected)
      * @param inputManager (not null)
      *
      * @return a new line in world coordinates
@@ -335,7 +335,7 @@ final public class MyCamera {
     /**
      * Convert the mouse-pointer location into a ray.
      *
-     * @param camera (not null, unaffected)
+     * @param camera the Camera to use (not null, unaffected)
      * @param inputManager (not null)
      *
      * @return a new ray in world coordinates
@@ -359,7 +359,7 @@ final public class MyCamera {
      * Alter a camera's near and far planes without affecting its aspect ratio
      * or field-of-view.
      *
-     * @param camera camera to alter (not null)
+     * @param camera the Camera to alter (not null, modified)
      * @param newNear distance to the near clipping plane (&lt;newFar, &gt;0)
      * @param newFar distance to the far clipping plane (&gt;newNear)
      */
@@ -385,7 +385,8 @@ final public class MyCamera {
     /**
      * Alter a camera's field-of-view tangents.
      *
-     * @param camera camera to alter (not null, perspective projection)
+     * @param camera the Camera to alter (not null, perspective projection,
+     * modified)
      * @param newTangent tangent of the vertical field-of-view half-angle
      * (&gt;0)
      */
@@ -405,7 +406,7 @@ final public class MyCamera {
     /**
      * Calculate the aspect ratio of the specified camera's viewport.
      *
-     * @param camera camera to measure (not null, unaffected)
+     * @param camera the Camera to analyze (not null, unaffected)
      * @return width divided by height (&gt;0)
      */
     public static float viewAspectRatio(Camera camera) {
@@ -449,10 +450,10 @@ final public class MyCamera {
     }
 
     /**
-     * Calculate the vertical field-of-view angle of the specified camera.
+     * Calculate the vertical field-of-view angle of the specified Camera.
      *
-     * @param camera camera to measure (not null, unaffected)
-     * @return vertical angle in degrees (&gt;0)
+     * @param camera the Camera to analyze (not null, unaffected)
+     * @return the vertical angle in degrees (&gt;0)
      */
     public static float yDegrees(Camera camera) {
         if (camera.isParallelProjection()) {
@@ -467,9 +468,9 @@ final public class MyCamera {
     }
 
     /**
-     * Calculate the vertical field-of-view tangent of the specified camera.
+     * Calculate the vertical field-of-view tangent of the specified Camera.
      *
-     * @param camera camera to measure (not null, unaffected)
+     * @param camera the Camera to analyze (not null, unaffected)
      * @return tangent of the vertical field-of-view half-angle (&ge;0)
      */
     public static float yTangent(Camera camera) {
@@ -493,8 +494,8 @@ final public class MyCamera {
     /**
      * Increase a camera's field-of-view tangents by the specified factor.
      *
-     * @param camera camera to alter (not null)
-     * @param factor amount to reduce both field-of-view tangents (&gt;0)
+     * @param camera the Camera to alter (not null, modified)
+     * @param factor the factor to reduce both field-of-view tangents (&gt;0)
      */
     public static void zoom(Camera camera, float factor) {
         Validate.positive(factor, "factor");

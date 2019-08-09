@@ -724,7 +724,7 @@ public class MySkeleton {
      * specified List, using a pre-order, depth-first traversal of the Skeleton,
      * such that child bones never precede their ancestors. Note: recursive!
      *
-     * @param bone the next Bone to append (not null, unaffected)
+     * @param bone the next Bone to append (not null, aliases created)
      * @param addResult the List to append to (modified)
      */
     private static void addPreOrderBones(Bone bone, List<Bone> addResult) {
@@ -741,7 +741,7 @@ public class MySkeleton {
      * specified List, using a pre-order, depth-first traversal of the Armature,
      * such that child joints never precede their ancestors. Note: recursive!
      *
-     * @param joint the next Joint to append (not null, unaffected)
+     * @param joint the next Joint to append (not null, aliases created)
      * @param addResult the List to append to (modified)
      */
     private static void addPreOrderJoints(Joint joint, List<Joint> addResult) {

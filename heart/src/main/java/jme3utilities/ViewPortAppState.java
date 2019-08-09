@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -116,7 +116,7 @@ public class ViewPortAppState extends SimpleAppState {
     /**
      * Add root spatials from the specified view ports to the update list.
      *
-     * @param viewPortList list of view ports (not null, unaffected)
+     * @param viewPortList list of view ports (not null, aliases created)
      */
     private void addToUpdateList(List<ViewPort> viewPortList) {
         for (ViewPort vp : viewPortList) {

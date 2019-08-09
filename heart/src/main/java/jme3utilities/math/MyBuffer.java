@@ -60,7 +60,7 @@ final public class MyBuffer {
     private MyBuffer() {
     }
     // *************************************************************************
-    // new methods exposed
+    // new methods exposed - TODO add countDistinct()
 
     /**
      * Calculate the sample covariance of 3-D vectors in the specified

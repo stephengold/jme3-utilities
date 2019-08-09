@@ -109,7 +109,7 @@ public class NamedAppState implements AppState {
     /**
      * Cause this state to influence the specified state.
      *
-     * @param appState (not null, not this)
+     * @param appState (not null, not this, alias created)
      */
     final public void influence(AppState appState) {
         Validate.nonNull(appState, "app state");
