@@ -638,7 +638,7 @@ public class MySkeleton {
      * specified List, using a pre-order, depth-first traversal of the Skeleton,
      * such that child bones never precede their ancestors. Note: recursive!
      *
-     * @param bone the next Bone to append (not null, unaffected)
+     * @param bone the next Bone to append (not null, aliases created)
      * @param addResult the List to append to (modified)
      */
     private static void addPreOrderBones(Bone bone, List<Bone> addResult) {

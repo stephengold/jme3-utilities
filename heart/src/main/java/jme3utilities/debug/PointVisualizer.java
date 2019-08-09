@@ -166,8 +166,7 @@ public class PointVisualizer extends Geometry {
      * Alter the shape.
      *
      * @param shapeName the name of a sprite texture (either "cross", "lozenge",
-     * "mascle", "ring", "saltire", "solid circle", or "square", or null for a
-     * solid square)
+     * "mascle", "ring", "saltire", "solid circle", or "square")
      */
     public void setShape(String shapeName) {
         Validate.nonEmpty(shapeName, "shape name");

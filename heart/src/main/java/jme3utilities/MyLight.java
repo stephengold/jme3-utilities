@@ -197,7 +197,7 @@ public class MyLight {
      * scene graph. Note: recursive!
      *
      * @param <T> subclass of Light
-     * @param subtree (not null)
+     * @param subtree (not null, aliases created)
      * @param lightType the subclass of Light to search for
      * @param storeResult storage for results (added to if not null)
      * @return an expanded list (either storeResult or a new instance)
