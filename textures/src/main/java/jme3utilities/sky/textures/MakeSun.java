@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -73,8 +73,8 @@ public class MakeSun {
     /**
      * filesystem path to the output directory/folder
      */
-    final private static String outputDirPath =
-            "../SkyControl/src/main/resources/Textures/skies/suns";
+    final private static String outputDirPath
+            = "../SkyControl/src/main/resources/Textures/skies/suns";
     // *************************************************************************
     // fields
 
@@ -106,9 +106,9 @@ public class MakeSun {
         /*
          * Set the logging level for this class and also for writeMap().
          */
-        logger.setLevel(Level.INFO);
-        Logger.getLogger(jme3utilities.Misc.class.getName())
-                .setLevel(Level.INFO);
+        //logger.setLevel(Level.INFO);
+        //Logger.getLogger(jme3utilities.Misc.class.getName())
+        //        .setLevel(Level.INFO);
         /*
          * Instantiate the application.
          */
