@@ -334,6 +334,19 @@ public class BasicScreenController
     // GuiAppState methods
 
     /**
+     * Clean up this state during the first update after it gets detached.
+     * Should be invoked only by a subclass or by the AppStateManager.
+     */
+    @Override
+    public void cleanup() {
+        if (isEnabled()) {
+            disable();
+        }
+
+        super.cleanup();
+    }
+
+    /**
      * Initialize this controller prior to its 1st update.
      *
      * @param stateManager (not null)
