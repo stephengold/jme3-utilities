@@ -69,6 +69,12 @@ final public class MyAsset {
     final public static String debugMaterialAssetPath
             = "Common/MatDefs/Misc/ShowNormals.j3md";
     /**
+     * asset path to the multicolor wireframe material definition with support
+     * for alpha discard and non-default point shapes
+     */
+    final public static String multicolor2MaterialAssetPath
+            = "MatDefs/wireframe/multicolor2.j3md";
+    /**
      * asset path of the Particle material definition
      */
     final public static String particleMaterialAssetPath
@@ -84,7 +90,7 @@ final public class MyAsset {
     final public static String unshadedMaterialAssetPath
             = "Common/MatDefs/Misc/Unshaded.j3md";
     /**
-     * asset path to the wireframe material definition
+     * asset path to the unicolor, default-shape wireframe material definition
      */
     final public static String wireframeMaterialAssetPath
             = "MatDefs/wireframe/wireframe.j3md";
@@ -203,6 +209,28 @@ final public class MyAsset {
         additional.setBlendMode(RenderState.BlendMode.Alpha);
         additional.setDepthWrite(false);
         additional.setFaceCullMode(RenderState.FaceCullMode.FrontAndBack);
+
+        return material;
+    }
+
+    /**
+     * Create a multicolor wireframe material with the specified point shape and
+     * point size. (Points are visible only with a point-mode mesh.)
+     *
+     * @param assetManager (not null)
+     * @param pointShape shape texture (alias created) or null for default shape
+     * @return a new instance
+     * @param pointSize in pixels (&ge;0, whole numbers recommended)
+     */
+    public static Material createMulticolor2Material(AssetManager assetManager,
+            Texture pointShape, float pointSize) {
+        Validate.nonNull(assetManager, "asset manager");
+        Validate.nonNegative(pointSize, "point size");
+
+        Material material
+                = new Material(assetManager, multicolor2MaterialAssetPath);
+        material.setTexture("PointShape", pointShape);
+        material.setFloat("PointSize", pointSize);
 
         return material;
     }
@@ -459,8 +487,8 @@ final public class MyAsset {
     }
 
     /**
-     * Create a wireframe material with default point shape and a point size of
-     * 1. (Points are visible only with a point-mode mesh.)
+     * Create a unicolor wireframe material with default point shape and a point
+     * size of 1. (Points are visible only with a point-mode mesh.)
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
@@ -476,8 +504,8 @@ final public class MyAsset {
     }
 
     /**
-     * Create a wireframe material with the default point shape and specified
-     * point size. (Points are visible only with a point-mode mesh.)
+     * Create a unicolor wireframe material with the default point shape and
+     * specified point size. (Points are visible only with a point-mode mesh.)
      *
      * @param assetManager (not null)
      * @param color (not null, unaffected)
