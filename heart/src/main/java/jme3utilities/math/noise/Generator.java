@@ -101,7 +101,19 @@ public class Generator extends Random {
      * @return a new unit vector
      */
     public Vector3f nextUnitVector3f() {
-        Vector3f result = new Vector3f();
+        Vector3f result = nextUnitVector3f(null);
+        return result;
+    }
+
+    /**
+     * Generate a uniformly distributed, pseudo-random unit vector.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a unit vector (either storeResult or a new instance)
+     */
+    public Vector3f nextUnitVector3f(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
         double lengthSquared = 0.0;
         while (lengthSquared < 0.1 || lengthSquared > 1.0) {
             float x = 2f * nextFloat() - 1f;
@@ -121,10 +133,23 @@ public class Generator extends Random {
      * Generate a pseudo-random vector that is uniformly distributed throughout
      * the unit sphere centered on the origin.
      *
-     * @return a new unit vector
+     * @return a new vector with length&le;1
      */
     public Vector3f nextVector3f() {
-        Vector3f result = new Vector3f();
+        Vector3f result = nextVector3f(null);
+        return result;
+    }
+
+    /**
+     * Generate a pseudo-random vector that is uniformly distributed throughout
+     * the unit sphere centered on the origin.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a vector with length&le;1 (either storeResult or a new instance)
+     */
+    public Vector3f nextVector3f(Vector3f storeResult) {
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
+
         double lengthSquared = 2.0;
         while (lengthSquared > 1.0) {
             float x = 2f * nextFloat() - 1f;
