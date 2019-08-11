@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -205,9 +205,9 @@ public class MakeStarMaps {
         /*
          * Set the logging level for this class and also for writeMap().
          */
-        logger.setLevel(Level.INFO);
-        Logger.getLogger(jme3utilities.Misc.class.getName())
-                .setLevel(Level.INFO);
+        //logger.setLevel(Level.INFO);
+        //Logger.getLogger(jme3utilities.Misc.class.getName())
+        //        .setLevel(Level.INFO);
         /*
          * Instantiate the application.
          */
