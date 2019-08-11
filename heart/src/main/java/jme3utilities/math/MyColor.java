@@ -124,11 +124,33 @@ final public class MyColor {
         Validate.nonNull(start, "start");
         Validate.nonNull(end, "end");
 
-        float r = MyMath.lerp(fraction, start.r, end.r);
-        float g = MyMath.lerp(fraction, start.g, end.g);
-        float b = MyMath.lerp(fraction, start.b, end.b);
-        float a = MyMath.lerp(fraction, start.a, end.a);
-        ColorRGBA result = new ColorRGBA(r, g, b, a);
+        ColorRGBA result = lerp(fraction, start, end, null);
+        return result;
+    }
+
+    /**
+     * Interpolate linearly between 2 colors.
+     *
+     * @param t descaled parameter value (0&rarr;v0, 1&rarr;v1)
+     * @param c0 function value at t=0 (not null, unaffected unless it's also
+     * storeResult)
+     * @param c1 function value at t=1 (not null, unaffected unless it's also
+     * storeResult)
+     * @param storeResult storage for the result (modified if not null, may be
+     * c0 or c1)
+     * @return an interpolated color (either storeResult or a new instance)
+     */
+    public static ColorRGBA lerp(float t, ColorRGBA c0, ColorRGBA c1,
+            ColorRGBA storeResult) {
+        Validate.nonNull(c0, "c0");
+        Validate.nonNull(c1, "c1");
+        ColorRGBA result
+                = (storeResult == null) ? new ColorRGBA() : storeResult;
+
+        result.r = MyMath.lerp(t, c0.r, c1.r);
+        result.g = MyMath.lerp(t, c0.g, c1.g);
+        result.b = MyMath.lerp(t, c0.b, c1.b);
+        result.a = MyMath.lerp(t, c0.a, c1.a);
 
         return result;
     }
