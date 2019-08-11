@@ -187,6 +187,30 @@ public class MyQuaternion {
     }
 
     /**
+     * Calculate the dot (scalar) product of 2 quaternions. Unlike
+     * {@link com.jme3.math.Quaternion#dot(com.jme3.math.Quaternion)}, this
+     * method returns a double-precision value for precise calculation of
+     * angles.
+     *
+     * @param q1 the first Quaternion (not null, unaffected)
+     * @param q2 the 2nd Quaternion (not null, unaffected)
+     * @return the dot product
+     */
+    public static double dot(Quaternion q1, Quaternion q2) {
+        double w1 = q1.getW();
+        double w2 = q2.getW();
+        double x1 = q1.getX();
+        double x2 = q2.getX();
+        double y1 = q1.getY();
+        double y2 = q2.getY();
+        double z1 = q1.getZ();
+        double z2 = q2.getZ();
+        double result = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2;
+
+        return result;
+    }
+
+    /**
      * Calculate the exponential of a pure Quaternion.
      *
      * @param q input value (not null, unaffected, w=0)
