@@ -439,7 +439,7 @@ public class SkyControlCore extends SubtreeControl {
     /**
      * Alter which camera to track.
      *
-     * @param camera which camera to track (not null)
+     * @param camera which camera to track (not null, alias created)
      */
     public void setCamera(Camera camera) {
         Validate.nonNull(camera, "camera");
