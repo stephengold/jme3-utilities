@@ -76,6 +76,26 @@ public class Generator extends Random {
     // new methods exposed
 
     /**
+     * Generate a random integer with a Poisson distribution, after Knuth.
+     *
+     * @param lambda the expected rate of arrivals per unit time (&gt;0)
+     * @return the number of arrivals observed in a unit time interval (&ge;0)
+     */
+    public int nextPoisson(double lambda) {
+        double expMinusLambda = Math.exp(-lambda);
+
+        double p = 1.0;
+        int result = -1;
+
+        do {
+            ++result;
+            p *= nextDouble();
+        } while (p > expMinusLambda);
+
+        return result;
+    }
+
+    /**
      * Generate a uniformly distributed, pseudo-random unit quaternion.
      *
      * @return a new unit quaternion
