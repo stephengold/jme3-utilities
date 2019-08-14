@@ -91,11 +91,9 @@ public class PointVisualizer extends Geometry {
 
         this.assetManager = assetManager;
 
-        String matDefPath = "MatDefs/wireframe/multicolor2.j3md";
-        Material mat = new Material(assetManager, matDefPath);
-        setMaterial(mat);
-
-        material.setFloat("PointSize", size);
+        Material material
+                = MyAsset.createMulticolor2Material(assetManager, null, size);
+        setMaterial(material);
         material.setName("point");
 
         if (color != null) {
