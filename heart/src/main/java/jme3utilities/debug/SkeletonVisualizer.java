@@ -112,11 +112,6 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     final private static String linksName = "skeleton links";
     /**
-     * asset path to the skeleton material definition
-     */
-    final private static String matDefsAssetPath
-            = "MatDefs/wireframe/multicolor2.j3md";
-    /**
      * name for the subtree node
      */
     final private static String subtreeName = "skeleton node";
@@ -174,7 +169,8 @@ public class SkeletonVisualizer extends SubtreeControl {
         super();
         Validate.nonNull(assetManager, "asset manager");
 
-        lineMaterial = new Material(assetManager, matDefsAssetPath);
+        lineMaterial = MyAsset.createMulticolor2Material(assetManager,
+                null, 0f);
         lineMaterial.setBoolean("UseVertexColor", true);
         lineMaterial.setColor("Color", defaultLineColor.clone());
         lineMaterial.setFloat("AlphaDiscardThreshold", 0.9999f);
@@ -186,11 +182,10 @@ public class SkeletonVisualizer extends SubtreeControl {
         Texture headShape = MyAsset.loadTexture(assetManager,
                 defaultShapeAssetPath, mipmaps);
 
-        headMaterial = new Material(assetManager, matDefsAssetPath);
+        headMaterial = MyAsset.createMulticolor2Material(assetManager,
+                headShape, defaultHeadSize);
         headMaterial.setBoolean("UseVertexColor", true);
         headMaterial.setFloat("AlphaDiscardThreshold", 0.0001f);
-        headMaterial.setFloat("PointSize", defaultHeadSize);
-        headMaterial.setTexture("PointShape", headShape);
         RenderState headState = headMaterial.getAdditionalRenderState();
         headState.setBlendMode(BlendMode.Alpha);
         headState.setDepthTest(false);
