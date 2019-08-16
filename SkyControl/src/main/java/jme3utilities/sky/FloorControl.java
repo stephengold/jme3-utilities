@@ -41,6 +41,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
@@ -198,6 +199,12 @@ public class FloorControl extends SubtreeControl {
         MySpatial.setWorldLocation(subtree, cameraLocation);
         MySpatial.setWorldScale(subtree, 1f);
 
+        Spatial floor = subtree.getChild(0);
+        float radius = camera.getFrustumFar();
+        floor.setLocalScale(2f * radius);
+        float drop = camera.getFrustumNear();
+        floor.setLocalTranslation(-radius, -drop, radius);
+
         if (stabilizeFlag) {
             /*
              * Counteract rotation of the controlled node.
@@ -279,6 +286,7 @@ public class FloorControl extends SubtreeControl {
         Quaternion rotation = new Quaternion();
         rotation.fromAngleNormalAxis(-FastMath.HALF_PI, unitX);
         floor.setLocalRotation(rotation); // rotate from X-Y plane to X-Z plane
+
         float radius = camera.getFrustumFar();
         floor.setLocalScale(2f * radius);
         float drop = camera.getFrustumNear();
