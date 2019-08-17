@@ -803,6 +803,21 @@ public class MyVector3f {
     }
 
     /**
+     * Test whether b is inside the axis-aligned bounding box formed by a and c.
+     *
+     * @param a the location of one corner of the box (not null, unaffected)
+     * @param b the location of being tested (not null, unaffected)
+     * @param c the location of the corner opposite a (not null, unaffected)
+     * @return true if b is between a and c (inclusive), otherwise false
+     */
+    public static boolean isBetween(Vector3f a, Vector3f b, Vector3f c) {
+        boolean result = MyMath.isBetween(a.x, b.x, c.x)
+                && MyMath.isBetween(a.y, b.y, c.y)
+                && MyMath.isBetween(a.z, b.z, c.z);
+        return result;
+    }
+
+    /**
      * Test for a scale identity.
      *
      * @param vector input (not null, unaffected)
