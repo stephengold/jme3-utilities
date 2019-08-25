@@ -24,8 +24,8 @@ processResources { dependsOn ':textures:skyTextures' }
 dependencies {
     api "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
 
-    //api "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    api project(':heart')
+    api "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    //api project(':heart')
 }
 
 task pom {
