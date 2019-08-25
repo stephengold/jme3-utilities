@@ -1,5 +1,12 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.21for32 released on TBD
+
+Notable changes:
+ + remove 2 deprecated constructors
+ + update the FloorControl quad's transform in case the frustum changes
+ + base on version 3.0.0for32 of the heart library
+
 ## Version 0.9.20for32 released on 7 August 2019
 
 Notable changes:
