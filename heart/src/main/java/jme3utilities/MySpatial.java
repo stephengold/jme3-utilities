@@ -87,41 +87,6 @@ public class MySpatial {
     // new methods exposed
 
     /**
-     * Re-parent the specified spatial, keeping its world scale unchanged.
-     *
-     * NOTE: This method may yield incorrect results in the presence of zero
-     * scaling.
-     *
-     * @param newParent (not null)
-     * @param child spatial to re-parent (not null, not orphan)
-     * @throws IllegalArgumentException if the child is a geometry with
-     * ignoreTransform=true
-     */
-    @Deprecated
-    public static void adopt(Node newParent, Spatial child) {
-        if (isIgnoringTransforms(child)) {
-            throw new IllegalArgumentException("transform ignored");
-        }
-        Validate.nonNull(newParent, "new parent");
-        Node oldParent = child.getParent();
-        if (oldParent == null) {
-            throw new NullPointerException("child should not be an orphan");
-        }
-
-        if (newParent != oldParent) {
-            float scaleFactor
-                    = getWorldScale(oldParent).x / getWorldScale(newParent).x;
-            Vector3f localScale = child.getLocalScale();
-            localScale.multLocal(scaleFactor);
-            child.setLocalScale(localScale);
-
-            newParent.attachChild(child);
-        }
-
-        assert child.getParent() == newParent : newParent;
-    }
-
-    /**
      * Count all controls of the specified type in the specified subtree of a
      * scene graph. Note: recursive!
      *
@@ -641,79 +606,6 @@ public class MySpatial {
                 result = override;
                 break;
             }
-        }
-
-        return result;
-    }
-
-    /**
-     * Calculate the world scale factor of a uniformly scaled Spatial.
-     *
-     * @param spatial the Spatial to analyze (not null, unaffected)
-     * @return scale factor
-     * @throws IllegalArgumentException if the Spatial is scaled non-uniformly
-     * @deprecated use {@link #uniformScale(com.jme3.scene.Spatial)}
-     */
-    @Deprecated
-    public static float getUniformScale(Spatial spatial) {
-        return uniformScale(spatial);
-    }
-
-    /**
-     * Calculate the world location of a spatial's center.
-     *
-     * @param spatial the Spatial to analyze (not null, unaffected)
-     * @return a new location vector (in world coordinates)
-     * @deprecated use
-     * {@link #worldLocation(com.jme3.scene.Spatial, com.jme3.math.Vector3f)}
-     */
-    @Deprecated
-    public static Vector3f getWorldLocation(Spatial spatial) {
-        return worldLocation(spatial, null);
-    }
-
-    /**
-     * Calculate the world orientation of the specified Spatial.
-     *
-     * @param spatial the Spatial to analyze (not null, unaffected)
-     * @return a new Quaternion (in world coordinates)
-     * @deprecated use
-     * {@link #worldOrientation(com.jme3.scene.Spatial, com.jme3.math.Quaternion)}
-     */
-    @Deprecated
-    public static Quaternion getWorldOrientation(Spatial spatial) {
-        return worldOrientation(spatial, null);
-    }
-
-    /**
-     * Calculate the world scale of the specified Spatial.
-     *
-     * @param spatial the Spatial to analyze (not null)
-     * @return a new scale vector (in world coordinates)
-     * @deprecated use
-     * {@link #worldScale(com.jme3.scene.Spatial, com.jme3.math.Vector3f)}
-     */
-    @Deprecated
-    public static Vector3f getWorldScale(Spatial spatial) {
-        return worldScale(spatial, null);
-    }
-
-    /**
-     * Calculate the world elevation of a perfectly horizontal Geometry.
-     *
-     * @param geometry the Geometry to analyze (not null)
-     * @return elevation of the surface (in world coordinates)
-     * @deprecated use {@link #yLevel(com.jme3.scene.Geometry)}
-     */
-    @Deprecated
-    public static float getYLevel(Geometry geometry) {
-        Validate.nonNull(geometry, "geometry");
-
-        Vector3f minMax[] = findMinMaxCoords(geometry, true);
-        float result = minMax[0].y;
-
-        if (minMax[0].y != minMax[1].y) {
-            throw new IllegalArgumentException("not perfectly horizontal");
         }
 
         return result;
@@ -1330,26 +1222,6 @@ public class MySpatial {
         } else {
             Transform transform = spatial.getWorldTransform();
             result.set(transform);
-        }
-
-        return result;
-    }
-
-    /**
-     * Calculate the world elevation of a perfectly horizontal geometry.
-     *
-     * @param geometry the surface to measure (not null)
-     * @return the elevation of the surface (in world coordinates)
-     */
-    @Deprecated
-    public static float yLevel(Geometry geometry) {
-        Validate.nonNull(geometry, "geometry");
-
-        Vector3f minMax[] = findMinMaxCoords(geometry, true);
-        float result = minMax[0].y;
-
-        if (minMax[0].y != minMax[1].y) {
-            throw new IllegalArgumentException("not perfectly horizontal");
         }
 
         return result;

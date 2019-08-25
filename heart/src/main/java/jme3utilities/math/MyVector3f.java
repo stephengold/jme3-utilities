@@ -314,38 +314,6 @@ public class MyVector3f {
     }
 
     /**
-     * Count the number of distinct vectors in the specified array,
-     * distinguishing 0 from -0.
-     *
-     * @param array input (not null, unaffected)
-     * @return count (&ge;0)
-     * @deprecated use
-     * {@link jme3utilities.math.MyArray#countDistinct(com.jme3.math.Vector3f[])}
-     */
-    @Deprecated
-    public static int countDistinct(Vector3f[] array) {
-        Validate.nonNull(array, "array");
-        int count = MyArray.countDistinct(array);
-        return count;
-    }
-
-    /**
-     * Count the number of distinct vectors in the specified array, without
-     * distinguishing 0 from -0.
-     *
-     * @deprecated use
-     * {@link jme3utilities.math.MyArray#countNe(com.jme3.math.Vector3f[])}
-     *
-     * @param array input (not null, unaffected)
-     * @return count (&ge;0)
-     */
-    public static int countNe(Vector3f[] array) {
-        Validate.nonNull(array, "array");
-        int count = MyArray.countNe(array);
-        return count;
-    }
-
-    /**
      * Calculate the sample covariance of a collection of vectors.
      *
      * @param collection the sample vectors (not null, at least 2, unaffected)
@@ -1069,21 +1037,6 @@ public class MyVector3f {
     /**
      * Calculate the midpoint between 2 locations.
      *
-     * @param vector1 coordinates of the first location (not null, unaffected)
-     * @param vector2 coordinates of the 2nd location (not null, unaffected)
-     * @return a new coordinate vector
-     * @deprecated use
-     * {@link #midpoint(com.jme3.math.Vector3f, com.jme3.math.Vector3f, com.jme3.math.Vector3f)}
-     * instead
-     */
-    @Deprecated
-    public static Vector3f midpoint(Vector3f vector1, Vector3f vector2) {
-        return midpoint(vector1, vector2, null);
-    }
-
-    /**
-     * Calculate the midpoint between 2 locations.
-     *
      * @param vector1 coordinates of the first location (not null, unaffected
      * unless it's storeResult)
      * @param vector2 coordinates of the 2nd location (not null, unaffected
@@ -1193,24 +1146,6 @@ public class MyVector3f {
         }
 
         return result;
-    }
-
-    /**
-     * Project vector1 onto vector2. Don't use
-     * {@link com.jme3.math.Vector3f#project(Vector3f)} for this because (as of
-     * jME 3.0.10) it contained a logic bug which gave the wrong magnitude when
-     * vector2 had length != 1.
-     *
-     * @param vector1 the first input vector (not null, unaffected)
-     * @param vector2 the 2nd input vector (length&gt;0, unaffected)
-     * @return a new vector with the same direction as vector2
-     * @deprecated use
-     * {@link #projection(com.jme3.math.Vector3f, com.jme3.math.Vector3f, com.jme3.math.Vector3f)}
-     * instead
-     */
-    @Deprecated
-    public static Vector3f projection(Vector3f vector1, Vector3f vector2) {
-        return projection(vector1, vector2, null);
     }
 
     /**

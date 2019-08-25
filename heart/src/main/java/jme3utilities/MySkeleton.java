@@ -33,7 +33,6 @@ import com.jme3.animation.SkeletonControl;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
@@ -459,30 +458,6 @@ public class MySkeleton {
     }
 
     /**
-     * Count the leaf bones in the specified Skeleton.
-     *
-     * @param skeleton the Skeleton to search (not null, unaffected)
-     * @return the count (&ge;0)
-     * @deprecated use {@link #countLeafBones(com.jme3.animation.Skeleton)}
-     */
-    @Deprecated
-    public static int numLeafBones(Skeleton skeleton) {
-        return countLeafBones(skeleton);
-    }
-
-    /**
-     * Count the root bones in the specified Skeleton.
-     *
-     * @param skeleton the Skeleton to seach (not null, unaffected)
-     * @return the count (&ge;0)
-     * @deprecated use {@link #countRootBones(com.jme3.animation.Skeleton)}
-     */
-    @Deprecated
-    public static int numRootBones(Skeleton skeleton) {
-        return countRootBones(skeleton);
-    }
-
-    /**
      * Enumerate all bones in a pre-order, depth-first traversal of the
      * specified Skeleton, such that child bones never precede their ancestors.
      *
@@ -598,37 +573,6 @@ public class MySkeleton {
         for (Skeleton skeleton : skeletons) {
             setUserControl(skeleton, newSetting);
         }
-    }
-
-    /**
-     * Calculate the world location of (the tail/origin of) the named Bone.
-     *
-     * @param spatial a skeletonized Spatial that contains the Bone (not null,
-     * unaffected)
-     * @param boneName the name of the Bone to read (not null)
-     * @param storeResult storage for the result (modified if not null)
-     * @return the location (in world coordinates, either storeResult or a new
-     * instance)
-     */
-    @Deprecated
-    public static Vector3f worldLocation(Spatial spatial, String boneName,
-            Vector3f storeResult) {
-        Validate.nonNull(spatial, "spatial");
-        Validate.nonNull(boneName, "bone name");
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
-
-        Bone bone = findBone(spatial, boneName);
-        Vector3f localCoordinates = bone.getModelSpacePosition();
-        Geometry animatedGeometry = MySpatial.findAnimatedGeometry(spatial);
-        if (animatedGeometry.isIgnoreTransform()) {
-            storeResult.set(localCoordinates);
-        } else {
-            animatedGeometry.localToWorld(localCoordinates, storeResult);
-        }
-
-        return storeResult;
     }
     // *************************************************************************
     // private methods

@@ -291,36 +291,6 @@ final public class Validate {
     }
 
     /**
-     * Validate a single-precision number as a method argument.
-     *
-     * @param fValue value to validate (number)
-     * @param description description of the value
-     * @return true
-     * @throws IllegalArgumentException if the value is NaN
-     * @deprecated use {@link #number(float, java.lang.String)}
-     */
-    @Deprecated
-    public static boolean isNumber(float fValue, String description) {
-        number(fValue, description);
-        return true;
-    }
-
-    /**
-     * Validate a double-precision number as a method argument.
-     *
-     * @param dValue value to validate (number)
-     * @param description description of the value
-     * @return true
-     * @throws IllegalArgumentException if the value is NaN
-     * @deprecated use {@link #number(double, java.lang.String)}
-     */
-    @Deprecated
-    public static boolean isNumber(double dValue, String description) {
-        number(dValue, description);
-        return true;
-    }
-
-    /**
      * Validate a non-null, non-empty collection as a method argument.
      *
      * @param collection the collection to validate (not null, not empty)

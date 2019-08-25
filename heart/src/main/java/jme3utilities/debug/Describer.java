@@ -383,20 +383,6 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the indexed axis.
-     *
-     * @param axisIndex (0&rarr;X, 1&rarr;Y, 2&rarr;Z)
-     * @return a description (not null, not empty)
-     * @deprecated use {@link jme3utilities.MyString#axisName(int)} instead
-     */
-    @Deprecated
-    public String describeAxis(int axisIndex) {
-        Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
-                MyVector3f.lastAxis);
-        return MyString.axisName(axisIndex);
-    }
-
-    /**
      * Describe the render-queue bucket to which the specified Spatial is
      * assigned.
      *

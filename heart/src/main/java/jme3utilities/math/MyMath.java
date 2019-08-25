@@ -28,13 +28,10 @@ package jme3utilities.math;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
 import com.jme3.math.Transform;
 import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
 import java.util.logging.Logger;
-import jme3utilities.MySpatial;
 import jme3utilities.Validate;
 
 /**
@@ -426,52 +423,6 @@ public class MyMath {
         }
 
         return lerp;
-    }
-
-    /**
-     * Transform a ray from world coordinates to the local coordinates of the
-     * specified spatial.
-     *
-     * @param worldRay input ray to transform (not null, unaffected)
-     * @param spatial which spatial (not null)
-     * @return a new instance, or null if error
-     */
-    @Deprecated
-    public static Ray localizeRay(Ray worldRay, Spatial spatial) {
-        Vector3f worldVertex = worldRay.getOrigin();
-        Vector3f worldDirection = worldRay.getDirection();
-        /*
-         * Choose a sample point on the ray.
-         */
-        float t = worldVertex.length();
-        if (t == 0f) {
-            t = 1f;
-        }
-        assert t > 0f : t;
-        Vector3f worldSample = worldDirection.mult(t);
-        worldSample.addLocal(worldVertex);
-        /*
-         * Transform the vertex and the sample point.
-         */
-        Vector3f localSample, localVertex;
-        if (MySpatial.isIgnoringTransforms(spatial)) {
-            localSample = worldSample;
-            localVertex = worldVertex;
-        } else {
-            localSample = spatial.worldToLocal(worldSample, null);
-            localVertex = spatial.worldToLocal(worldVertex, null);
-        }
-
-        Vector3f localDirection = localSample.subtract(localVertex);
-        double lengthSquared = MyVector3f.lengthSquared(localDirection);
-        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
-        localDirection.multLocal((float) scaleFactor);
-        Ray result = null;
-        if (localDirection.isUnitVector()) {
-            result = new Ray(localVertex, localDirection);
-        }
-
-        return result;
     }
 
     /**

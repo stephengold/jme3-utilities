@@ -183,18 +183,6 @@ final public class MyColor {
     }
 
     /**
-     * Parse a color from the specified text string.
-     *
-     * @param textString input text (not null, not empty)
-     * @return a new color instance, or null if text is invalid
-     * @deprecated use {@link #parse(java.lang.String)}
-     */
-    @Deprecated
-    public static ColorRGBA parseColor(String textString) {
-        return parse(textString);
-    }
-
-    /**
      * Generate a brightened and saturated version of a specified color (with no
      * side effect).
      *
