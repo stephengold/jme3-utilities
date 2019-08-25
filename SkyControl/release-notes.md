@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.21for33 released on TBD
+## Version 0.9.21for33 released on 25 August 2019
 
 Notable changes:
  + remove 2 deprecated constructors
