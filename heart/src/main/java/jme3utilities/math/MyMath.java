@@ -107,7 +107,7 @@ public class MyMath {
 
     /**
      * Compute the circle function sqrt(1 - x^2) for a single-precision value.
-     * Double precision arithmetic is used to reduce the risk of overflow.
+     * Double-precision arithmetic is used to reduce the risk of overflow.
      *
      * @param abscissa input (&le;1, &ge;-1)
      * @return positive ordinate of the unit circle at the abscissa (&le;1,
@@ -237,7 +237,7 @@ public class MyMath {
     }
 
     /**
-     * Fade polynomial for Perlin noise. Double precision arithmetic is used to
+     * Fade polynomial for Perlin noise. Double-precision arithmetic is used to
      * reduce rounding error.
      *
      * @param t input value (&le;1, &ge;0)
@@ -702,7 +702,7 @@ public class MyMath {
     }
 
     /**
-     * Compute the sum-of-squares of 2 single-precision values. Double precision
+     * Compute the sum-of-squares of 2 single-precision values. Double-precision
      * arithmetic is used to reduce the risk of overflow.
      *
      * @param firstValue the first input value
@@ -713,6 +713,25 @@ public class MyMath {
         double x = firstValue;
         double y = secondValue;
         double result = x * x + y * y;
+
+        assert result >= 0.0 : result;
+        return result;
+    }
+
+    /**
+     * Compute the sum-of-squares of 3 single-precision values. Double-precision
+     * arithmetic is used to reduce the risk of overflow.
+     *
+     * @param v1 the first input value
+     * @param v2 the 2nd input value
+     * @param v3 the 3rd input value
+     * @return sum of squares (&ge;0)
+     */
+    public static double sumOfSquares(float v1, float v2, float v3) {
+        double x = v1;
+        double y = v2;
+        double z = v3;
+        double result = x * x + y * y + z * z;
 
         assert result >= 0.0 : result;
         return result;
