@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -287,35 +287,6 @@ public class SkyControlCore extends SubtreeControl {
                 cloudsMaterial);
 
         assert !isEnabled();
-    }
-
-    /**
-     * Instantiate a disabled control for no clouds, full moon, no cloud
-     * modulation, no lights, no shadows, and no viewports. For a visible sky,
-     * the control must be (1) added to a node of the scene graph and (2)
-     * enabled.
-     *
-     * @param assetManager for loading textures and material definitions (not
-     * null)
-     * @param camera the application's camera (not null)
-     * @param cloudFlattening the oblateness (ellipticity) of the dome with the
-     * clouds (&ge;0, &lt;1, 0 &rarr; no flattening (hemisphere), 1 &rarr;
-     * maximum flattening
-     * @param starMotionFlag true to simulate moving stars, false for fixed
-     * stars
-     * @param bottomDomeFlag true to create a bottom dome, false to leave this
-     * region to background color (if starMotionFlag=false) or stars (if
-     * starMotionFlag=true)
-     * @deprecated Use
-     * {@link #SkyControlCore(com.jme3.asset.AssetManager, com.jme3.renderer.Camera, float, jme3utilities.sky.StarsOption, boolean)}
-     */
-    @Deprecated
-    public SkyControlCore(AssetManager assetManager, Camera camera,
-            float cloudFlattening, boolean starMotionFlag,
-            boolean bottomDomeFlag) {
-        this(assetManager, camera, cloudFlattening,
-                starMotionFlag ? StarsOption.Cube : StarsOption.TopDome,
-                bottomDomeFlag);
     }
     // *************************************************************************
     // new methods exposed
