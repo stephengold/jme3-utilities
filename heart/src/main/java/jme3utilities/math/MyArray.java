@@ -150,25 +150,6 @@ final public class MyArray {
     }
 
     /**
-     * Count the number of distinct vectors in the specified array,
-     * distinguishing 0 from -0.
-     *
-     * @param array input (not null, unaffected)
-     * @return count (&ge;0)
-     */
-    @Deprecated
-    public static int countDistinct(Vector3f[] array) {
-        int length = array.length;
-        Set<Vector3f> distinct = new HashSet<>(length);
-        for (Vector3f vector : array) {
-            distinct.add(vector);
-        }
-        int count = distinct.size();
-
-        return count;
-    }
-
-    /**
      * Count the number of distinct vectors in the specified array, without
      * distinguishing 0 from -0.
      *
@@ -266,31 +247,6 @@ final public class MyArray {
     }
 
     /**
-     * Test whether the specified float array contains more than one distinct
-     * value, distinguishing 0 from -0.
-     *
-     * @param array input (not null, unaffected)
-     * @return true if multiple values found, otherwise false
-     */
-    @Deprecated
-    public static boolean hasDistinct(float[] array) {
-        Validate.nonNull(array, "array");
-
-        boolean result = false;
-        if (array.length > 1) {
-            float first = array[0];
-            for (float value : array) {
-                if (Float.compare(value, first) != 0) {
-                    result = true;
-                    break;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Calculate the arithmetic mean of the 3-D vectors in the specified float
      * array.
      *
@@ -336,28 +292,6 @@ final public class MyArray {
         result.divideLocal(count);
 
         return result;
-    }
-
-    /**
-     * Normalize a dataset to [0, 1]. If min=max, all data will be set to 0.5 .
-     *
-     * @param dataset data to normalize (not null, modified)
-     */
-    @Deprecated
-    public static void normalize(float[] dataset) {
-        Validate.nonNull(dataset, "dataset");
-
-        float min = Float.POSITIVE_INFINITY;
-        float max = Float.NEGATIVE_INFINITY;
-        for (float value : dataset) {
-            if (value < min) {
-                min = value;
-            }
-            if (value > max) {
-                max = value;
-            }
-        }
-        normalize(dataset, min, max);
     }
 
     /**

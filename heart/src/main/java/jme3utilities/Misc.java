@@ -118,18 +118,6 @@ public class Misc {
     }
 
     /**
-     * Return a deep copy of the specified object.
-     *
-     * @param object input (unaffected)
-     * @return an object equivalent to the input
-     * @deprecated use {@link #deepCopy(java.lang.Object)}
-     */
-    @Deprecated
-    public static Object deepClone(Object object) {
-        return deepCopy(object);
-    }
-
-    /**
      * Return a deep copy of the specified object. This works around JME issue
      * #879, but still doesn't handle all classes.
      *
@@ -252,27 +240,6 @@ public class Misc {
     }
 
     /**
-     * Access the pre-existing filter post processor of the specified viewport,
-     * or if it has none, add a new FPP and use that.
-     *
-     * @param viewPort which view port (not null)
-     * @param assetManager (not null)
-     * @return not null
-     * @deprecated use
-     * {@link #getFpp(com.jme3.renderer.ViewPort, com.jme3.asset.AssetManager, int)}
-     */
-    @Deprecated
-    public static FilterPostProcessor getFpp(ViewPort viewPort,
-            AssetManager assetManager) {
-        Validate.nonNull(viewPort, "viewport");
-        Validate.nonNull(assetManager, "asset manager");
-
-        FilterPostProcessor fpp = getFpp(viewPort, assetManager, 0);
-
-        return fpp;
-    }
-
-    /**
      * Access the pre-existing filter post processor of the specified view port,
      * or if it has none, add a new FPP and use that.
      *
@@ -303,28 +270,6 @@ public class Misc {
         viewPort.addProcessor(fpp);
 
         return fpp;
-    }
-
-    /**
-     * Read the verbose version string for this library.
-     *
-     * @return project name, library name, branch, and revision
-     * @deprecated use {@link #version()}
-     */
-    @Deprecated
-    public static String getVersion() {
-        return version();
-    }
-
-    /**
-     * Read the terse version string for this library.
-     *
-     * @return branch and revision (not null, not empty)
-     * @deprecated use {@link #versionShort()}
-     */
-    @Deprecated
-    public static String getVersionShort() {
-        return versionShort();
     }
 
     /**

@@ -99,21 +99,6 @@ public class MyString {
     }
 
     /**
-     * Test 2 strings for lexicographic order.
-     *
-     * @param a string that should precede (not null)
-     * @param b string that should follow (not null)
-     * @return true if a precedes or equals b, false otherwise
-     */
-    @Deprecated
-    public static boolean areLexOrdered(String a, String b) {
-        Validate.nonNull(b, "string");
-
-        boolean result = a.compareTo(b) <= 0;
-        return result;
-    }
-
-    /**
      * Determine the index of the named coordinate axis.
      *
      * @param axisName the name of the axis (not null, not empty)

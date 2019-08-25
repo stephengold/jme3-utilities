@@ -298,50 +298,6 @@ public class MyMesh {
     }
 
     /**
-     * Find the largest weight in the specified Mesh for the indexed bone.
-     *
-     * @param mesh the Mesh to search (not null, possibly modified)
-     * @param boneIndex which bone (&ge;0)
-     * @return bone weight, or 0f if no influence found
-     */
-    @Deprecated
-    public static float maxWeight(Mesh mesh, int boneIndex) {
-        Validate.nonNegative(boneIndex, "bone index");
-
-        int maxWeightsPerVert = mesh.getMaxNumWeights();
-        assert maxWeightsPerVert > 0 : maxWeightsPerVert;
-        assert maxWeightsPerVert <= maxWeights : maxWeightsPerVert;
-
-        VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
-        Buffer boneIndexBuffer = biBuf.getDataReadOnly();
-        boneIndexBuffer.rewind();
-        int numBoneIndices = boneIndexBuffer.remaining();
-        assert numBoneIndices % maxWeights == 0 : numBoneIndices;
-        int numVertices = boneIndexBuffer.remaining() / maxWeights;
-
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
-        weightBuffer.rewind();
-        int numWeights = weightBuffer.remaining();
-        assert numWeights == numVertices * maxWeights : numWeights;
-
-        float result = 0f;
-        for (int vIndex = 0; vIndex < numVertices; ++vIndex) {
-            for (int wIndex = 0; wIndex < maxWeights; ++wIndex) {
-                float weight = weightBuffer.get();
-                int bIndex = readIndex(boneIndexBuffer);
-                if (wIndex < maxWeightsPerVert
-                        && bIndex == boneIndex
-                        && weight > result) {
-                    result = weight;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Count how many vertices in the specified Mesh are directly influenced by
      * the indexed bone.
      *

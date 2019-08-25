@@ -462,7 +462,7 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonEmpty(assetPath, "path");
 
-        Texture texture = loadTexture(assetManager, assetPath);
+        Texture texture = loadTexture(assetManager, assetPath, false);
         Material material = createUnshadedMaterial(assetManager, texture);
 
         return material;
@@ -548,24 +548,6 @@ final public class MyAsset {
 
         assert texture != null;
         return texture;
-    }
-
-    /**
-     * Load a non-flipped texture asset in edge-clamp mode and without mipmaps.
-     *
-     * @param assetManager (not null)
-     * @param assetPath to the texture asset (not null, not empty)
-     * @return the texture that was loaded (not null)
-     * @deprecated use
-     * {@link #loadTexture(com.jme3.asset.AssetManager, java.lang.String, boolean)}
-     * instead
-     */
-    @Deprecated
-    public static Texture loadTexture(AssetManager assetManager,
-            String assetPath) {
-        Validate.nonEmpty(assetPath, "path");
-        Texture result = loadTexture(assetManager, assetPath, false);
-        return result;
     }
 
     /**
