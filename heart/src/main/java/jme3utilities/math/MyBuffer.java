@@ -247,17 +247,16 @@ final public class MyBuffer {
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
         double maxLengthSquared = 0.0;
-        Vector3f tmpVector = new Vector3f();
         int numVectors = numFloats / numAxes;
 
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
 
-            tmpVector.x = buffer.get(position + MyVector3f.xAxis);
-            tmpVector.y = buffer.get(position + MyVector3f.yAxis);
-            tmpVector.z = buffer.get(position + MyVector3f.zAxis);
+            float x = buffer.get(position + MyVector3f.xAxis);
+            float y = buffer.get(position + MyVector3f.yAxis);
+            float z = buffer.get(position + MyVector3f.zAxis);
 
-            double lengthSquared = MyVector3f.lengthSquared(tmpVector);
+            double lengthSquared = MyMath.sumOfSquares(x, y, z);
             if (lengthSquared > maxLengthSquared) {
                 maxLengthSquared = lengthSquared;
             }
