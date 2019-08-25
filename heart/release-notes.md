@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 3.0.0for32 released on TBD
+## Version 3.0.0for32 released on 25 August 2019
 
  + Deleted deprecated methods. (API changes!)
  + Added a 3-argument `sumOfSquares()` method to the `MyMath` class.
