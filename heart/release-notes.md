@@ -1,5 +1,18 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 3.0.0for32 released on TBD
+
+ + Deleted deprecated methods. (API changes!)
+ + Added a 3-argument `sumOfSquares()` method to the `MyMath` class.
+ + Added a `dot()` method to the `MyQuaternion` class.
+ + Added an `isBetween()` method to the `MyVector3f` class.
+ + Added a `lerp()` method to the `MyColor` class.
+ + Added a `nextPoisson()` method to the `Generator` class.
+ + Added a `createMulticolor2Material()` method to the `MyAsset` class.
+ + Added caller-provided storage options to 2 `Generator` methods.
+ + Describe the `BlendMode` of a `RenderState`.
+ + Strengthened argument validation.
+
 ## Version 2.31.0for32 released on 7 August 2019
 
  + Added support for `IntBuffer` in `MyMesh.readIndex()`.

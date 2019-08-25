@@ -29,7 +29,7 @@ gradle.projectsEvaluated {
 ext {
     // current versions of the libraries
     jcommanderVersion = '1.74'
-    jme3utilitiesheartVersion = '2.31.0for32'
+    jme3utilitiesheartVersion = '3.0.0for32'
     jme3utilitiesniftyVersion = '0.9.8for32'
     jme3utilitiesuiVersion = '0.7.6for32'
     jme3utilitiesxVersion = '0.2.13for32'
