@@ -305,9 +305,9 @@ public class MyVector3f {
         int result = Float.compare(v1.x, v2.x);
         if (result == 0) {
             result = Float.compare(v1.y, v2.y);
-        }
-        if (result == 0) {
-            result = Float.compare(v1.z, v2.z);
+            if (result == 0) {
+                result = Float.compare(v1.z, v2.z);
+            }
         }
 
         return result;
@@ -837,11 +837,7 @@ public class MyVector3f {
      * @return the squared length (&ge;0)
      */
     public static double lengthSquared(Vector3f vector) {
-        double xx = vector.x;
-        double yy = vector.y;
-        double zz = vector.z;
-        double result = xx * xx + yy * yy + zz * zz;
-
+        double result = MyMath.sumOfSquares(vector.x, vector.y, vector.z);
         return result;
     }
 
