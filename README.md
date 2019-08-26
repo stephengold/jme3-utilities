@@ -103,8 +103,7 @@ The evolution of each sub-project is chronicled in its release notes:
 
 ### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
 
-The `master` branch of the jme3-utilities repository targets
-Version 3.2.2 of jMonkeyEngine.  You are welcome to use the Engine
+You are welcome to use the Engine
 without also using the SDK, but I use the SDK, and the following
 installation instructions assume you will too.
 
@@ -143,7 +142,7 @@ Clone the jme3-utilities repository using Git:
 10. Click on the "Finish" button.
 11. When the "Clone Complete" dialog appears, click on the "Open Project..."
     button.
-12. Expand the root project node to reveal the 10 sub-projects.
+12. Expand the root project node to reveal the 8 sub-projects.
 13. To start with, I recommend opening 4 sub-projects:  "heart", "SkyControl",
     "tests", and "textures".  Select them using control-click, then click on the
     "Open" button.
