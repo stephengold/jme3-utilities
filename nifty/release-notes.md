@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.9for32 released on TBD
+## Version 0.9.9for32 released on 25 August 2019
 
 + Disable `BasicScreenController` during cleanup.
 + Base on version 3.0 of the jme3-utilities-heart library
