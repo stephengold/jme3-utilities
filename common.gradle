@@ -30,7 +30,7 @@ ext {
     // current versions of the libraries
     jcommanderVersion = '1.74'
     jme3utilitiesheartVersion = '3.0.0for32'
-    jme3utilitiesniftyVersion = '0.9.8for32'
+    jme3utilitiesniftyVersion = '0.9.9for32'
     jme3utilitiesuiVersion = '0.7.7for32'
     jme3utilitiesxVersion = '0.2.14for32'
     jmonkeyengineVersion = '3.2.4-stable'
