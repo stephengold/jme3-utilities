@@ -30,6 +30,7 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -60,7 +61,51 @@ final public class MyBuffer {
     private MyBuffer() {
     }
     // *************************************************************************
-    // new methods exposed - TODO add countDistinct()
+    // new methods exposed
+
+    /**
+     * Enumerate all distinct 3-D vectors in the specified FloatBuffer range,
+     * distinguishing 0 from -0.
+     *
+     * @param buffer the buffer that contains the vectors (not null, unaffected)
+     * @param startPosition the position at which the vectors start (&ge;0,
+     * &le;endPosition)
+     * @param endPosition the position at which the vectors end
+     * (&ge;startPosition, &le;capacity)
+     * @return a new VectorSet (not null)
+     */
+    public static VectorSet distinct(FloatBuffer buffer, int startPosition,
+            int endPosition) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.inRange(startPosition, "start position", 0, endPosition);
+        Validate.inRange(endPosition, "end position", startPosition,
+                buffer.capacity());
+
+        int numFloats = endPosition - startPosition;
+        assert (numFloats % numAxes == 0) : numFloats;
+
+        Vector3f tmpVector = new Vector3f();
+        int numVectors = numFloats / numAxes;
+
+        VectorSet result;
+        if (numVectors > 20) {
+            result = new VectorSetUsingCollection(numVectors);
+        } else {
+            result = new VectorSetUsingBuffer(numVectors);
+        }
+
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            int position = startPosition + vectorIndex * numAxes;
+
+            tmpVector.x = buffer.get(position + MyVector3f.xAxis);
+            tmpVector.y = buffer.get(position + MyVector3f.yAxis);
+            tmpVector.z = buffer.get(position + MyVector3f.zAxis);
+
+            result.add(tmpVector);
+        }
+
+        return result;
+    }
 
     /**
      * Calculate the sample covariance of 3-D vectors in the specified
@@ -151,7 +196,6 @@ final public class MyBuffer {
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
         double maxRadiusSquared = 0.0;
-        Vector3f tmpVector = new Vector3f();
         int numVectors = numFloats / numAxes;
 
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
@@ -290,6 +334,7 @@ final public class MyBuffer {
 
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
+
         storeMaxima.set(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY,
                 Float.NEGATIVE_INFINITY);
         storeMinima.set(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY,
@@ -345,6 +390,62 @@ final public class MyBuffer {
             result.addLocal(x, y, z);
         }
         result.divideLocal(numVectors);
+
+        return result;
+    }
+
+    /**
+     * Copy data in the specified FloatBuffer range to a new array.
+     *
+     * @param buffer the buffer that contains the data (not null, unaffected)
+     * @param startPosition the position at which the data start (&ge;0,
+     * &le;endPosition)
+     * @param endPosition the position at which the data end (&ge;startPosition,
+     * &le;capacity)
+     * @return a new array (not null)
+     */
+    public static float[] toFloatArray(FloatBuffer buffer, int startPosition,
+            int endPosition) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.inRange(startPosition, "start position", 0, endPosition);
+        Validate.inRange(endPosition, "end position", startPosition,
+                buffer.capacity());
+
+        int numFloats = endPosition - startPosition;
+        float[] result = new float[numFloats];
+
+        for (int floatIndex = 0; floatIndex < numFloats; ++floatIndex) {
+            int position = startPosition + floatIndex;
+            result[floatIndex] = buffer.get(position);
+        }
+
+        return result;
+    }
+
+    /**
+     * Copy data in the specified IntBuffer range to a new array.
+     *
+     * @param buffer the buffer that contains the data (not null, unaffected)
+     * @param startPosition the position at which the data start (&ge;0,
+     * &le;endPosition)
+     * @param endPosition the position at which the data end (&ge;startPosition,
+     * &le;capacity)
+     * @return a new array (not null)
+     */
+    public static int[] toIntArray(IntBuffer buffer, int startPosition,
+            int endPosition) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.inRange(startPosition, "start position", 0, endPosition);
+        Validate.inRange(endPosition, "end position", startPosition,
+                buffer.capacity());
+
+        int numInts = endPosition - startPosition;
+        int[] result = new int[numInts];
+
+        for (int intIndex = 0; intIndex < numInts; ++intIndex) {
+            int position = startPosition + intIndex;
+            result[intIndex] = buffer.get(position);
+        }
 
         return result;
     }
