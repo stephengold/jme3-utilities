@@ -987,8 +987,10 @@ public class MyVector3f {
     /**
      * Calculate the component-wise maximum of absolute values of 2 vectors.
      *
-     * @param vector1 the first input vector (not null, unaffected)
-     * @param vector2 the 2nd input vector (not null, unaffected)
+     * @param vector1 the first input vector (not null, unaffected unless it's
+     * also storeResult)
+     * @param vector2 the 2nd input vector (not null, unaffected unless it's
+     * also storeResult)
      * @param storeResult storage for the result (modified if not null, may be
      * vector1 or vector2)
      * @return the max magnitude for each axis (either storeResult or a new
@@ -1193,7 +1195,7 @@ public class MyVector3f {
     /**
      * Standardize a vector in preparation for hashing.
      *
-     * @param input (not null, unaffected)
+     * @param input (not null, unaffected unless it's also storeResult)
      * @param storeResult storage for the result (modified if not null, may be
      * input)
      * @return an equivalent vector without any negative zero components (either
