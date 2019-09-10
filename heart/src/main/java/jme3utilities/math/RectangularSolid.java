@@ -36,6 +36,7 @@ import com.jme3.math.Eigen3f;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.shape.AbstractBox;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -85,6 +86,19 @@ public class RectangularSolid implements Savable {
      * Instantiate a zero-size rectangular solid at the origin.
      */
     public RectangularSolid() {
+    }
+
+    /**
+     * Instantiate a solid that exactly matches the specified mesh.
+     *
+     * @param mesh the input mesh (not null, unaffected)
+     */
+    public RectangularSolid(AbstractBox mesh) {
+        maxima.set(mesh.center);
+        maxima.addLocal(mesh.xExtent, mesh.yExtent, mesh.zExtent);
+
+        minima.set(mesh.center);
+        minima.subtractLocal(mesh.xExtent, mesh.yExtent, mesh.zExtent);
     }
 
     /**
