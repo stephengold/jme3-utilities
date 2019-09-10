@@ -29,8 +29,10 @@ package jme3utilities.math;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -227,6 +229,38 @@ final public class MyBuffer {
 
         float result = (float) Math.sqrt(maxRadiusSquared);
         assert result >= 0f : result;
+        return result;
+    }
+
+    /**
+     * Reuse the specified FloatBuffer, if it has the required capacity. If no
+     * buffer is specified, allocate a new one.
+     *
+     * @param minFloats the required capacity (in floats, &ge;0)
+     * @param bufferToReuse the buffer to reuse, or null for none
+     * @return a buffer with at least the required capacity (either storeResult
+     * or a new buffer)
+     */
+    public static FloatBuffer ensureCapacity(int minFloats,
+            FloatBuffer bufferToReuse) {
+        Validate.nonNegative(minFloats, "minimum number of elements");
+
+        FloatBuffer result;
+        if (bufferToReuse == null) {
+            result = BufferUtils.createFloatBuffer(minFloats);
+
+        } else {
+            int capacityFloats = bufferToReuse.capacity();
+            if (capacityFloats < minFloats) {
+                logger.log(Level.SEVERE, "capacity={0}", capacityFloats);
+                String message = String.format(
+                        "Buffer capacity must be greater than or equal to %d.",
+                        minFloats);
+                throw new IllegalArgumentException(message);
+            }
+            result = bufferToReuse;
+        }
+
         return result;
     }
 
