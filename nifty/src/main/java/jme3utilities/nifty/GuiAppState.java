@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 import jme3utilities.ui.ActionAppState;
 
 /**
- * Action app state with protected fields analogous to the private fields of
+ * An ActionAppState with protected fields analogous to the private fields of
  * GuiApplication.
  *
  * @author Stephen Gold sgold@sonic.net
