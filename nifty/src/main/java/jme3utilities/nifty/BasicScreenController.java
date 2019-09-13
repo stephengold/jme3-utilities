@@ -45,7 +45,7 @@ import jme3utilities.Validate;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI app state to control a Nifty screen. A screen is displayed if and only if
+ * A GuiAppState to control a Nifty screen. A screen is displayed if and only if
  * its controller is enabled. No more than one screen can be enabled/displayed
  * at a time.
  * <p>

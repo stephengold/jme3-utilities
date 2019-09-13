@@ -47,7 +47,7 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * A pop screen controller with added support for Nifty controls such as check
+ * A PopScreenController with added support for Nifty controls such as check
  * boxes, radio buttons, sliders, tool windows, and dynamic labels.
  *
  * @author Stephen Gold sgold@sonic.net

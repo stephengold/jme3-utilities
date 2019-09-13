@@ -55,7 +55,7 @@ import jme3utilities.nifty.dialog.MinimalDialog;
 import jme3utilities.ui.InputMode;
 
 /**
- * A basic screen controller with added support for Nifty popup elements such as
+ * A BasicScreenController with added support for Nifty popup elements such as
  * dialog boxes and popup menus.
  *
  * @author Stephen Gold sgold@sonic.net
