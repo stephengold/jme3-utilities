@@ -55,6 +55,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import jme3utilities.MyRender;
 import jme3utilities.MyString;
+import jme3utilities.NamedAppState;
 import jme3utilities.Validate;
 import jme3utilities.math.MyColor;
 
@@ -152,16 +153,24 @@ public class Dumper implements Cloneable {
     // new methods exposed
 
     /**
-     * Dump the specified AppState.
+     * Dump the specified AppState. TODO sort methods
      *
      * @param appState the app state to dump (not null, unaffected)
      * @param indent the indent text (not null, may be empty)
      */
-    public void dump(AppState appState, String indent) {
+    protected void dump(AppState appState, String indent) {
         Validate.nonNull(indent, "indent");
 
         String className = appState.getClass().getSimpleName();
         stream.print(className);
+
+        if (appState instanceof NamedAppState) {
+            String id = ((NamedAppState) appState).getId();
+            if (id != null) {
+                stream.print(" id=");
+                stream.print(id);
+            }
+        }
 
         if (appState.isEnabled()) {
             stream.print(" en");
