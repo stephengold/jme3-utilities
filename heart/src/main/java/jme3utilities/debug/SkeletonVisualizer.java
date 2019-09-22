@@ -429,9 +429,10 @@ public class SkeletonVisualizer extends SubtreeControl {
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
 
+        Node subtreeNode = (Node) getSubtree();
         if (countBones() == 0) {
-            subtree.detachAllChildren();
-        } else if (subtree.getQuantity() == 0) {
+            subtreeNode.detachAllChildren();
+        } else if (subtreeNode.getQuantity() == 0) {
             addGeometries();
         } else {
             updateGeometries();
@@ -445,14 +446,15 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     @Override
     public void setEnabled(boolean newState) {
-        if (newState && subtree == null) {
+        if (newState && getSubtree() == null) {
             /*
              * Before enabling this control for the first time,
              * create the subtree.
              */
-            subtree = new Node(subtreeName);
-            subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
-            subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+            Node subtreeNode = new Node(subtreeName);
+            subtreeNode.setQueueBucket(RenderQueue.Bucket.Transparent);
+            subtreeNode.setShadowMode(RenderQueue.ShadowMode.Off);
+            setSubtree(subtreeNode);
         }
 
         super.setEnabled(newState);
@@ -465,19 +467,20 @@ public class SkeletonVisualizer extends SubtreeControl {
      * subtree Node.
      */
     private void addGeometries() {
-        assert subtree.getQuantity() == 0;
+        Node subtreeNode = (Node) getSubtree();
+        assert subtreeNode.getQuantity() == 0;
 
         SkeletonMesh headsMesh
                 = new SkeletonMesh(skeleton, Mesh.Mode.Points);
         Geometry headsGeometry = new Geometry(headsName, headsMesh);
         headsGeometry.setMaterial(headMaterial);
-        subtree.attachChildAt(headsGeometry, headsChildPosition);
+        subtreeNode.attachChildAt(headsGeometry, headsChildPosition);
 
         SkeletonMesh linksMesh
                 = new SkeletonMesh(skeleton, Mesh.Mode.Lines);
         Geometry linksGeometry = new Geometry(linksName, linksMesh);
         linksGeometry.setMaterial(lineMaterial);
-        subtree.attachChildAt(linksGeometry, linksChildPosition);
+        subtreeNode.attachChildAt(linksGeometry, linksChildPosition);
 
         updateGeometries();
     }
@@ -489,8 +492,8 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     private void setSkeleton(Skeleton newSkeleton) {
         if (skeleton != newSkeleton) {
-            if (subtree != null) {
-                subtree.detachAllChildren();
+            if (getSubtree() != null) {
+                ((Node) getSubtree()).detachAllChildren();
             }
             skeleton = newSkeleton;
         }
@@ -508,16 +511,17 @@ public class SkeletonVisualizer extends SubtreeControl {
         } else {
             worldTransform = transformSpatial.getWorldTransform();
         }
-        MySpatial.setWorldTransform(subtree, worldTransform);
+        Node subtreeNode = (Node) getSubtree();
+        MySpatial.setWorldTransform(subtreeNode, worldTransform);
 
         Geometry headsGeometry
-                = (Geometry) subtree.getChild(headsChildPosition);
+                = (Geometry) subtreeNode.getChild(headsChildPosition);
         SkeletonMesh headsMesh = (SkeletonMesh) headsGeometry.getMesh();
         headsMesh.updateColors(this);
         headsMesh.updatePositions(skeleton);
 
         Geometry linksGeometry
-                = (Geometry) subtree.getChild(linksChildPosition);
+                = (Geometry) subtreeNode.getChild(linksChildPosition);
         SkeletonMesh linksMesh = (SkeletonMesh) linksGeometry.getMesh();
         linksMesh.updateColors(this);
         linksMesh.updatePositions(skeleton);

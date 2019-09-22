@@ -196,10 +196,11 @@ public class FloorControl extends SubtreeControl {
          * Translate the floor to center it below the camera.
          */
         Vector3f cameraLocation = camera.getLocation();
-        MySpatial.setWorldLocation(subtree, cameraLocation);
-        MySpatial.setWorldScale(subtree, 1f);
+        Node subtreeNode = (Node) getSubtree();
+        MySpatial.setWorldLocation(subtreeNode, cameraLocation);
+        MySpatial.setWorldScale(subtreeNode, 1f);
 
-        Spatial floor = subtree.getChild(0);
+        Spatial floor = subtreeNode.getChild(0);
         float radius = camera.getFrustumFar();
         floor.setLocalScale(2f * radius);
         float drop = camera.getFrustumNear();
@@ -209,7 +210,7 @@ public class FloorControl extends SubtreeControl {
             /*
              * Counteract rotation of the controlled node.
              */
-            MySpatial.setWorldOrientation(subtree, rotationIdentity);
+            MySpatial.setWorldOrientation(subtreeNode, rotationIdentity);
         }
     }
 
@@ -271,16 +272,17 @@ public class FloorControl extends SubtreeControl {
         /*
          * Create a node to parent the floor geometry.
          */
-        subtree = new Node(nodeName);
-        subtree.setQueueBucket(RenderQueue.Bucket.Sky);
-        subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+        Node subtreeNode = new Node(nodeName);
+        subtreeNode.setQueueBucket(RenderQueue.Bucket.Sky);
+        subtreeNode.setShadowMode(RenderQueue.ShadowMode.Off);
+        setSubtree(subtreeNode);
         /*
          * Create and attach the floor geometry.
          */
         Quad mesh = new Quad(1f, 1f);
         mesh.scaleTextureCoordinates(new Vector2f(textureScale, textureScale));
         Geometry floor = new Geometry(geometryName, mesh);
-        subtree.attachChild(floor);
+        subtreeNode.attachChild(floor);
         floor.setMaterial(material);
 
         Quaternion rotation = new Quaternion();

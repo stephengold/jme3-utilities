@@ -249,14 +249,15 @@ public class BoundsVisualizer extends SubtreeControl {
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
 
+        Node subtreeNode = (Node) getSubtree();
         if (subject == null || effectiveLineWidth < 1f) {
-            subtree.detachAllChildren();
+            subtreeNode.detachAllChildren();
 
-        } else if (subtree.getQuantity() == 0) {
+        } else if (subtreeNode.getQuantity() == 0) {
             addLines();
 
         } else {
-            Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+            Geometry lines = (Geometry) subtreeNode.getChild(linesChildPosition);
             BoundingVolume bound = subject.getWorldBound();
             Mesh mesh = lines.getMesh();
             if (bound instanceof BoundingBox && mesh instanceof WireBox) {
@@ -265,7 +266,7 @@ public class BoundsVisualizer extends SubtreeControl {
                     && mesh instanceof WireSphere) {
                 updateSphere();
             } else { // wrong type of mesh
-                subtree.detachAllChildren();
+                subtreeNode.detachAllChildren();
                 addLines();
             }
         }
@@ -278,14 +279,15 @@ public class BoundsVisualizer extends SubtreeControl {
      */
     @Override
     public void setEnabled(boolean newState) {
-        if (newState && subtree == null) {
+        if (newState && getSubtree() == null) {
             /*
-             * Before enabling this control for the first time,
+             * Before enabling this Control for the first time,
              * create the subtree.
              */
-            subtree = new Node(subtreeName);
-            subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
-            subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+            Node subtreeNode = new Node(subtreeName);
+            subtreeNode.setQueueBucket(RenderQueue.Bucket.Transparent);
+            subtreeNode.setShadowMode(RenderQueue.ShadowMode.Off);
+            setSubtree(subtreeNode);
         }
 
         super.setEnabled(newState);
@@ -297,7 +299,7 @@ public class BoundsVisualizer extends SubtreeControl {
      * Create a lines geometry and attach it to the empty subtree.
      */
     private void addLines() {
-        assert subtree.getQuantity() == 0;
+        assert ((Node) getSubtree()).getQuantity() == 0;
 
         Mesh mesh;
         BoundingVolume bound = subject.getWorldBound();
@@ -311,7 +313,7 @@ public class BoundsVisualizer extends SubtreeControl {
 
         Geometry lines = new Geometry(linesName, mesh);
         lines.setMaterial(lineMaterial);
-        subtree.attachChildAt(lines, linesChildPosition);
+        ((Node) getSubtree()).attachChildAt(lines, linesChildPosition);
 
         if (bound instanceof BoundingBox) {
             updateBox();
@@ -326,7 +328,8 @@ public class BoundsVisualizer extends SubtreeControl {
     private void updateBox() {
         BoundingVolume bound = subject.getWorldBound();
         BoundingBox boundingBox = (BoundingBox) bound;
-        Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+        Node subtreeNode = (Node) getSubtree();
+        Geometry lines = (Geometry) subtreeNode.getChild(linesChildPosition);
         WireBox boxMesh = (WireBox) lines.getMesh();
         /*
          * Update the mesh extents.
@@ -353,7 +356,8 @@ public class BoundsVisualizer extends SubtreeControl {
      * Update the line width.
      */
     private void updateLineWidth() {
-        Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+        Node subtreeNode = (Node) getSubtree();
+        Geometry lines = (Geometry) subtreeNode.getChild(linesChildPosition);
         assert effectiveLineWidth >= 1f : effectiveLineWidth;
         assert lineMaterial == lines.getMaterial();
         RenderState rs = lineMaterial.getAdditionalRenderState();
@@ -366,7 +370,8 @@ public class BoundsVisualizer extends SubtreeControl {
     private void updateSphere() {
         BoundingVolume bound = subject.getWorldBound();
         BoundingSphere boundingSphere = (BoundingSphere) bound;
-        Geometry lines = (Geometry) subtree.getChild(linesChildPosition);
+        Node subtreeNode = (Node) getSubtree();
+        Geometry lines = (Geometry) subtreeNode.getChild(linesChildPosition);
         WireSphere sphereMesh = (WireSphere) lines.getMesh();
         /*
          * Update the mesh radius.
