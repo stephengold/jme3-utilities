@@ -27,7 +27,6 @@
 package jme3utilities;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
@@ -166,10 +165,6 @@ public class NamedAppState extends AbstractAppState {
             throw new IllegalStateException("already initialized");
         }
         Validate.nonNull(sm, "state manager");
-        if (!(app instanceof SimpleApplication)) {
-            throw new IllegalArgumentException(
-                    "application should be a SimpleApplication");
-        }
         if (sm != app.getStateManager()) {
             throw new IllegalArgumentException("wrong state manager");
         }
