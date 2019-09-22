@@ -61,7 +61,7 @@ abstract public class SubtreeControl extends SimpleControl {
     /**
      * subtree managed by this control: set by subclass
      */
-    protected Node subtree = null;  // TODO could be a Geometry
+    private Spatial subtree = null;
     // *************************************************************************
     // constructors
 
@@ -75,11 +75,11 @@ abstract public class SubtreeControl extends SimpleControl {
     // new public methods
 
     /**
-     * Access this control's subtree. // TODO change return type
+     * Access this control's subtree.
      *
      * @return the pre-existing instance, or null if none
      */
-    public Node getSubtree() {
+    public Spatial getSubtree() {
         return subtree;
     }
 
@@ -91,6 +91,21 @@ abstract public class SubtreeControl extends SimpleControl {
     public void traverse(SceneGraphVisitor visitor) {
         Validate.nonNull(visitor, "visitor");
         subtree.depthFirstTraversal(visitor);
+    }
+    // *************************************************************************
+    // new protected methods
+
+    /**
+     * Initialize the subtree.
+     *
+     * @param desiredSubtree the desired subtree (not null, not parented)
+     */
+    final protected void setSubtree(Spatial desiredSubtree) {
+        assert desiredSubtree != null;
+        assert MySpatial.isOrphan(desiredSubtree);
+        assert subtree == null;
+
+        subtree = desiredSubtree;
     }
     // *************************************************************************
     // SimpleControl methods
@@ -158,7 +173,6 @@ abstract public class SubtreeControl extends SimpleControl {
     @Override
     public void setEnabled(boolean newState) {
         Node node = (Node) spatial;
-
         if (enabled && !newState) {
             if (node != null && subtree != null) {
                 /*

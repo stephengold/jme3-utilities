@@ -267,8 +267,9 @@ public class AxesVisualizer extends SubtreeControl {
 
         Vector3f result = null;
         if (isEnabled() && axisIndex < numAxes) {
-            MySpatial.setWorldScale(subtree, axisLength);
-            Geometry arrow = (Geometry) subtree.getChild(axisIndex);
+            Node subtreeNode = (Node) getSubtree();
+            MySpatial.setWorldScale(subtreeNode, axisLength);
+            Geometry arrow = (Geometry) subtreeNode.getChild(axisIndex);
             result = arrow.localToWorld(unitX, null);
         }
 
@@ -299,13 +300,14 @@ public class AxesVisualizer extends SubtreeControl {
     protected void controlUpdate(float updateInterval) {
         super.controlUpdate(updateInterval);
 
-        int numChildren = subtree.getQuantity();
+        Node subtreeNode = (Node) getSubtree();
+        int numChildren = subtreeNode.getQuantity();
         if (numChildren != numAxes) {
-            subtree.detachAllChildren();
+            subtreeNode.detachAllChildren();
             addArrows();
 
         } else {
-            Geometry xArrow = (Geometry) subtree.getChild(0);
+            Geometry xArrow = (Geometry) subtreeNode.getChild(0);
             Mesh xMesh = xArrow.getMesh();
             boolean arrowMesh = xMesh instanceof Arrow;
 
@@ -314,7 +316,7 @@ public class AxesVisualizer extends SubtreeControl {
             } else if (lineWidth < 1f && !arrowMesh) {
                 updateArrows();
             } else {
-                subtree.detachAllChildren();
+                subtreeNode.detachAllChildren();
                 addArrows();
             }
         }
@@ -327,14 +329,15 @@ public class AxesVisualizer extends SubtreeControl {
      */
     @Override
     public void setEnabled(boolean newState) {
-        if (newState && subtree == null) {
+        if (newState && getSubtree() == null) {
             /*
              * Before enabling this control for the first time,
              * create the subtree.
              */
-            subtree = new Node(subtreeName);
-            subtree.setQueueBucket(RenderQueue.Bucket.Transparent);
-            subtree.setShadowMode(RenderQueue.ShadowMode.Off);
+            Node subtreeNode = new Node(subtreeName);
+            subtreeNode.setQueueBucket(RenderQueue.Bucket.Transparent);
+            subtreeNode.setShadowMode(RenderQueue.ShadowMode.Off);
+            setSubtree(subtreeNode);
         }
 
         super.setEnabled(newState);
@@ -346,7 +349,7 @@ public class AxesVisualizer extends SubtreeControl {
      * Create up to 3 arrow geometries and add them to the subtree.
      */
     private void addArrows() {
-        assert subtree.getQuantity() == 0;
+        assert ((Node) getSubtree()).getQuantity() == 0;
         if (lineWidth >= 1f) {
             addWireArrow(xColor, "xAxis", unitX);
             if (numAxes > MyVector3f.yAxis) {
@@ -389,7 +392,7 @@ public class AxesVisualizer extends SubtreeControl {
         Node node2 = (Node) node.getChild(0);
         Node node3 = (Node) node2.getChild(0);
         Geometry geometry = (Geometry) node3.getChild(0);
-        subtree.attachChild(geometry);
+        ((Node) getSubtree()).attachChild(geometry);
 
         Vector3f xDir = direction.clone();
         Vector3f yDir = new Vector3f();
@@ -424,7 +427,7 @@ public class AxesVisualizer extends SubtreeControl {
 
         Arrow mesh = new Arrow(direction);
         Geometry geometry = new Geometry(name, mesh);
-        subtree.attachChild(geometry);
+        ((Node) getSubtree()).attachChild(geometry);
 
         Material material
                 = MyAsset.createWireframeMaterial(assetManager, color);
@@ -437,9 +440,10 @@ public class AxesVisualizer extends SubtreeControl {
      * Update the existing axis arrows.
      */
     private void updateArrows() {
-        MySpatial.setWorldScale(subtree, axisLength);
+        Node subtreeNode = (Node) getSubtree();
+        MySpatial.setWorldScale(subtreeNode, axisLength);
 
-        for (Spatial axis : subtree.getChildren()) {
+        for (Spatial axis : subtreeNode.getChildren()) {
             Geometry geometry = (Geometry) axis;
             Material material = geometry.getMaterial();
             RenderState state = material.getAdditionalRenderState();
