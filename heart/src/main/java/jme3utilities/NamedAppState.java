@@ -65,23 +65,23 @@ public class NamedAppState extends AbstractAppState {
     /**
      * generator for unique names
      */
-    final private static NameGenerator nameGenerator = new NameGenerator();
+    final private static NameGenerator idGenerator = new NameGenerator();
     /**
-     * unique name for debugging (not null, set by constructor)
+     * unique ID for debugging (not null, not empty)
      */
-    final public String appStateName;
+    final private String id;
     // *************************************************************************
     // constructor
 
     /**
      * Instantiate an uninitialized AppState with no influence.
      *
-     * @param enabled true &rarr; enabled, false &rarr; disabled
+     * @param initialState true &rarr; enabled, false &rarr; disabled
      */
-    public NamedAppState(boolean enabled) {
+    public NamedAppState(boolean initialState) {
         String className = getClass().getSimpleName();
-        appStateName = nameGenerator.unique(className);
-        super.setEnabled(enabled);
+        id = idGenerator.unique(className);
+        super.setEnabled(initialState);
     }
     // *************************************************************************
     // new methods exposed
@@ -92,7 +92,7 @@ public class NamedAppState extends AbstractAppState {
      * @return the unique ID for debugging (not null, not empty)
      */
     public String getId() {
-        return appStateName;
+        return id;
     }
 
     /**
@@ -258,7 +258,7 @@ public class NamedAppState extends AbstractAppState {
      */
     @Override
     public void stateAttached(AppStateManager sm) {
-        logger.log(Level.INFO, "attach {0}", appStateName);
+        logger.log(Level.INFO, "attach {0}", getId());
         Validate.nonNull(sm, "state manager");
 
         super.stateAttached(sm);
@@ -271,7 +271,7 @@ public class NamedAppState extends AbstractAppState {
      */
     @Override
     public void stateDetached(AppStateManager sm) {
-        logger.log(Level.INFO, "detach {0}", appStateName);
+        logger.log(Level.INFO, "detach {0}", getId());
         Validate.nonNull(sm, "state manager");
 
         super.stateDetached(sm);
@@ -281,11 +281,11 @@ public class NamedAppState extends AbstractAppState {
      * Callback to update this state prior to rendering. (Invoked once per frame
      * while the state is attached and enabled.)
      *
-     * @param elapsedTime time interval between frames (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
-    public void update(float elapsedTime) {
-        Validate.nonNegative(elapsedTime, "elapsed time");
+    public void update(float tpf) {
+        Validate.nonNegative(tpf, "time between frames");
         if (!isInitialized()) {
             throw new IllegalStateException("should be initialized");
         }
@@ -293,7 +293,7 @@ public class NamedAppState extends AbstractAppState {
             throw new IllegalStateException("should be enabled");
         }
 
-        super.update(elapsedTime);
+        super.update(tpf);
     }
     // *************************************************************************
     // Object methods
@@ -301,12 +301,12 @@ public class NamedAppState extends AbstractAppState {
     /**
      * Represent this state as a text string.
      *
-     * @return descriptive string of text (not null)
+     * @return descriptive string of text (not null, not empty)
      */
     @Override
     public String toString() {
         String result = String.format("%s (%sinitialized, %senabled)",
-                appStateName, initialized ? "" : "un", isEnabled() ? "" : "not ");
+                getId(), initialized ? "" : "un", isEnabled() ? "" : "not ");
         return result;
     }
 }
