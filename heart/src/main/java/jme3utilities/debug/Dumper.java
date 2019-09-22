@@ -153,35 +153,6 @@ public class Dumper implements Cloneable {
     // new methods exposed
 
     /**
-     * Dump the specified AppState. TODO sort methods
-     *
-     * @param appState the app state to dump (not null, unaffected)
-     * @param indent the indent text (not null, may be empty)
-     */
-    protected void dump(AppState appState, String indent) {
-        Validate.nonNull(indent, "indent");
-
-        String className = appState.getClass().getSimpleName();
-        stream.print(className);
-
-        if (appState instanceof AbstractAppState) {
-            String id = ((AbstractAppState) appState).getId();
-            if (id != null) {
-                stream.print(" id=");
-                stream.print(id);
-            }
-        }
-
-        if (appState.isEnabled()) {
-            stream.print(" en");
-        } else {
-            stream.print(" dis");
-        }
-        stream.println("abled");
-        stream.print(indent);
-    }
-
-    /**
      * Dump the specified AppStateManager.
      *
      * @param manager (not null, unaffected)
@@ -819,6 +790,35 @@ public class Dumper implements Cloneable {
             stream.print(' ');
             stream.print(description);
         }
+    }
+
+    /**
+     * Dump the specified AppState.
+     *
+     * @param appState the app state to dump (not null, unaffected)
+     * @param indent the indent text (not null, may be empty)
+     */
+    protected void dump(AppState appState, String indent) {
+        Validate.nonNull(indent, "indent");
+
+        String className = appState.getClass().getSimpleName();
+        stream.print(className);
+
+        if (appState instanceof AbstractAppState) {
+            String id = ((AbstractAppState) appState).getId();
+            if (id != null) {
+                stream.print(" id=");
+                stream.print(id);
+            }
+        }
+
+        if (appState.isEnabled()) {
+            stream.print(" en");
+        } else {
+            stream.print(" dis");
+        }
+        stream.println("abled");
+        stream.print(indent);
     }
     // *************************************************************************
     // Cloneable methods
