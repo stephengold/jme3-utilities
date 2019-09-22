@@ -28,6 +28,7 @@ package jme3utilities.debug;
 
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
+import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.bounding.BoundingVolume;
@@ -152,16 +153,24 @@ public class Dumper implements Cloneable {
     // new methods exposed
 
     /**
-     * Dump the specified AppState.
+     * Dump the specified AppState. TODO sort methods
      *
      * @param appState the app state to dump (not null, unaffected)
      * @param indent the indent text (not null, may be empty)
      */
-    public void dump(AppState appState, String indent) {
+    protected void dump(AppState appState, String indent) {
         Validate.nonNull(indent, "indent");
 
         String className = appState.getClass().getSimpleName();
         stream.print(className);
+
+        if (appState instanceof AbstractAppState) {
+            String id = ((AbstractAppState) appState).getId();
+            if (id != null) {
+                stream.print(" id=");
+                stream.print(id);
+            }
+        }
 
         if (appState.isEnabled()) {
             stream.print(" en");
