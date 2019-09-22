@@ -65,20 +65,20 @@ public class NamedAppState extends AbstractAppState {
     /**
      * generator for unique names
      */
-    final private static NameGenerator nameGenerator = new NameGenerator();
+    final private static NameGenerator idGenerator = new NameGenerator();
     // *************************************************************************
     // constructor
 
     /**
      * Instantiate an uninitialized AppState with no influence.
      *
-     * @param enabled true &rarr; enabled, false &rarr; disabled
+     * @param initialState true &rarr; enabled, false &rarr; disabled
      */
-    public NamedAppState(boolean enabled) {
+    public NamedAppState(boolean initialState) {
         String className = getClass().getSimpleName();
-        String id = nameGenerator.unique(className);
+        String id = idGenerator.unique(className);
         setId(id);
-        super.setEnabled(enabled);
+        super.setEnabled(initialState);
     }
     // *************************************************************************
     // new methods exposed
@@ -269,11 +269,11 @@ public class NamedAppState extends AbstractAppState {
      * Callback to update this state prior to rendering. (Invoked once per frame
      * while the state is attached and enabled.)
      *
-     * @param elapsedTime time interval between frames (in seconds, &ge;0)
+     * @param tpf time interval between frames (in seconds, &ge;0)
      */
     @Override
-    public void update(float elapsedTime) {
-        Validate.nonNegative(elapsedTime, "elapsed time");
+    public void update(float tpf) {
+        Validate.nonNegative(tpf, "time between frames");
         if (!isInitialized()) {
             throw new IllegalStateException("should be initialized");
         }
@@ -281,7 +281,7 @@ public class NamedAppState extends AbstractAppState {
             throw new IllegalStateException("should be enabled");
         }
 
-        super.update(elapsedTime);
+        super.update(tpf);
     }
     // *************************************************************************
     // Object methods
