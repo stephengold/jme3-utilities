@@ -28,6 +28,7 @@ package jme3utilities;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.renderer.RenderManager;
@@ -46,7 +47,7 @@ import java.util.logging.Logger;
  * @author Stephen Gold sgold@sonic.net
  * @see com.jme3.app.state.AbstractAppState
  */
-public class NamedAppState implements AppState {
+public class NamedAppState extends AbstractAppState {
     // *************************************************************************
     // constants and loggers
 
@@ -59,15 +60,6 @@ public class NamedAppState implements AppState {
     // fields
 
     /**
-     * true &rarr; enabled, false &rarr; disabled (set by constructor and
-     * {@link #setEnabled(boolean)})
-     */
-    private boolean enabled;
-    /**
-     * true &rarr; initialized, false &rarr; uninitialized
-     */
-    private boolean initialized = false;
-    /**
      * AppStates influenced by this one (not null)
      */
     final private List<AppState> influenceList = new ArrayList<>(2);
@@ -75,10 +67,6 @@ public class NamedAppState implements AppState {
      * generator for unique names
      */
     final private static NameGenerator nameGenerator = new NameGenerator();
-    /**
-     * unique name for debugging (not null, set by constructor)
-     */
-    final public String appStateName;
     // *************************************************************************
     // constructor
 
@@ -89,8 +77,9 @@ public class NamedAppState implements AppState {
      */
     public NamedAppState(boolean enabled) {
         String className = getClass().getSimpleName();
-        appStateName = nameGenerator.unique(className);
-        this.enabled = enabled;
+        String id = nameGenerator.unique(className);
+        setId(id);
+        super.setEnabled(enabled);
     }
     // *************************************************************************
     // new methods exposed
@@ -148,7 +137,7 @@ public class NamedAppState implements AppState {
             throw new IllegalStateException("should be initialized");
         }
 
-        initialized = false;
+        super.cleanup();
     }
 
     /**
@@ -160,7 +149,7 @@ public class NamedAppState implements AppState {
      */
     @Override
     public void initialize(AppStateManager sm, Application app) {
-        logger.log(Level.INFO, "initialize {0}", appStateName);
+        logger.log(Level.INFO, "initialize {0}", getId());
         if (isInitialized()) {
             throw new IllegalStateException("already initialized");
         }
@@ -173,7 +162,7 @@ public class NamedAppState implements AppState {
             throw new IllegalArgumentException("wrong state manager");
         }
 
-        initialized = true;
+        super.initialize(sm, app);
     }
 
     /**
@@ -184,7 +173,7 @@ public class NamedAppState implements AppState {
      */
     @Override
     final public boolean isEnabled() {
-        return enabled;
+        return super.isEnabled();
     }
 
     /**
@@ -195,7 +184,7 @@ public class NamedAppState implements AppState {
      */
     @Override
     final public boolean isInitialized() {
-        return initialized;
+        return super.isInitialized();
     }
 
     /**
@@ -209,6 +198,8 @@ public class NamedAppState implements AppState {
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
+
+        super.postRender();
     }
 
     /**
@@ -225,6 +216,8 @@ public class NamedAppState implements AppState {
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
+
+        super.render(rm);
     }
 
     /**
@@ -235,15 +228,13 @@ public class NamedAppState implements AppState {
     @Override
     public void setEnabled(boolean newSetting) {
         boolean oldSetting = isEnabled();
-        enabled = newSetting;
-
         if (oldSetting != newSetting) {
             if (newSetting) {
-                logger.log(Level.INFO, "enable {0}", appStateName);
+                logger.log(Level.INFO, "enable {0}", getId());
             } else {
-                logger.log(Level.INFO, "disable {0}", appStateName);
-
+                logger.log(Level.INFO, "disable {0}", getId());
             }
+            super.setEnabled(newSetting);
             /*
              * Exert influence over other AppStates.
              */
@@ -260,8 +251,10 @@ public class NamedAppState implements AppState {
      */
     @Override
     public void stateAttached(AppStateManager sm) {
-        logger.log(Level.INFO, "attach {0}", appStateName);
+        logger.log(Level.INFO, "attach {0}", getId());
         Validate.nonNull(sm, "state manager");
+
+        super.stateAttached(sm);
     }
 
     /**
@@ -271,8 +264,10 @@ public class NamedAppState implements AppState {
      */
     @Override
     public void stateDetached(AppStateManager sm) {
-        logger.log(Level.INFO, "detach {0}", appStateName);
+        logger.log(Level.INFO, "detach {0}", getId());
         Validate.nonNull(sm, "state manager");
+
+        super.stateDetached(sm);
     }
 
     /**
@@ -290,6 +285,8 @@ public class NamedAppState implements AppState {
         if (!isEnabled()) {
             throw new IllegalStateException("should be enabled");
         }
+
+        super.update(elapsedTime);
     }
     // *************************************************************************
     // Object methods
@@ -302,7 +299,7 @@ public class NamedAppState implements AppState {
     @Override
     public String toString() {
         String result = String.format("%s (%sinitialized, %senabled)",
-                appStateName, initialized ? "" : "un", enabled ? "" : "not ");
+                getId(), isInitialized() ? "" : "un", isEnabled() ? "" : "not ");
         return result;
     }
 }
