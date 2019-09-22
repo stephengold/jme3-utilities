@@ -597,7 +597,7 @@ public class MyString {
     }
 
     /**
-     * Undo character escapes added by {@link #escape(CharSequence)}.
+     * Undo character escape sequences added by {@link #escape(CharSequence)}.
      *
      * @param escaped the input sequence (not null)
      * @return an unescaped string (not null)
