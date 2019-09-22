@@ -29,6 +29,7 @@ package jme3utilities;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
+import com.jme3.material.Materials;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -80,15 +81,13 @@ final public class MyAsset {
     final public static String particleMaterialAssetPath
             = "Common/MatDefs/Misc/Particle.j3md";
     /**
-     * asset path of the shaded material definition TODO Materials in JME3.3
+     * asset path of the shaded material definition
      */
-    final public static String shadedMaterialAssetPath
-            = "Common/MatDefs/Light/Lighting.j3md";
+    final public static String shadedMaterialAssetPath = Materials.LIGHTING;
     /**
-     * asset path to the Unshaded material definition TODO Materials in JME3.3
+     * asset path to the Unshaded material definition
      */
-    final public static String unshadedMaterialAssetPath
-            = "Common/MatDefs/Misc/Unshaded.j3md";
+    final public static String unshadedMaterialAssetPath = Materials.UNSHADED;
     /**
      * asset path to the unicolor, default-shape wireframe material definition
      */
