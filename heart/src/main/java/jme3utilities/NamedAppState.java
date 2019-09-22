@@ -37,11 +37,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * An AppState with a unique name, able to influence other AppStates.
+ * An AppState that can influence other AppStates.
  * <p>
- * Enabling a disabled state causes all the states influenced by it to get
- * enabled. Likewise, disabling an enabled state disables any states it
- * influences. Influence may be mutual or one-way.
+ * Enabling a disabled NamedAppState enables all states it influences. Likewise,
+ * disabling an enabled NamedAppState disables any states it influences.
+ * Influence may be mutual or one-way.
  *
  * @author Stephen Gold sgold@sonic.net
  * @see com.jme3.app.state.AbstractAppState
@@ -83,7 +83,7 @@ public class NamedAppState implements AppState {
     // constructor
 
     /**
-     * Instantiate an uninitialized state with a unique name.
+     * Instantiate an uninitialized AppState with no influence.
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      */
@@ -96,9 +96,9 @@ public class NamedAppState implements AppState {
     // new methods exposed
 
     /**
-     * Test whether this state influences the specified state.
+     * Test whether this state influences the specified AppState.
      *
-     * @param appState the state to test
+     * @param appState the AppState to test (unaffected)
      * @return true if influenced, false if not influenced
      */
     public boolean hasInfluenceOver(AppState appState) {
@@ -107,9 +107,10 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Cause this state to influence the specified state.
+     * Cause this state to influence the specified AppState.
      *
-     * @param appState (not null, not this, alias created)
+     * @param appState the AppState to influence (not null, not this, alias
+     * created)
      */
     final public void influence(AppState appState) {
         Validate.nonNull(appState, "app state");
@@ -127,9 +128,9 @@ public class NamedAppState implements AppState {
     }
 
     /**
-     * Remove any influence this state has over the specified state.
+     * Remove any influence this state has over the specified AppState.
      *
-     * @param appState which state to stop influencing
+     * @param appState the AppState to stop influencing (unaffected)
      */
     public void stopInfluencing(AppState appState) {
         influenceList.remove(appState);
@@ -278,7 +279,7 @@ public class NamedAppState implements AppState {
      * Callback to update this state prior to rendering. (Invoked once per frame
      * while the state is attached and enabled.)
      *
-     * @param elapsedTime the time interval between frames (in seconds, &ge;0)
+     * @param elapsedTime time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void update(float elapsedTime) {
