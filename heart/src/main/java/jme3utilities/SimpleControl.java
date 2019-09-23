@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
 /**
- * Simplified abstract control.
+ * A simplified AbstractControl.
  * <p>
  * Although this is an abstract class, it defines all required methods in order
  * to simplify the development of subclasses -- unlike AbstractControl. It also
@@ -46,7 +46,7 @@ abstract public class SimpleControl extends AbstractControl {
     // new methods exposed
 
     /**
-     * Toggle the enabled status of this control.
+     * Toggle the enabled status of this Control.
      */
     public void toggleEnabled() {
         setEnabled(!enabled);
@@ -55,12 +55,15 @@ abstract public class SimpleControl extends AbstractControl {
     // AbstractControl methods
 
     /**
-     * Render this control.  Invoked when the spatial is about to be rendered to a viewport.
+     * Render this Control. Invoked when the controlled spatial is about to be
+     * rendered to a ViewPort.
      * <p>
      * This implementation only performs checks and is meant to be overridden.
      *
-     * @param renderManager renderer which is rendering the spatial (not null)
-     * @param viewPort viewport where the spatial will be rendered (not null)
+     * @param renderManager the renderer which is rendering the controlled
+     * spatial (not null)
+     * @param viewPort the ViewPort where the controlled spatial will be
+     * rendered (not null)
      */
     @Override
     protected void controlRender(RenderManager renderManager,
@@ -74,14 +77,13 @@ abstract public class SimpleControl extends AbstractControl {
     }
 
     /**
-     * Update this control. Invoked once per frame during the logical-state
-     * update, provided the control is enabled and added to a spatial. Should
+     * Update this Control. Invoked once per frame during the logical-state
+     * update, provided the Control is enabled and added to a Spatial. Should
      * not be invoked directly from user code.
      * <p>
      * This implementation only performs checks and is meant to be overridden.
      *
-     * @param updateInterval the time interval between updates (in seconds,
-     * &ge;0)
+     * @param updateInterval time interval between frames (in seconds, &ge;0)
      */
     @Override
     protected void controlUpdate(float updateInterval) {
@@ -93,7 +95,7 @@ abstract public class SimpleControl extends AbstractControl {
     }
 
     /**
-     * Test whether this control is enabled.
+     * Test whether this Control is enabled.
      *
      * @return true if enabled, otherwise false
      */

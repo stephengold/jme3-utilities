@@ -53,10 +53,10 @@ import jme3utilities.Validate;
 /**
  * A SubtreeControl to visualize a Skeleton.
  * <p>
- * The controlled Spatial must be a Node.
+ * The controlled spatial must be a Node.
  * <p>
  * A new Control is disabled by default. When enabled, it attaches 2 geometries
- * to its subtree node.
+ * to the subtree.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -375,10 +375,10 @@ public class SkeletonVisualizer extends SubtreeControl {
         transformSpatial = spatial;
     }
     // *************************************************************************
-    // SubtreeControl methods
+    // SubtreeControl methods - TODO read/write
 
     /**
-     * Create a shallow copy of this control.
+     * Create a shallow copy of this Control.
      *
      * @return a new Control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
@@ -393,10 +393,8 @@ public class SkeletonVisualizer extends SubtreeControl {
      * Convert this shallow-cloned Control into a deep-cloned one, using the
      * specified Cloner and original to resolve copied fields.
      *
-     * @param cloner the cloner currently cloning this control (not null,
-     * modified)
-     * @param original the control from which this control was shallow-cloned
-     * (not null, unaffected)
+     * @param cloner the Cloner currently cloning this Control
+     * @param original the instance from which this Control was shallow-cloned
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
@@ -420,8 +418,8 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
-     * Callback invoked when the spatial's geometric state is about to be
-     * updated, once per frame while attached and enabled.
+     * Callback invoked when the controlled spatial's geometric state is about
+     * to be updated, once per frame while attached and enabled.
      *
      * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
@@ -448,7 +446,7 @@ public class SkeletonVisualizer extends SubtreeControl {
     public void setEnabled(boolean newState) {
         if (newState && getSubtree() == null) {
             /*
-             * Before enabling this control for the first time,
+             * Before enabling this Control for the first time,
              * create the subtree.
              */
             Node subtreeNode = new Node(subtreeName);

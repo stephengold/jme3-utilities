@@ -39,8 +39,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * Simple control to manage a single subtree of the scene graph. Such controls
- * can only be added to nodes, not geometries.
+ * A SimpleControl to manage a subtree of the scene graph. Such controls can be
+ * added only to nodes, not geometries.
  * <p>
  * Each instance is disabled at creation.
  *
@@ -59,14 +59,14 @@ abstract public class SubtreeControl extends SimpleControl {
     // fields
 
     /**
-     * subtree managed by this control: set by subclass
+     * scene-graph subtree managed by this Control
      */
     private Spatial subtree = null;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a disabled control.
+     * Instantiate a disabled Control.
      */
     public SubtreeControl() {
         super.setEnabled(false);
@@ -84,7 +84,7 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Traverse this control's subtree in depth-first order.
+     * Traverse this control's subtree in depth-first order. TODO delete
      *
      * @param visitor method invoked on each spatial (not null)
      */
@@ -111,9 +111,9 @@ abstract public class SubtreeControl extends SimpleControl {
     // SimpleControl methods
 
     /**
-     * Create a shallow copy of this control.
+     * Create a shallow copy of this Control.
      *
-     * @return a new control, equivalent to this one
+     * @return a new Control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
@@ -123,11 +123,13 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Convert this shallow-cloned control into a deep-cloned one, using the
-     * specified cloner and original to resolve copied fields.
+     * Callback from {@link com.jme3.util.clone.Cloner} to convert this
+     * shallow-cloned Control into a deep-cloned one, using the specified Cloner
+     * and original to resolve copied fields.
      *
-     * @param cloner the cloner currently cloning this control
-     * @param original the control from which this control was shallow-cloned
+     * @param cloner the Cloner that's cloning this Control (not null)
+     * @param original the instance from which this Control was shallow-cloned
+     * (not null, unaffected)
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {
@@ -136,9 +138,9 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Clone this control for a different node. No longer used as of JME 3.1.
+     * Clone this Control for a different Spatial. No longer used as of JME 3.1.
      *
-     * @param cloneNode the node for the clone to control (or null)
+     * @param cloneNode (unused)
      * @return never
      * @throws UnsupportedOperationException always
      */
@@ -148,10 +150,11 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * De-serialize this instance, for example when loading from a J3O file.
+     * De-serialize this Control from the specified importer, for example when
+     * loading from a J3O file.
      *
      * @param importer (not null)
-     * @throws IOException from importer
+     * @throws IOException from the importer
      */
     @Override
     public void read(JmeImporter importer) throws IOException {
@@ -162,11 +165,11 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Enable or disable this control.
+     * Enable or disable this Control.
      * <p>
-     * Disabling the control immediately removes the subtree (if any) from the
-     * controlled node (if any). Enabling the control immediately adds the
-     * subtree to the node.
+     * Disabling the Control immediately detaches the subtree (if any) from the
+     * controlled node (if any). Enabling the Control immediately attaches the
+     * subtree to the Node.
      *
      * @param newState true&rarr;enable the control, false&rarr;disable it
      */
@@ -192,7 +195,7 @@ abstract public class SubtreeControl extends SimpleControl {
                         "subtree should be initialized");
             }
             /*
-             * Attach the subtree to the controlled node.
+             * Attach the subtree to the controlled Node.
              */
             node.attachChild(subtree);
         }
@@ -201,11 +204,11 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Alter which node is controlled. Invoked when the control is added to or
-     * removed from a node. Should be invoked only by a subclass or from
+     * Alter which Node is controlled. Invoked when the Control is added to or
+     * removed from a Node. Should be invoked only by a subclass or from
      * Spatial. Do not invoke directly from user code.
      *
-     * @param newSpatial the node to control, or null to remove
+     * @param newSpatial the Node to control, or null to remove
      */
     @Override
     public void setSpatial(Spatial newSpatial) {
@@ -226,10 +229,11 @@ abstract public class SubtreeControl extends SimpleControl {
     }
 
     /**
-     * Serialize this instance, for example when saving to a J3O file.
+     * Serialize this Control to the specified exporter, for example when saving
+     * to a J3O file.
      *
      * @param exporter (not null)
-     * @throws IOException from exporter
+     * @throws IOException from the exporter
      */
     @Override
     public void write(JmeExporter exporter) throws IOException {

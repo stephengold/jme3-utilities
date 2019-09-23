@@ -4,14 +4,14 @@
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the copyright holder nor the names of its contributors
-      may be used to endorse or promote products derived from this software
-      without specific prior written permission.
+ * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ * Neither the name of the copyright holder nor the names of its contributors
+ may be used to endorse or promote products derived from this software without
+ specific prior written permission.
 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -46,12 +46,12 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Subtree control to visualize the coordinate axes of a Node.
+ * A SubtreeControl to visualize the coordinate axes of a Node.
  * <p>
  * The controlled spatial must be a Node. TODO option to specify a subject
  * spatial
  * <p>
- * The control is disabled by default. When enabled, it attaches up to 3 arrow
+ * A new Control is disabled by default. When enabled, it attaches up to 3 arrow
  * geometries to the subtree, each of which represents an axis.
  *
  * @author Stephen Gold sgold@sonic.net

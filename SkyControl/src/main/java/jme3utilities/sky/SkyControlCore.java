@@ -58,15 +58,15 @@ import jme3utilities.math.MyColor;
 import jme3utilities.mesh.DomeMesh;
 
 /**
- * Core fields and methods of a subtree control to simulate a dynamic sky.
+ * Core fields and methods of a SubtreeControl to simulate a dynamic sky.
  * <p>
- * The control is disabled at creation. When enabled, it attaches a "sky" node
+ * The Control is disabled at creation. When enabled, it attaches a "sky" node
  * to the controlled spatial, which must be a scene-graph node.
  * <p>
  * The "top" dome is oriented so that its rim is parallel to the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze.
  * <p>
- * This control simulates up to 6 layers of clouds. The cloud density may be
+ * This Control simulates up to 6 layers of clouds. The cloud density may be
  * adjusted by invoking setCloudiness(). The rate of cloud motion may be
  * adjusted by invoking setCloudsRate(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
@@ -876,7 +876,7 @@ public class SkyControlCore extends SubtreeControl {
     private void createSpatials(float cloudFlattening, Material topMaterial,
             Material bottomMaterial, Material cloudsMaterial) {
         /*
-         * Create a node to parent the dome geometries.
+         * Create a Node to parent the dome geometries.
          */
         Node subtreeNode = new Node("sky node");
         subtreeNode.setQueueBucket(Bucket.Sky);

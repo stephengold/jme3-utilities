@@ -51,12 +51,12 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * Subtree control to visualize the world bound of a subject spatial.
+ * A SubtreeControl to visualize the world bound of a subject spatial.
  * <p>
- * The controlled spatial must be a node, but the subject (visualized spatial)
- * may be a geometry.
+ * The controlled spatial must be a Node, but the subject (visualized spatial)
+ * may be a Geometry.
  * <p>
- * The control is disabled by default. When enabled, it attaches a geometry to
+ * The Control is disabled by default. When enabled, it attaches a Geometry to
  * the subtree.
  *
  * @author Stephen Gold sgold@sonic.net
@@ -202,7 +202,7 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter which spatial is visualized.
+     * Alter which Spatial is visualized.
      *
      * @param newSubject which spatial to visualize (may be null, alias created)
      */
@@ -210,10 +210,10 @@ public class BoundsVisualizer extends SubtreeControl {
         subject = newSubject;
     }
     // *************************************************************************
-    // SubtreeControl methods
+    // SubtreeControl methods - TODO read/write
 
     /**
-     * Create a shallow copy of this control.
+     * Create a shallow copy of this Control.
      *
      * @return a new control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
@@ -225,11 +225,11 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Convert this shallow-cloned control into a deep-cloned one, using the
-     * specified cloner and original to resolve copied fields.
+     * Convert this shallow-cloned Control into a deep-cloned one, using the
+     * specified Cloner and original to resolve copied fields.
      *
-     * @param cloner the cloner currently cloning this control
-     * @param original the control from which this control was shallow-cloned
+     * @param cloner the Cloner currently cloning this Control
+     * @param original the instance from which this Control was shallow-cloned
      */
     @Override
     public void cloneFields(Cloner cloner, Object original) {

@@ -653,7 +653,7 @@ public class MySpatial {
     /**
      * Test whether a Spatial is a Geometry with ignoreTransform=true.
      *
-     * @param spatial the Spatial to test (unaffected)
+     * @param spatial the Spatial to test (may be null, unaffected)
      * @return true if the Spatial ignores transforms, otherwise false
      */
     public static boolean isIgnoringTransforms(Spatial spatial) {

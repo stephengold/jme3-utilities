@@ -270,7 +270,7 @@ public class FloorControl extends SubtreeControl {
         assert material != null;
         assert textureScale > 0f : textureScale;
         /*
-         * Create a node to parent the floor geometry.
+         * Create a Node to parent the floor geometry.
          */
         Node subtreeNode = new Node(nodeName);
         subtreeNode.setQueueBucket(RenderQueue.Bucket.Sky);
