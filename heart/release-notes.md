@@ -1,5 +1,20 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 4.0.0for33 released on TBD
+
+ + Protect no-arg constructors used only for serialization. (API changes!)
+ + Deleted the `traverse()` method from `SubtreeControl`. (API change!)
+ + Privatized the `subtree` field of a `SubtreeControl`. (API change!)
+ + Based `NamedAppState` on `AbstractAppState`. (API change!)
+ + Targeted jMonkeyEngine version 3.3.0-alpha5.
+ + Added `Icosphere` and `InfluenceUtil` classes.
+ + Added `distinct()`, `ensureCapacity()`, `frequency()`, `toFloatArray()`,
+   and `toIntArray()` methods to the `MyBuffer` class.
+ + Added a constructor for a `RectangularSolid` that takes an `AbstractBox`.
+ + Changed `SubtreeControl` so the subtree can be a `Geometry`.
+ + Changed `Dumper` to dump the ID of each `AbstractAppState`.
+ + Changed `NamedAppState` so it doesn't require a `SimpleApplication`.
+
 ## Version 3.0.0for33 released on 25 August 2019
 
  + Deleted deprecated methods. (API changes!)
