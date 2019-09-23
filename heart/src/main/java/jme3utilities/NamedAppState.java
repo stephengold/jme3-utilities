@@ -305,8 +305,9 @@ public class NamedAppState extends AbstractAppState {
      */
     @Override
     public String toString() {
-        String result = String.format("%s (%sinitialized, %senabled)",
-                getId(), initialized ? "" : "un", isEnabled() ? "" : "not ");
+        String result = String.format("%s (%sinitialized, %sabled)",
+                getId(), isInitialized() ? "" : "un",
+                isEnabled() ? "en" : "dis");
         return result;
     }
 }
