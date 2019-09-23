@@ -186,6 +186,9 @@ public class AxesVisualizer extends SubtreeControl {
 
     /**
      * Read the depth-test setting.
+     * <p>
+     * The test provides depth cues, but might hide portions of the
+     * visualization.
      *
      * @return true if the test is enabled, otherwise false
      */
@@ -276,12 +279,12 @@ public class AxesVisualizer extends SubtreeControl {
         return result;
     }
     // *************************************************************************
-    // SubtreeControl methods
+    // SubtreeControl methods - TODO read/write
 
     /**
-     * Create a shallow copy of this control.
+     * Create a shallow copy of this Control.
      *
-     * @return a new control, equivalent to this one
+     * @return a new Control, equivalent to this one
      * @throws CloneNotSupportedException if superclass isn't cloneable
      */
     @Override
@@ -291,8 +294,8 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
-     * Callback invoked when the spatial's geometric state is about to be
-     * updated, once per frame while attached and enabled.
+     * Callback invoked when the controlled spatial's geometric state is about
+     * to be updated, once per frame while attached and enabled.
      *
      * @param updateInterval time interval between updates (in seconds, &ge;0)
      */
@@ -331,7 +334,7 @@ public class AxesVisualizer extends SubtreeControl {
     public void setEnabled(boolean newState) {
         if (newState && getSubtree() == null) {
             /*
-             * Before enabling this control for the first time,
+             * Before enabling this Control for the first time,
              * create the subtree.
              */
             Node subtreeNode = new Node(subtreeName);
