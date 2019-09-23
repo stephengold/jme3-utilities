@@ -1,8 +1,8 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 4.0.0for33 released on TBD
+## Version 4.0.0for33 released on 23 September 2019
 
- + Protect no-arg constructors used only for serialization. (API changes!)
+ + Protected no-arg constructors used only for serialization. (API changes!)
  + Deleted the `traverse()` method from `SubtreeControl`. (API change!)
  + Privatized the `subtree` field of a `SubtreeControl`. (API change!)
  + Based `NamedAppState` on `AbstractAppState`. (API change!)
