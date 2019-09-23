@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-x library and related tests
 
+## Version 0.2.15for32 released on TBD
+
+Based on version 4.0.0for32 of the jme3-utilities-heart library.
+
 ## Version 0.2.14for32 released on 25 August 2019
 
 Based on version 3.0.0for32 of the jme3-utilities-heart library.

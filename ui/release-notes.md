@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.7.8for32 released on TBD
+
+Based on version 4.0 of the jme3-utilities-heart library.
+
 ## Version 0.7.7for32 released on 25 August 2019
 
 Based on version 3.0 of the jme3-utilities-heart library.
