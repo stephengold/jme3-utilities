@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 4.0.0for32 released on TBD
+## Version 4.0.0for32 released on 23 September 2019
 
  + Deleted the `traverse()` method from `SubtreeControl`. (API change!)
  + Privatized the `subtree` field of a `SubtreeControl`. (API change!)
