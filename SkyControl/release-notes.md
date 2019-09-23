@@ -1,5 +1,11 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.22for33 released on TBD
+
+Notable changes:
+ + protect no-arg constructors used only for serialization
+ + base on version 4.0.0for33 of the heart library and target JME 3.3.0-alpha5
+
 ## Version 0.9.21for33 released on 25 August 2019
 
 Notable changes:
