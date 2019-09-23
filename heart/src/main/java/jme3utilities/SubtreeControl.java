@@ -31,7 +31,6 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.scene.Node;
-import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.util.clone.Cloner;
@@ -81,16 +80,6 @@ abstract public class SubtreeControl extends SimpleControl {
      */
     public Spatial getSubtree() {
         return subtree;
-    }
-
-    /**
-     * Traverse this control's subtree in depth-first order. TODO delete
-     *
-     * @param visitor method invoked on each spatial (not null)
-     */
-    public void traverse(SceneGraphVisitor visitor) {
-        Validate.nonNull(visitor, "visitor");
-        subtree.depthFirstTraversal(visitor);
     }
     // *************************************************************************
     // new protected methods
