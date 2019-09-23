@@ -289,7 +289,7 @@ public class NamedAppState extends AbstractAppState {
     /**
      * Represent this state as a text string.
      *
-     * @return descriptive string of text (not null)
+     * @return descriptive string of text (not null, not empty)
      */
     @Override
     public String toString() {
