@@ -104,10 +104,9 @@ public class FloorControl extends SubtreeControl {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil. Do not invoke
-     * directly!
+     * No-argument constructor needed by SavableClassUtil.
      */
-    public FloorControl() {
+    protected FloorControl() {
         super();
         camera = null;
     }

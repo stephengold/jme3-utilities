@@ -119,10 +119,9 @@ public class SkyMaterialCore extends Material {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil. Do not invoke
-     * directly!
+     * No-argument constructor needed by SavableClassUtil.
      */
-    public SkyMaterialCore() {
+    protected SkyMaterialCore() {
         assetManager = null;
         cloudAlphas = null;
         cloudImages = null;

@@ -67,7 +67,7 @@ public class PointVisualizer extends Geometry {
     /**
      * No-argument constructor needed by SavableClassUtil.
      */
-    private PointVisualizer() {
+    protected PointVisualizer() {
         assetManager = null;
     }
 

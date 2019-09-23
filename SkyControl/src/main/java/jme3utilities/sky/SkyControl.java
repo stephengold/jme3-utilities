@@ -174,10 +174,9 @@ public class SkyControl extends SkyControlCore {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil. Do not invoke
-     * directly!
+     * No-argument constructor needed by SavableClassUtil.
      */
-    public SkyControl() {
+    protected SkyControl() {
         super();
     }
 

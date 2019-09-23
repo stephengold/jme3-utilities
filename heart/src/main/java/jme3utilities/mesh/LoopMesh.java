@@ -77,7 +77,7 @@ public class LoopMesh extends Mesh {
     /**
      * No-argument constructor needed by SavableClassUtil.
      */
-    private LoopMesh() {
+    protected LoopMesh() {
     }
 
     /**

@@ -133,7 +133,7 @@ public class AxesVisualizer extends SubtreeControl {
     /**
      * No-argument constructor needed by SavableClassUtil.
      */
-    private AxesVisualizer() {
+    protected AxesVisualizer() {
         assetManager = null;
     }
 

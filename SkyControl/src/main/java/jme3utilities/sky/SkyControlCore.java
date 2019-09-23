@@ -195,10 +195,9 @@ public class SkyControlCore extends SubtreeControl {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil. Do not invoke
-     * directly!
+     * No-argument constructor needed by SavableClassUtil.
      */
-    public SkyControlCore() {
+    protected SkyControlCore() {
         assetManager = null;
         bottomDomeFlag = false;
         starsOption = StarsOption.TopDome;

@@ -149,10 +149,9 @@ public class LandscapeControl extends SubtreeControl {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil. Do not invoke
-     * directly!
+     * No-argument constructor needed by SavableClassUtil.
      */
-    public LandscapeControl() {
+    protected LandscapeControl() {
         super();
         assetManager = null;
     }

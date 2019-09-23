@@ -93,10 +93,9 @@ public class SkyMaterial extends SkyMaterialCore {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil. Do not invoke
-     * directly!
+     * No-argument constructor needed by SavableClassUtil.
      */
-    public SkyMaterial() {
+    protected SkyMaterial() {
         super();
     }
 
