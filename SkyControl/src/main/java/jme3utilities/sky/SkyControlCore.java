@@ -58,15 +58,15 @@ import jme3utilities.math.MyColor;
 import jme3utilities.mesh.DomeMesh;
 
 /**
- * Core fields and methods of a subtree control to simulate a dynamic sky.
+ * Core fields and methods of a SubtreeControl to simulate a dynamic sky.
  * <p>
- * The control is disabled at creation. When enabled, it attaches a "sky" node
+ * The Control is disabled at creation. When enabled, it attaches a "sky" node
  * to the controlled spatial, which must be a scene-graph node.
  * <p>
  * The "top" dome is oriented so that its rim is parallel to the horizon. The
  * top dome implements the sun, moon, clear sky color, and horizon haze.
  * <p>
- * This control simulates up to 6 layers of clouds. The cloud density may be
+ * This Control simulates up to 6 layers of clouds. The cloud density may be
  * adjusted by invoking setCloudiness(). The rate of cloud motion may be
  * adjusted by invoking setCloudsRate(). Flatten the clouds for best results;
  * this puts them on a translucent "clouds only" dome.
@@ -508,7 +508,7 @@ public class SkyControlCore extends SubtreeControl {
                 removeStarsNode();
                 starNode = MyAsset.createStarMapQuads(assetManager, assetName);
                 starNode.setName(starsNodeName);
-                subtree.attachChildAt(starNode, 0);
+                ((Node) getSubtree()).attachChildAt(starNode, 0);
                 break;
 
             case TopDome:
@@ -519,7 +519,7 @@ public class SkyControlCore extends SubtreeControl {
             case TwoDomes:
                 removeStarsNode();
                 starNode = createStarMapDomes(assetName);
-                subtree.attachChildAt(starNode, 0);
+                ((Node) getSubtree()).attachChildAt(starNode, 0);
                 break;
 
             default:
@@ -559,8 +559,10 @@ public class SkyControlCore extends SubtreeControl {
      * @return the pre-existing geometry (or null if none)
      */
     protected Geometry getBottomDome() {
-        Geometry bottomDome = (Geometry) MySpatial.findChild(subtree,
-                bottomName);
+        Node subtreeNode = (Node) getSubtree();
+        Geometry bottomDome
+                = (Geometry) MySpatial.findChild(subtreeNode, bottomName);
+
         return bottomDome;
     }
 
@@ -600,8 +602,10 @@ public class SkyControlCore extends SubtreeControl {
      * @return the pre-existing geometry (or null if none)
      */
     protected Geometry getCloudsOnlyDome() {
-        Geometry cloudsOnlyDome = (Geometry) MySpatial.findChild(
-                subtree, cloudsName);
+        Node subtreeNode = (Node) getSubtree();
+        Geometry cloudsOnlyDome
+                = (Geometry) MySpatial.findChild(subtreeNode, cloudsName);
+
         return cloudsOnlyDome;
     }
 
@@ -648,7 +652,9 @@ public class SkyControlCore extends SubtreeControl {
      * @return the pre-existing node (or null if none)
      */
     protected Node getStarsNode() {
-        Node starsNode = (Node) MySpatial.findChild(subtree, starsNodeName);
+        Node subtreeNode = (Node) getSubtree();
+        Node starsNode = (Node) MySpatial.findChild(subtreeNode, starsNodeName);
+
         return starsNode;
     }
 
@@ -658,7 +664,9 @@ public class SkyControlCore extends SubtreeControl {
      * @return the pre-existing geometry (not null)
      */
     protected Geometry getTopDome() {
-        Geometry topDome = (Geometry) MySpatial.findChild(subtree, topName);
+        Node subtreeNode = (Node) getSubtree();
+        Geometry topDome = (Geometry) MySpatial.findChild(subtreeNode, topName);
+
         assert topDome != null;
         return topDome;
     }
@@ -769,6 +777,7 @@ public class SkyControlCore extends SubtreeControl {
          * Translate the sky node to center the sky on the camera.
          */
         Vector3f cameraLocation = camera.getLocation();
+        Spatial subtree = getSubtree();
         MySpatial.setWorldLocation(subtree, cameraLocation);
         /*
          * Scale the sky node so that its furthest geometries are midway
@@ -777,7 +786,7 @@ public class SkyControlCore extends SubtreeControl {
         float far = camera.getFrustumFar();
         float near = camera.getFrustumNear();
         float radius = (near + far) / 2f;
-        assert subtree.getParent() == spatial;
+        assert getSubtree().getParent() == spatial;
         MySpatial.setWorldScale(subtree, radius);
 
         if (stabilizeFlag) {
@@ -867,11 +876,12 @@ public class SkyControlCore extends SubtreeControl {
     private void createSpatials(float cloudFlattening, Material topMaterial,
             Material bottomMaterial, Material cloudsMaterial) {
         /*
-         * Create a node to parent the dome geometries.
+         * Create a Node to parent the dome geometries.
          */
-        subtree = new Node("sky node");
-        subtree.setQueueBucket(Bucket.Sky);
-        subtree.setShadowMode(ShadowMode.Off);
+        Node subtreeNode = new Node("sky node");
+        subtreeNode.setQueueBucket(Bucket.Sky);
+        subtreeNode.setShadowMode(ShadowMode.Off);
+        setSubtree(subtreeNode);
         /*
          * Attach geometries to the sky node from the outside in
          * because they'll be rendered in that order.
@@ -886,14 +896,14 @@ public class SkyControlCore extends SubtreeControl {
                 break;
         }
         Geometry topDome = new Geometry(topName, hemisphereMesh.clone());
-        subtree.attachChild(topDome);
+        subtreeNode.attachChild(topDome);
         topDome.setMaterial(topMaterial);
 
         if (bottomDomeFlag) {
             DomeMesh bottomMesh = new DomeMesh(numRimSamples, 2, Constants.topU,
                     Constants.topV, Constants.uvScale, true);
             Geometry bottomDome = new Geometry(bottomName, bottomMesh);
-            subtree.attachChild(bottomDome);
+            subtreeNode.attachChild(bottomDome);
 
             Quaternion upsideDown = new Quaternion();
             upsideDown.lookAt(unitX, negativeUnitY);
@@ -906,7 +916,7 @@ public class SkyControlCore extends SubtreeControl {
             assert cloudFlattening < 1f : cloudFlattening;
 
             Geometry cloudsOnlyDome = new Geometry(cloudsName, hemisphereMesh);
-            subtree.attachChild(cloudsOnlyDome);
+            subtreeNode.attachChild(cloudsOnlyDome);
             /*
              * Flatten the clouds-only dome in order to foreshorten clouds
              * near the horizon -- even if cloudYOffset=0.
@@ -962,7 +972,7 @@ public class SkyControlCore extends SubtreeControl {
     private void removeStarsNode() {
         Node starsNode = getStarsNode();
         if (starsNode != null) {
-            int index = subtree.detachChild(starsNode);
+            int index = ((Node) getSubtree()).detachChild(starsNode);
             assert index == 0 : index;
         }
     }

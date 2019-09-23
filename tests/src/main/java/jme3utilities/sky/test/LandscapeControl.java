@@ -174,9 +174,10 @@ public class LandscapeControl extends SubtreeControl {
         Spatial monument = createMonument();
         TerrainQuad terrain = createTerrain();
 
-        subtree = new Node("landscape node");
-        subtree.attachChild(monument);
-        subtree.attachChild(terrain);
+        Node subtreeNode = new Node("landscape node");
+        subtreeNode.attachChild(monument);
+        subtreeNode.attachChild(terrain);
+        setSubtree(subtreeNode);
     }
     // *************************************************************************
     // new methods exposed
@@ -201,7 +202,7 @@ public class LandscapeControl extends SubtreeControl {
      * @return the Y component (in world coordinates)
      */
     public float peakY() {
-        Spatial terrain = MySpatial.findChild(subtree, "terrain");
+        Spatial terrain = MySpatial.findChild((Node) getSubtree(), "terrain");
         float localYScale = terrain.getLocalScale().y;
         assert localYScale > 0f : localYScale;
         float baseY = MySpatial.worldLocation(terrain, null).y;
@@ -219,7 +220,7 @@ public class LandscapeControl extends SubtreeControl {
         Validate.nonNull(material, "material");
 
         terrainMaterial = material;
-        Spatial terrain = MySpatial.findChild(subtree, "terrain");
+        Spatial terrain = MySpatial.findChild((Node) getSubtree(), "terrain");
         terrain.setMaterial(material);
     }
 
@@ -231,7 +232,7 @@ public class LandscapeControl extends SubtreeControl {
     public void setMonumentScale(float radius) {
         Validate.positive(radius, "radius");
 
-        Spatial monument = MySpatial.findChild(subtree, "monument");
+        Spatial monument = MySpatial.findChild((Node) getSubtree(), "monument");
         float ringRadius = ringDiameter / 2f;
         float scale = radius / ringRadius;
         monument.setLocalScale(scale);
@@ -252,7 +253,7 @@ public class LandscapeControl extends SubtreeControl {
             throw new IllegalArgumentException("peak should be above base");
         }
 
-        Spatial terrain = MySpatial.findChild(subtree, "terrain");
+        Spatial terrain = MySpatial.findChild((Node) getSubtree(), "terrain");
         float yScale = (peakY - baseY) / terrainHeight;
         float xzScale = (2f * radius) / terrainDiameter;
         Vector3f scale = new Vector3f(xzScale, yScale, xzScale);
