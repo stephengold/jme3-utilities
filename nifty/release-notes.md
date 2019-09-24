@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.10for33 released on TBD
+## Version 0.9.10for33 released on 23 September 2019
 
  + Protect `GuiEvent` no-arg constructor.
  + Base on version 4.0 of the jme3-utilities-heart library
