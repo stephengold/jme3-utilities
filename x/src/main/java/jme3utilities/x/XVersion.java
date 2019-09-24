@@ -60,6 +60,6 @@ public class XVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "for_jME3.2 0.2.15for32";
+        return "for_jME3.2 0.2.15for32+1";
     }
 }
