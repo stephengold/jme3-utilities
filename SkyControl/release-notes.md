@@ -1,6 +1,6 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.22for33 released on TBD
+## Version 0.9.22for33 released on 23 September 2019
 
 Notable changes:
  + protect no-arg constructors used only for serialization
