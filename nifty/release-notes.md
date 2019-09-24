@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.10for33 released on TBD
+
+ + Protect `GuiEvent` no-arg constructor.
+ + Base on version 4.0 of the jme3-utilities-heart library
+   and version 0.7.8 of the jme3-utilities-ui library.
+
 ## Version 0.9.9for33 released on 25 August 2019
 
 + Disable `BasicScreenController` during cleanup.
