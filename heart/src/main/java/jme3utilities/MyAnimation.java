@@ -26,6 +26,11 @@
  */
 package jme3utilities;
 
+import com.jme3.anim.AnimClip;
+import com.jme3.anim.AnimTrack;
+import com.jme3.anim.Joint;
+import com.jme3.anim.TransformTrack;
+import com.jme3.anim.util.HasLocalTransform;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.Animation;
 import com.jme3.animation.AudioTrack;
@@ -69,12 +74,12 @@ public class MyAnimation {
     // new methods exposed
 
     /**
-     * Count all tracks of the specified type in the specified animation.
+     * Count all tracks of the specified type in the specified Animation.
      *
      * @param <T> subclass of Track
-     * @param animation animation to search (may be null, unaffected)
+     * @param animation the Animation to search (may be null, unaffected)
      * @param trackType the subclass of Track to search for
-     * @return number of tracks (&ge;0)
+     * @return the number of tracks found (&ge;0)
      */
     public static <T extends Track> int countTracks(Animation animation,
             Class<T> trackType) {
@@ -94,10 +99,10 @@ public class MyAnimation {
     }
 
     /**
-     * Describe an animation.
+     * Describe an Animation.
      *
-     * @param animation animation to describe (not null, unaffected)
-     * @param animControl control that contains the animation (not null,
+     * @param animation the Animation to describe (not null, unaffected)
+     * @param animControl the Control that contains the animation (not null,
      * unaffected)
      * @return textual description (not null, not empty)
      */
@@ -126,10 +131,10 @@ public class MyAnimation {
     }
 
     /**
-     * Describe an animation track in the context of its animation.
+     * Describe an animation track in the context of its Animation.
      *
-     * @param track the track to describe (not null, unaffected)
-     * @param animControl an anim control that contains the track (not null,
+     * @param track the Track to describe (not null, unaffected)
+     * @param animControl an AnimControl that contains the Track (not null,
      * unaffected)
      * @return a textual description (not null, not empty)
      */
@@ -182,7 +187,7 @@ public class MyAnimation {
     }
 
     /**
-     * Find a BoneTrack in a specified animation for the indexed bone.
+     * Find a BoneTrack in a specified Animation for the indexed Bone.
      *
      * @param animation which animation (not null, unaffected)
      * @param boneIndex which bone (&ge;0)
@@ -207,9 +212,9 @@ public class MyAnimation {
 
     /**
      * Find the index of the keyframe (if any) at the specified time in the
-     * specified track.
+     * specified Track.
      *
-     * @param track which track to search (not null, unaffected)
+     * @param track which Track to search (not null, unaffected)
      * @param time the track time (in seconds, &ge;0)
      * @return the keyframe's index (&ge;0) or -1 if no keyframe at that time
      */
@@ -226,10 +231,10 @@ public class MyAnimation {
     }
 
     /**
-     * Find the time of the keyframe in the specified animation with the latest
+     * Find the time of the keyframe in the specified Animation with the latest
      * time.
      *
-     * @param animation input (not null, unaffected)
+     * @param animation the input (not null, unaffected)
      * @return the track time (in seconds, &ge;0)
      */
     public static float findLastKeyframe(Animation animation) {
@@ -249,9 +254,9 @@ public class MyAnimation {
 
     /**
      * Find the index of the last keyframe at or before the specified time in
-     * the specified track.
+     * the specified Track.
      *
-     * @param track which track to search (not null, unaffected)
+     * @param track the Track to search (not null, unaffected)
      * @param time the track time (in seconds, &ge;0)
      * @return the keyframe's index (&ge;0)
      */
@@ -268,10 +273,10 @@ public class MyAnimation {
     /**
      * Find a SpatialTrack in the specified animation for the specified spatial.
      *
-     * @param animControl anim control containing the animation (not null,
+     * @param animControl the AnimControl containing the Animation (not null,
      * unaffected)
-     * @param animation which animation to search (not null, unaffected)
-     * @param spatial which spatial to find (unaffected)
+     * @param animation which Animation to search (not null, unaffected)
+     * @param spatial which Spatial to find (unaffected)
      * @return the pre-existing instance, or null if not found
      */
     public static SpatialTrack findSpatialTrack(AnimControl animControl,
@@ -294,11 +299,11 @@ public class MyAnimation {
     }
 
     /**
-     * Find the specified track in the specified animation.
+     * Find the specified track in the specified Animation.
      *
-     * @param animation the animation containing the track (not null,
+     * @param animation the Animation containing the Track (not null,
      * unaffected)
-     * @param track which track to find (unaffected)
+     * @param track which Track to find (unaffected)
      * @return the track index (&ge;0) or -1 if not found
      */
     public static int findTrackIndex(Animation animation, Track track) {
@@ -316,9 +321,37 @@ public class MyAnimation {
     }
 
     /**
+     * Find a TransformTrack in a specified AnimClip for the indexed Joint.
+     *
+     * @param clip which AnimClip (not null, unaffected)
+     * @param jointIndex which joint (&ge;0)
+     * @return the pre-existing instance, or null if not found
+     */
+    public TransformTrack findTransformTrack(AnimClip clip, int jointIndex) {
+        TransformTrack result = null;
+
+        AnimTrack[] animTracks = clip.getTracks();
+        for (AnimTrack animTrack : animTracks) {
+            if (animTrack instanceof TransformTrack) {
+                TransformTrack track = (TransformTrack) animTrack;
+                HasLocalTransform target = track.getTarget();
+                if (target instanceof Joint) {
+                    int targetIndex = ((Joint) target).getId();
+                    if (targetIndex == jointIndex) {
+                        result = track;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Access the keyframe rotations for the specified bone/spatial track.
      *
-     * @param track which track (not null, unaffected)
+     * @param track which Track (not null, unaffected)
      * @return the pre-existing instance or null
      */
     public static Quaternion[] getRotations(Track track) {
@@ -341,7 +374,7 @@ public class MyAnimation {
     /**
      * Access the keyframe scales for the specified bone/spatial track.
      *
-     * @param track which track (not null, unaffected)
+     * @param track which Track (not null, unaffected)
      * @return the pre-existing instance or null
      */
     public static Vector3f[] getScales(Track track) {
@@ -363,10 +396,11 @@ public class MyAnimation {
 
     /**
      * Read the name of the target of the specified bone/spatial track in the
-     * specified animation control.
+     * specified AnimControl.
      *
      * @param track the bone/spatial track (not null, unaffected)
-     * @param animControl control that contains the track (not null, unaffected)
+     * @param animControl the Control that contains the Track (not null,
+     * unaffected)
      * @return the name of target bone/spatial
      */
     public static String getTargetName(Track track, AnimControl animControl) {
@@ -398,7 +432,7 @@ public class MyAnimation {
     /**
      * Access the translations for the specified bone/spatial track.
      *
-     * @param track which track (not null, unaffected)
+     * @param track which Track (not null, unaffected)
      * @return the pre-existing instance or null
      */
     public static Vector3f[] getTranslations(Track track) {
@@ -419,11 +453,11 @@ public class MyAnimation {
     }
 
     /**
-     * Test whether the specified animation includes a bone track for the
-     * indexed bone.
+     * Test whether the specified animation includes a BoneTrack for the indexed
+     * Bone.
      *
-     * @param animation which animation to test (not null, unaffected)
-     * @param boneIndex which bone (&ge;0)
+     * @param animation the Animation to test (not null, unaffected)
+     * @param boneIndex which Bone (&ge;0)
      * @return true if a track exists, otherwise false
      */
     public static boolean hasTrackForBone(Animation animation, int boneIndex) {
@@ -465,7 +499,7 @@ public class MyAnimation {
     }
 
     /**
-     * Create a new bone track, with or without scales.
+     * Create a new BoneTrack, with or without scales.
      *
      * @param boneIndex (&ge;0)
      * @param times (not null, alias created)
