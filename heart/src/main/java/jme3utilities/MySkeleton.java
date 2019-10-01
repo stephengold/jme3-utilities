@@ -130,23 +130,22 @@ public class MySkeleton {
      */
     public static Transform copyBindTransform(Bone bone,
             Transform storeResult) {
-        if (storeResult == null) {
-            storeResult = new Transform();
-        }
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
 
         Vector3f translation = bone.getBindPosition();
-        storeResult.setTranslation(translation);
+        result.setTranslation(translation);
 
-        Quaternion rotation = bone.getBindRotation();
-        storeResult.setRotation(rotation);
+        Quaternion rotation = bone.getBindRotation(); // alias
+        result.setRotation(rotation);
 
         Vector3f scale = bone.getBindScale();
         if (scale == null) {
             scale = scaleIdentity;
         }
-        storeResult.setScale(scale);
+        result.setScale(scale);
 
-        return storeResult;
+        return result;
     }
 
     /**
@@ -154,7 +153,7 @@ public class MySkeleton {
      *
      * @param bone which Bone to read (not null, unaffected)
      * @param storeResult storage for the result (modified if not null)
-     * @return the bone's transform (in its parent's coordinates, either
+     * @return the bone's Transform (in its parent's coordinates, either
      * storeResult or a new instance)
      */
     public static Transform copyLocalTransform(Bone bone,
@@ -179,25 +178,24 @@ public class MySkeleton {
      *
      * @param bone which Bone to read (not null, unaffected)
      * @param storeResult storage for the result (modified if not null)
-     * @return the bone transform (in mesh coordinates, either storeResult or a
-     * new instance)
+     * @return the bone's Transform (in mesh coordinates, either storeResult or
+     * a new instance)
      */
     public static Transform copyMeshTransform(Bone bone,
             Transform storeResult) {
-        if (storeResult == null) {
-            storeResult = new Transform();
-        }
+        Transform result
+                = (storeResult == null) ? new Transform() : storeResult;
 
         Vector3f translation = bone.getModelSpacePosition();
-        storeResult.setTranslation(translation);
+        result.setTranslation(translation);
 
         Quaternion rotation = bone.getModelSpaceRotation();
-        storeResult.setRotation(rotation);
+        result.setRotation(rotation);
 
         Vector3f scale = bone.getModelSpaceScale();
-        storeResult.setScale(scale);
+        result.setScale(scale);
 
-        return storeResult;
+        return result;
     }
 
     /**
