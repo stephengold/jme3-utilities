@@ -187,11 +187,11 @@ public class MyAnimation {
     }
 
     /**
-     * Find a BoneTrack in a specified Animation for the indexed Bone.
+     * Find a BoneTrack in a specified Animation that targets the indexed Bone.
      *
-     * @param animation which animation (not null, unaffected)
-     * @param boneIndex which bone (&ge;0)
-     * @return the pre-existing instance, or null if not found
+     * @param animation which Animation (not null, unaffected)
+     * @param boneIndex which Bone (&ge;0)
+     * @return the pre-existing instance, or null if none found
      */
     public static BoneTrack findBoneTrack(Animation animation, int boneIndex) {
         Validate.nonNegative(boneIndex, "bone index");
@@ -203,6 +203,36 @@ public class MyAnimation {
                 int trackBoneIndex = boneTrack.getTargetBoneIndex();
                 if (boneIndex == trackBoneIndex) {
                     return boneTrack;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find a TransformTrack in a specified AnimClip that targets the indexed
+     * Joint.
+     *
+     * @param clip which AnimClip (not null, unaffected)
+     * @param jointIndex which Joint (&ge;0)
+     * @return the pre-existing instance, or null if none found
+     */
+    public static TransformTrack findJointTrack(AnimClip clip,
+            int jointIndex) {
+        Validate.nonNegative(jointIndex, "joint index");
+
+        AnimTrack[] tracks = clip.getTracks();
+        for (AnimTrack track : tracks) {
+            if (track instanceof TransformTrack) {
+                TransformTrack transformTrack = (TransformTrack) track;
+                HasLocalTransform target = transformTrack.getTarget();
+                if (target instanceof Joint) {
+                    Joint joint = (Joint) target;
+                    int trackJointIndex = joint.getId();
+                    if (jointIndex == trackJointIndex) {
+                        return transformTrack;
+                    }
                 }
             }
         }
@@ -472,9 +502,29 @@ public class MyAnimation {
     }
 
     /**
+     * Test whether the specified AnimTrack targets a Joint.
+     *
+     * @param track the AnimTrack to test (not null, unaffected)
+     * @return true if it targets a Joint, otherwise false
+     */
+    public static boolean isJointTrack(AnimTrack track) {
+        boolean result = false;
+
+        if (track instanceof TransformTrack) {
+            TransformTrack transformTrack = (TransformTrack) track;
+            HasLocalTransform target = transformTrack.getTarget();
+            if (target instanceof Joint) {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Create a BoneTrack consisting of a single keyframe at t=0.
      *
-     * @param boneIndex which bone (&ge;0)
+     * @param boneIndex which Bone (&ge;0)
      * @param translation relative to bind pose (not null, unaffected)
      * @param rotation relative to bind pose (not null, unaffected)
      * @param scale relative to bind pose (not null, unaffected)
