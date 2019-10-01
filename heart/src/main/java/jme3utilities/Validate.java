@@ -67,8 +67,8 @@ final public class Validate {
     /**
      * Validate a finite single-precision value as a method argument.
      *
-     * @param fValue value to validate (finite)
-     * @param description description of the value
+     * @param fValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is NaN or infinite
      */
@@ -91,8 +91,8 @@ final public class Validate {
     /**
      * Validate a finite double-precision value as a method argument.
      *
-     * @param dValue value to validate (finite)
-     * @param description description of the value
+     * @param dValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is NaN or infinite
      */
@@ -115,9 +115,8 @@ final public class Validate {
     /**
      * Validate a finite Vector3f as a method argument.
      *
-     * @param vector vector to validate (not null, all components finite
-     * numbers)
-     * @param description description of the vector
+     * @param vector the vector to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the vector has a NaN or infinite
      * component
@@ -143,8 +142,8 @@ final public class Validate {
     /**
      * Validate a non-negative proper fraction as a method argument.
      *
-     * @param fValue fraction to validate (&le;1, &ge;0)
-     * @param description description of the value
+     * @param fValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is outside the range [0, 1]
      */
@@ -156,8 +155,8 @@ final public class Validate {
     /**
      * Validate a non-negative proper fraction as a method argument.
      *
-     * @param dValue fraction to validate (&le;1, &ge;0)
-     * @param description description of the value
+     * @param dValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is outside the range [0, 1]
      */
@@ -169,8 +168,8 @@ final public class Validate {
     /**
      * Validate a limited integer as a method argument.
      *
-     * @param iValue value to validate (&le;max, &ge;min)
-     * @param description description of the value
+     * @param iValue the value to validate
+     * @param description a description of the argument
      * @param min the smallest valid value (&le;max)
      * @param max the largest valid value (&ge;max)
      * @return true
@@ -211,8 +210,8 @@ final public class Validate {
     /**
      * Validate a limited single-precision value as a method argument.
      *
-     * @param fValue value to validate (&le;max, &ge;min)
-     * @param description description of the value
+     * @param fValue the value to validate
+     * @param description a description of the argument
      * @param min the smallest valid value (&le;max)
      * @param max the largest valid value (&ge;max)
      * @return true
@@ -252,8 +251,8 @@ final public class Validate {
     /**
      * Validate a limited double-precision value as a method argument.
      *
-     * @param dValue value to validate (&le;max, &ge;min)
-     * @param description description of the value
+     * @param dValue the value to validate
+     * @param description a description of the argument
      * @param min the smallest valid value (&le;max)
      * @param max the largest valid value (&ge;max)
      * @return true
@@ -293,8 +292,8 @@ final public class Validate {
     /**
      * Validate a non-null, non-empty collection as a method argument.
      *
-     * @param collection the collection to validate (not null, not empty)
-     * @param description a description of the collection
+     * @param collection the collection to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws NullPointerException if the collection is null
      * @throws IllegalArgumentException if the collection is empty
@@ -319,8 +318,8 @@ final public class Validate {
     /**
      * Validate a non-null, non-empty float array as a method argument.
      *
-     * @param array array to validate (not null, not empty)
-     * @param description description of the array
+     * @param array the array to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws NullPointerException if the array is null
      * @throws IllegalArgumentException if the array has zero length
@@ -345,8 +344,8 @@ final public class Validate {
     /**
      * Validate a non-null, non-empty object array as a method argument.
      *
-     * @param array array to validate (not null, not empty)
-     * @param description description of the array
+     * @param array the array to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws NullPointerException if the array is null
      * @throws IllegalArgumentException if the array has zero length
@@ -371,11 +370,11 @@ final public class Validate {
     /**
      * Validate a non-null, non-empty string as a method argument.
      *
-     * @param string string to validate (not null, not empty)
-     * @param description description of the string
+     * @param string the String to validate
+     * @param description a description of the argument
      * @return true
-     * @throws NullPointerException if the string is null
-     * @throws IllegalArgumentException if the string has zero length
+     * @throws NullPointerException if the String is null
+     * @throws IllegalArgumentException if the String has zero length
      */
     public static boolean nonEmpty(String string, String description) {
         nonNull(string, description);
@@ -397,8 +396,8 @@ final public class Validate {
     /**
      * Validate a non-negative integer as a method argument.
      *
-     * @param iValue value to validate (&ge;0)
-     * @param description description of the value
+     * @param iValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is negative
      */
@@ -421,8 +420,8 @@ final public class Validate {
     /**
      * Validate a non-negative single-precision value as a method argument.
      *
-     * @param fValue value to validate (&ge;0)
-     * @param description description of the value
+     * @param fValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is negative or NaN
      */
@@ -445,8 +444,8 @@ final public class Validate {
     /**
      * Validate a non-negative double-precision value as a method argument.
      *
-     * @param dValue value to validate (&ge;0)
-     * @param description description of the value
+     * @param dValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is negative or NaN
      */
@@ -469,8 +468,8 @@ final public class Validate {
     /**
      * Validate a non-negative Vector3f as a method argument.
      *
-     * @param vector vector to validate (not null, all components non-negative)
-     * @param description description of the vector
+     * @param vector the vector to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the vector has a negative component
      * @throws NullPointerException if the vector is null
@@ -501,8 +500,8 @@ final public class Validate {
      * "Applications should throw instances of this class to indicate other
      * illegal uses of the null object."
      *
-     * @param object reference to validate (not null, unaffected)
-     * @param description description of the object
+     * @param object the reference to validate
+     * @param description a description of the argument
      * @return true
      * @throws NullPointerException if the reference is null
      */
@@ -529,8 +528,8 @@ final public class Validate {
      * "Applications should throw instances of this class to indicate other
      * illegal uses of the null object."
      *
-     * @param array reference to validate (not null, unaffected)
-     * @param description description of the object
+     * @param array the array to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws NullPointerException if the array is null or contains a null
      * element
@@ -558,8 +557,8 @@ final public class Validate {
     /**
      * Validate a non-zero integer value as a method argument.
      *
-     * @param iValue value to validate (&ne;0)
-     * @param description description of the value
+     * @param iValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is zero
      */
@@ -581,8 +580,8 @@ final public class Validate {
     /**
      * Validate a non-zero long value as a method argument.
      *
-     * @param lValue value to validate (&ne;0)
-     * @param description description of the value
+     * @param lValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is zero
      */
@@ -604,8 +603,8 @@ final public class Validate {
     /**
      * Validate a non-zero single-precision value as a method argument.
      *
-     * @param fValue value to validate (&ne;0)
-     * @param description description of the value
+     * @param fValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is zero
      */
@@ -627,8 +626,8 @@ final public class Validate {
     /**
      * Validate a non-zero Quaternion as a method argument.
      *
-     * @param quaternion the Quaternion to validate (not null, non-zero)
-     * @param description description of the Quaternion
+     * @param quaternion the Quaternion to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the Quaternion equals (0,0,0,0)
      * @throws NullPointerException if the Quaternion is null
@@ -653,8 +652,8 @@ final public class Validate {
     /**
      * Validate a non-zero Vector2f as a method argument.
      *
-     * @param vector vector to validate (not null, non-zero)
-     * @param description description of the vector
+     * @param vector the vector to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the vector equals (0,0)
      * @throws NullPointerException if the vector is null
@@ -679,8 +678,8 @@ final public class Validate {
     /**
      * Validate a non-zero Vector3f as a method argument.
      *
-     * @param vector vector to validate (not null, non-zero)
-     * @param description description of the vector
+     * @param vector the vector to validate (unaffected)
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the vector equals (0,0,0)
      * @throws NullPointerException if the vector is null
@@ -705,8 +704,8 @@ final public class Validate {
     /**
      * Validate a single-precision number as a method argument.
      *
-     * @param fValue value to validate (number)
-     * @param description description of the value
+     * @param fValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is NaN
      */
@@ -728,8 +727,8 @@ final public class Validate {
     /**
      * Validate a double-precision number as a method argument.
      *
-     * @param dValue value to validate (number)
-     * @param description description of the value
+     * @param dValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is NaN
      */
@@ -751,8 +750,8 @@ final public class Validate {
     /**
      * Validate a positive integer value as a method argument.
      *
-     * @param iValue value to validate (&gt;0)
-     * @param description description of the value
+     * @param iValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is negative or zero
      */
@@ -775,8 +774,8 @@ final public class Validate {
     /**
      * Validate a positive single-precision value as a method argument.
      *
-     * @param fValue value to validate (&gt;0)
-     * @param description description of the value
+     * @param fValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is not positive
      */
@@ -799,8 +798,8 @@ final public class Validate {
     /**
      * Validate a positive double-precision value as a method argument.
      *
-     * @param dValue value to validate (&gt;0)
-     * @param description description of the value
+     * @param dValue the value to validate
+     * @param description a description of the argument
      * @return true
      * @throws IllegalArgumentException if the value is not positive
      */
@@ -814,6 +813,32 @@ final public class Validate {
             }
             logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, dValue});
             String message = what + " must be positive.";
+            throw new IllegalArgumentException(message);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate an all-positive Vector3f as a method argument.
+     *
+     * @param vector the vector to validate (unaffected)
+     * @param description a description of the argument
+     * @return true
+     * @throws IllegalArgumentException if any component is not positive
+     * @throws NullPointerException if the vector is null
+     */
+    public static boolean positive(Vector3f vector, String description) {
+        nonNull(vector, description);
+
+        if (MyVector3f.isAllPositive(vector)) {
+            String what;
+            if (description == null) {
+                what = "Vector3f argument";
+            } else {
+                what = description;
+            }
+            String message = what + " must have all components positive.";
             throw new IllegalArgumentException(message);
         }
 
