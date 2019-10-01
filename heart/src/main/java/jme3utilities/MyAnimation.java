@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 import jme3utilities.math.MyArray;
 
 /**
- * Utility methods for manipulating pre-3.3 animations and tracks. All methods
+ * Utility methods for manipulating animations, clips, and tracks. All methods
  * should be static.
  *
  * @author Stephen Gold sgold@sonic.net
@@ -102,7 +102,7 @@ public class MyAnimation {
      * Describe an Animation.
      *
      * @param animation the Animation to describe (not null, unaffected)
-     * @param animControl the Control that contains the animation (not null,
+     * @param animControl the Control that contains the Animation (not null,
      * unaffected)
      * @return textual description (not null, not empty)
      */
