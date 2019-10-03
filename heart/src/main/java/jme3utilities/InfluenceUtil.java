@@ -78,7 +78,7 @@ public class InfluenceUtil {
      * @param visualizer the visualizer (not null, modified)
      * @param skeletonControl the control to analyze (not null, unaffected)
      */
-    static void hideNonInfluencers(SkeletonVisualizer visualizer,
+    public static void hideNonInfluencers(SkeletonVisualizer visualizer,
             SkeletonControl skeletonControl) {
         Spatial subtree = skeletonControl.getSpatial();
         Skeleton skeleton = ((SkeletonControl) skeletonControl).getSkeleton();
