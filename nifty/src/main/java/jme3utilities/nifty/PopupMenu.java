@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -129,7 +129,7 @@ public class PopupMenu
     /**
      * Generate the action string for an indexed item in this menu.
      *
-     * @param index item to generate for (&ge;0, 0 &rarr; 1st)
+     * @param index item to generate for (&ge;0, 0 &rarr; first)
      * @return action string, or null for index out of range
      */
     String actionString(int index) {

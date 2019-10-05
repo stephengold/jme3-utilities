@@ -137,7 +137,7 @@ abstract public class Tool extends GuiWindowController {
     // GuiWindowController methods
 
     /**
-     * Initialize this controller prior to its 1st update.
+     * Initialize this controller prior to its first update.
      *
      * @param stateManager (not null)
      * @param application application which owns this tool (not null)
