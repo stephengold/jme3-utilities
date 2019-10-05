@@ -88,7 +88,7 @@ public class SimplePolygon3f
      */
     private Vector3f planeNormal = null;
     /**
-     * cached 1st basis vector for planar offsets (unit vector, initialized by
+     * cached first basis vector for planar offsets (unit vector, initialized by
      * #setPlane())
      */
     private Vector3f planeXBasis = null;
@@ -98,7 +98,7 @@ public class SimplePolygon3f
      */
     private Vector3f planeZBasis = null;
     /**
-     * cached planar offsets relative to the 1st corner (allocated by
+     * cached planar offsets relative to the first corner (allocated by
      * constructor, initialized by #setPlanarOffset())
      */
     final private VectorXZ[] planarOffsets;
@@ -603,8 +603,8 @@ public class SimplePolygon3f
     }
 
     /**
-     * Calculate the distance from the specified starting point to the 1st point
-     * of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the first
+     * point of support (if any) directly below it in this region.
      *
      * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
@@ -697,7 +697,7 @@ public class SimplePolygon3f
             assert startI < numCorners : startI;
         }
         /*
-         * Add its 1st corner to the result.
+         * Add its first corner to the result.
          */
         Vector3f location = cornerLocations[startI];
         result.add(location);

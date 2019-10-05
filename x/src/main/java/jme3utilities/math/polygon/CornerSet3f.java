@@ -389,14 +389,14 @@ public class CornerSet3f {
      * Test whether all the corners in a specified subset lie on the line
      * connecting 2 specified corners.
      *
-     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param subset (length&ge;1, length&le;numCorners, unaffected)
      * @return true if the corners are collinear, false otherwise
      */
     protected boolean allCollinear(int cornerIndex1, int cornerIndex2,
             BitSet subset) {
-        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex1, "index of first corner");
         validateIndex(cornerIndex2, "index of 2nd corner");
         Validate.nonNull(subset, "subset");
         int length = subset.length();
@@ -448,7 +448,7 @@ public class CornerSet3f {
     /**
      * Test whether 3 corners are collinear.
      *
-     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param cornerIndex3 index of the 3rd corner (&ge;0, &lt;numCorners)
      * @param storeMiddleIndex if the result is true, used to store the index of
@@ -457,7 +457,7 @@ public class CornerSet3f {
      */
     protected boolean areCollinear(int cornerIndex1, int cornerIndex2,
             int cornerIndex3, int[] storeMiddleIndex) {
-        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex1, "index of first corner");
         validateIndex(cornerIndex2, "index of 2nd corner");
         validateIndex(cornerIndex3, "index of 3rd corner");
         /*
@@ -499,12 +499,12 @@ public class CornerSet3f {
     /**
      * Test whether 2 specified corners coincide.
      *
-     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @return true if they coincide, otherwise false
      */
     protected boolean doCoincide(int cornerIndex1, int cornerIndex2) {
-        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex1, "index of first corner");
         validateIndex(cornerIndex2, "index of 2nd corner");
 
         double squaredDistance = squaredDistance(cornerIndex1, cornerIndex2);
@@ -550,13 +550,13 @@ public class CornerSet3f {
      * Calculate the square of the area of the triangle formed by 3 specified
      * corners.
      *
-     * @param indexA index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param indexA index of the first corner (&ge;0, &lt;numCorners)
      * @param indexB index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param indexC index of the 3rd corner (&ge;0, &lt;numCorners)
      * @return area^2 (&ge;0)
      */
     protected double squaredArea(int indexA, int indexB, int indexC) {
-        validateIndex(indexA, "index of 1st corner");
+        validateIndex(indexA, "index of first corner");
         validateIndex(indexB, "index of 2nd corner");
         validateIndex(indexC, "index of 3rd corner");
         /*
@@ -578,12 +578,12 @@ public class CornerSet3f {
     /**
      * Calculate (or look up) the squared distance between 2 corners.
      *
-     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @return squared distance (&ge;0)
      */
     protected double squaredDistance(int cornerIndex1, int cornerIndex2) {
-        validateIndex(cornerIndex1, "index of 1st corner");
+        validateIndex(cornerIndex1, "index of first corner");
         validateIndex(cornerIndex2, "index of 2nd corner");
 
         if (squaredDistances[cornerIndex1][cornerIndex2] == null) {
@@ -762,7 +762,7 @@ public class CornerSet3f {
      * Initialize the element(s) of the #squaredDistances field for a particular
      * pair of corners.
      *
-     * @param cornerIndex1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param cornerIndex1 index of the first corner (&ge;0, &lt;numCorners)
      * @param cornerIndex2 index of the 2nd corner (&ge;0, &lt;numCorners)
      */
     private void setSquaredDistance(int cornerIndex1, int cornerIndex2) {
@@ -784,7 +784,7 @@ public class CornerSet3f {
     /**
      * Direct setter for the #squaredDistances field.
      *
-     * @param ci1 index of the 1st corner (&ge;0, &lt;numCorners)
+     * @param ci1 index of the first corner (&ge;0, &lt;numCorners)
      * @param ci2 index of the 2nd corner (&ge;0, &lt;numCorners)
      * @param newValue new value for squared distance (&ge;0)
      */

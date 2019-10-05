@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -124,21 +124,23 @@ public class GenericPolygon3f extends Polygon3f {
      * Test whether 2 line segments (each connecting 2 distinct corners)
      * intersect (apart from shared any corners).
      *
-     * @param corner1 index of 1st corner, 1st segment (&ge;0, &lt;numCorners)
-     * @param partner1 index of 2nd corner, 1st segment (&ge;0, &lt;numCorners)
-     * @param corner2 index of 1st corner, 2nd segment (&ge;0, &lt;numCorners)
+     * @param corner1 index of first corner, first segment (&ge;0,
+     * &lt;numCorners)
+     * @param partner1 index of 2nd corner, first segment (&ge;0,
+     * &lt;numCorners)
+     * @param corner2 index of first corner, 2nd segment (&ge;0, &lt;numCorners)
      * @param partner2 index of 2nd corner, 2nd segment (&ge;0, &lt;numCorners)
      * @return true if the segments intersect, otherwise false
      */
     protected boolean doSegmentsIntersect(int corner1, int partner1,
             int corner2, int partner2) {
-        validateIndex(corner1, "index of 1st corner of 1st segment");
-        validateIndex(partner1, "index of 2nd corner of 1st segment");
+        validateIndex(corner1, "index of first corner of first segment");
+        validateIndex(partner1, "index of 2nd corner of first segment");
         if (corner1 == partner1) {
-            throw new IllegalArgumentException("1st segment is trivial.");
+            throw new IllegalArgumentException("first segment is trivial.");
         }
-        validateIndex(corner2, "index of 1st corner of 2nd segment");
-        validateIndex(partner2, "index of 2st corner of 2nd segment");
+        validateIndex(corner2, "index of first corner of 2nd segment");
+        validateIndex(partner2, "index of 2nd corner of 2nd segment");
         if (corner2 == partner2) {
             throw new IllegalArgumentException("2nd segment is trivial.");
         }
@@ -252,12 +254,12 @@ public class GenericPolygon3f extends Polygon3f {
     /**
      * Test whether 2 sides intersect (other than at a shared corner).
      *
-     * @param side1 index of the 1st side (&ge;0, &lt;numCorners)
+     * @param side1 index of the first side (&ge;0, &lt;numCorners)
      * @param side2 index of the 2nd side (&ge;0, &lt;numCorners)
      * @return true if they intersect, otherwise false
      */
     protected boolean doSidesIntersect(int side1, int side2) {
-        validateIndex(side1, "index of 1st side");
+        validateIndex(side1, "index of first side");
         validateIndex(side2, "index of 2nd side");
 
         int next1 = nextIndex(side1);
@@ -390,9 +392,11 @@ public class GenericPolygon3f extends Polygon3f {
      * Helper method to determine whether 2 collinear segments overlap.
      *
      * @param ext index of an outer corner (&ge;0, &lt; numCorners)
-     * @param corner1 index of 1st corner, 1st segment (&ge;0, &lt;numCorners)
-     * @param partner1 index of 2nd corner, 1st segment (&ge;0, &lt;numCorners)
-     * @param corner2 index of 1st corner, 2nd segment (&ge;0, &lt;numCorners)
+     * @param corner1 index of first corner, first segment (&ge;0,
+     * &lt;numCorners)
+     * @param partner1 index of 2nd corner, first segment (&ge;0,
+     * &lt;numCorners)
+     * @param corner2 index of first corner, 2nd segment (&ge;0, &lt;numCorners)
      * @param partner2 index of 2nd corner, 2nd segment (&ge;0, &lt;numCorners)
      */
     private boolean isOverlap(int ext, int corner1, int partner1,

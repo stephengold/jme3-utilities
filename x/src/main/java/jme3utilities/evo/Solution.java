@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ public class Solution {
             Solution.class.getName());
     // *************************************************************************
     // fields
-    
+
     /**
      * array of parameter values (not null, initialized by constructor)
      */
@@ -123,7 +123,7 @@ public class Solution {
             Solution solution2, double blend2) {
         Validate.nonNull(solution1, "solution1");
         Validate.nonNull(solution2, "solution2");
-        Validate.fraction(blend1, "1st blend amount");
+        Validate.fraction(blend1, "first blend amount");
         Validate.fraction(blend2, "2nd blend amount");
         Validate.fraction(blend1 + blend2, "sum of blend amounts");
         String species1 = solution1.getSpecies();

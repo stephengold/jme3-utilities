@@ -72,14 +72,14 @@ public class Segment3f implements Locus3f {
     /**
      * Instantiate a segment with the specified corners.
      *
-     * @param corner0 location of 1st corner (not null, unaffected)
+     * @param corner0 location of first corner (not null, unaffected)
      * @param corner1 location of 2nd corner (not null, unaffected)
      * @param compareTolerance tolerance (&ge;0) used when comparing two points
      * or testing for intersection
      */
     public Segment3f(Vector3f corner0, Vector3f corner1,
             float compareTolerance) {
-        Validate.nonNull(corner0, "1st corner");
+        Validate.nonNull(corner0, "first corner");
         Validate.nonNull(corner1, "2nd corner");
         Validate.nonNegative(compareTolerance, "compare tolerance");
         /*
@@ -483,8 +483,8 @@ public class Segment3f implements Locus3f {
     }
 
     /**
-     * Calculate the distance from the specified starting point to the 1st point
-     * of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the first
+     * point of support (if any) directly below it in this region.
      *
      * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)

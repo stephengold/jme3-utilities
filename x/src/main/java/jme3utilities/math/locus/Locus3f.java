@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -116,8 +116,8 @@ public interface Locus3f {
             int maxPoints);
 
     /**
-     * Calculate the distance from the specified starting point to the 1st point
-     * of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the first
+     * point of support (if any) directly below it in this region.
      *
      * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
