@@ -289,7 +289,7 @@ public class Icosphere extends Mesh {
     /**
      * Determine the index of the vertex halfway between the indexed vertices.
      *
-     * @param p1 the index of the 1st input vertex (&ge;0)
+     * @param p1 the index of the first input vertex (&ge;0)
      * @param p2 the index of the 2nd input vertex (&ge;0)
      * @return the midpoint index (&ge;0)
      */
