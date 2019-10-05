@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -106,7 +106,7 @@ class MenuInputMode extends InputMode {
         } else if (actionString.startsWith("select ")) {
             /*
              * Select a menu item based on its position, with "1"
-             * selecting the 1st item.
+             * selecting the first item.
              */
             String arg = MyString.remainder(actionString, "select ");
             int position = Integer.parseInt(arg);
@@ -143,7 +143,7 @@ class MenuInputMode extends InputMode {
     }
 
     /**
-     * Initialize this (disabled) mode prior to its 1st update.
+     * Initialize this (disabled) mode prior to its first update.
      *
      * @param stateManager (not null)
      * @param application (not null)

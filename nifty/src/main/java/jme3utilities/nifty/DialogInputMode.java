@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -135,7 +135,7 @@ class DialogInputMode extends InputMode {
     // AppState methods
 
     /**
-     * Initialize this (disabled) input mode prior to its 1st update.
+     * Initialize this (disabled) input mode prior to its first update.
      *
      * @param stateManager (not null)
      * @param application (not null)

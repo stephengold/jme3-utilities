@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -105,7 +105,7 @@ public class MessageDisplay extends GuiScreenController {
     // BasicScreenController methods
 
     /**
-     * Initialize this display prior to its 1st update.
+     * Initialize this display prior to its first update.
      *
      * @param stateManager (not null)
      * @param application application which owns this screen (not null)

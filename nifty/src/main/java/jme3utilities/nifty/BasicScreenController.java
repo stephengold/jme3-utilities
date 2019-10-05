@@ -347,7 +347,7 @@ public class BasicScreenController
     }
 
     /**
-     * Initialize this controller prior to its 1st update.
+     * Initialize this controller prior to its first update.
      *
      * @param stateManager (not null)
      * @param application application which owns this screen (not null)

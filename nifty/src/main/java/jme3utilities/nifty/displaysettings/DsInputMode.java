@@ -88,7 +88,7 @@ public class DsInputMode extends InputMode {
     }
 
     /**
-     * Initialize this (disabled) mode prior to its 1st update.
+     * Initialize this (disabled) mode prior to its first update.
      *
      * @param stateManager (not null)
      * @param application (not null)

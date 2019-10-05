@@ -240,7 +240,7 @@ public class PopScreenController extends BasicScreenController {
     /**
      * Select the indexed item from the active popup menu.
      *
-     * @param index index of the item (&ge;0, 0 &rarr; 1st)
+     * @param index index of the item (&ge;0, 0 &rarr; first)
      */
     void selectMenuItem(int index) {
         Validate.nonNegative(index, "index");

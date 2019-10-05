@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -140,7 +140,7 @@ public class WindowController extends GuiAppState {
     // AppState methods
 
     /**
-     * Initialize this controller prior to its 1st update.
+     * Initialize this controller prior to its first update.
      *
      * @param stateManager (not null)
      * @param application application which owns the window (not null)
