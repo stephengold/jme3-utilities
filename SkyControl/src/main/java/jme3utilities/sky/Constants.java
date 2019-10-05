@@ -57,7 +57,7 @@ final public class Constants {
      */
     final public static float discDiameter = 0.25f;
     /**
-     * 1st (U) texture coordinate of the top of a DomeMesh
+     * first (U) texture coordinate of the top of a DomeMesh
      */
     final static float topU = 0.5f;
     /**

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -96,7 +96,7 @@ public class WaterProcessor extends SimpleWaterProcessor {
     // SimpleWaterProcessor methods
 
     /**
-     * Initialize this processor prior to its 1st update.
+     * Initialize this processor prior to its first update.
      *
      * @param renderManager (not null)
      * @param viewPort (not null)

@@ -137,7 +137,7 @@ public class SkyMaterialCore extends Material {
     }
 
     /**
-     * Instantiate sky material from a specified asset path. The 1st method
+     * Instantiate sky material from a specified asset path. The first method
      * invoked should be initialize().
      *
      * @param assetManager asset manager for loading textures and material
@@ -554,7 +554,7 @@ public class SkyMaterialCore extends Material {
      * Alter the texture offset of a cloud layer.
      *
      * @param layerIndex (&lt;maxCloudLayers, &ge;0)
-     * @param newU 1st component of the new offset
+     * @param newU first component of the new offset
      * @param newV 2nd component of the new offset
      */
     public void setCloudsOffset(int layerIndex, float newU, float newV) {

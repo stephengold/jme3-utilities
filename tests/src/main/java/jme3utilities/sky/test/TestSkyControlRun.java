@@ -307,7 +307,7 @@ public class TestSkyControlRun
     // ActionAppState methods
 
     /**
-     * Initialize this app state on the 1st update after it gets attached.
+     * Initialize this app state on the first update after it gets attached.
      *
      * @param sm the application's state manager (not null)
      * @param app the application that owns this state (not null)
@@ -580,7 +580,7 @@ public class TestSkyControlRun
     /**
      * Create a horizontal square of water and add it to the scene.
      * <p>
-     * During initialization of the water processor (on the 1st update), the
+     * During initialization of the water processor (on the first update), the
      * processor will discover the SkyControl and put the SkyControl in charge
      * of the processor's background colors.
      */
