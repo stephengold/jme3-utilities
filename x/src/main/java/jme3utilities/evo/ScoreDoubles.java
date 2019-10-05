@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -71,11 +71,11 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
     /**
      * Instantiate a score from a pair of sub-score values.
      *
-     * @param subscore0 1st sub-score value (number)
+     * @param subscore0 first sub-score value (number)
      * @param subscore1 2nd sub-score value (number)
      */
     public ScoreDoubles(double subscore0, double subscore1) {
-        Validate.number(subscore0, "1st sub-score");
+        Validate.number(subscore0, "first sub-score");
         Validate.number(subscore1, "2nd sub-score");
 
         subscores = new double[2];
@@ -119,9 +119,9 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
 
     /**
      * Compare two scores and return the higher one. If they are equivalent,
-     * return the 1st score. Null is treated as the lowest possible score.
+     * return the first score. Null is treated as the lowest possible score.
      *
-     * @param score1 1st score input (may be null)
+     * @param score1 first score input (may be null)
      * @param score2 2nd score input (may be null)
      * @return one of the inputs, or null if both inputs are null
      */

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ public interface Spline3f {
     int numControlPoints();
 
     /**
-     * Calculate the spline's 1st derivative to the right of the specified
+     * Calculate the spline's first derivative to the right of the specified
      * parameter value.
      *
      * @param sampleT input value

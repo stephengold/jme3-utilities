@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -125,7 +125,7 @@ public class Shell3f implements Locus3f {
      */
     private Vector3f weights;
     // *************************************************************************
-    // constructors    
+    // constructors
 
     /**
      * Instantiate a sphere.
@@ -353,7 +353,7 @@ public class Shell3f implements Locus3f {
         }
     }
     // *************************************************************************
-    // Locus3f methods    
+    // Locus3f methods
 
     /**
      * Test whether this region can be merged with another.
@@ -451,7 +451,7 @@ public class Shell3f implements Locus3f {
 
         if (squaredValue == 0.0 && innerRadius > 0.0) {
             /*
-             * Location is the center.  
+             * Location is the center.
              * Substitute an offset halfway to the inner surface.
              */
             float r = innerRadius / 2f;
@@ -479,7 +479,7 @@ public class Shell3f implements Locus3f {
         double scaleFactor;
         if (squaredValue < innerRSquared) {
             /*
-             * The original location is in the hole, so project outward radially 
+             * The original location is in the hole, so project outward radially
              * from the center to the inner surface.
              */
             double centerMagnitude = Metric.CHEBYSHEV.value(center);
@@ -508,8 +508,8 @@ public class Shell3f implements Locus3f {
         }
         assert scaleFactor > 0.0 : scaleFactor;
         /*
-         * Project to the surface of the shell.  For non-spherical 
-         * shells, this won't usually produce the nearest point, but it 
+         * Project to the surface of the shell.  For non-spherical
+         * shells, this won't usually produce the nearest point, but it
          * provides a starting point for optimization.
          */
         Vector3f result = offset.mult((float) scaleFactor);
@@ -542,7 +542,7 @@ public class Shell3f implements Locus3f {
         }
         result.addLocal(center);
         /*
-         * TODO if shell is non-spherical, optimize the result 
+         * TODO if shell is non-spherical, optimize the result
          */
         assert contains(result) : result;
         return result;
@@ -670,8 +670,8 @@ public class Shell3f implements Locus3f {
     }
 
     /**
-     * Calculate the distance from the specified starting point to the 1st point
-     * of support (if any) directly below it in this region.
+     * Calculate the distance from the specified starting point to the first
+     * point of support (if any) directly below it in this region.
      *
      * @param location coordinates of starting point (not null, unaffected)
      * @param cosineTolerance cosine of maximum slope for support (&gt;0, &lt;1)
@@ -685,7 +685,7 @@ public class Shell3f implements Locus3f {
         throw new UnsupportedOperationException(); // TODO
     }
     // *************************************************************************
-    // Object methods    
+    // Object methods
 
     /**
      * Represent this shell as a text string.

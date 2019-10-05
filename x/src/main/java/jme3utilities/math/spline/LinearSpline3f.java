@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ public class LinearSpline3f implements Spline3f {
 
     /**
      * Instantiate a new spline using the specified array of control points. The
-     * 1st control point will be the value at t=0. t increases with Euclidean
+     * first control point will be the value at t=0. t increases with Euclidean
      * distance along the path.
      *
      * @param points control points (not null, length&gt;0, elements not null,
@@ -106,7 +106,7 @@ public class LinearSpline3f implements Spline3f {
 
     /**
      * Instantiate a new spline using the specified list of control points. The
-     * 1st control point will be the value at t=0. t increases with Euclidean
+     * first control point will be the value at t=0. t increases with Euclidean
      * distance along the path.
      *
      * @param points control points (not null, size&gt;0, elements not null,
@@ -233,7 +233,7 @@ public class LinearSpline3f implements Spline3f {
     }
 
     /**
-     * Calculate this spline's 1st derivative on the positive side of the
+     * Calculate this spline's first derivative on the positive side of the
      * specified parameter value.
      *
      * @param sampleT input value
