@@ -85,7 +85,7 @@ public class InfluenceUtil {
         BitSet influencers = addAllInfluencers(subtree, skeleton);
 
         int numBones = skeleton.getBoneCount();
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < numBones; ++boneIndex) {
             if (influencers.get(boneIndex) == false) {
                 visualizer.setHeadColor(boneIndex, ColorRGBA.BlackNoAlpha);
             }
@@ -107,7 +107,7 @@ public class InfluenceUtil {
 
         addDirectInfluencers(subtree, result);
 
-        for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
+        for (int boneIndex = 0; boneIndex < numBones; ++boneIndex) {
             if (result.get(boneIndex)) {
                 Bone bone = skeleton.getBone(boneIndex);
                 for (Bone parent = bone.getParent();
@@ -176,8 +176,8 @@ public class InfluenceUtil {
         int numWeights = weightBuffer.remaining();
         assert numWeights == numVertices * maxWeights : numWeights;
 
-        for (int vIndex = 0; vIndex < numVertices; vIndex++) {
-            for (int wIndex = 0; wIndex < maxWeights; wIndex++) {
+        for (int vIndex = 0; vIndex < numVertices; ++vIndex) {
+            for (int wIndex = 0; wIndex < maxWeights; ++wIndex) {
                 float weight = weightBuffer.get();
                 int boneIndex = MyMesh.readIndex(boneIndexBuffer);
                 if (wIndex < maxWeightsPerVert && weight != 0f) {
