@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 4.1.0for32 released on TBD
+## Version 4.1.0for32 released on 5 October 2019
 
  + Added a `positive()` method for `Vector3f` arguments to the `Validate` class.
  + Publicized 3 methods in the `InfluenceUtil` class.
