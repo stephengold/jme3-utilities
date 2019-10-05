@@ -53,7 +53,7 @@ import jme3utilities.UncachedKey;
 import jme3utilities.Validate;
 
 /**
- * Action app state to implement a configurable input mode. At most one mode is
+ * An ActionAppState to implement a configurable input mode. At most one mode is
  * active at a time.
  * <p>
  * Modes may be temporarily suspended, in which the case the underlying app
@@ -454,7 +454,7 @@ abstract public class InputMode
     // ActionAppState methods
 
     /**
-     * Initialize this (disabled) mode prior to its 1st update.
+     * Initialize this (disabled) mode prior to its first update.
      *
      * @param stateManager (not null)
      * @param application (not null)

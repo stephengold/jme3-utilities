@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ public class Locators {
      */
     private static AssetManager manager = null;
     /**
-     * list of locator types (1st element is tried first, parallel with
+     * list of locator types (first element is tried first, parallel with
      * {@link #rootPaths})
      */
     final private List<Class<? extends AssetLocator>> locatorTypes
@@ -74,7 +74,7 @@ public class Locators {
      */
     final private static List<Locators> stack = new ArrayList<>(3);
     /**
-     * list of locator root paths (1st element is tried first, parallel with
+     * list of locator root paths (first element is tried first, parallel with
      * {@link #locatorTypes})
      */
     final private List<String> rootPaths = new ArrayList<>(6);
