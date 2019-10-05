@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2019, Stephen Gold
  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -287,7 +287,7 @@ public class GlobeRenderer extends SimpleAppState {
     /**
      * Alter the light direction.
      *
-     * @param theta 1st polar coordinate (in radians, &le;2*Pi, &ge;0)
+     * @param theta first polar coordinate (in radians, &le;2*Pi, &ge;0)
      * @param phi 2nd polar coordinate (in radians, &le;Pi/2, &ge;-Pi/2)
      */
     final public void setPhase(float theta, float phi) {
@@ -341,7 +341,7 @@ public class GlobeRenderer extends SimpleAppState {
     }
 
     /**
-     * Initialize this controller prior to its 1st update. Should be invoked
+     * Initialize this controller prior to its first update. Should be invoked
      * only by a subclass or by the AppStateManager.
      *
      * @param stateManager (not null)

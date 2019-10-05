@@ -101,7 +101,7 @@ public class SkyMaterial extends SkyMaterialCore {
     }
 
     /**
-     * Instantiate sky material from the default definitions. The 1st method
+     * Instantiate sky material from the default definitions. The first method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -112,7 +112,7 @@ public class SkyMaterial extends SkyMaterialCore {
     }
 
     /**
-     * Instantiate sky material from a specified asset path. The 1st method
+     * Instantiate sky material from a specified asset path. The first method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -126,7 +126,7 @@ public class SkyMaterial extends SkyMaterialCore {
 
     /**
      * Instantiate sky material with the specified number of objects and cloud
-     * layers. Material definitions will be automatically selected. The 1st
+     * layers. Material definitions will be automatically selected. The first
      * method invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
@@ -141,7 +141,7 @@ public class SkyMaterial extends SkyMaterialCore {
     }
 
     /**
-     * Instantiate sky material from a specified asset path. The 1st method
+     * Instantiate sky material from a specified asset path. The first method
      * invoked should be initialize().
      *
      * @param assetManager for loading textures and material definitions (not
