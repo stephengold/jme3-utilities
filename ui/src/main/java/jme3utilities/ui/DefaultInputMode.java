@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 import jme3utilities.MyString;
 
 /**
- * Default input mode for a GUI application.
+ * The default InputMode for an ActionApplication.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -109,7 +109,7 @@ class DefaultInputMode extends InputMode {
     }
 
     /**
-     * Initialize this (disabled) mode prior to its 1st update.
+     * Initialize this (disabled) mode prior to its first update.
      *
      * @param stateManager (not null)
      * @param application (not null)
