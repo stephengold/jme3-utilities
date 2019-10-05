@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 4.1.0for32 released on TBD
+
+ + Added a `positive()` method for `Vector3f` arguments to the `Validate` class.
+ + Publicized 3 methods in the `InfluenceUtil` class.
+
 ## Version 4.0.0for32 released on 23 September 2019
 
  + Deleted the `traverse()` method from `SubtreeControl`. (API change!)
