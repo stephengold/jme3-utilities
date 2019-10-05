@@ -76,7 +76,7 @@ public class InfluenceUtil {
      * De-visualize any bones that don't influence mesh vertices.
      *
      * @param visualizer the visualizer (not null, modified)
-     * @param skeletonControl the control to analyze (not null, unaffected)
+     * @param skeletonControl the Control to analyze (not null, unaffected)
      */
     public static void hideNonInfluencers(SkeletonVisualizer visualizer,
             SkeletonControl skeletonControl) {
@@ -91,19 +91,17 @@ public class InfluenceUtil {
             }
         }
     }
-    // *************************************************************************
-    // private methods
 
     /**
-     * Generate the set of indices for bones that influence (directly or
+     * Generate a set of indices for bones that influence (directly or
      * indirectly) vertices in the specified subtree of the scene graph. Note:
      * recursive!
      *
      * @param subtree the subtree to traverse (may be null, unaffected)
-     * @param skeleton the skeleton containing the bones (not null, unaffected)
+     * @param skeleton the Skeleton containing the bones (not null, unaffected)
      * @return a new set of bone indices
      */
-    private static BitSet addAllInfluencers(Spatial subtree,
+    public static BitSet addAllInfluencers(Spatial subtree,
             Skeleton skeleton) {
         int numBones = skeleton.getBoneCount();
         BitSet result = new BitSet(numBones);
@@ -124,6 +122,8 @@ public class InfluenceUtil {
 
         return result;
     }
+    // *************************************************************************
+    // private methods
 
     /**
      * Add indices to the result for bones that directly influence vertices in
@@ -166,12 +166,13 @@ public class InfluenceUtil {
 
     /**
      * Add indices to the result for bones that directly influence vertices in
-     * the specified subtree of the scene graph. Note: recursive!
+     * the specified subtree of the scene graph. Note: recursive! TODO re-order
+     * methods
      *
      * @param subtree subtree to traverse (may be null, unaffected)
      * @param addResult (not null, modified)
      */
-    private static void addDirectInfluencers(Spatial subtree,
+    public static void addDirectInfluencers(Spatial subtree,
             BitSet addResult) {
         if (subtree instanceof Geometry) {
             Geometry geometry = (Geometry) subtree;
