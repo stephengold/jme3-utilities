@@ -101,8 +101,7 @@ public class InfluenceUtil {
      * @param skeleton the Skeleton containing the bones (not null, unaffected)
      * @return a new set of bone indices
      */
-    public static BitSet addAllInfluencers(Spatial subtree,
-            Skeleton skeleton) {
+    public static BitSet addAllInfluencers(Spatial subtree, Skeleton skeleton) {
         int numBones = skeleton.getBoneCount();
         BitSet result = new BitSet(numBones);
 
@@ -121,6 +120,30 @@ public class InfluenceUtil {
         }
 
         return result;
+    }
+
+    /**
+     * Add indices to the result for bones that directly influence vertices in
+     * the specified subtree of the scene graph. Note: recursive!
+     *
+     * @param subtree subtree to traverse (may be null, unaffected)
+     * @param addResult (not null, modified)
+     */
+    public static void addDirectInfluencers(Spatial subtree, BitSet addResult) {
+        if (subtree instanceof Geometry) {
+            Geometry geometry = (Geometry) subtree;
+            Mesh mesh = geometry.getMesh();
+            if (MyMesh.isAnimated(mesh)) {
+                addDirectInfluencers(mesh, addResult);
+            }
+
+        } else if (subtree instanceof Node) {
+            Node node = (Node) subtree;
+            List<Spatial> children = node.getChildren();
+            for (Spatial child : children) {
+                addDirectInfluencers(child, addResult);
+            }
+        }
     }
     // *************************************************************************
     // private methods
@@ -160,32 +183,6 @@ public class InfluenceUtil {
                 if (wIndex < maxWeightsPerVert && weight != 0f) {
                     addResult.set(boneIndex);
                 }
-            }
-        }
-    }
-
-    /**
-     * Add indices to the result for bones that directly influence vertices in
-     * the specified subtree of the scene graph. Note: recursive! TODO re-order
-     * methods
-     *
-     * @param subtree subtree to traverse (may be null, unaffected)
-     * @param addResult (not null, modified)
-     */
-    public static void addDirectInfluencers(Spatial subtree,
-            BitSet addResult) {
-        if (subtree instanceof Geometry) {
-            Geometry geometry = (Geometry) subtree;
-            Mesh mesh = geometry.getMesh();
-            if (MyMesh.isAnimated(mesh)) {
-                addDirectInfluencers(mesh, addResult);
-            }
-
-        } else if (subtree instanceof Node) {
-            Node node = (Node) subtree;
-            List<Spatial> children = node.getChildren();
-            for (Spatial child : children) {
-                addDirectInfluencers(child, addResult);
             }
         }
     }
