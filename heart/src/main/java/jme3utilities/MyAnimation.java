@@ -329,7 +329,7 @@ public class MyAnimation {
     }
 
     /**
-     * Find the specified track in the specified Animation.
+     * Find the specified Track in the specified Animation.
      *
      * @param animation the Animation containing the Track (not null,
      * unaffected)
@@ -354,10 +354,11 @@ public class MyAnimation {
      * Find a TransformTrack in a specified AnimClip for the indexed Joint.
      *
      * @param clip which AnimClip (not null, unaffected)
-     * @param jointIndex which joint (&ge;0)
+     * @param jointIndex which Joint (&ge;0)
      * @return the pre-existing instance, or null if not found
      */
-    public TransformTrack findTransformTrack(AnimClip clip, int jointIndex) {
+    public static TransformTrack findTransformTrack(AnimClip clip,
+            int jointIndex) {
         TransformTrack result = null;
 
         AnimTrack[] animTracks = clip.getTracks();
@@ -483,7 +484,7 @@ public class MyAnimation {
     }
 
     /**
-     * Test whether the specified animation includes a BoneTrack for the indexed
+     * Test whether the specified Animation includes a BoneTrack for the indexed
      * Bone.
      *
      * @param animation the Animation to test (not null, unaffected)
@@ -581,12 +582,12 @@ public class MyAnimation {
     }
 
     /**
-     * Create a BoneTrack in which all keyframes have the same transform.
+     * Create a BoneTrack in which all keyframes have the same Transform.
      *
      * @param boneIndex which bone (&ge;0)
      * @param frameTimes (not null, unaffected)
-     * @param transform (not null, unaffected)
-     * @return a new bone track
+     * @param transform the desired Transform (not null, unaffected)
+     * @return a new BoneTrack
      */
     public static BoneTrack newBoneTrack(int boneIndex, float[] frameTimes,
             Transform transform) {
