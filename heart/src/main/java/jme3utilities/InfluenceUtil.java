@@ -28,6 +28,7 @@ package jme3utilities;
 
 import com.jme3.anim.Armature;
 import com.jme3.anim.Joint;
+import com.jme3.anim.SkinningControl;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
@@ -90,6 +91,26 @@ public class InfluenceUtil {
         for (int boneIndex = 0; boneIndex < numBones; boneIndex++) {
             if (influencers.get(boneIndex) == false) {
                 visualizer.setHeadColor(boneIndex, ColorRGBA.BlackNoAlpha);
+            }
+        }
+    }
+
+    /**
+     * De-visualize any joints that don't influence mesh vertices.
+     *
+     * @param visualizer the visualizer (not null, modified)
+     * @param skinningControl the Control to analyze (not null, unaffected)
+     */
+    public static void hideNonInfluencers(SkeletonVisualizer visualizer,
+            SkinningControl skinningControl) {
+        Spatial subtree = skinningControl.getSpatial();
+        Armature armature = ((SkinningControl) skinningControl).getArmature();
+        BitSet influencers = addAllInfluencers(subtree, armature);
+
+        int numJoints = armature.getJointCount();
+        for (int jointIndex = 0; jointIndex < numJoints; jointIndex++) {
+            if (influencers.get(jointIndex) == false) {
+                visualizer.setHeadColor(jointIndex, ColorRGBA.BlackNoAlpha);
             }
         }
     }
