@@ -566,7 +566,13 @@ public class MyMath {
     public static int modulo(int iValue, int modulus) {
         Validate.positive(modulus, "modulus");
 
-        int result = (iValue % modulus + modulus) % modulus;
+        int remainder = iValue % modulus;
+        int result;
+        if (iValue >= 0) {
+            result = remainder;
+        } else {
+            result = (remainder + modulus) % modulus;
+        }
 
         assert result >= 0f : result;
         assert result < modulus : result;
@@ -586,7 +592,13 @@ public class MyMath {
     public static float modulo(float fValue, float modulus) {
         Validate.positive(modulus, "modulus");
 
-        float result = (fValue % modulus + modulus) % modulus;
+        float remainder = fValue % modulus;
+        float result;
+        if (fValue >= 0) {
+            result = remainder;
+        } else {
+            result = (remainder + modulus) % modulus;
+        }
 
         assert result >= 0f : result;
         assert result < modulus : result;
@@ -604,7 +616,13 @@ public class MyMath {
     public static double modulo(double dValue, double modulus) {
         Validate.positive(modulus, "modulus");
 
-        double result = (dValue % modulus + modulus) % modulus;
+        double remainder = dValue % modulus;
+        double result;
+        if (dValue >= 0) {
+            result = remainder;
+        } else {
+            result = (remainder + modulus) % modulus;
+        }
 
         assert result >= 0.0 : result;
         assert result < modulus : result;
