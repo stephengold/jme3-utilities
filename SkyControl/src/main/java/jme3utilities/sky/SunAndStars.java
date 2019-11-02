@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2019, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ import jme3utilities.math.MyMath;
  * <li>+Z points to the north celestial pole (in Ursa Minor)
  * </ul>
  * In world coordinates:<ul>
- * <li>+X points to the north horizon,
+ * <li>+X points to the north horizon
  * <li>+Y points to the zenith
  * <li>+Z points to the east horizon
  * </ul>
