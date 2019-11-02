@@ -78,10 +78,10 @@ public class MyMath {
         Vector3f b = triangle.get2();
         Vector3f c = triangle.get3();
 
-        Vector3f ab = b.subtract(a);
+        Vector3f ab = b.subtract(a); // TODO garbage
         Vector3f ac = c.subtract(a);
 
-        Vector3f cross = ab.cross(ac);
+        Vector3f cross = ab.cross(ac); // TODO garbage
         double areaSquared = MyVector3f.lengthSquared(cross) / 4.0;
         double area = Math.sqrt(areaSquared);
 
@@ -607,11 +607,13 @@ public class MyMath {
 
     /**
      * Compute the least non-negative value congruent with a double-precision
-     * value with respect to the specified modulus.
+     * value with respect to the specified modulus. modulo() differs from
+     * remainder for negative values of the first argument. For instance,
+     * modulo(-1, 4) == 3, while -1 % 4 == -1.
      *
      * @param dValue input value
      * @param modulus (&gt;0)
-     * @return x MOD modulus (&lt;modulus, &ge;0)
+     * @return dValue MOD modulus (&lt;modulus, &ge;0)
      */
     public static double modulo(double dValue, double modulus) {
         Validate.positive(modulus, "modulus");
@@ -687,8 +689,7 @@ public class MyMath {
     }
 
     /**
-     * Standardize a single-precision floating-point value in preparation for
-     * hashing.
+     * Standardize a single-precision value in preparation for hashing.
      *
      * @param fValue input value
      * @return an equivalent value that's not -0
