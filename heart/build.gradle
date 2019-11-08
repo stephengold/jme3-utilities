@@ -14,7 +14,6 @@ ext {
     baseName = "$artifact-$version"
 }
 
-build.dependsOn('pom')
 jar {
     baseName project.ext.baseName
     exclude('**/arrow.blend')
@@ -28,6 +27,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+build.dependsOn('pom')
 task pom {
     doLast {
         pom {
