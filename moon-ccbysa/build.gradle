@@ -14,9 +14,9 @@ ext {
 }
 
 build { dependsOn 'pom' }
-jar { baseName project.ext.baseName }
-javadocJar { baseName project.ext.baseName }
-sourcesJar { baseName project.ext.baseName }
+jar { archiveBaseName = project.ext.baseName }
+javadocJar { archiveBaseName = project.ext.baseName }
+sourcesJar { archiveBaseName = project.ext.baseName }
 
 task pom {
     doLast {
