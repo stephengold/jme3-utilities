@@ -42,7 +42,7 @@ repositories {
     maven { url 'https://dl.bintray.com/stephengold/jme3utilities' }
     maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for testdata
     jcenter()
-    maven { url 'http://nifty-gui.sourceforge.net/nifty-maven-repo' }
+    maven { url 'https://nifty-gui.sourceforge.net/nifty-maven-repo' }
 }
 
 // custom tasks for creating source/javadoc JARs
