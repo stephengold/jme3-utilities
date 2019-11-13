@@ -240,7 +240,8 @@ public class NamedAppState extends AbstractAppState {
     }
 
     /**
-     * Callback when this state gets attached.
+     * Callback when this state gets attached. Executes on the same thread as
+     * stateManager.attach(). Used mostly for debugging.
      *
      * @param sm the application's state manager (not null)
      */
@@ -253,7 +254,8 @@ public class NamedAppState extends AbstractAppState {
     }
 
     /**
-     * Callback when this state gets detached.
+     * Callback when this state gets detached. Executes on the same thread as
+     * stateManager.detach(). Used mostly for debugging.
      *
      * @param sm the application's state manager (not null)
      */
