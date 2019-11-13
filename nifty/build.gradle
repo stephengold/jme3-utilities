@@ -14,7 +14,6 @@ ext {
     baseName = "$artifact-$version"
 }
 
-build { dependsOn 'pom' }
 jar { archiveBaseName = project.ext.baseName }
 javadocJar { archiveBaseName = project.ext.baseName }
 sourcesJar { archiveBaseName = project.ext.baseName }
@@ -27,6 +26,7 @@ dependencies {
     api project(':ui')
 }
 
+build.dependsOn('pom')
 task('pom', type: Copy) {
     dependsOn 'generatePomFileForMavenPublication'
     from "${buildDir}/publications/maven/pom-default.xml"
