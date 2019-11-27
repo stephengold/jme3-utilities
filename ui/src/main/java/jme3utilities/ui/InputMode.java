@@ -427,6 +427,18 @@ abstract public class InputMode
     }
 
     /**
+     * Unbind the specified keyboard key.
+     *
+     * @param keyCode the key code
+     */
+    public void unbind(int keyCode) {
+        Validate.inRange(keyCode, "key code", 0, KeyInput.KEY_LAST);
+
+        Hotkey hotkey = Hotkey.findKey(keyCode);
+        unbind(hotkey);
+    }
+
+    /**
      * Unbind the specified hotkey.
      *
      * @param hotkey (not null)
