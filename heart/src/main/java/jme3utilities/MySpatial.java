@@ -844,6 +844,20 @@ public class MySpatial {
     }
 
     /**
+     * Enumerate all spatials in the specified subtree of a scene graph.
+     *
+     * @see com.jme3.scene.Node#descendantMatches(java.lang.Class)
+     *
+     * @param subtree (not null, aliases created)
+     * @return a new List (not null, not empty)
+     */
+    public static List<Spatial> listSpatials(Spatial subtree) {
+        Validate.nonNull(subtree, "subtree");
+        List<Spatial> result = listSpatials(subtree, Spatial.class, null);
+        return result;
+    }
+
+    /**
      * Enumerate all spatials of the specified type in the specified subtree of
      * a scene graph. Note: recursive!
      *
