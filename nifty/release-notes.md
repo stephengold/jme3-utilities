@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.11for33 released on TBD
+
+ + Fix multi-atlas batch render issue (submitted by joliver82).
+ + Base on version 4.2 of the jme3-utilities-heart library
+   and version 0.7.9 of the jme3-utilities-ui library.
+
 ## Version 0.9.10for33 released on 23 September 2019
 
  + Protect `GuiEvent` no-arg constructor.
