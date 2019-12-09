@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.11for33 released on TBD
+## Version 0.9.11for33 released on 8 December 2019
 
  + Fix multi-atlas batch render issue (submitted by joliver82).
  + Base on version 4.2 of the jme3-utilities-heart library
