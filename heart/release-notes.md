@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 4.2.0for33 released on TBD
+## Version 4.2.0for33 released on 8 December 2019
 
  + Added a single-argument `listSpatials()` method to the `MySpatial` class.
  + Targeted jMonkeyEngine version 3.3.0-beta1.
