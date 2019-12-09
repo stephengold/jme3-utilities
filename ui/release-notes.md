@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.7.9for33 released on TBD
+## Version 0.7.9for33 released on 8 December 2019
 
  + Added the `HelpUtils` class.
  + Implemented `unbind()` by keycode in the `InputMode` class.
