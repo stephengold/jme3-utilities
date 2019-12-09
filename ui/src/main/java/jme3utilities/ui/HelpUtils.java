@@ -44,7 +44,7 @@ import jme3utilities.Validate;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-class HelpUtils {
+public class HelpUtils {
     // *************************************************************************
     // constants and loggers
 
@@ -75,7 +75,7 @@ class HelpUtils {
      * pixels)
      * @return a new Node, suitable for attachment to the GUI node
      */
-    static Node buildNode(InputMode inputMode, Rectangle bounds,
+    public static Node buildNode(InputMode inputMode, Rectangle bounds,
             BitmapFont font, float space) {
         Validate.nonNull(inputMode, "input mode");
         Validate.nonNull(bounds, "bounds");
@@ -133,7 +133,7 @@ class HelpUtils {
      * @param inputMode (not null, unaffected)
      * @return a new String-to-String Map
      */
-    static Map<String, String> mapActions(InputMode inputMode) {
+    public static Map<String, String> mapActions(InputMode inputMode) {
         List<String> actionNames = inputMode.listActionNames();
         Map<String, String> actionsToHots = new TreeMap<>();
         for (String actionName : actionNames) {
