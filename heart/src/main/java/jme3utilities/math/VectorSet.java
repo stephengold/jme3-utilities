@@ -43,6 +43,7 @@ public interface VectorSet {
      * @param vector the value to add (not null, unaffected)
      */
     void add(Vector3f vector);
+    // TODO addAll()
 
     /**
      * Test whether this set contains the specified value.
@@ -110,4 +111,6 @@ public interface VectorSet {
      * @return a Buffer, flipped but possibly not rewound
      */
     FloatBuffer toBuffer();
+    // TODO toFloatArray()
+    // TODO toVectorArray()
 }
