@@ -426,7 +426,7 @@ public class MyMath {
     }
 
     /**
-     * Find the maximum of 3 single-precision values.
+     * Find the maximum of 3 single-precision values. TODO float... version
      *
      * @param a the first input value
      * @param b the 2nd input value
@@ -445,7 +445,7 @@ public class MyMath {
     }
 
     /**
-     * Find the maximum of 3 double-precision values.
+     * Find the maximum of 3 double-precision values. TODO double... version
      *
      * @param a the first input value
      * @param b the 2nd input value
@@ -516,7 +516,7 @@ public class MyMath {
     }
 
     /**
-     * Find the minimum of 3 single-precision values.
+     * Find the minimum of 3 single-precision values. TODO float... version
      *
      * @param a the first input value
      * @param b the 2nd input value
@@ -535,7 +535,7 @@ public class MyMath {
     }
 
     /**
-     * Find the minimum of 3 double-precision values.
+     * Find the minimum of 3 double-precision values. TODO double... version
      *
      * @param a the first input value
      * @param b the 2nd input value
@@ -739,7 +739,7 @@ public class MyMath {
 
     /**
      * Compute the sum-of-squares of 3 single-precision values. Double-precision
-     * arithmetic is used to reduce the risk of overflow.
+     * arithmetic is used to reduce the risk of overflow. TODO float... version
      *
      * @param v1 the first input value
      * @param v2 the 2nd input value
