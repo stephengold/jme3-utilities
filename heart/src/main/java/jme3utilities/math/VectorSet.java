@@ -43,7 +43,7 @@ public interface VectorSet {
      * @param vector the value to add (not null, unaffected)
      */
     void add(Vector3f vector);
-    // TODO addAll()
+    // TODO addAll(), add(float, float, float)
 
     /**
      * Test whether this set contains the specified value.
