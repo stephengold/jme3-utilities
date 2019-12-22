@@ -525,9 +525,9 @@ public class Dumper implements Cloneable {
                 stream.printf(" bg(%s)", MyColor.describe(backColor));
             }
             String descP = describer.describeProcessors(viewPort);
-            stream.print(" procs={");
+            stream.print(" procs[");
             stream.print(descP);
-            stream.println('}');
+            stream.println(']');
 
             stream.print(indent);
             stream.print(" ");
