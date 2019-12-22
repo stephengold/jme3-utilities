@@ -98,7 +98,7 @@ public class Describer implements Cloneable {
     /**
      * separator between items in lists (not null, may be empty)
      */
-    private String listSeparator = ",";
+    private String listSeparator = " ";
     // *************************************************************************
     // new methods exposed
 
@@ -283,7 +283,7 @@ public class Describer implements Cloneable {
         result.append(" mode=");
         Mesh.Mode mode = mesh.getMode();
         result.append(mode);
-        result.append(" bufs=");
+        result.append(" bufs[");
 
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         for (IntMap.Entry<VertexBuffer> bufferEntry : buffers) {
@@ -296,6 +296,7 @@ public class Describer implements Cloneable {
             String desc = describe(buffer);
             result.append(desc);
         }
+        result.append(']');
 
         return result.toString();
     }
@@ -574,7 +575,7 @@ public class Describer implements Cloneable {
         Validate.nonNull(spatial, "spatial");
         StringBuilder result = new StringBuilder(60);
 
-        result.append("mpo=(");
+        result.append("mpo[");
         boolean addSeparators = false;
 
         List<MatParamOverride> list = spatial.getLocalMatParamOverrides();
@@ -587,7 +588,7 @@ public class Describer implements Cloneable {
             String description = describe(override);
             result.append(description);
         }
-        result.append(')');
+        result.append(']');
 
         return result.toString();
     }
@@ -949,7 +950,7 @@ public class Describer implements Cloneable {
         } else if (processor instanceof FilterPostProcessor) {
             FilterPostProcessor fpp = (FilterPostProcessor) processor;
             String desc = describeFilters(fpp);
-            result = String.format("filters<%s>", desc);
+            result = String.format("filters[%s]", desc);
         } else if (processor instanceof PointLightShadowRenderer) {
             result = "PShadow";
         } else if (processor instanceof ScreenshotAppState) {
