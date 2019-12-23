@@ -98,11 +98,7 @@ final public class MyBuffer {
 
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
-
-            tmpVector.x = buffer.get(position + MyVector3f.xAxis);
-            tmpVector.y = buffer.get(position + MyVector3f.yAxis);
-            tmpVector.z = buffer.get(position + MyVector3f.zAxis);
-
+            get(buffer, position, tmpVector);
             result.add(tmpVector);
         }
 
@@ -295,6 +291,25 @@ final public class MyBuffer {
     }
 
     /**
+     * Read a Vector3f starting from the specified position. Does not alter the
+     * buffer's position.
+     *
+     * @param buffer the buffer to read from (not null, unaffected)
+     * @param startPosition the position at which to start reading (&ge;0)
+     * @param storeVector storage for the vector (not null, modified)
+     */
+    public static void get(FloatBuffer buffer, int startPosition,
+            Vector3f storeVector) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.nonNegative(startPosition, "start position");
+        Validate.nonNull(storeVector, "store vector");
+
+        storeVector.x = buffer.get(startPosition + MyVector3f.xAxis);
+        storeVector.y = buffer.get(startPosition + MyVector3f.yAxis);
+        storeVector.z = buffer.get(startPosition + MyVector3f.zAxis);
+    }
+
+    /**
      * Find the maximum absolute coordinate for each axis in the specified
      * FloatBuffer range.
      *
@@ -408,11 +423,7 @@ final public class MyBuffer {
 
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
-
-            tmpVector.x = buffer.get(position + MyVector3f.xAxis);
-            tmpVector.y = buffer.get(position + MyVector3f.yAxis);
-            tmpVector.z = buffer.get(position + MyVector3f.zAxis);
-
+            get(buffer, position, tmpVector);
             MyVector3f.accumulateMinima(storeMinima, tmpVector);
             MyVector3f.accumulateMaxima(storeMaxima, tmpVector);
         }
@@ -456,6 +467,25 @@ final public class MyBuffer {
         result.divideLocal(numVectors);
 
         return result;
+    }
+
+    /**
+     * Write a Vector3f starting at the specified position. Does not alter the
+     * buffer's position.
+     *
+     * @param buffer the buffer to write to (not null, modified)
+     * @param startPosition the position at which to start writing (&ge;0)
+     * @param vector the input vector (not null, unaffected)
+     */
+    public static void put(FloatBuffer buffer, int startPosition,
+            Vector3f vector) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.nonNegative(startPosition, "start position");
+        Validate.nonNull(vector, "vector");
+
+        buffer.put(startPosition + MyVector3f.xAxis, vector.x);
+        buffer.put(startPosition + MyVector3f.yAxis, vector.y);
+        buffer.put(startPosition + MyVector3f.zAxis, vector.z);
     }
 
     /**
@@ -540,16 +570,9 @@ final public class MyBuffer {
 
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
-
-            tmpVector.x = buffer.get(position + MyVector3f.xAxis);
-            tmpVector.y = buffer.get(position + MyVector3f.yAxis);
-            tmpVector.z = buffer.get(position + MyVector3f.zAxis);
-
+            get(buffer, position, tmpVector);
             transform.transformVector(tmpVector, tmpVector);
-
-            buffer.put(position + MyVector3f.xAxis, tmpVector.x);
-            buffer.put(position + MyVector3f.yAxis, tmpVector.y);
-            buffer.put(position + MyVector3f.zAxis, tmpVector.z);
+            put(buffer, position, tmpVector);
         }
     }
 
@@ -576,20 +599,12 @@ final public class MyBuffer {
         assert (numFloats % numAxes == 0) : numFloats;
         int numVectors = numFloats / numAxes;
 
+        Vector3f tmpVector = new Vector3f();
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
-
-            float x = buffer.get(position + MyVector3f.xAxis);
-            x += offsetVector.x;
-            buffer.put(position + MyVector3f.xAxis, x);
-
-            float y = buffer.get(position + MyVector3f.yAxis);
-            y += offsetVector.y;
-            buffer.put(position + MyVector3f.yAxis, y);
-
-            float z = buffer.get(position + MyVector3f.zAxis);
-            z += offsetVector.z;
-            buffer.put(position + MyVector3f.zAxis, z);
+            get(buffer, position, tmpVector);
+            tmpVector.addLocal(offsetVector);
+            put(buffer, position, tmpVector);
         }
     }
 }
