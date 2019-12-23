@@ -227,11 +227,7 @@ public class RectangularSolid implements Savable {
 
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = vectorIndex * numAxes;
-
-            tmpVector.x = buffer.get(position + MyVector3f.xAxis);
-            tmpVector.y = buffer.get(position + MyVector3f.yAxis);
-            tmpVector.z = buffer.get(position + MyVector3f.zAxis);
-
+            MyBuffer.get(buffer, position, tmpVector);
             worldToLocal.mult(tmpVector, tmpVector);
             MyVector3f.accumulateMaxima(maxima, tmpVector);
             MyVector3f.accumulateMinima(minima, tmpVector);
