@@ -31,6 +31,7 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix4f;
+import com.jme3.math.Triangle;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
@@ -48,6 +49,7 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import jme3utilities.math.MyBuffer;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorSet;
 import jme3utilities.math.VectorSetUsingBuffer;
@@ -65,6 +67,14 @@ public class MyMesh {
      * maximum number of bones that can influence any one vertex
      */
     final private static int maxWeights = 4;
+    /**
+     * number of axes in a vector
+     */
+    final private static int numAxes = 3;
+    /**
+     * number of vertices per triangle
+     */
+    final private static int vpt = 3;
     /**
      * message logger for this class
      */
@@ -173,6 +183,48 @@ public class MyMesh {
 
         assert result >= 0 : result;
         return result;
+    }
+
+    /**
+     * Generate normals on a triangle-by-triangle basis for a Triangles-mode
+     * mesh without an index buffer. Any pre-existing normal buffer is
+     * discarded.
+     *
+     * @param mesh the Mesh to update (not null, mode=Triangles, not indexed)
+     */
+    public static void generateNormals(Mesh mesh) {
+        assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
+        assert mesh.getBuffer(VertexBuffer.Type.Index) == null;
+
+        VertexBuffer vpBuffer = mesh.getBuffer(VertexBuffer.Type.Position);
+        FloatBuffer positionBuffer = (FloatBuffer) vpBuffer.getDataReadOnly();
+        int numFloats = positionBuffer.limit();
+
+        FloatBuffer normalBuffer = BufferUtils.createFloatBuffer(numFloats);
+        mesh.setBuffer(VertexBuffer.Type.Normal, numAxes, normalBuffer);
+
+        Triangle triangle = new Triangle();
+        Vector3f pos1 = new Vector3f();
+        Vector3f pos2 = new Vector3f();
+        Vector3f pos3 = new Vector3f();
+
+        int numTriangles = numFloats / vpt / numAxes;
+        for (int triIndex = 0; triIndex < numTriangles; ++triIndex) {
+            int trianglePosition = triIndex * vpt * numAxes;
+            MyBuffer.get(positionBuffer, trianglePosition, pos1);
+            MyBuffer.get(positionBuffer, trianglePosition + numAxes, pos2);
+            MyBuffer.get(positionBuffer, trianglePosition + 2 * numAxes, pos3);
+            triangle.set(pos1, pos2, pos3);
+
+            triangle.setNormal(null); // work around JME issue #957
+            Vector3f normal = triangle.getNormal();
+            for (int j = 0; j < vpt; ++j) {
+                normalBuffer.put(normal.x);
+                normalBuffer.put(normal.y);
+                normalBuffer.put(normal.z);
+            }
+        }
+        normalBuffer.flip();
     }
 
     /**
@@ -736,18 +788,14 @@ public class MyMesh {
                 || bufferType == VertexBuffer.Type.Normal
                 || bufferType == VertexBuffer.Type.Position : bufferType;
         Validate.nonNegative(vertexIndex, "vertex index");
-        if (storeResult == null) {
-            storeResult = new Vector3f();
-        }
+        Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
         VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
         FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
         int floatIndex = MyVector3f.numAxes * vertexIndex;
-        storeResult.x = floatBuffer.get(floatIndex + MyVector3f.xAxis);
-        storeResult.y = floatBuffer.get(floatIndex + MyVector3f.yAxis);
-        storeResult.z = floatBuffer.get(floatIndex + MyVector3f.zAxis);
+        MyBuffer.get(floatBuffer, floatIndex, result);
 
-        return storeResult;
+        return result;
     }
 
     /**
