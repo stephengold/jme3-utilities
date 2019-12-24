@@ -163,8 +163,8 @@ public class MyMesh {
         assert numBoneIndices % maxWeights == 0 : numBoneIndices;
         int numVertices = boneIndexBuffer.remaining() / maxWeights;
 
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        FloatBuffer weightBuffer
+                = mesh.getFloatBuffer(VertexBuffer.Type.BoneWeight);
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
         assert numWeights == numVertices * maxWeights : numWeights;
@@ -196,8 +196,8 @@ public class MyMesh {
         assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
         assert mesh.getBuffer(VertexBuffer.Type.Index) == null;
 
-        VertexBuffer vpBuffer = mesh.getBuffer(VertexBuffer.Type.Position);
-        FloatBuffer positionBuffer = (FloatBuffer) vpBuffer.getDataReadOnly();
+        FloatBuffer positionBuffer
+                = mesh.getFloatBuffer(VertexBuffer.Type.Position);
         int numFloats = positionBuffer.limit();
 
         FloatBuffer normalBuffer = BufferUtils.createFloatBuffer(numFloats);
@@ -371,8 +371,8 @@ public class MyMesh {
         assert numBoneIndices % maxWeights == 0 : numBoneIndices;
         int numVertices = boneIndexBuffer.remaining() / maxWeights;
 
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        FloatBuffer weightBuffer
+                = mesh.getFloatBuffer(VertexBuffer.Type.BoneWeight);
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
         assert numWeights == numVertices * maxWeights : numWeights;
@@ -490,8 +490,8 @@ public class MyMesh {
             maxWeightsPerVert = 1;
         }
 
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        FloatBuffer weightBuffer
+                = mesh.getFloatBuffer(VertexBuffer.Type.BoneWeight);
         int startIndex = maxWeights * vertexIndex;
         for (int wIndex = 0; wIndex < maxWeightsPerVert; ++wIndex) {
             storeResult[wIndex] = weightBuffer.get(startIndex + wIndex);
@@ -557,8 +557,8 @@ public class MyMesh {
             Vector3f b = vertexVector3f(mesh,
                     VertexBuffer.Type.BindPosePosition, vertexIndex, null);
 
-            VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-            FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+            FloatBuffer weightBuffer
+                    = mesh.getFloatBuffer(VertexBuffer.Type.BoneWeight);
             weightBuffer.position(maxWeights * vertexIndex);
 
             VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
@@ -616,8 +616,8 @@ public class MyMesh {
             Vector3f b = vertexVector3f(mesh, VertexBuffer.Type.BindPoseNormal,
                     vertexIndex, null);
 
-            VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-            FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+            FloatBuffer weightBuffer
+                    = mesh.getFloatBuffer(VertexBuffer.Type.BoneWeight);
             weightBuffer.position(maxWeights * vertexIndex);
 
             VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
@@ -664,8 +664,7 @@ public class MyMesh {
         Validate.nonNull(mesh, "mesh");
         Validate.nonNegative(vertexIndex, "vertex index");
 
-        VertexBuffer vertexBuffer = mesh.getBuffer(VertexBuffer.Type.Size);
-        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        FloatBuffer floatBuffer = mesh.getFloatBuffer(VertexBuffer.Type.Size);
         float result = floatBuffer.get(vertexIndex);
 
         return result;
@@ -692,8 +691,8 @@ public class MyMesh {
             Vector4f b = vertexVector4f(mesh, VertexBuffer.Type.BindPoseTangent,
                     vertexIndex, null);
 
-            VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-            FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+            FloatBuffer weightBuffer
+                    = mesh.getFloatBuffer(VertexBuffer.Type.BoneWeight);
             weightBuffer.position(maxWeights * vertexIndex);
 
             VertexBuffer biBuf = mesh.getBuffer(VertexBuffer.Type.BoneIndex);
@@ -757,8 +756,7 @@ public class MyMesh {
             storeResult = new Vector2f();
         }
 
-        VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
-        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        FloatBuffer floatBuffer = mesh.getFloatBuffer(bufferType);
         int floatIndex = 2 * vertexIndex;
         storeResult.x = floatBuffer.get(floatIndex);
         storeResult.y = floatBuffer.get(floatIndex + 1);
@@ -790,8 +788,7 @@ public class MyMesh {
         Validate.nonNegative(vertexIndex, "vertex index");
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
 
-        VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
-        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        FloatBuffer floatBuffer = mesh.getFloatBuffer(bufferType);
         int floatIndex = MyVector3f.numAxes * vertexIndex;
         MyBuffer.get(floatBuffer, floatIndex, result);
 
@@ -821,8 +818,7 @@ public class MyMesh {
             storeResult = new Vector4f();
         }
 
-        VertexBuffer vertexBuffer = mesh.getBuffer(bufferType);
-        FloatBuffer floatBuffer = (FloatBuffer) vertexBuffer.getDataReadOnly();
+        FloatBuffer floatBuffer = mesh.getFloatBuffer(bufferType);
         int floatIndex = 4 * vertexIndex;
         storeResult.x = floatBuffer.get(floatIndex);
         storeResult.y = floatBuffer.get(floatIndex + 1);
