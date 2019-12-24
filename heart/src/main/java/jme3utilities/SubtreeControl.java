@@ -150,7 +150,6 @@ abstract public class SubtreeControl extends SimpleControl {
         super.read(importer);
         InputCapsule ic = importer.getCapsule(this);
         subtree = (Node) ic.readSavable("subtree", null);
-        assert subtree.getParent() == (enabled ? spatial : null);
     }
 
     /**
