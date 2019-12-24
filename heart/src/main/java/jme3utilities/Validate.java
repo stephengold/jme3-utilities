@@ -466,12 +466,40 @@ final public class Validate {
     }
 
     /**
+     * Validate a non-negative Vector2f as a method argument.
+     *
+     * @param vector the vector to validate (unaffected)
+     * @param description a description of the argument
+     * @return true
+     * @throws IllegalArgumentException if the vector has a negative or NaN
+     * component
+     * @throws NullPointerException if the vector is null
+     */
+    public static boolean nonNegative(Vector2f vector, String description) {
+        nonNull(vector, description);
+
+        if (!(vector.x >= 0f && vector.y >= 0f)) {
+            String what;
+            if (description == null) {
+                what = "Vector2f argument";
+            } else {
+                what = description;
+            }
+            String message = what + " must not have a negative component.";
+            throw new IllegalArgumentException(message);
+        }
+
+        return true;
+    }
+
+    /**
      * Validate a non-negative Vector3f as a method argument.
      *
      * @param vector the vector to validate (unaffected)
      * @param description a description of the argument
      * @return true
-     * @throws IllegalArgumentException if the vector has a negative component
+     * @throws IllegalArgumentException if the vector has a negative or NaN
+     * component
      * @throws NullPointerException if the vector is null
      */
     public static boolean nonNegative(Vector3f vector, String description) {
