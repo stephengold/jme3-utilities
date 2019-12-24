@@ -33,7 +33,7 @@ ext {
     jme3utilitiesniftyVersion = '0.9.11for33'
     jme3utilitiesuiVersion = '0.7.9for33'
     jme3utilitiesxVersion = '0.2.16for33'
-    jmonkeyengineVersion = 'v3.3.0-beta1'
+    jmonkeyengineVersion = '3.3.0-beta1'
     skycontrolVersion = '0.9.23for33'
 }
 
