@@ -223,8 +223,8 @@ public class InfluenceUtil {
         assert numBoneIndices % maxWeights == 0 : numBoneIndices;
         int numVertices = boneIndexBuffer.remaining() / maxWeights;
 
-        VertexBuffer wBuf = mesh.getBuffer(VertexBuffer.Type.BoneWeight);
-        FloatBuffer weightBuffer = (FloatBuffer) wBuf.getDataReadOnly();
+        FloatBuffer weightBuffer
+                = mesh.getFloatBuffer(VertexBuffer.Type.BoneWeight);
         weightBuffer.rewind();
         int numWeights = weightBuffer.remaining();
         assert numWeights == numVertices * maxWeights : numWeights;
