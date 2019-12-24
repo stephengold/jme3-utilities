@@ -30,6 +30,10 @@ import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.bounding.BoundingVolume;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
@@ -44,6 +48,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireBox;
 import com.jme3.scene.debug.WireSphere;
 import com.jme3.util.clone.Cloner;
+import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
@@ -95,6 +100,12 @@ public class BoundsVisualizer extends SubtreeControl {
      * name for the subtree node
      */
     final private static String subtreeName = "bound node";
+    /**
+     * field names for serialization
+     */
+    final private static String tagLineMaterial = "lineMaterial";
+    final private static String tagLineWidth = "lineWidth";
+    final private static String tagSubject = "subject";
     // *************************************************************************
     // fields
 
@@ -112,6 +123,12 @@ public class BoundsVisualizer extends SubtreeControl {
     private Spatial subject = null;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor needed by SavableClassUtil.
+     */
+    protected BoundsVisualizer() {
+    }
 
     /**
      * Instantiate a disabled control.
@@ -133,7 +150,7 @@ public class BoundsVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Copy the color of the lines.
+     * Copy the color of the lines. TODO storeResult argument
      *
      * @return a new instance
      */
@@ -198,7 +215,6 @@ public class BoundsVisualizer extends SubtreeControl {
     public void setLineWidth(float newWidth) {
         Validate.nonNegative(newWidth, "new width");
         effectiveLineWidth = newWidth;
-
     }
 
     /**
@@ -210,7 +226,7 @@ public class BoundsVisualizer extends SubtreeControl {
         subject = newSubject;
     }
     // *************************************************************************
-    // SubtreeControl methods - TODO read/write
+    // SubtreeControl methods
 
     /**
      * Create a shallow copy of this Control.
@@ -273,6 +289,23 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
+     * De-serialize this Control from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from the importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+        InputCapsule capsule = importer.getCapsule(this);
+
+        lineMaterial = (Material) capsule.readSavable(tagLineMaterial, null);
+        effectiveLineWidth = capsule.readFloat(tagLineWidth, 0f);
+        subject = (Spatial) capsule.readSavable(tagSubject, null);
+    }
+
+    /**
      * Alter the visibility of the visualization.
      *
      * @param newState if true, reveal the visualization; if false, hide it
@@ -291,6 +324,23 @@ public class BoundsVisualizer extends SubtreeControl {
         }
 
         super.setEnabled(newState);
+    }
+
+    /**
+     * Serialize this Control to the specified exporter, for example when saving
+     * to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from the exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(lineMaterial, tagLineMaterial, null);
+        capsule.write(effectiveLineWidth, tagLineWidth, 0f);
+        capsule.write(subject, tagSubject, null);
     }
     // *************************************************************************
     // private methods

@@ -31,6 +31,11 @@ import com.jme3.anim.SkinningControl;
 import com.jme3.animation.Skeleton;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetManager;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
+import com.jme3.export.Savable;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
@@ -45,6 +50,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.texture.Texture;
 import com.jme3.util.clone.Cloner;
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -116,6 +122,18 @@ public class SkeletonVisualizer extends SubtreeControl {
      */
     final private static String subtreeName = "skeleton node";
     /**
+     * field names for serialization
+     */
+    final private static String tagArmature = "armature";
+    final private static String tagCustomColorIndices = "customColorKeys";
+    final private static String tagCustomColors = "customColors";
+    final private static String tagHeadColor = "headColor";
+    final private static String tagHeadMaterial = "headMaterial";
+    final private static String tagLineMaterial = "lineMaterial";
+    final private static String tagLineWidth = "lineWidth";
+    final private static String tagSkeleton = "skeleton";
+    final private static String tagTransformSpatial = "transformSpatial";
+    /**
      * local copy of {@link com.jme3.math.Transform#IDENTITY}
      */
     final private static Transform transformIdentity = new Transform();
@@ -156,6 +174,12 @@ public class SkeletonVisualizer extends SubtreeControl {
     private Spatial transformSpatial = null;
     // *************************************************************************
     // constructors
+
+    /**
+     * No-argument constructor needed by SavableClassUtil.
+     */
+    protected SkeletonVisualizer() {
+    }
 
     /**
      * Instantiate a disabled control.
@@ -392,7 +416,7 @@ public class SkeletonVisualizer extends SubtreeControl {
         transformSpatial = spatial;
     }
     // *************************************************************************
-    // SubtreeControl methods - TODO read/write
+    // SubtreeControl methods
 
     /**
      * Create a shallow copy of this Control.
@@ -456,6 +480,39 @@ public class SkeletonVisualizer extends SubtreeControl {
     }
 
     /**
+     * De-serialize this Control from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from the importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+        InputCapsule capsule = importer.getCapsule(this);
+
+        armature = (Armature) capsule.readSavable(tagArmature, null);
+
+        int[] indices = capsule.readIntArray(tagCustomColorIndices, null);
+        Savable[] savables = capsule.readSavableArray(tagCustomColors, null);
+        assert indices.length == savables.length;
+        for (int j = 0; j < indices.length; ++j) {
+            int index = indices[j];
+            ColorRGBA color = (ColorRGBA) savables[j];
+            customColors.put(index, color);
+        }
+
+        headColor = (ColorRGBA) capsule.readSavable(tagHeadColor,
+                defaultHeadColor);
+        headMaterial = (Material) capsule.readSavable(tagHeadMaterial, null);
+        lineMaterial = (Material) capsule.readSavable(tagLineMaterial, null);
+        effectiveLineWidth = capsule.readFloat(tagLineWidth, defaultLineWidth);
+        skeleton = (Skeleton) capsule.readSavable(tagSkeleton, null);
+        transformSpatial = (Spatial) capsule.readSavable(tagTransformSpatial,
+                null);
+    }
+
+    /**
      * Alter the visibility of the visualization.
      *
      * @param newState if true, reveal the visualization; if false, hide it
@@ -474,6 +531,40 @@ public class SkeletonVisualizer extends SubtreeControl {
         }
 
         super.setEnabled(newState);
+    }
+
+    /**
+     * Serialize this Control to the specified exporter, for example when saving
+     * to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from the exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(armature, tagArmature, null);
+
+        int numEntries = customColors.size();
+        int[] indices = new int[numEntries];
+        Savable[] savables = new Savable[numEntries];
+        int j = 0;
+        for (Map.Entry<Integer, ColorRGBA> entry : customColors.entrySet()) {
+            indices[j] = entry.getKey();
+            savables[j] = entry.getValue();
+            ++j;
+        }
+        capsule.write(indices, tagCustomColorIndices, null);
+        capsule.write(savables, tagCustomColors, null);
+
+        capsule.write(headColor, tagHeadColor, defaultHeadColor);
+        capsule.write(headMaterial, tagHeadMaterial, null);
+        capsule.write(lineMaterial, tagLineMaterial, null);
+        capsule.write(effectiveLineWidth, tagLineWidth, defaultLineWidth);
+        capsule.write(skeleton, tagSkeleton, null);
+        capsule.write(transformSpatial, tagTransformSpatial, null);
     }
     // *************************************************************************
     // private methods
