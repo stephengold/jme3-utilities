@@ -24,7 +24,9 @@ processResources.dependsOn(':textures:shapeTextures')
 
 dependencies {
     api "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
+
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
 }
 
 build.dependsOn('pom')
