@@ -169,9 +169,10 @@ public class SkeletonVisualizer extends SubtreeControl {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil.
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
      */
-    protected SkeletonVisualizer() {
+    public SkeletonVisualizer() {
     }
 
     /**
@@ -473,8 +474,6 @@ public class SkeletonVisualizer extends SubtreeControl {
         super.read(importer);
         InputCapsule capsule = importer.getCapsule(this);
 
-        armature = (Armature) capsule.readSavable(tagArmature, null);
-
         int[] indices = capsule.readIntArray(tagCustomColorIndices, null);
         Savable[] savables = capsule.readSavableArray(tagCustomColors, null);
         assert indices.length == savables.length;
@@ -526,8 +525,6 @@ public class SkeletonVisualizer extends SubtreeControl {
     public void write(JmeExporter exporter) throws IOException {
         super.write(exporter);
         OutputCapsule capsule = exporter.getCapsule(this);
-
-        capsule.write(armature, tagArmature, null);
 
         int numEntries = customColors.size();
         int[] indices = new int[numEntries];

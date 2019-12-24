@@ -125,9 +125,10 @@ public class BoundsVisualizer extends SubtreeControl {
     // constructors
 
     /**
-     * No-argument constructor needed by SavableClassUtil.
+     * No-argument constructor needed by SavableClassUtil. Do not invoke
+     * directly!
      */
-    protected BoundsVisualizer() {
+    public BoundsVisualizer() {
     }
 
     /**

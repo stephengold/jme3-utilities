@@ -30,6 +30,7 @@ import com.jme3.animation.SkeletonControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.DesktopAssetManager;
 import com.jme3.asset.plugins.ClasspathLocator;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.material.plugins.J3MLoader;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
@@ -45,7 +46,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Test cloning of various abstract controls.
+ * Test cloning/saving/loading various abstract controls.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -61,7 +62,7 @@ public class TestCloneControls {
     // new methods exposed
 
     /**
-     * Test cloning of various abstract controls.
+     * Test cloning/saving/loading various abstract controls.
      */
     @Test
     public void testClone() {
@@ -112,6 +113,14 @@ public class TestCloneControls {
         setParameters(controlClone, 0.6f);
         verifyParameters(control, 0.3f);
         verifyParameters(controlClone, 0.6f);
+
+        AbstractControl controlCopy
+                = BinaryExporter.saveAndLoad(assetManager, control);
+        verifyParameters(controlCopy, 0.3f);
+
+        AbstractControl controlCopyClone
+                = BinaryExporter.saveAndLoad(assetManager, controlClone);
+        verifyParameters(controlCopyClone, 0.6f);
     }
 
     /**
@@ -171,6 +180,7 @@ public class TestCloneControls {
      * @param b the key value
      */
     private static void verifyParameters(AbstractControl control, float b) {
+        assert control != null;
         boolean flag = (b > 0.15f && b < 0.45f);
         Assert.assertEquals(flag, control.isEnabled());
 
