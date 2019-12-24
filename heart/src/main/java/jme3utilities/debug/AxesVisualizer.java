@@ -27,6 +27,10 @@
 package jme3utilities.debug;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -38,6 +42,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Arrow;
+import java.io.IOException;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
@@ -91,6 +96,13 @@ public class AxesVisualizer extends SubtreeControl {
      */
     final private static String subtreeName = "axes node";
     /**
+     * field names for serialization
+     */
+    final private static String tagAxisLength = "axisLength";
+    final private static String tagDepthTest = "depthTest";
+    final private static String tagLineWidth = "lineWidth";
+    final private static String tagNumAxes = "numAxes";
+    /**
      * local copy of {@link com.jme3.math.Vector3f#UNIT_X}
      */
     final private static Vector3f unitX = new Vector3f(1f, 0f, 0f);
@@ -108,7 +120,7 @@ public class AxesVisualizer extends SubtreeControl {
     /**
      * asset manager to use (not null)
      */
-    final private AssetManager assetManager;
+    private AssetManager assetManager;
     /**
      * true &rarr; enabled, false &rarr; disabled.
      *
@@ -279,7 +291,7 @@ public class AxesVisualizer extends SubtreeControl {
         return result;
     }
     // *************************************************************************
-    // SubtreeControl methods - TODO read/write
+    // SubtreeControl methods
 
     /**
      * Create a shallow copy of this Control.
@@ -326,6 +338,25 @@ public class AxesVisualizer extends SubtreeControl {
     }
 
     /**
+     * De-serialize this Control from the specified importer, for example when
+     * loading from a J3O file.
+     *
+     * @param importer (not null)
+     * @throws IOException from the importer
+     */
+    @Override
+    public void read(JmeImporter importer) throws IOException {
+        super.read(importer);
+        assetManager = importer.getAssetManager();
+        InputCapsule capsule = importer.getCapsule(this);
+
+        axisLength = capsule.readFloat(tagAxisLength, 1f);
+        depthTest = capsule.readBoolean(tagDepthTest, defaultDepthTest);
+        lineWidth = capsule.readFloat(tagLineWidth, 0f);
+        numAxes = capsule.readInt(tagNumAxes, MyVector3f.numAxes);
+    }
+
+    /**
      * Alter the visibility of the visualization.
      *
      * @param newState if true, reveal the visualization; if false, hide it
@@ -344,6 +375,24 @@ public class AxesVisualizer extends SubtreeControl {
         }
 
         super.setEnabled(newState);
+    }
+
+    /**
+     * Serialize this Control to the specified exporter, for example when saving
+     * to a J3O file.
+     *
+     * @param exporter (not null)
+     * @throws IOException from the exporter
+     */
+    @Override
+    public void write(JmeExporter exporter) throws IOException {
+        super.write(exporter);
+        OutputCapsule capsule = exporter.getCapsule(this);
+
+        capsule.write(axisLength, tagAxisLength, 1f);
+        capsule.write(depthTest, tagDepthTest, defaultDepthTest);
+        capsule.write(lineWidth, tagLineWidth, 0f);
+        capsule.write(numAxes, tagNumAxes, MyVector3f.numAxes);
     }
     // *************************************************************************
     // private methods
