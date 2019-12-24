@@ -26,8 +26,7 @@ gradle.projectsEvaluated {
     }
 }
 
-ext {
-    // current versions of the libraries
+ext { // current versions of the libraries
     jcommanderVersion = '1.74'
     jme3utilitiesheartVersion = '4.1.0for32'
     jme3utilitiesniftyVersion = '0.9.10for32'
@@ -40,7 +39,7 @@ ext {
 repositories {
     //mavenLocal()
     maven { url 'https://dl.bintray.com/stephengold/jme3utilities' }
-    maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for testdata
+    maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for jme3-testdata
     jcenter()
     maven { url 'https://nifty-gui.sourceforge.net/nifty-maven-repo' }
 }
