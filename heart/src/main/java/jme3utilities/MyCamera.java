@@ -323,7 +323,7 @@ final public class MyCamera {
         /*
          * Convert screen coordinates to world coordinates.
          */
-        Vector3f vertex = camera.getWorldCoordinates(screenXY, 0f);
+        Vector3f vertex = camera.getWorldCoordinates(screenXY, 0f); // TODO garbage
         Vector3f far = camera.getWorldCoordinates(screenXY, 1f);
 
         Vector3f direction = far.subtract(vertex);
@@ -345,7 +345,7 @@ final public class MyCamera {
         /*
          * Convert screen coordinates to world coordinates.
          */
-        Vector3f vertex = camera.getWorldCoordinates(screenXY, 0f);
+        Vector3f vertex = camera.getWorldCoordinates(screenXY, 0f); // TODO garbage
         Vector3f far = camera.getWorldCoordinates(screenXY, 1f);
 
         Vector3f direction = far.subtract(vertex);
