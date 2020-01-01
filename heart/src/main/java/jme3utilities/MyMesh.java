@@ -74,7 +74,7 @@ public class MyMesh {
     /**
      * number of vertices per triangle
      */
-    final private static int vpt = 3;
+    final public static int vpt = 3;
     /**
      * message logger for this class
      */
@@ -94,6 +94,7 @@ public class MyMesh {
     }
     // *************************************************************************
     // new methods exposed
+    // TODO add addindex(), deindex(), isConnected(), reverseNormals(), reverseWinding()
 
     /**
      * Generate a material to visualize the bone weights in the specified Mesh.
@@ -194,7 +195,7 @@ public class MyMesh {
      */
     public static void generateNormals(Mesh mesh) {
         assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
-        assert mesh.getBuffer(VertexBuffer.Type.Index) == null;
+        assert !hasIndices(mesh);
 
         FloatBuffer positionBuffer
                 = mesh.getFloatBuffer(VertexBuffer.Type.Position);
@@ -225,6 +226,21 @@ public class MyMesh {
             }
         }
         normalBuffer.flip();
+    }
+
+    /**
+     * Test whether the specified Mesh has an index buffer.
+     *
+     * @param mesh the Mesh to test (not null, unaffected)
+     * @return true if the Mesh has indices, otherwise false
+     */
+    public static boolean hasIndices(Mesh mesh) {
+        VertexBuffer buffer = mesh.getBuffer(VertexBuffer.Type.Index);
+        if (buffer == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
