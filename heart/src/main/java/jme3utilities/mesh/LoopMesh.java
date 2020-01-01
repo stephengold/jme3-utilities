@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,8 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A 3-D, static, lineloop-mode mesh that renders a circle or polygon.
+ * A static, LineLoop-mode mesh (without indices) that renders a circle or
+ * polygon.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -81,10 +82,12 @@ public class LoopMesh extends Mesh {
     }
 
     /**
-     * Instantiate a regular polygon (or circle) in the X-Z plane, centered at
-     * the mesh origin, with radius=1 and the specified number of vertices.
+     * Instantiate a regular polygon (or circle) in the X-Z plane, with radius=1
+     * and the specified number of vertices.
      *
-     * @param vertexCount (&ge;3)
+     * The center is at (0,0,0).
+     *
+     * @param the desired vertexCount (&ge;3)
      */
     public LoopMesh(int vertexCount) {
         Validate.inRange(vertexCount, "vertex count", 3, Integer.MAX_VALUE);
@@ -99,10 +102,10 @@ public class LoopMesh extends Mesh {
     }
 
     /**
-     * Instantiate a polygon from an array of coordinates.
+     * Instantiate a 3-D polygon from an array of coordinates.
      *
-     * @param cornerArray local coordinates of the corners, in sequence (not
-     * null or containing any nulls, length&ge;3, unaffected)
+     * @param cornerArray the desired local coordinates of the corners, in
+     * sequence (not null or containing any nulls, length&ge;3, unaffected)
      */
     public LoopMesh(Vector3f[] cornerArray) {
         Validate.nonNull(cornerArray, "corner list");
@@ -114,7 +117,7 @@ public class LoopMesh extends Mesh {
             Validate.nonNull(cornerArray[index], description);
         }
 
-        setMode(Mode.LineStrip);
+        setMode(Mode.LineLoop);
         Vector3f[] locationArray = new Vector3f[vertexCount];
         System.arraycopy(cornerArray, 0, locationArray, 0, vertexCount);
         /*
