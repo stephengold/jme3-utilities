@@ -88,7 +88,7 @@ public class LoopMesh extends Mesh {
      *
      * The center is at (0,0,0).
      *
-     * @param the desired vertexCount (&ge;3)
+     * @param vertexCount the desired number of vertices (&ge;3)
      */
     public LoopMesh(int vertexCount) {
         Validate.inRange(vertexCount, "vertex count", 3, Integer.MAX_VALUE);
