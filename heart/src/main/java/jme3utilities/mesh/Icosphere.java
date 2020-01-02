@@ -113,7 +113,7 @@ public class Icosphere extends Mesh {
      */
     final private Map<Long, Integer> midpointCache = new HashMap<>();
     // *************************************************************************
-    // constructors - TODO inward-facing option
+    // constructors
 
     /**
      * Instantiate an icosphere with the specified radius and number of
