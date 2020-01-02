@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019, Stephen Gold
+ Copyright (c) 2019-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 package jme3utilities.math;
 
 import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.util.BufferUtils;
@@ -486,6 +487,71 @@ final public class MyBuffer {
         buffer.put(startPosition + MyVector3f.xAxis, vector.x);
         buffer.put(startPosition + MyVector3f.yAxis, vector.y);
         buffer.put(startPosition + MyVector3f.zAxis, vector.z);
+    }
+
+    /**
+     * Apply the specified rotation to 3-D vectors in the specified FloatBuffer
+     * range.
+     *
+     * @param buffer the buffer that contains the vectors (not null, MODIFIED)
+     * @param startPosition the position at which the vectors start (&ge;0,
+     * &le;endPosition)
+     * @param endPosition the position at which the vectors end
+     * (&ge;startPosition, &le;capacity)
+     * @param rotation the rotation to apply (not null, unaffected)
+     */
+    public static void rotate(FloatBuffer buffer, int startPosition,
+            int endPosition, Quaternion rotation) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.nonNull(rotation, "rotation");
+        Validate.inRange(startPosition, "start position", 0, endPosition);
+        Validate.inRange(endPosition, "end position", startPosition,
+                buffer.capacity());
+        int numFloats = endPosition - startPosition;
+        assert (numFloats % numAxes == 0) : numFloats;
+
+        Vector3f tmpVector = new Vector3f();
+        int numVectors = numFloats / numAxes;
+
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            int position = startPosition + vectorIndex * numAxes;
+            get(buffer, position, tmpVector);
+            rotation.mult(tmpVector, tmpVector);
+            put(buffer, position, tmpVector);
+        }
+    }
+
+    /**
+     * Apply the specified scale factors to 3-D vectors in the specified
+     * FloatBuffer range.
+     *
+     * @param buffer the buffer that contains the vectors (not null, MODIFIED)
+     * @param startPosition the position at which the vectors start (&ge;0,
+     * &le;endPosition)
+     * @param endPosition the position at which the vectors end
+     * (&ge;startPosition, &le;capacity)
+     * @param scale the scale factor to apply to each axis (not null,
+     * unaffected)
+     */
+    public static void scale(FloatBuffer buffer, int startPosition,
+            int endPosition, Vector3f scale) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.finite(scale, "scale factors");
+        Validate.inRange(startPosition, "start position", 0, endPosition);
+        Validate.inRange(endPosition, "end position", startPosition,
+                buffer.capacity());
+        int numFloats = endPosition - startPosition;
+        assert (numFloats % numAxes == 0) : numFloats;
+
+        Vector3f tmpVector = new Vector3f();
+        int numVectors = numFloats / numAxes;
+
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            int position = startPosition + vectorIndex * numAxes;
+            get(buffer, position, tmpVector);
+            scale.mult(tmpVector, tmpVector);
+            put(buffer, position, tmpVector);
+        }
     }
 
     /**
