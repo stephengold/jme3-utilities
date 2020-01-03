@@ -100,7 +100,7 @@ public class MyMesh {
     }
     // *************************************************************************
     // new methods exposed
-    // TODO add addindex(), deindex(), isConnected()
+    // TODO add addIndices(), isConnected()
 
     /**
      * Generate a material to visualize the bone weights in the specified Mesh.
@@ -193,8 +193,89 @@ public class MyMesh {
     }
 
     /**
+     * Expand a Mesh to ensure that no vertex data are re-used. Any index buffer
+     * is eliminated and any loop/strip/fan mode is changed to Triangles or
+     * Lines.
+     *
+     * @param in the input mesh (not null, mode not Hybrid or Patch, unaffected)
+     * @return a new Mesh (without an index buffer, mode = Triangles or Lines or
+     * Points)
+     */
+    public static Mesh expand(Mesh in) {
+        Mesh.Mode outMode;
+        Mesh.Mode inMode = in.getMode();
+        switch (inMode) {
+            case Points:
+            case Lines:
+            case Triangles:
+                outMode = inMode;
+                break;
+
+            case LineLoop:
+            case LineStrip:
+                outMode = Mesh.Mode.Lines;
+                break;
+
+            case TriangleFan:
+            case TriangleStrip:
+                outMode = Mesh.Mode.Triangles;
+                break;
+
+            default:
+                String message = "mode = " + inMode;
+                throw new IllegalArgumentException(message);
+        }
+
+        IndexBuffer indexList = in.getIndicesAsList();
+        int outVertexCount = indexList.size();
+        /*
+         * Create a shallow clone of the input mesh.
+         */
+        Mesh out = in.clone();
+        out.setMode(outMode);
+
+        for (VertexBuffer inVertexBuffer : in.getBufferList()) {
+            VertexBuffer.Type type = inVertexBuffer.getBufferType();
+            out.clearBuffer(type);
+
+            if (type != VertexBuffer.Type.Index) {
+                VertexBuffer.Format format = inVertexBuffer.getFormat();
+                int numCperE = inVertexBuffer.getNumComponents();
+                Buffer data = VertexBuffer.createBuffer(format, numCperE,
+                        outVertexCount);
+                out.setBuffer(type, numCperE, format, data);
+            }
+        }
+        /*
+         * Copy all vertex data to the new mesh.
+         */
+        for (int outVI = 0; outVI < outVertexCount; ++outVI) {
+            int inVI = indexList.get(outVI);
+            for (VertexBuffer outVB : out.getBufferList()) {
+                VertexBuffer.Type type = outVB.getBufferType();
+                VertexBuffer inVB = in.getBuffer(type);
+                assert inVB != outVB;
+                Element.copy(inVB, inVI, outVB, outVI);
+            }
+        }
+        /*
+         * Flip each buffer.
+         */
+        for (VertexBuffer outVB : out.getBufferList()) {
+            Buffer data = outVB.getData();
+            int endPosition = data.capacity();
+            data.position(endPosition);
+            data.flip();
+        }
+
+        out.updateCounts();
+
+        return out;
+    }
+
+    /**
      * Generate normals on a triangle-by-triangle basis for a Triangles-mode
-     * mesh without an index buffer. Any pre-existing normal buffer is
+     * Mesh without an index buffer. Any pre-existing normal buffer is
      * discarded.
      *
      * @param mesh the Mesh to modify (not null, mode=Triangles, not indexed)
@@ -505,17 +586,18 @@ public class MyMesh {
     }
 
     /**
-     * Swap all data between two vertices in a VertexBuffer.
+     * Swap all data between two elements of a VertexBuffer. TODO move to
+     * Element class
      *
      * @param vertexBuffer the VertexBuffer to modify (not null)
-     * @param vi1 the index of the first vertex (&ge;0)
-     * @param vi2 the index of the 2nd vertex (&ge;0)
+     * @param vi1 the index of the first element (&ge;0)
+     * @param vi2 the index of the 2nd element (&ge;0)
      */
     public static void swapVertexData(VertexBuffer vertexBuffer, int vi1,
             int vi2) {
-        int numVertices = vertexBuffer.getNumElements();
-        Validate.inRange(vi1, "v1", 0, numVertices - 1);
-        Validate.inRange(vi2, "v2", 0, numVertices - 1);
+        int numElements = vertexBuffer.getNumElements();
+        Validate.inRange(vi1, "v1", 0, numElements - 1);
+        Validate.inRange(vi2, "v2", 0, numElements - 1);
         if (vi1 == vi2) {
             return;
         }
