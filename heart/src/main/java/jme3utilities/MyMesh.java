@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -40,9 +40,11 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -84,6 +86,10 @@ public class MyMesh {
      * local copy of {@link com.jme3.math.Matrix4f#IDENTITY}
      */
     final private static Matrix4f matrixIdentity = new Matrix4f();
+    /**
+     * scale factors to reverse the direction of a vector
+     */
+    final private static Vector3f scaleReverse = new Vector3f(-1f, -1f, -1f);
     // *************************************************************************
     // constructors
 
@@ -94,7 +100,7 @@ public class MyMesh {
     }
     // *************************************************************************
     // new methods exposed
-    // TODO add addindex(), deindex(), isConnected(), reverseNormals(), reverseWinding()
+    // TODO add addindex(), deindex(), isConnected()
 
     /**
      * Generate a material to visualize the bone weights in the specified Mesh.
@@ -191,7 +197,7 @@ public class MyMesh {
      * mesh without an index buffer. Any pre-existing normal buffer is
      * discarded.
      *
-     * @param mesh the Mesh to update (not null, mode=Triangles, not indexed)
+     * @param mesh the Mesh to modify (not null, mode=Triangles, not indexed)
      */
     public static void generateNormals(Mesh mesh) {
         assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
@@ -440,6 +446,148 @@ public class MyMesh {
 
         assert result >= 0 : result;
         return result;
+    }
+
+    /**
+     * Reverse the normals of a Mesh. Apply this method (for instance) after
+     * reversing the winding order of a triangle mesh.
+     *
+     * @param mesh the Mesh to modify (not null)
+     */
+    public static void reverseNormals(Mesh mesh) {
+        FloatBuffer buffer = mesh.getFloatBuffer(VertexBuffer.Type.Normal);
+        if (buffer != null) {
+            MyBuffer.scale(buffer, 0, buffer.limit(), scaleReverse);
+        }
+
+        buffer = mesh.getFloatBuffer(VertexBuffer.Type.BindPoseNormal);
+        if (buffer != null) {
+            MyBuffer.scale(buffer, 0, buffer.limit(), scaleReverse);
+        }
+    }
+
+    /**
+     * Reverse the winding order of a Triangles-mode Mesh, but don't reverse its
+     * normals.
+     *
+     * @param mesh the Mesh to modify (not null, mode=Triangles)
+     */
+    public static void reverseWinding(Mesh mesh) {
+        assert mesh.getMode() == Mesh.Mode.Triangles : mesh.getMode();
+
+        mesh.updateCounts();
+        int numTriangles = mesh.getTriangleCount();
+
+        IndexBuffer indexBuffer = mesh.getIndexBuffer();
+        if (indexBuffer != null) { // a Mesh with indices
+            int numIndices = vpt * numTriangles;
+            assert indexBuffer.size() == numIndices : indexBuffer.size();
+            for (int triIndex = 0; triIndex < numTriangles; ++triIndex) {
+                int v1Index = vpt * triIndex;
+                int v3Index = (vpt * triIndex + vpt - 1);
+                int i1 = indexBuffer.get(v1Index);
+                int i3 = indexBuffer.get(v3Index);
+                indexBuffer.put(v1Index, i3);
+                indexBuffer.put(v3Index, i1);
+            }
+
+        } else { // a Mesh without indices
+            int numVertices = vpt * numTriangles;
+            for (VertexBuffer vb : mesh.getBufferList()) {
+                assert vb.getNumElements() == numVertices : vb.getNumElements();
+                for (int triIndex = 0; triIndex < numTriangles; ++triIndex) {
+                    int v1Index = vpt * triIndex;
+                    int v3Index = vpt * triIndex + vpt - 1;
+                    swapVertexData(vb, v1Index, v3Index);
+                }
+            }
+        }
+    }
+
+    /**
+     * Swap all data between two vertices in a VertexBuffer.
+     *
+     * @param vertexBuffer the VertexBuffer to modify (not null)
+     * @param vi1 the index of the first vertex (&ge;0)
+     * @param vi2 the index of the 2nd vertex (&ge;0)
+     */
+    public static void swapVertexData(VertexBuffer vertexBuffer, int vi1,
+            int vi2) {
+        int numVertices = vertexBuffer.getNumElements();
+        Validate.inRange(vi1, "v1", 0, numVertices - 1);
+        Validate.inRange(vi2, "v2", 0, numVertices - 1);
+        if (vi1 == vi2) {
+            return;
+        }
+
+        int numComponents = vertexBuffer.getNumComponents();
+        VertexBuffer.Format format = vertexBuffer.getFormat();
+        if (format == VertexBuffer.Format.Half) {
+            numComponents *= 2;
+        }
+        int startPos1 = numComponents * vi1;
+        int startPos2 = numComponents * vi2;
+
+        switch (format) {
+            case Byte:
+            case UnsignedByte:
+            case Half:
+                ByteBuffer byteBuf = (ByteBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numComponents; ++cIndex) {
+                    byte b1 = byteBuf.get(startPos1 + cIndex);
+                    byte b2 = byteBuf.get(startPos2 + cIndex);
+                    byteBuf.put(startPos1 + cIndex, b2);
+                    byteBuf.put(startPos2 + cIndex, b1);
+                }
+                break;
+
+            case Short:
+            case UnsignedShort:
+                ShortBuffer shortBuf = (ShortBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numComponents; ++cIndex) {
+                    short s1 = shortBuf.get(startPos1 + cIndex);
+                    short s2 = shortBuf.get(startPos2 + cIndex);
+                    shortBuf.put(startPos1 + cIndex, s2);
+                    shortBuf.put(startPos2 + cIndex, s1);
+                }
+                break;
+
+            case Int:
+            case UnsignedInt:
+                IntBuffer intBuf = (IntBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numComponents; ++cIndex) {
+                    int i1 = intBuf.get(startPos1 + cIndex);
+                    int i2 = intBuf.get(startPos2 + cIndex);
+                    intBuf.put(startPos1 + cIndex, i2);
+                    intBuf.put(startPos2 + cIndex, i1);
+                }
+                break;
+
+            case Double:
+                DoubleBuffer doubleBuffer
+                        = (DoubleBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numComponents; ++cIndex) {
+                    double d1 = doubleBuffer.get(startPos1 + cIndex);
+                    double d2 = doubleBuffer.get(startPos2 + cIndex);
+                    doubleBuffer.put(startPos1 + cIndex, d2);
+                    doubleBuffer.put(startPos2 + cIndex, d1);
+                }
+                break;
+
+            case Float:
+                FloatBuffer floatBuf = (FloatBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numComponents; ++cIndex) {
+                    float f1 = floatBuf.get(startPos1 + cIndex);
+                    float f2 = floatBuf.get(startPos2 + cIndex);
+                    floatBuf.put(startPos1 + cIndex, f2);
+                    floatBuf.put(startPos2 + cIndex, f1);
+                }
+                break;
+
+            default:
+                String message = "Unrecognized buffer format: " + format;
+                throw new UnsupportedOperationException(message);
+        }
     }
 
     /**
