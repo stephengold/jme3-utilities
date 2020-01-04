@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-ui library and related tests
 
-## Version 0.7.10for33 released on TBD
+## Version 0.7.10for33 released on 4 January 2020
 
  + Publicized the `HelpUtils` class.
  + Changed `HelpUtils` to sort displayed hints by action.
