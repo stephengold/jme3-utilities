@@ -38,7 +38,8 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * Utility methods that operate on buffers.
+ * Utility methods that operate on buffers, especially float buffers containing
+ * 3-D vectors.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -83,20 +84,18 @@ final public class MyBuffer {
         Validate.inRange(startPosition, "start position", 0, endPosition);
         Validate.inRange(endPosition, "end position", startPosition,
                 buffer.capacity());
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
 
-        Vector3f tmpVector = new Vector3f();
-        int numVectors = numFloats / numAxes;
-
         VectorSet result;
+        int numVectors = numFloats / numAxes;
         if (numVectors > 20) {
             result = new VectorSetUsingCollection(numVectors);
         } else {
             result = new VectorSetUsingBuffer(numVectors);
         }
 
+        Vector3f tmpVector = new Vector3f();
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
             get(buffer, position, tmpVector);
@@ -127,9 +126,9 @@ final public class MyBuffer {
         Validate.inRange(endPosition, "end position",
                 startPosition + 2 * numAxes, buffer.capacity());
         Matrix3f result = (storeResult == null) ? new Matrix3f() : storeResult;
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
+
         int numVectors = numFloats / numAxes;
         Vector3f sampleMean = mean(buffer, startPosition, endPosition, null);
         /*
@@ -191,9 +190,9 @@ final public class MyBuffer {
                 buffer.capacity());
         Validate.inRange(axisIndex, "axis index", MyVector3f.xAxis,
                 MyVector3f.zAxis);
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
+
         double maxRadiusSquared = 0.0;
         int numVectors = numFloats / numAxes;
 
@@ -330,12 +329,11 @@ final public class MyBuffer {
         Validate.inRange(endPosition, "end position", startPosition,
                 buffer.capacity());
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
+
         int numVectors = numFloats / numAxes;
         result.zero();
-
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
             float x = buffer.get(position + MyVector3f.xAxis);
@@ -367,12 +365,11 @@ final public class MyBuffer {
         Validate.inRange(startPosition, "start position", 0, endPosition);
         Validate.inRange(endPosition, "end position", startPosition,
                 buffer.capacity());
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
+
         double maxLengthSquared = 0.0;
         int numVectors = numFloats / numAxes;
-
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
 
@@ -411,7 +408,6 @@ final public class MyBuffer {
         Validate.inRange(startPosition, "start position", 0, endPosition);
         Validate.inRange(endPosition, "end position", startPosition,
                 buffer.capacity());
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
 
@@ -421,7 +417,6 @@ final public class MyBuffer {
                 Float.POSITIVE_INFINITY);
         Vector3f tmpVector = new Vector3f();
         int numVectors = numFloats / numAxes;
-
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
             get(buffer, position, tmpVector);
@@ -450,12 +445,11 @@ final public class MyBuffer {
         Validate.inRange(endPosition, "end position", startPosition + numAxes,
                 buffer.capacity());
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
+
         int numVectors = numFloats / numAxes;
         result.zero();
-
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
 
@@ -468,6 +462,35 @@ final public class MyBuffer {
         result.divideLocal(numVectors);
 
         return result;
+    }
+
+    /**
+     * Normalize 3-D vectors in the specified FloatBuffer range.
+     *
+     * @param buffer the buffer that contains the vectors (not null, modified)
+     * @param startPosition the position at which the vectors start (&ge;0,
+     * &le;endPosition-3)
+     * @param endPosition the position at which the vectors end
+     * (&ge;startPosition+3, &le;capacity)
+     */
+    public static void normalize(FloatBuffer buffer, int startPosition,
+            int endPosition) {
+        Validate.nonNull(buffer, "buffer");
+        Validate.inRange(startPosition, "start position", 0,
+                endPosition - numAxes);
+        Validate.inRange(endPosition, "end position", startPosition + numAxes,
+                buffer.capacity());
+        int numFloats = endPosition - startPosition;
+        assert (numFloats % numAxes == 0) : numFloats;
+
+        int numVectors = numFloats / numAxes;
+        Vector3f tmpVector = new Vector3f();
+        for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
+            int position = startPosition + vectorIndex * numAxes;
+            get(buffer, position, tmpVector);
+            tmpVector.normalizeLocal();
+            put(buffer, position, tmpVector);
+        }
     }
 
     /**
@@ -510,9 +533,8 @@ final public class MyBuffer {
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
 
-        Vector3f tmpVector = new Vector3f();
         int numVectors = numFloats / numAxes;
-
+        Vector3f tmpVector = new Vector3f();
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
             get(buffer, position, tmpVector);
@@ -545,7 +567,6 @@ final public class MyBuffer {
 
         Vector3f tmpVector = new Vector3f();
         int numVectors = numFloats / numAxes;
-
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
             get(buffer, position, tmpVector);
@@ -633,7 +654,6 @@ final public class MyBuffer {
 
         Vector3f tmpVector = new Vector3f();
         int numVectors = numFloats / numAxes;
-
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
             get(buffer, position, tmpVector);
@@ -660,11 +680,10 @@ final public class MyBuffer {
         Validate.inRange(endPosition, "end position", startPosition,
                 buffer.capacity());
         Validate.finite(offsetVector, "offset vector");
-
         int numFloats = endPosition - startPosition;
         assert (numFloats % numAxes == 0) : numFloats;
-        int numVectors = numFloats / numAxes;
 
+        int numVectors = numFloats / numAxes;
         Vector3f tmpVector = new Vector3f();
         for (int vectorIndex = 0; vectorIndex < numVectors; ++vectorIndex) {
             int position = startPosition + vectorIndex * numAxes;
