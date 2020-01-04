@@ -46,6 +46,7 @@ import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.Filter;
 import com.jme3.post.FilterPostProcessor;
@@ -73,6 +74,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 import jme3utilities.MyCamera;
 import jme3utilities.MyControl;
+import jme3utilities.MyMesh;
 import jme3utilities.MySkeleton;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
@@ -284,8 +286,12 @@ public class Describer implements Cloneable {
         result.append(" mode=");
         Mesh.Mode mode = mesh.getMode();
         result.append(mode);
-        result.append(" bufs[");
 
+        result.append(" numV=");
+        int numV = mesh.getVertexCount();
+        result.append(numV);
+
+        result.append(" bufs[");
         IntMap<VertexBuffer> buffers = mesh.getBuffers();
         for (IntMap.Entry<VertexBuffer> bufferEntry : buffers) {
             if (addSeparators) {
@@ -712,6 +718,60 @@ public class Describer implements Cloneable {
         }
 
         return result.toString();
+    }
+
+    /**
+     * Generate a compact, textual description of the indexed vertex in the
+     * specified Mesh.
+     *
+     * @param mesh (not null, unaffected)
+     * @param vertexIndex (&ge;0)
+     * @return a description (not null, not empty)
+     */
+    public String describeVertexData(Mesh mesh, int vertexIndex) {
+        StringBuilder builder = new StringBuilder(50);
+        String desc;
+
+        int numVertices = mesh.getVertexCount();
+        if (numVertices <= 10) {
+            desc = String.format("v%1d: ", vertexIndex);
+        } else if (numVertices <= 100) {
+            desc = String.format("v%02d: ", vertexIndex);
+        } else if (numVertices <= 1000) {
+            desc = String.format("v%03d: ", vertexIndex);
+        } else {
+            desc = String.format("v%d: ", vertexIndex);
+        }
+        builder.append(desc);
+
+        Vector3f pos = MyMesh.vertexVector3f(mesh, VertexBuffer.Type.Position,
+                vertexIndex, null);
+        desc = MyVector3f.describe(pos);
+        builder.append(desc);
+
+        if (MyMesh.hasUV(mesh)) {
+            Vector2f norm = MyMesh.vertexVector2f(mesh,
+                    VertexBuffer.Type.TexCoord, vertexIndex, null);
+            builder.append(" u=");
+            builder.append(norm.x);
+            builder.append(" v=");
+            builder.append(norm.y);
+        }
+
+        if (MyMesh.hasNormals(mesh)) {
+            int length = builder.length();
+            if (length < 20) {
+                builder.append(MyString.repeat(" ", 20 - length));
+            }
+            builder.append(" N[");
+            Vector3f norm = MyMesh.vertexVector3f(mesh,
+                    VertexBuffer.Type.Normal, vertexIndex, null);
+            desc = MyVector3f.describeDirection(norm);
+            builder.append(desc);
+            builder.append(']');
+        }
+
+        return builder.toString();
     }
 
     /**
