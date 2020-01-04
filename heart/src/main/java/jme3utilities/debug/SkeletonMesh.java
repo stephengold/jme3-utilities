@@ -35,8 +35,11 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
+import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Logger;
 import jme3utilities.MySkeleton;
@@ -81,21 +84,22 @@ class SkeletonMesh extends Mesh {
         createPositions(boneCount);
 
         if (mode == Mode.Lines) {
-            ShortBuffer shorts = createLineIndices(numConnections);
+            IndexBuffer ib = createLineIndices(boneCount, numConnections);
             /*
              * Populate the index buffer.
              */
-            shorts.clear(); // prepare for writing
             for (int boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
-                Bone child = skeleton.getBone(boneIndex); // skeleton != null
+                Bone child = skeleton.getBone(boneIndex);// skeleton != null
                 Bone parent = child.getParent();
                 if (parent != null) {
-                    short parentIndex = (short) skeleton.getBoneIndex(parent);
-                    short childIndex = (short) boneIndex;
-                    shorts.put(parentIndex).put(childIndex);
+                    int parentIndex = skeleton.getBoneIndex(parent);
+                    int bufPosition = ib.getBuffer().position();
+                    ib.put(bufPosition, parentIndex);
+                    ib.put(bufPosition + 1, boneIndex);
+                    ib.getBuffer().position(bufPosition + 2);
                 }
             }
-            shorts.flip(); // prepare for reading
+            ib.getBuffer().flip(); // prepare for reading
         }
 
         setMode(mode);
@@ -183,21 +187,26 @@ class SkeletonMesh extends Mesh {
     }
 
     /**
-     * Create and add the indices buffer for a Lines-mode mesh.
+     * Create and add an IndexBuffer for a Lines-mode mesh.
      *
      * @param numLines (&ge;0)
      */
-    private ShortBuffer createLineIndices(int numLines) {
+    private IndexBuffer createLineIndices(int numBones, int numLines) {
         assert numLines >= 0 : numLines;
 
         int numIndices = 2 * numLines;
-        // TODO use a ByteBuffer if possible
-        ShortBuffer shorts = BufferUtils.createShortBuffer(numIndices);
-        VertexBuffer indices = new VertexBuffer(Type.Index);
-        indices.setupData(Usage.Static, 2, Format.UnsignedShort, shorts);
-        setBuffer(indices);
+        IndexBuffer ib = IndexBuffer.createIndexBuffer(numBones, numIndices);
+        Buffer ibData = ib.getBuffer();
+        VertexBuffer.Format ibFormat;
+        if (ibData instanceof ShortBuffer) {
+            ibFormat = VertexBuffer.Format.UnsignedShort;
+        } else {
+            assert ibData instanceof IntBuffer;
+            ibFormat = VertexBuffer.Format.UnsignedInt;
+        }
+        setBuffer(VertexBuffer.Type.Index, 1, ibFormat, ibData);
 
-        return shorts;
+        return ib;
     }
 
     /**
