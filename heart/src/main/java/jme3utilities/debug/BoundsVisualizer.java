@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -151,15 +151,33 @@ public class BoundsVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
-     * Copy the color of the lines. TODO storeResult argument
+     * Copy the color of the lines.
      *
      * @return a new instance
+     * @deprecated use {@link #copyLineColor(com.jme3.math.ColorRGBA)}
      */
+    @Deprecated
     public ColorRGBA copyLineColor() {
         MatParam parameter = lineMaterial.getParam("Color");
         ColorRGBA color = (ColorRGBA) parameter.getValue();
 
         return color.clone();
+    }
+
+    /**
+     * Copy the color of the lines.
+     *
+     * @param storeResult storage for the result (modified if not null)
+     * @return a new instance
+     */
+    public ColorRGBA copyLineColor(ColorRGBA storeResult) {
+        ColorRGBA result
+                = (storeResult == null) ? new ColorRGBA() : storeResult;
+        MatParam parameter = lineMaterial.getParam("Color");
+        ColorRGBA color = (ColorRGBA) parameter.getValue();
+        result.set(color);
+
+        return result;
     }
 
     /**
