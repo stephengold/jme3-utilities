@@ -1,9 +1,31 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 4.3.0for33 released on TBD
+
+ + Bugfix: wrong mode in `LoopMesh`.
+ + Added `addIndices()`, `areIdentical()`, `expand()`, `generateNormals()`,
+   `hasIndices()`, `reverseNormals()`, and `reverseWinding()` methods
+    to the `MyMesh` class.
+ + Added `Cone`, `Element`, `Icosahedron`, `Octahedron`, `Prism`, and
+   `Tetrahedron` classes.
+ + Added `get()`, `normalize()`, `put()`, `rotate()`, and `scale()` methods to
+   the `MyBuffer` class.
+ + Added a `Dumper` option to dump mesh-vertex data.
+ + Improved dumping of meshes, including number of vertices.
+ + Changed default list separator to " " in the `Describer` class.
+ + Added a `nonNegative()` method for `Vector2f` arguments to the `Validate`
+   class.
+ + Implemented JME serialization for visualizer classes.
+ + Publicized the `vpt` field of the `MyMesh` class.
+ + Added caller-provided storage to `BoundsVisualizer.copyLineColor()`.
+ + Added `TestSolidMeshes` application to the tests sub-project.
+ + Added `TestCloneControls` class to the automated test suite.
+ + Targeted the new jMonkeyEngine version 3.3.0-beta1.
+
 ## Version 4.2.0for33 released on 8 December 2019
 
  + Added a single-argument `listSpatials()` method to the `MySpatial` class.
- + Targeted jMonkeyEngine version 3.3.0-beta1.
+ + Targeted jMonkeyEngine version v3.3.0-beta1, which was later deleted!
 
 ## Version 4.1.0for33 released on 5 October 2019
 
