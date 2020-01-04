@@ -229,6 +229,7 @@ public class TestSolidMeshes
         height = 1f;
         generatePyramid = false;
         mesh = new Cone(numSides, radius, height, generatePyramid);
+        mesh = MyMesh.addIndices(mesh);
         geometry = new Geometry("cone", mesh);
         rootNode.attachChild(geometry);
         geometry.move(0f, 0f, 0f);
@@ -254,7 +255,7 @@ public class TestSolidMeshes
         int refineSteps = 3;
         radius = 1f;
         mesh = new Icosphere(refineSteps, radius);
-        geometry = new Geometry("icosphere", mesh);
+        geometry = new Geometry("icoSphere", mesh);
         rootNode.attachChild(geometry);
         geometry.move(2f, 0f, 0f);
 
@@ -350,7 +351,7 @@ public class TestSolidMeshes
      */
     private void configureDumper() {
         dumper.setDumpTransform(true);
-        dumper.setDumpMatParam(true);
+        //dumper.setDumpVertex(true);
     }
 
     /**
