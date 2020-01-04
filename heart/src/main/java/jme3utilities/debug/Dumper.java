@@ -46,6 +46,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.mesh.IndexBuffer;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -111,6 +112,10 @@ public class Dumper implements Cloneable {
      * enable dumping of user data (for spatials)
      */
     private boolean dumpUserFlag = true;
+    /**
+     * enable dumping of mesh-vertex data (for meshes)
+     */
+    private boolean dumpVertexFlag = false;
     /**
      * describer for JME objects
      */
@@ -433,61 +438,11 @@ public class Dumper implements Cloneable {
         }
 
         if (spatial instanceof Geometry) {
-            Geometry geometry = (Geometry) spatial;
-            Material material = geometry.getMaterial();
-            description = describer.describe(material);
-            if (!description.isEmpty()) {
-                stream.println();
-                stream.print(indent);
-                stream.print(" mat");
-                stream.print(description);
-                if (dumpMatParamFlag) {
-                    dump(material.getParamsMap(), indent + indentIncrement);
-                }
-            }
-
-            Mesh mesh = geometry.getMesh();
-            description = describer.describe(mesh);
-            stream.println();
-            stream.print(indent);
-            addDescription(description);
+            dumpGeometry((Geometry) spatial, indent);
         }
         stream.println();
-        /*
-         * If the spatial is a Node, dump its children
-         * with incremented indentation.
-         */
         if (spatial instanceof Node) {
-            List<Spatial> children = ((Node) spatial).getChildren();
-            int numChildren = children.size();
-            String childIndent = indent + indentIncrement;
-            if (numChildren <= maxChildren) {
-                /*
-                 * Dump all children.
-                 */
-                for (Spatial child : children) {
-                    dump(child, childIndent);
-                }
-            } else {
-                /*
-                 * Dump the head and tail of the list,
-                 * just the specified number.
-                 */
-                int numTail = maxChildren / 3;
-                int numHead = maxChildren - numTail;
-                for (int childI = 0; childI < numHead; ++childI) {
-                    Spatial child = children.get(childI);
-                    dump(child, childIndent);
-                }
-                int numSkipped = numChildren - numHead - numTail;
-                stream.printf("%s... %d child spatial%s",
-                        childIndent, numSkipped, (numSkipped == 1) ? "" : "s");
-                stream.println(" skipped ...");
-                for (int i = numChildren - numTail; i < numChildren; ++i) {
-                    Spatial child = children.get(i);
-                    dump(child, childIndent);
-                }
-            }
+            dumpChildren((Node) spatial, indent + indentIncrement);
         }
     }
 
@@ -643,6 +598,15 @@ public class Dumper implements Cloneable {
     }
 
     /**
+     * Test whether mesh-vertex data will be dumped.
+     *
+     * @return true if they'll be dumped, otherwise false
+     */
+    public boolean isDumpVertex() {
+        return dumpVertexFlag;
+    }
+
+    /**
      * Read the maximum number of children per Node.
      *
      * @return the current limit (&ge;0, default=MAX_VALUE)
@@ -753,6 +717,17 @@ public class Dumper implements Cloneable {
     }
 
     /**
+     * Configure dumping of mesh-vertex data.
+     *
+     * @param newValue true to enable, false to disable (default=false)
+     * @return this instance for chaining
+     */
+    public Dumper setDumpVertex(boolean newValue) {
+        dumpVertexFlag = newValue;
+        return this;
+    }
+
+    /**
      * Configure the indent increment.
      *
      * @param newValue (not null, default=" ")
@@ -858,6 +833,93 @@ public class Dumper implements Cloneable {
                 stream.print(indent);
                 MatParam matParam = map.get(name);
                 String description = describer.describe(matParam);
+                stream.print(description);
+            }
+        }
+    }
+
+    /**
+     * Dump children of a scene-graph Node.
+     */
+    private void dumpChildren(Node node, String childIndent) {
+        List<Spatial> children = node.getChildren();
+        int numChildren = children.size();
+        if (numChildren <= maxChildren) {
+            /*
+             * Dump all children.
+             */
+            for (Spatial child : children) {
+                dump(child, childIndent);
+            }
+        } else {
+            /*
+             * Dump the head and tail of the list, just the specified number.
+             */
+            int numTail = maxChildren / 3;
+            int numHead = maxChildren - numTail;
+            for (int childI = 0; childI < numHead; ++childI) {
+                Spatial child = children.get(childI);
+                dump(child, childIndent);
+            }
+            int numSkipped = numChildren - numHead - numTail;
+            stream.printf("%s... %d child spatial%s",
+                    childIndent, numSkipped, (numSkipped == 1) ? "" : "s");
+            stream.println(" skipped ...");
+            for (int i = numChildren - numTail; i < numChildren; ++i) {
+                Spatial child = children.get(i);
+                dump(child, childIndent);
+            }
+        }
+    }
+
+    /**
+     * Dump the material and mesh of a Geometry.
+     *
+     * @param geometry (not null, unaffected)
+     * @param indent the indent text (not null, may be empty)
+     */
+    private void dumpGeometry(Geometry geometry, String indent) {
+        Material material = geometry.getMaterial();
+        String description = describer.describe(material);
+        if (!description.isEmpty()) {
+            stream.println();
+            stream.print(indent);
+            stream.print(" mat");
+            stream.print(description);
+            if (dumpMatParamFlag) {
+                dump(material.getParamsMap(), indent + indentIncrement);
+            }
+        }
+
+        Mesh mesh = geometry.getMesh();
+        description = describer.describe(mesh);
+        stream.println();
+        stream.print(indent);
+        addDescription(description);
+
+        if (dumpVertexFlag) {
+            IndexBuffer indexBuffer = mesh.getIndexBuffer();
+            if (indexBuffer != null) {
+                stream.println();
+                stream.print(indent);
+                stream.print(indentIncrement);
+                stream.print("index[");
+                for (int ibPos = 0; ibPos < indexBuffer.size(); ++ibPos) {
+                    if (ibPos > 0) {
+                        stream.print(' ');
+                    }
+                    int index = indexBuffer.get(ibPos);
+                    stream.print(index);
+                }
+                stream.print(']');
+            }
+
+            int numVertices = mesh.getVertexCount();
+            for (int vertexI = 0; vertexI < numVertices; ++vertexI) {
+                stream.println();
+                stream.print(indent);
+                stream.print(indentIncrement);
+                description = describer.describeVertexData(mesh, vertexI);
                 stream.print(description);
             }
         }
