@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 4.3.0for33 released on TBD
+## Version 4.3.0for33 released on 4 January 2020
 
  + Bugfix: wrong mode in `LoopMesh`.
  + Added `addIndices()`, `areIdentical()`, `expand()`, `generateNormals()`,
@@ -20,7 +20,7 @@
  + Added caller-provided storage to `BoundsVisualizer.copyLineColor()`.
  + Added `TestSolidMeshes` application to the tests sub-project.
  + Added `TestCloneControls` class to the automated test suite.
- + Targeted the new jMonkeyEngine version 3.3.0-beta1.
+ + Targeted the NEW jMonkeyEngine version 3.3.0-beta1.
 
 ## Version 4.2.0for33 released on 8 December 2019
 
