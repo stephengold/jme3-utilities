@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 4.3.0for32 released on TBD
+## Version 4.3.0for32 released on 4 January 2020
 
  + Bugfix: wrong mode in `LoopMesh`.
  + Added `addIndices()`, `areIdentical()`, `expand()`, `generateNormals()`,
