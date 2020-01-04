@@ -167,9 +167,7 @@ public class MyMesh {
         }
         Buffer ibData = ib.getBuffer();
         VertexBuffer.Format ibFormat;
-        if (ibData instanceof ByteBuffer) {
-            ibFormat = VertexBuffer.Format.UnsignedByte;
-        } else if (ibData instanceof ShortBuffer) {
+        if (ibData instanceof ShortBuffer) {
             ibFormat = VertexBuffer.Format.UnsignedShort;
         } else {
             assert ibData instanceof IntBuffer;
