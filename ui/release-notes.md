@@ -1,5 +1,11 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.7.10for32 released on TBD
+
+ + Added the `HelpUtils` class.
+ + Implemented `unbind()` by keycode in the `InputMode` class.
+ + Based on version 4.3 of the jme3-utilities-heart library.
+
 ## Version 0.7.8for32 released on 23 September 2019
 
 Based on version 4.0 of the jme3-utilities-heart library.
