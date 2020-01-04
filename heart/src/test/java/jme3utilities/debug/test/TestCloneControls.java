@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019, Stephen Gold
+ Copyright (c) 2019-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -210,7 +210,7 @@ public class TestCloneControls {
                 = new ColorRGBA(0.11f + b, 0.012f + b, 0.013f + b, 0.014f + b);
         boolean flag = (b > 0.15f && b < 0.45f);
 
-        Assert.assertEquals(color, bounds.copyLineColor());
+        Assert.assertEquals(color, bounds.copyLineColor(null));
         Assert.assertEquals(!flag, bounds.isDepthTest());
         Assert.assertEquals(0.02f + b, bounds.lineWidth(), 0f);
     }
