@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -103,8 +103,8 @@ public class Describer implements Cloneable {
     // new methods exposed
 
     /**
-     * Generate a textual description of the specified Bone, not including its
-     * children.
+     * Generate a compact, textual description of the specified Bone, not
+     * including its children.
      *
      * @param bone the Bone to describe (not null, unaffected)
      * @return a description (not null, not empty)
@@ -138,7 +138,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description for a BoundingBox.
+     * Generate a compact, textual description of the specified BoundingBox.
      *
      * @param aabb the box to describe (not null, unaffected)
      * @return description (not null, not empty)
@@ -160,7 +160,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description for a BoundingSphere.
+     * Generate a compact, textual description of the specified BoundingSphere.
      *
      * @param sphere the sphere to describe (not null, unaffected)
      * @return description (not null, not empty)
@@ -181,7 +181,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description for a BoundingVolume.
+     * Generate a compact, textual description of the specified BoundingVolume.
      *
      * @param boundingVolume the sphere to describe (not null, unaffected)
      * @return description (not null, not empty)
@@ -200,8 +200,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the specified Material, not including
-     * its parameters.
+     * Generate a compact, textual description of the specified Material, not
+     * including its parameters.
      *
      * @param material the Material to describe (may be null, unaffected)
      * @return a description (not null, may be empty)
@@ -236,7 +236,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the specified material parameter.
+     * Generate a compact, textual description of the specified material
+     * parameter.
      *
      * @param matParam the material parameter to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -268,7 +269,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the specified Mesh.
+     * Generate a compact, textual description of the specified Mesh.
      *
      * @param mesh the Mesh to describe (may be null, unaffected)
      * @return a description (not null, not empty)
@@ -302,8 +303,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the specified Skeleton, not including
-     * its bones.
+     * Generate a compact, textual description of the specified Skeleton, not
+     * including its bones.
      *
      * @param skeleton the Skeleton to describe (not null, unaffected)
      * @return a description (not null, not empty)
@@ -322,7 +323,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Describe the specified Texture.
+     * Generate a compact, textual description of the specified Texture.
      *
      * @param texture the Texture to describe (may be null, unaffected)
      * @return a textual description (not null, not empty)
@@ -361,7 +362,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a compact texture description of the specified VertexBuffer.
+     * Generate a compact, textual description of the specified VertexBuffer.
      *
      * @param buffer the buffer to describe (not null, unaffected)
      * @return a textual description (not null, not empty)
@@ -384,8 +385,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Describe the render-queue bucket to which the specified Spatial is
-     * assigned.
+     * Generate a compact, textual description of the render-queue bucket to
+     * which the specified Spatial is assigned.
      *
      * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, not empty)
@@ -411,8 +412,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description for all controls added to the specified
-     * Spatial.
+     * Generate a compact, textual description of all controls added to the
+     * specified Spatial.
      *
      * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -442,8 +443,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the view-frustum culling hints
-     * associated with the specified Spatial.
+     * Generate a compact, textual description of the view-frustum culling hints
+     * of the specified Spatial.
      *
      * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, not empty)
@@ -469,7 +470,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a filter post-processor's filters.
+     * Generate a compact, textual description of the filters in the specified
+     * FilterPostProcessor.
      *
      * @param fpp the processor to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -493,7 +495,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description the flags associated with the specified
+     * Generate a compact, textual description of the flags of the specified
      * ViewPort.
      *
      * @param viewPort the ViewPort to describe (not null, unaffected)
@@ -521,8 +523,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the world location of the specified
-     * Spatial.
+     * Generate a compact, textual description of the world location of the
+     * specified Spatial.
      *
      * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -543,8 +545,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the world orientation of the specified
-     * Spatial.
+     * Generate a compact, textual description of the world orientation of the
+     * specified Spatial.
      *
      * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -565,8 +567,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the material-parameter overrides of the
-     * specified Spatial.
+     * Generate a compact, textual description of the material-parameter
+     * overrides of the specified Spatial.
      *
      * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, not empty)
@@ -594,7 +596,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of a viewport's scene processors.
+     * Generate a compact, textual description of the scene processors of the
+     * specified ViewPort.
      *
      * @param viewPort the ViewPort to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -618,8 +621,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the world scale of the specified
-     * spatial.
+     * Generate a compact, textual description of the world scale of the
+     * specified Spatial.
      *
      * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -634,7 +637,7 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the specified scale vector.
+     * Generate a compact, textual description of the specified scale vector.
      *
      * @param vector the vector to describe (not null, unaffected)
      * @return a description (not null, may be empty)
@@ -654,8 +657,8 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the shadow modes associated with the
-     * specified spatial.
+     * Generate a compact, textual description of the shadow modes of the
+     * specified Spatial.
      *
      * @param spatial the spatial to describe (not null, unaffected)
      * @return a description (not null, not empty)
@@ -681,10 +684,10 @@ public class Describer implements Cloneable {
     }
 
     /**
-     * Generate a textual description of the user data associated with a
-     * spatial.
+     * Generate a compact, textual description of any user data in the specified
+     * Spatial.
      *
-     * @param spatial the spatial to describe (not null, unaffected)
+     * @param spatial the Spatial to describe (not null, unaffected)
      * @return a description (not null, may be empty)
      */
     public String describeUserData(Spatial spatial) {

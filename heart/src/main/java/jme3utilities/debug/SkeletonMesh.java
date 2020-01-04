@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -221,6 +221,7 @@ class SkeletonMesh extends Mesh {
         assert numLines >= 0 : numLines;
 
         int numIndices = 2 * numLines;
+        // TODO use a ByteBuffer if possible
         ShortBuffer shorts = BufferUtils.createShortBuffer(numIndices);
         VertexBuffer indices = new VertexBuffer(Type.Index);
         indices.setupData(Usage.Static, 2, Format.UnsignedShort, shorts);

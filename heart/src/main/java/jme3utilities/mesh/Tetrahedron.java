@@ -37,8 +37,7 @@ import jme3utilities.Validate;
 
 /**
  * A 3-D, static, Triangles-mode Mesh (without indices or texture coordinates)
- * that renders a tetrahedron. (An tetrahedron has 4 vertices and 4 triangular
- * faces.)
+ * that renders a tetrahedron. (An tetrahedron has 4 triangular faces.)
  *
  * @author Stephen Gold sgold@sonic.net
  * @see jme3utilities.mesh.Icosahedron
