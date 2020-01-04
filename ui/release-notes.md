@@ -1,11 +1,18 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.7.10for33 released on TBD
+
+ + Publicized the `HelpUtils` class.
+ + Changed `HelpUtils` to sort displayed hints by action.
+ + Based on version 4.3 of the jme3-utilities-heart library and the NEW
+   version 3.3.0-beta1 of the jme3-core library.
+
 ## Version 0.7.9for33 released on 8 December 2019
 
  + Added the `HelpUtils` class.
  + Implemented `unbind()` by keycode in the `InputMode` class.
  + Based on version 4.2 of the jme3-utilities-heart library and
-   version 3.3.0-beta1 of the jme3-core library.
+   version v3.3.0-beta1 of the jme3-core library, which was later deleted!
 
 ## Version 0.7.8for33 released on 23 September 2019
 
