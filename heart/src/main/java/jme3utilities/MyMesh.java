@@ -99,7 +99,7 @@ public class MyMesh {
     }
     // *************************************************************************
     // new methods exposed
-    // TODO add isConnected()
+    // TODO add isConnected(), makeDoubleSided(), merge()
 
     /**
      * Compress a Mesh by introducing an index buffer.
