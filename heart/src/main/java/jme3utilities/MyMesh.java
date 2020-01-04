@@ -99,7 +99,119 @@ public class MyMesh {
     }
     // *************************************************************************
     // new methods exposed
-    // TODO add addIndices(), isConnected()
+    // TODO add isConnected()
+
+    /**
+     * Compress a Mesh by introducing an index buffer.
+     *
+     * @param input the input mesh (not null, without an index buffer)
+     * @return a new Mesh (with an index buffer)
+     */
+    public static Mesh addIndices(Mesh input) {
+        assert !hasIndices(input);
+        /*
+         * Assign new indices and create mappings between
+         * the old and new indices.
+         */
+        int oldN = input.getVertexCount();
+        int[] old2new = new int[oldN];
+        int[] new2old = new int[oldN];
+        int newN = 0;
+        for (int oldI = 0; oldI < oldN; ++oldI) {
+            old2new[oldI] = -1;
+            new2old[oldI] = -1;
+
+            for (int newI = 0; newI < newN; ++newI) {
+                if (areIdentical(input, oldI, new2old[newI])) {
+                    old2new[oldI] = newI;
+                    break;
+                }
+            }
+            if (old2new[oldI] == -1) { // allocate a vertex index
+                old2new[oldI] = newN;
+                new2old[newN] = oldI;
+                ++newN;
+            }
+        }
+        /*
+         * Create a clone of the input mesh with smaller vertex buffers.
+         */
+        Mesh result = input.clone();
+        for (VertexBuffer oldVertexBuffer : input.getBufferList()) {
+            VertexBuffer.Type type = oldVertexBuffer.getBufferType();
+            result.clearBuffer(type);
+            VertexBuffer.Format format = oldVertexBuffer.getFormat();
+            int numCperE = oldVertexBuffer.getNumComponents();
+            Buffer data = VertexBuffer.createBuffer(format, numCperE, newN);
+            result.setBuffer(type, numCperE, format, data);
+        }
+        /*
+         * Copy vertex data from the input mesh to the new mesh.
+         */
+        for (int newI = 0; newI < newN; ++newI) {
+            int oldI = new2old[newI];
+            for (VertexBuffer newVB : result.getBufferList()) {
+                VertexBuffer.Type type = newVB.getBufferType();
+                VertexBuffer oldVB = input.getBuffer(type);
+                assert oldVB != newVB;
+                Element.copy(oldVB, oldI, newVB, newI);
+            }
+        }
+        /*
+         * Create the index buffer and fill it with indices.
+         */
+        IndexBuffer ib = IndexBuffer.createIndexBuffer(newN, oldN);
+        for (int oldI = 0; oldI < oldN; ++oldI) {
+            int newI = old2new[oldI];
+            ib.put(oldI, newI);
+        }
+        VertexBuffer.Format ibFormat = ib.getFormat();
+        Buffer ibData = ib.getBuffer();
+        result.setBuffer(VertexBuffer.Type.Index, 1, ibFormat, ibData);
+        /*
+         * Flip each buffer.
+         */
+        for (VertexBuffer outVB : result.getBufferList()) {
+            Buffer data = outVB.getData();
+            int endPosition = data.capacity();
+            data.position(endPosition);
+            data.flip();
+        }
+
+        result.updateCounts();
+
+        return result;
+    }
+
+    /**
+     * Test whether 2 vertices in the specified mesh are identical.
+     *
+     * @param mesh (not null, unaffected)
+     * @param vi1 the index of the first vertex (&ge;0)
+     * @param vi2 the index of the 2nd vertex (&ge;0)
+     * @return true if identical, otherwise false
+     */
+    public static boolean areIdentical(Mesh mesh, int vi1, int vi2) {
+        Validate.nonNull(mesh, "mesh");
+        int numVertices = mesh.getVertexCount();
+        Validate.inRange(vi1, "first vertex index", 0, numVertices - 1);
+        Validate.inRange(vi2, "2nd vertex index", 0, numVertices - 1);
+
+        if (vi1 == vi2) {
+            return true;
+        }
+
+        for (VertexBuffer vertexBuffer : mesh.getBufferList()) {
+            VertexBuffer.Type type = vertexBuffer.getBufferType();
+            if (type != VertexBuffer.Type.Index) {
+                if (!Element.equals(vertexBuffer, vi1, vi2)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Generate a material to visualize the bone weights in the specified Mesh.
