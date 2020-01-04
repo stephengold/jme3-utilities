@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * A filter to adjust the contrast of a rendered scene using a power-law function.
+ * A filter to adjust the contrast of a rendered scene using a power-law
+ * function.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -76,7 +77,7 @@ public class ContrastAdjustmentFilter extends Filter {
      */
     public ContrastAdjustmentFilter(float exponent) {
         super("ContrastAdjustmentFilter");
-        assert exponent > 0f : exponent;
+        Validate.positive(exponent, "exponent");
         setExponent(exponent);
     }
     // *************************************************************************
