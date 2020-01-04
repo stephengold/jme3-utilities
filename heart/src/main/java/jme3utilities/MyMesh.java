@@ -104,10 +104,11 @@ public class MyMesh {
     /**
      * Compress a Mesh by introducing an index buffer.
      *
-     * @param input the input mesh (not null, without an index buffer)
+     * @param input the input Mesh (not null, without an index buffer)
      * @return a new Mesh (with an index buffer)
      */
     public static Mesh addIndices(Mesh input) {
+        Validate.nonNull(input, "input");
         assert !hasIndices(input);
         /*
          * Assign new indices and create mappings between
