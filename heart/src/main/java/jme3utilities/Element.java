@@ -148,6 +148,100 @@ public class Element {
     }
 
     /**
+     * Compare all data between 2 elements of a VertexBuffer.
+     *
+     * @param vertexBuffer (not null, unaffected)
+     * @param index1 the index of the first element (&ge;0)
+     * @param index2 the index of the 2nd element (&ge;0)
+     * @return true if all data are equal, otherwise false
+     */
+    public static boolean equals(VertexBuffer vertexBuffer, int index1,
+            int index2) {
+        int numElements = vertexBuffer.getNumElements();
+        Validate.inRange(index1, "index1", 0, numElements - 1);
+        Validate.inRange(index2, "index2", 0, numElements - 1);
+        if (index1 == index2) {
+            return true;
+        }
+
+        int numCperE = vertexBuffer.getNumComponents();
+        VertexBuffer.Format format = vertexBuffer.getFormat();
+        if (format == VertexBuffer.Format.Half) {
+            numCperE *= 2;
+        }
+        int startPos1 = numCperE * index1;
+        int startPos2 = numCperE * index2;
+
+        switch (format) {
+            case Byte:
+            case Half:
+            case UnsignedByte:
+                ByteBuffer byteBuf = (ByteBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numCperE; ++cIndex) {
+                    byte b1 = byteBuf.get(startPos1 + cIndex);
+                    byte b2 = byteBuf.get(startPos2 + cIndex);
+                    if (b1 != b2) {
+                        return false;
+                    }
+                }
+                break;
+
+            case Double:
+                DoubleBuffer doubleBuffer
+                        = (DoubleBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numCperE; ++cIndex) {
+                    double d1 = doubleBuffer.get(startPos1 + cIndex);
+                    double d2 = doubleBuffer.get(startPos2 + cIndex);
+                    if (d1 != d2) {
+                        return false;
+                    }
+                }
+                break;
+
+            case Float:
+                FloatBuffer floatBuf = (FloatBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numCperE; ++cIndex) {
+                    float f1 = floatBuf.get(startPos1 + cIndex);
+                    float f2 = floatBuf.get(startPos2 + cIndex);
+                    if (f1 != f2) {
+                        return false;
+                    }
+                }
+                break;
+
+            case Int:
+            case UnsignedInt:
+                IntBuffer intBuf = (IntBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numCperE; ++cIndex) {
+                    int i1 = intBuf.get(startPos1 + cIndex);
+                    int i2 = intBuf.get(startPos2 + cIndex);
+                    if (i1 != i2) {
+                        return false;
+                    }
+                }
+                break;
+
+            case Short:
+            case UnsignedShort:
+                ShortBuffer shortBuf = (ShortBuffer) vertexBuffer.getData();
+                for (int cIndex = 0; cIndex < numCperE; ++cIndex) {
+                    short s1 = shortBuf.get(startPos1 + cIndex);
+                    short s2 = shortBuf.get(startPos2 + cIndex);
+                    if (s1 != s2) {
+                        return false;
+                    }
+                }
+                break;
+
+            default:
+                String message = "Unrecognized buffer format: " + format;
+                throw new UnsupportedOperationException(message);
+        }
+
+        return true;
+    }
+
+    /**
      * Swap all data between 2 elements of a VertexBuffer.
      *
      * @param vertexBuffer the VertexBuffer to modify (not null)
