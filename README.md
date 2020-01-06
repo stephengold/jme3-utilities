@@ -23,6 +23,9 @@ at [GitHub](https://github.com/stephengold/Minie).
 The `Wes` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Wes).
 
+Java source code is provided under
+[a FreeBSD license](https://github.com/stephengold/jme3-utilities/blob/master/license.txt).
+
 Summary of SkyControl features:
 
  + sun, moon, stars, horizon haze, and up to 6 cloud layers
@@ -38,19 +41,21 @@ Summary of SkyControl features:
  + demonstration apps and online tutorial provided
  + complete source code provided under FreeBSD license
 
+<a name="toc"/>
+
 ## Contents of this document
 
  + [Downloads](#downloads)
  + [Conventions](#conventions)
  + [History](#history)
- + [How to install the SDK and the Jme3-utilities Project](#install)
+ + [How to build Jme3-utilities from source](#build)
  + [How to add SkyControl to an existing game](#addsky)
  + [External links](#links)
  + [Acknowledgments](#acks)
 
 <a name="downloads"/>
 
-### Downloads
+## Downloads
 
 Recent releases can be downloaded from
 [GitHub](https://github.com/stephengold/jme3-utilities/releases).
@@ -58,16 +63,18 @@ Recent releases can be downloaded from
 Maven artifacts are available from
 [JFrog Bintray](https://bintray.com/stephengold/jme3utilities).
 
+[Jump to table of contents](#toc)
+
 <a name="conventions"/>
 
-### Conventions
+## Conventions
 
 Since the Jme3-utilities Project is not associated with an Internet domain,
 package names generally begin with `jme3utilities`.  Packages copied from
 jMonkeyEngine and the BVH Retarget Project,
 however, retain their original names, which began with `com.jme3`.
 
-The source code remains compatible with JDK 7.
+Both the source code and the pre-built libraries are compatible with JDK 7.
 
 World coordinate system:
 
@@ -75,9 +82,11 @@ World coordinate system:
  + the `+Y` axis points up (toward the zenith)
  + the `+Z` axis points toward the eastern horizon
 
+[Jump to table of contents](#toc)
+
 <a name="history"/>
 
-### History
+## History
 
 Since September 2015, the Jme3-utilities Project has been hosted at
 [GitHub](https://github.com/stephengold/jme3-utilities).
@@ -97,50 +106,80 @@ The evolution of each sub-project is chronicled in its release notes:
  + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
  + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
 
-<a name="install"/>
+[Jump to table of contents](#toc)
 
-## How to install the SDK and the Jme3-utilities Project
+<a name="build"/>
 
-### jMonkeyEngine3 (jME3) Software Development Kit (SDK)
+## How to build Jme3-utilities from source
 
-You are welcome to use the Engine
-without also using the SDK, but I use the SDK, and the following
-installation instructions assume you will too.
+Jme-utilities currently targets Version 3.2.4 of jMonkeyEngine.
+You are welcome to use the Engine without installing
+its Integrated Development Environment (IDE),
+but I use the IDE, so I tend to assume you will too.
 
-The hardware and software requirements of the SDK are documented on
+### IDE setup
+
+If you already have the IDE installed, skip to step 6.
+
+The hardware and software requirements of the IDE are documented at
 [the JME wiki](https://jmonkeyengine.github.io/wiki/jme3/requirements.html).
 
- 1. Download a jMonkeyEngine 3.2 SDK from
+ 1. Download a jMonkeyEngine 3.2 Software Development Kit (SDK) from
     [GitHub](https://github.com/jMonkeyEngine/sdk/releases).
  2. Install the SDK, which includes:
     + the engine itself,
-    + an integrated development environment (IDE) based on NetBeans,
-    + various plugins, and
+    + an IDE based on NetBeans,
+    + various IDE plugins, and
     + the Blender 3D application.
- 3. To open the Jme3-utilities Project in the IDE (or NetBeans), you will need the
-    `Gradle Support` plugin.  Download and install it before proceeding.
-    If this plugin isn't shown in the IDE's "Plugins" tool,
-    you can download it from
-    [GitHub](https://github.com/kelemen/netbeans-gradle-project/releases).
+ 3. Open the IDE.
+ 4. The first time you open the IDE, it prompts you to
+    specify a folder for storing projects:
+    + Fill in the "Folder name" text box.
+    + Click on the "Set Project Folder" button.
+ 5. The first time you open the IDE, you should update
+    all the pre-installed plugins:
+    + Menu bar -> "Tools" -> "Plugins" to open the "Plugins" dialog.
+    + Click on the "Update" button to open the "Plugin Installer" wizard.
+    + Click on the "Next >" button.
+    + After the plugins have downloaded, click "Finish".
+    + The IDE will restart.
+ 6. In order to open the Jme3-utilities Project in the IDE (or NetBeans),
+    you will need to install the `Gradle Support` plugin:
+    + Menu bar -> "Tools" -> "Plugins" to open the "Plugins" dialog.
+    + Click on the "Available Plugins" tab.
+    + Check the box next to "Gradle Support" in the "Gradle" category.
+     If this plugin isn't shown in the IDE's "Plugins" tool,
+     you can download it from
+     [GitHub](https://github.com/kelemen/netbeans-gradle-project/releases).
+    + Click on the "Install" button to open the "Plugin Installer" wizard.
+    + Click on the "Next >" button.
+    + Check the box next to
+     "I accept the terms in all the license agreements."
+    + Click on the "Install" button.
+    + When the "Verify Certificate" dialog appears,
+     click on the "Continue" button.
+    + Click on the "Finish" button.
+    + The IDE will restart.
 
 ### Source files
 
-Clone the jme3-utilities repository using Git:
+Clone the Jme3-utilities repository using Git:
 
- 1. Open the Clone wizard in the IDE:
+ 1. Open the "Clone Repository" wizard in the IDE:
+     + Menu bar -> "Team" -> "Git" -> "Clone..." or
      + Menu bar -> "Team" -> "Remote" -> "Clone..."
  2. For "Repository URL:" specify
     `https://github.com/stephengold/jme3-utilities.git`
  3. Clear the "User:" and "Password:" text boxes.
  4. For "Clone into:" specify a writable folder (on a local filesystem)
-    which doesn't already contain "jme3-utilities".
+    that doesn't already contain "jme3-utilities".
  5. Click on the "Next >" button.
  6. Make sure the "master" remote branch is checked.
  7. Click on the "Next >" button again.
  8. Make sure the Checkout Branch is set to "master".
  9. Make sure the "Scan for NetBeans Projects after Clone" box is checked.
 10. Click on the "Finish" button.
-11. When the "Clone Complete" dialog appears, click on the "Open Project..."
+11. When the "Clone Completed" dialog appears, click on the "Open Project..."
     button.
 12. Expand the root project node to reveal the 8 sub-projects.
 13. To start with, I recommend opening 4 sub-projects:  "heart", "SkyControl",
@@ -151,9 +190,28 @@ Clone the jme3-utilities repository using Git:
 
 ### Build the project
 
- 1. In the "Projects" window, right-click on the "tests" sub-project to
-    select it.
+ 1. In the "Projects" window of the IDE,
+    right-click on the "tests" sub-project to select it.
  2. Select "Build".
+
+### How to build Jme3-utilities without an IDE
+
+ 1. Install build software:
+   + a Java Development Kit,
+   + Gradle, and
+   + Git
+ 2. Download and extract the source code from GitHub:
+     + `git clone https://github.com/stephengold/jme3-utilities.git`
+     + `cd jme3-utilities`
+     + `git checkout nifty-0.9.12for32`
+ 3. Set the `JAVA_HOME` environment variable:
+   + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
+   + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`
+ 4. Run the Gradle wrapper:
+   + using Bash:  `./gradlew build`
+   + using Windows Command Prompt:  `.\gradlew build`
+
+After a successful build, new jars will be found in `*/build/libs`.
 
 <a name="addsky"/>
 
@@ -202,8 +260,6 @@ the source code) to see how it works before modifying it.
 
 #### Add the SkyControl JARs to the project
 
-In the following instructions, "0.0.0" indicates a version number.
-
 Open the project's properties in the IDE:
 
  1. Right-click on the BasicGame project (not its assets) in the "Projects"
@@ -211,20 +267,20 @@ Open the project's properties in the IDE:
  2. Select "Properties to open the "Project Properties" dialog.
  3. Under "Categories:" select "Libraries".
  4. Click on the "Compile" tab.
- 5. Add the `jme3-utilities-heart` class JAR:
+ 5. Add the `jme3-utilities-heart` class jar:
     + Click on the "Add JAR/Folder" button.
     + Navigate to the "jme3-utilities" project folder.
     + Open the "heart" sub-project folder.
     + Navigate to the "build/libs" folder.
-    + Select the "jme3-utilities-heart-0.0.0.jar" file.
+    + Select the "jme3-utilities-heart-4.3.0for32.jar" file.
     + Click on the "Open" button.
- 6. (optional) Add JARs for javadoc and sources:
+ 6. (optional) Add jars for javadoc and sources:
     + Click on the "Edit" button.
     + Click on the "Browse..." button to the right of "Javadoc:"
-    + Select the "jme3-utilities-heart-0.0.0-javadoc.jar" file.
+    + Select the "jme3-utilities-heart-4.3.0for32-javadoc.jar" file.
     + Click on the "Open" button.
     + Click on the "Browse..." button to the right of "Sources:"
-    + Select the "jme3-utilities-heart-0.0.0-sources.jar" file.
+    + Select the "jme3-utilities-heart-4.3.0for32-sources.jar" file.
     + Click on the "Open" button again.
     + Click on the "OK" button to close the "Edit Jar Reference dialog.
  7. Add the "SkyControl" class JAR:
@@ -232,25 +288,18 @@ Open the project's properties in the IDE:
     + Navigate to the "jme3-utilities" project folder.
     + Open the "SkyControl" sub-project folder.
     + Navigate to the "build/libs" folder.
-    + Select the "SkyControl-0.0.0.jar" file.
+    + Select the "SkyControl-0.9.24for32.jar" file.
     + Click on the "Open" button.
  8. (optional) Add JARs for javadoc and sources:
     + Click on the "Edit" button.
     + Click on the "Browse..." button to the right of "Javadoc:"
-    + Select the "SkyControl-0.0.0-javadoc.jar" file.
+    + Select the "SkyControl-0.9.24for32-javadoc.jar" file.
     + Click on the "Open" button.
     + Click on the "Browse..." button to the right of "Sources:"
-    + Select the "SkyControl-0.0.0-sources.jar" file.
+    + Select the "SkyControl-0.9.24for32-sources.jar" file.
     + Click on the "Open" button again.
     + Click on the "OK" button to close the "Edit Jar Reference dialog.
- 9. (optional) Add the "moon-ccbysa" class JAR:
-    + Click on the "Add JAR/Folder" button.
-    + Navigate to the "jme3-utilities" project folder.
-    + Open the "moon-cc-by-sa" sub-project folder.
-    + Navigate to the "build/libs" folder.
-    + Select the "moon-ccbysa-0.0.0.jar" file.
-    + Click on the "Open" button.
-10. Click on the "OK" button to exit the "Project Properties" dialog.
+ 9. Click on the "OK" button to exit the "Project Properties" dialog.
 
 #### Disable existing sky
 
@@ -485,6 +534,8 @@ can be used, you may wish to study "TestSkyControl.java" in the
 "tests" sub-project.  The easiest way to run TestSkyControl is to right-click
 on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 
+[Jump to table of contents](#toc)
+
 <a name="links"/>
 
 ## External links
@@ -493,6 +544,8 @@ on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
   + January 2014 [SkyControl update video](https://www.youtube.com/watch?v=gE4wxgBIkaw)
   + A [maze game](https://github.com/stephengold/jme3-maze) that uses the Jme3-utilities libraries.
   + A [flight simulation game](https://github.com/ZoltanTheHun/SkyHussars) that uses SkyControl.
+
+[Jump to table of contents](#toc)
 
 <a name="acks"/>
 
@@ -536,6 +589,7 @@ artists and software developers:
     + the Java compiler, standard doclet, and runtime environment
     + the JCommander Java framework
     + jMonkeyEngine and the jME3 Software Development Kit
+    + the Linux Mint operating system
     + LWJGL, the Lightweight Java Game Library
     + the Markdown document conversion tool
     + Microsoft Windows
@@ -555,7 +609,7 @@ For this I thank:
 + Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
 + Tom Ruen
 
-I am grateful to JFrog, Google, and Github for providing free hosting for the
+I am grateful to JFrog, Google, and Github] for providing free hosting for the
 Jme3-utilities Project and many other open-source projects.
 
 I'm also grateful to Quinn (for lending me one of her microphones) and finally
@@ -563,3 +617,5 @@ my dear Holly, for keeping me sane.
 
 If I've misattributed anything or left anyone out, please let me know so I can
 correct the situation: sgold@sonic.net
+
+[Jump to table of contents](#toc)
