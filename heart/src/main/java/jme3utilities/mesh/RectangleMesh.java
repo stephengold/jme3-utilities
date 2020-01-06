@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -33,12 +33,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A 2-D, static, fan-mode mesh that renders an axis-aligned rectangle in the
- * X-Y plane.
+ * A 2-D, static, TriangleFan-mode mesh that renders an axis-aligned rectangle
+ * in the X-Y plane.
  * <p>
  * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0) with
  * normals set to (0,0,zNorm). In texture space, it extends extends from (s1,t1)
  * to (s2, t2).
+ * <p>
+ * The key differences between this class and com.jme3.scene.shape.Quad are:<ol>
+ * <li> the center and extent can be configured independently,
+ * <li> TriangleFan mode is used to reduce the number of indices from 6 to 4,
+ * <li> the normal direction is configurable, and
+ * <li> the texture coordinates can be configured in greater detail.</ol>
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -70,7 +76,7 @@ public class RectangleMesh extends Mesh {
      * Instantiate an axis-aligned rectangle with default texture coordinates.
      *
      * @param rect the location of the first vertex and the dimensions of the
-     * rectangle (not null)
+     * rectangle (not null, Z components are ignored, unaffected)
      * @param zNorm the Z component of the normal vector (must be +1 or -1)
      */
     public RectangleMesh(Rectangle rect, float zNorm) {
