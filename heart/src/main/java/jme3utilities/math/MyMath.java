@@ -31,6 +31,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
+import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -400,6 +401,24 @@ public class MyMath {
     public static boolean isOdd(int iValue) {
         boolean result = (iValue % 2) != 0;
         return result;
+    }
+
+    /**
+     * Test whether the specified list is sorted in ascending order with no
+     * duplicates.
+     *
+     * @param list the list to analyze (not null, unaffected)
+     * @return true if sorted, otherwise false
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean isSorted(List<Comparable> list) {
+        for (int i = 0; i < list.size() - 1; ++i) {
+            if (list.get(i).compareTo(list.get(i + 1)) >= 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
