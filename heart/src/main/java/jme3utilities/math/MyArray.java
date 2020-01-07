@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -153,7 +153,7 @@ final public class MyArray {
      * Count the number of distinct vectors in the specified array, without
      * distinguishing 0 from -0.
      *
-     * @param array input (not null, unaffected)
+     * @param array the array to analyze (not null, unaffected)
      * @return count (&ge;0)
      */
     public static int countNe(Vector3f[] array) {
@@ -172,8 +172,8 @@ final public class MyArray {
      * Test whether the first N elements of the specified vector contain &gt;1
      * distinct values, without distinguishing 0 from -0.
      *
-     * @param vector input (not null, unaffected)
-     * @param n number of elements to consider
+     * @param vector the array to analyze (not null, unaffected)
+     * @param n number of elements to consider (&ge;0)
      * @return true if multiple values found, otherwise false
      */
     public static boolean distinct(float[] vector, int n) {
@@ -203,6 +203,8 @@ final public class MyArray {
      * @param array array to search (not null, strictly monotonic increasing
      * order, unaffected)
      * @return array index (&ge;0) or -1 if array is empty or value&le;array[0]
+     *
+     * @see java.util.Arrays#binarySearch(float[], float)
      */
     public static int findPreviousIndex(float value, float[] array) {
         Validate.nonNull(array, "array");
@@ -234,8 +236,8 @@ final public class MyArray {
     /**
      * Find the index of the first true element in the specified boolean array.
      *
-     * @param array input (not null, unaffected)
-     * @return index (&ge;0, &lt;length) or -1 if no true element found
+     * @param array the array to analyze (not null, unaffected)
+     * @return the index (&ge;0, &lt;length) or -1 if no true element found
      */
     public static int first(boolean[] array) {
         for (int i = 0; i < array.length; ++i) {
@@ -247,11 +249,28 @@ final public class MyArray {
     }
 
     /**
+     * Test whether the specified array is sorted in ascending order with no
+     * duplicates.
+     *
+     * @param array the array to analyze (not null, unaffected)
+     * @return true if sorted, otherwise false
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean isSorted(Comparable[] array) {
+        for (int i = 0; i < array.length - 1; ++i) {
+            if (array[i].compareTo(array[i + 1]) >= 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Calculate the arithmetic mean of the 3-D vectors in the specified float
      * array.
      *
-     * @param input the input array (not null, not empty, length a multiple of
-     * 3, unaffected)
+     * @param input the array to analyze (not null, not empty, length a multiple
+     * of 3, unaffected)
      * @param storeResult storage for the result (modified if not null)
      * @return the mean (either storeResult or a new vector, not null)
      */
