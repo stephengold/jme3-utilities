@@ -39,7 +39,8 @@ import jme3utilities.Validate;
 
 /**
  * Utility methods that operate on buffers, especially float buffers containing
- * 3-D vectors.
+ * 3-D vectors. Unlike the com.jme3.util.BufferUtils methods, these methods
+ * ignore buffer limits.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -235,7 +236,7 @@ final public class MyBuffer {
      * @param minFloats the required capacity (in floats, &ge;0)
      * @param bufferToReuse the buffer to reuse, or null for none
      * @return a buffer with at least the required capacity (either storeResult
-     * or a new buffer)
+     * or a new direct buffer)
      */
     public static FloatBuffer ensureCapacity(int minFloats,
             FloatBuffer bufferToReuse) {
@@ -297,6 +298,9 @@ final public class MyBuffer {
      * @param buffer the buffer to read from (not null, unaffected)
      * @param startPosition the position at which to start reading (&ge;0)
      * @param storeVector storage for the vector (not null, modified)
+     *
+     * @see com.jme3.util.BufferUtils#populateFromBuffer(com.jme3.math.Vector3f,
+     * java.nio.FloatBuffer, int)
      */
     public static void get(FloatBuffer buffer, int startPosition,
             Vector3f storeVector) {
@@ -500,6 +504,9 @@ final public class MyBuffer {
      * @param buffer the buffer to write to (not null, modified)
      * @param startPosition the position at which to start writing (&ge;0)
      * @param vector the input vector (not null, unaffected)
+     *
+     * @see com.jme3.util.BufferUtils#setInBuffer(com.jme3.math.Vector3f,
+     * java.nio.FloatBuffer, int)
      */
     public static void put(FloatBuffer buffer, int startPosition,
             Vector3f vector) {
