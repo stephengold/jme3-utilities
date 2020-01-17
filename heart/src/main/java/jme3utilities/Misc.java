@@ -29,6 +29,9 @@ package jme3utilities;
 import com.jme3.app.state.AppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.Savable;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.SceneProcessor;
 import com.jme3.renderer.ViewPort;
@@ -378,8 +381,30 @@ public class Misc {
     }
 
     /**
+     * Write a Savable to a J3O file.
+     *
+     * @param filePath (not null, not empty, should end in ".j3o")
+     * @param savable (not null, unaffected)
+     */
+    public static void writeJ3O(String filePath, Savable savable) {
+        Validate.nonEmpty(filePath, "file path");
+        Validate.nonNull(savable, "savable");
+
+        JmeExporter exporter = BinaryExporter.getInstance();
+        File file = new File(filePath);
+        try {
+            exporter.save(savable, file);
+        } catch (IOException exception) {
+            logger.log(Level.SEVERE, "write to {0} failed",
+                    MyString.quote(filePath));
+            throw new RuntimeException(exception);
+        }
+        logger.log(Level.INFO, "wrote file {0}", MyString.quote(filePath));
+    }
+
+    /**
      * Write an image to a PNG file, attempting to overwrite any pre-existing
-     * file.
+     * file. TODO rename writeImage()
      *
      * @param filePath path to the output file (not null, not empty)
      * @param image image to be written (not null)
