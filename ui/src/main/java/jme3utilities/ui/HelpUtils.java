@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019, Stephen Gold
+ Copyright (c) 2019-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,18 +26,24 @@
  */
 package jme3utilities.ui;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.font.Rectangle;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import jme3utilities.MyAsset;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.mesh.RoundedRectangle;
 
 /**
  * Utility methods to generate hotkey clues for action-oriented applications.
@@ -48,6 +54,28 @@ public class HelpUtils {
     // *************************************************************************
     // constants and loggers
 
+    /**
+     * color of the background
+     */
+    final private static ColorRGBA backgroundColor
+            = new ColorRGBA(0f, 0f, 0f, 1f);
+    /**
+     * foreground color for highlighted text
+     */
+    final private static ColorRGBA highlightForegroundColor
+            = new ColorRGBA(1f, 1f, 0f, 1f);
+    /**
+     * padding added to all 4 sides of the background (in pixels)
+     */
+    final private static float padding = 5f;
+    /**
+     * Z coordinate for the background
+     */
+    final private static float zBackground = -1f;
+    /**
+     * Z coordinate for text
+     */
+    final private static float zText = 0f;
     /**
      * message logger for this class
      */
@@ -86,6 +114,8 @@ public class HelpUtils {
         Node result = new Node("help node");
         float x = bounds.x;
         float y = bounds.y;
+        float maxX = x + 1;
+        float minY = y - 1;
 
         for (Map.Entry<String, String> entry : actionToList.entrySet()) {
             BitmapText spatial = new BitmapText(font);
@@ -103,13 +133,18 @@ public class HelpUtils {
                 y -= spatial.getHeight();
                 x = bounds.x;
             }
-            spatial.setLocalTranslation(x, y, 0f);
+            spatial.setLocalTranslation(x, y, zText);
+            maxX = Math.max(maxX, x + textWidth);
+            minY = Math.min(minY, y - spatial.getHeight());
             x += textWidth + space;
 
             if (actionName.equals("toggle help")) {
-                spatial.setColor(ColorRGBA.Yellow);
+                spatial.setColor(highlightForegroundColor);
             }
         }
+
+        Geometry backgroundGeometry = buildBackground(bounds, maxX, minY);
+        result.attachChild(backgroundGeometry);
 
         return result;
     }
@@ -185,6 +220,35 @@ public class HelpUtils {
             result = MyString.removeSuffix(result, " arrow");
         }
         result = result.replace("numpad ", "num");
+
+        return result;
+    }
+
+    /**
+     * Generate a background geometry for the help node.
+     *
+     * @param bounds (in screen coordinates, not null, unaffected)
+     * @param maxX the highest screen X of the text
+     * @param minY the lowest screen Y of the text
+     * @return a new Geometry, suitable for attachment to the help node
+     */
+    private static Geometry buildBackground(Rectangle bounds, float maxX,
+            float minY) {
+        float x1 = bounds.x - padding;
+        float x2 = maxX + padding;
+        float y1 = minY - padding;
+        float y2 = bounds.y + padding;
+        float zNorm = 1f;
+        Mesh backgroundMesh
+                = new RoundedRectangle(x1, x2, y1, y2, padding, zNorm);
+
+        Geometry result = new Geometry("help background", backgroundMesh);
+        result.setLocalTranslation(0f, 0f, zBackground);
+
+        AssetManager assetManager = Locators.getAssetManager();
+        Material backgroundMaterial
+                = MyAsset.createUnshadedMaterial(assetManager, backgroundColor);
+        result.setMaterial(backgroundMaterial);
 
         return result;
     }
