@@ -46,10 +46,12 @@ public class MyMath {
 
     /**
      * Pi/2
+     *
+     * @see com.jme3.math.FastMath#HALF_PI
      */
     final public static double halfPi = Math.PI / 2.0;
     /**
-     * the square root of 1/2
+     * square root of 1/2
      */
     final public static float rootHalf = FastMath.sqrt(0.5f);
     /**
