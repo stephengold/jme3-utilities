@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018, Stephen Gold
+ Copyright (c) 2018-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
  */
 package jme3utilities.ui.test;
 
+import com.jme3.font.Rectangle;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -34,13 +35,17 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 import java.util.logging.Logger;
 import jme3utilities.MyAsset;
 import jme3utilities.ui.ActionApplication;
+import jme3utilities.ui.HelpUtils;
+import jme3utilities.ui.InputMode;
 
 /**
- * Test FlyCam support in an ActionApplication.
+ * An ActionApplication to test a help node and the default hotkey bindings.
  */
 public class TestFlyCam extends ActionApplication {
     // *************************************************************************
@@ -51,12 +56,30 @@ public class TestFlyCam extends ActionApplication {
      */
     final public static Logger logger
             = Logger.getLogger(TestFlyCam.class.getName());
-
+    /**
+     * application name (for the title bar of the app's window)
+     */
+    final private static String applicationName
+            = TestFlyCam.class.getSimpleName();
     // *************************************************************************
     // new methods exposed
+
     public static void main(String[] args) {
-        TestFlyCam app = new TestFlyCam();
-        app.start();
+        /*
+         * Instantiate the application.
+         */
+        TestFlyCam application = new TestFlyCam();
+        /*
+         * Customize the window's title bar.
+         */
+        AppSettings settings = new AppSettings(true);
+        settings.setTitle(applicationName);
+        application.setSettings(settings);
+        /*
+         * Invoke the JME startup code,
+         * which in turn invokes actionInitializeApplication().
+         */
+        application.start();
     }
     // *************************************************************************
     // ActionApplication methods
@@ -72,6 +95,23 @@ public class TestFlyCam extends ActionApplication {
         viewPort.setBackgroundColor(ColorRGBA.Gray);
         addLighting();
         addBox();
+    }
+
+    /**
+     * Attach a help node to the GUI node.
+     */
+    @Override
+    public void moreDefaultBindings() {
+        float x = 10f;
+        float y = cam.getHeight() - 80f;
+        float width = cam.getWidth() - 20f;
+        float height = cam.getHeight() - 20f;
+        Rectangle rectangle = new Rectangle(x, y, width, height);
+
+        InputMode dim = getDefaultInputMode();
+        float space = 20f;
+        Node helpNode = HelpUtils.buildNode(dim, rectangle, guiFont, space);
+        guiNode.attachChild(helpNode);
     }
     // *************************************************************************
     // private methods
