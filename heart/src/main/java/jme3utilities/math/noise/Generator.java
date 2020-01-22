@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
+import jme3utilities.math.MyMath;
 import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 
@@ -76,7 +77,38 @@ public class Generator extends Random {
     // new methods exposed
 
     /**
-     * Generate a random integer with a Poisson distribution, after Knuth.
+     * Generate a single-precision value, uniformly distributed between 2
+     * extremes.
+     *
+     * @param e1 the first extreme
+     * @param e2 the 2nd extreme
+     * @return a pseudo-random value (&ge;min(e1,e2), &le;max(e1,e2))
+     */
+    public float nextFloat(float e1, float e2) {
+        float result = e1 + nextFloat() * (e2 - e1);
+
+        assert MyMath.isBetween(e1, result, e2);
+        return result;
+    }
+
+    /**
+     * Generate an integer value, uniformly distributed between 2 extremes.
+     *
+     * @param e1 the first extreme
+     * @param e2 the 2nd extreme
+     * @return a pseudo-random value (&ge;min(e1,e2), &le;max(e1,e2))
+     */
+    public int nextInt(int e1, int e2) {
+        int max = Math.max(e1, e2);
+        int min = Math.min(e1, e2);
+        int result = min + nextInt(max - min + 1);
+
+        assert MyMath.isBetween(e1, result, e2);
+        return result;
+    }
+
+    /**
+     * Generate an integer with a Poisson distribution, after Knuth.
      *
      * @param lambda the expected rate of arrivals per unit time (&gt;0)
      * @return the number of arrivals observed in a unit time interval (&ge;0)
@@ -104,10 +136,10 @@ public class Generator extends Random {
         Quaternion result = new Quaternion();
         double lengthSquared = 2.0;
         while (lengthSquared < 0.1 || lengthSquared > 1.0) {
-            float x = 2f * nextFloat() - 1f;
-            float y = 2f * nextFloat() - 1f;
-            float z = 2f * nextFloat() - 1f;
-            float w = 2f * nextFloat() - 1f;
+            float x = nextFloat(-1f, 1f);
+            float y = nextFloat(-1f, 1f);
+            float z = nextFloat(-1f, 1f);
+            float w = nextFloat(-1f, 1f);
             result.set(x, y, z, w);
             lengthSquared = MyQuaternion.lengthSquared(result);
         }
@@ -138,9 +170,9 @@ public class Generator extends Random {
 
         double lengthSquared = 0.0;
         while (lengthSquared < 0.1 || lengthSquared > 1.0) {
-            float x = 2f * nextFloat() - 1f;
-            float y = 2f * nextFloat() - 1f;
-            float z = 2f * nextFloat() - 1f;
+            float x = nextFloat(-1f, 1f);
+            float y = nextFloat(-1f, 1f);
+            float z = nextFloat(-1f, 1f);
             result.set(x, y, z);
             lengthSquared = MyVector3f.lengthSquared(result);
         }
@@ -174,9 +206,9 @@ public class Generator extends Random {
 
         double lengthSquared = 2.0;
         while (lengthSquared > 1.0) {
-            float x = 2f * nextFloat() - 1f;
-            float y = 2f * nextFloat() - 1f;
-            float z = 2f * nextFloat() - 1f;
+            float x = nextFloat(-1f, 1f);
+            float y = nextFloat(-1f, 1f);
+            float z = nextFloat(-1f, 1f);
             result.set(x, y, z);
             lengthSquared = MyVector3f.lengthSquared(result);
         }
