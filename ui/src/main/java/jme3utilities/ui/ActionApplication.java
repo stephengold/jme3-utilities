@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@ package jme3utilities.ui;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
+import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.input.CameraInput;
 import com.jme3.input.controls.ActionListener;
@@ -158,6 +159,7 @@ abstract public class ActionApplication
      * names and/or override those bindings.
      */
     public void moreDefaultBindings() {
+        // do nothing
     }
 
     /**
@@ -165,6 +167,7 @@ abstract public class ActionApplication
      *
      * @param newSpeed animation speed (&gt;0, standard speed &rarr; 1)
      */
+    @Override
     public void setSpeed(float newSpeed) {
         Validate.positive(newSpeed, "speed");
         speed = newSpeed;
@@ -210,6 +213,14 @@ abstract public class ActionApplication
          */
         if (ongoing) {
             switch (actionString) {
+                case "ScreenShot":
+                    ScreenshotAppState screenshotAppState
+                            = stateManager.getState(ScreenshotAppState.class);
+                    if (screenshotAppState != null) {
+                        screenshotAppState.onAction(actionString, ongoing, tpf);
+                    }
+                    break;
+
                 case SimpleApplication.INPUT_MAPPING_EXIT:
                     stop();
                     break;
@@ -233,10 +244,10 @@ abstract public class ActionApplication
                     break;
 
                 case SimpleApplication.INPUT_MAPPING_HIDE_STATS:
-                    StatsAppState sas = stateManager.getState(
-                            StatsAppState.class);
-                    if (sas != null) {
-                        sas.toggleStats();
+                    StatsAppState statsAppState
+                            = stateManager.getState(StatsAppState.class);
+                    if (statsAppState != null) {
+                        statsAppState.toggleStats();
                     }
                     break;
 
@@ -299,6 +310,18 @@ abstract public class ActionApplication
         defaultInputMode = new DefaultInputMode();
         stateManager.attach(defaultInputMode);
         defaultInputMode.setEnabled(true);
+        /*
+         * Capture a screenshot each time KEY_SYSRQ
+         * (the PrtSc key) is pressed.
+         */
+        ScreenshotAppState screenshotAppState
+                = stateManager.getState(ScreenshotAppState.class);
+        if (screenshotAppState == null) {
+            screenshotAppState
+                    = new ScreenshotAppState("Written Assets/", "screenshot");
+            boolean success = stateManager.attach(screenshotAppState);
+            assert success;
+        }
         /*
          * Invoke the startup code of the subclass.
          */

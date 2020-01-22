@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -102,6 +102,13 @@ class DefaultInputMode extends InputMode {
         bindSignal(CameraInput.FLYCAM_STRAFELEFT, KeyInput.KEY_A);
         bindSignal(CameraInput.FLYCAM_STRAFERIGHT, KeyInput.KEY_D);
 
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("linux")) {
+            bind("ScreenShot", KeyInput.KEY_SCROLL); // window mgr blocks SYSRQ
+        } else {
+            bind("ScreenShot", KeyInput.KEY_SYSRQ);
+        }
+
         bind(SimpleApplication.INPUT_MAPPING_CAMERA_POS, KeyInput.KEY_C);
         bind(SimpleApplication.INPUT_MAPPING_EXIT, KeyInput.KEY_ESCAPE);
         bind(SimpleApplication.INPUT_MAPPING_HIDE_STATS, KeyInput.KEY_F5);
@@ -128,6 +135,7 @@ class DefaultInputMode extends InputMode {
         for (String signalName : ActionApplication.flycamNames) {
             deleteAnyMapping(im, signalName);
         }
+        deleteAnyMapping(im, "ScreenShot");
         deleteAnyMapping(im, SimpleApplication.INPUT_MAPPING_CAMERA_POS);
         deleteAnyMapping(im, SimpleApplication.INPUT_MAPPING_EXIT);
         deleteAnyMapping(im, SimpleApplication.INPUT_MAPPING_HIDE_STATS);
