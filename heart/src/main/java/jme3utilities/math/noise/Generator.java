@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -103,7 +103,7 @@ public class Generator extends Random {
     public Quaternion nextQuaternion() {
         Quaternion result = new Quaternion();
         double lengthSquared = 2.0;
-        while (lengthSquared > 1.0) {
+        while (lengthSquared < 0.1 || lengthSquared > 1.0) {
             float x = 2f * nextFloat() - 1f;
             float y = 2f * nextFloat() - 1f;
             float z = 2f * nextFloat() - 1f;
@@ -111,6 +111,8 @@ public class Generator extends Random {
             result.set(x, y, z, w);
             lengthSquared = MyQuaternion.lengthSquared(result);
         }
+        double scaleFactor = 1.0 / Math.sqrt(lengthSquared);
+        result.multLocal((float) scaleFactor);
 
         return result;
     }
