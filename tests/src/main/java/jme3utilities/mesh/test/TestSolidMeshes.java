@@ -40,7 +40,9 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -219,14 +221,21 @@ public class TestSolidMeshes
         boolean generateNormals, generatePyramid;
         float height, radius;
         Geometry geometry;
-        int numSides;
+        int numSides, radialSamples, zSamples;
         Mesh mesh;
 
         inwardNormals = false;
         inwardWinding = false;
 
-        numSides = 40;
         radius = 1f;
+        zSamples = 32;
+        radialSamples = 32;
+        mesh = new Sphere(zSamples, radialSamples, radius);
+        geometry = new Geometry("sphere-original", mesh);
+        rootNode.attachChild(geometry);
+        geometry.move(0f, -2f, 0f);
+
+        numSides = 40;
         height = 1f;
         generatePyramid = false;
         mesh = new Cone(numSides, radius, height, generatePyramid);
@@ -252,6 +261,12 @@ public class TestSolidMeshes
         rootNode.attachChild(geometry);
         geometry.move(0f, 4f, 0f);
 
+        mesh = new Sphere(zSamples, radialSamples, radius);
+        ((Sphere) mesh).setTextureMode(Sphere.TextureMode.Projected);
+        geometry = new Geometry("sphere-projected", mesh);
+        rootNode.attachChild(geometry);
+        geometry.move(2f, -2f, 0f);
+
         int refineSteps = 3;
         mesh = new Icosphere(refineSteps, radius);
         geometry = new Geometry("icoSphere", mesh);
@@ -268,6 +283,12 @@ public class TestSolidMeshes
         geometry = new Geometry("prism", mesh);
         rootNode.attachChild(geometry);
         geometry.move(2f, 4f, 0f);
+
+        mesh = new Sphere(zSamples, radialSamples, radius);
+        ((Sphere) mesh).setTextureMode(Sphere.TextureMode.Polar);
+        geometry = new Geometry("sphere-polar", mesh);
+        rootNode.attachChild(geometry);
+        geometry.move(4f, -2f, 0f);
 
         numSides = 4;
         generatePyramid = true;
@@ -340,8 +361,9 @@ public class TestSolidMeshes
      */
     private void configureCamera() {
         flyCam.setMoveSpeed(10f);
-        cam.setLocation(new Vector3f(-0.4f, 5.7f, 7.3f));
-        cam.setRotation(new Quaternion(0.044f, 0.94556f, -0.2896f, 0.142f));
+
+        cam.setLocation(new Vector3f(-0.9f, 6.8f, 9f));
+        cam.setRotation(new Quaternion(0.026f, 0.9644f, -0.243f, 0.1f));
     }
 
     /**
@@ -394,6 +416,14 @@ public class TestSolidMeshes
         allMaterials.add(mat);
 
         mat = MyAsset.createDebugMaterial(assetManager);
+        allMaterials.add(mat);
+
+        String assetPath = "Interface/Logo/Monkey.jpg";
+        boolean generateMips = true;
+        Texture texture
+                = MyAsset.loadTexture(assetManager, assetPath, generateMips);
+        mat = MyAsset.createUnshadedMaterial(assetManager, texture);
+        mat.setName("unshaded texture");
         allMaterials.add(mat);
     }
 
