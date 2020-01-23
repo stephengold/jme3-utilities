@@ -100,24 +100,18 @@ public class LoopMesh extends Mesh {
      * sequence (not null or containing any nulls, length&ge;3, unaffected)
      */
     public LoopMesh(Vector3f[] cornerArray) {
-        Validate.nonNull(cornerArray, "corner list");
+        Validate.nonNullArray(cornerArray, "corner array");
         int vertexCount = cornerArray.length;
-        Validate.inRange(vertexCount, "length of corner list",
+        Validate.inRange(vertexCount, "length of corner array",
                 3, Integer.MAX_VALUE);
-        for (int index = 0; index < vertexCount; ++index) {
-            String description = String.format("cornerArray[%d]", index);
-            Validate.nonNull(cornerArray[index], description);
-        }
 
         setMode(Mode.LineLoop);
-        Vector3f[] locationArray = new Vector3f[vertexCount];
-        System.arraycopy(cornerArray, 0, locationArray, 0, vertexCount);
         /*
-         * Allocate and assign a buffer.
+         * Allocate, fill, and flip the position buffer.
          */
-        FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
-        setBuffer(VertexBuffer.Type.Position, numAxes, locBuffer);
+        FloatBuffer positionBuffer = BufferUtils.createFloatBuffer(cornerArray);
 
+        setBuffer(VertexBuffer.Type.Position, numAxes, positionBuffer);
         updateBound();
         setStatic();
     }
