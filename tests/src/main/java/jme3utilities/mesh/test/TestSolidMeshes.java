@@ -281,7 +281,7 @@ public class TestSolidMeshes
         rootNode.attachChild(geometry);
         geometry.move(4f, 2f, 0f);
 
-        mesh = new Dodecahedron(radius);
+        mesh = new Dodecahedron(radius, Mesh.Mode.Triangles);
         mesh = MyMesh.expand(mesh);
         MyMesh.generateNormals(mesh);
         geometry = new Geometry("dodecahedron", mesh);

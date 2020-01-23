@@ -39,9 +39,9 @@ import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
 
 /**
- * A 3-D, static, Triangles-mode mesh (with indices but without normals or
- * texture coordinates) that renders a regular dodecahedron. (An regular
- * dodecahedron has 12 pentagonal faces.)
+ * A 3-D, static mesh (with indices but without normals or texture coordinates)
+ * that renders a regular dodecahedron. (A regular dodecahedron has 12
+ * pentagonal faces.)
  *
  * @author Stephen Gold sgold@sonic.net
  * @see jme3utilities.mesh.Icosahedron
@@ -54,6 +54,10 @@ public class Dodecahedron extends Mesh {
      * golden ratio = 1.618...
      */
     final public static float phi = (1f + FastMath.sqrt(5f)) / 2f;
+    /**
+     * number of vertices per edge
+     */
+    final private static int vpe = 2;
     /**
      * message logger for this class
      */
@@ -72,13 +76,15 @@ public class Dodecahedron extends Mesh {
      * Instantiate a regular dodecahedron with the specified radius.
      *
      * The center is at (0,0,0). The first and last faces lie parallel to the
-     * X-Y plane. All triangles face outward.
+     * X-Y plane. If mode=Triangles, all triangles face outward.
      *
      * @param radius the desired distance of the vertices from the center (in
      * mesh units, &gt;0)
+     * @param mode mode for the Mesh (Lines or Triangles)
      */
-    public Dodecahedron(float radius) {
+    public Dodecahedron(float radius, Mode mode) {
         Validate.positive(radius, "radius");
+        Validate.nonNull(mode, "mode");
 
         float denom = MyMath.hypotenuse(2f, phi + 1f) / radius;
 
@@ -132,25 +138,43 @@ public class Dodecahedron extends Mesh {
         assert numFloats == 20 * MyVector3f.numAxes;
         positionBuffer.limit(numFloats);
 
-        IntBuffer indexBuffer = BufferUtils.createIntBuffer(
-                0, 1, 2, 0, 2, 3, 0, 3, 4,
-                0, 5, 13, 0, 13, 6, 0, 6, 1,
-                1, 6, 14, 1, 14, 7, 1, 7, 2,
-                2, 7, 10, 2, 10, 8, 2, 8, 3,
-                3, 8, 11, 3, 11, 9, 3, 9, 4,
-                4, 9, 12, 4, 12, 5, 4, 5, 0,
-                5, 12, 17, 5, 17, 18, 5, 18, 13,
-                6, 13, 18, 6, 18, 19, 6, 19, 14,
-                7, 14, 19, 7, 19, 15, 7, 15, 10,
-                8, 10, 15, 8, 15, 16, 8, 16, 11,
-                9, 11, 16, 9, 16, 17, 9, 17, 12,
-                15, 19, 18, 15, 18, 17, 15, 17, 16
-        );
-        setBuffer(VertexBuffer.Type.Index, MyMesh.vpt, indexBuffer);
-        int numInts = indexBuffer.capacity();
-        assert numInts == 36 * MyMesh.vpt;
-        indexBuffer.limit(numInts);
+        IntBuffer indexBuffer;
+        if (mode == Mode.Lines) {
+            indexBuffer = BufferUtils.createIntBuffer(
+                    0, 1, 1, 2, 2, 3, 3, 4, 4, 0,
+                    0, 5, 1, 6, 2, 7, 3, 8, 4, 9,
+                    5, 13, 6, 14, 7, 10, 8, 11, 9, 12,
+                    5, 12, 6, 13, 7, 14, 8, 10, 9, 11,
+                    10, 15, 11, 16, 12, 17, 13, 18, 14, 19,
+                    15, 16, 16, 17, 17, 18, 18, 19, 19, 15
+            );
+            setBuffer(VertexBuffer.Type.Index, vpe, indexBuffer);
 
+        } else if (mode == Mode.Triangles) {
+            indexBuffer = BufferUtils.createIntBuffer(
+                    0, 1, 2, 0, 2, 3, 0, 3, 4,
+                    0, 5, 13, 0, 13, 6, 0, 6, 1,
+                    1, 6, 14, 1, 14, 7, 1, 7, 2,
+                    2, 7, 10, 2, 10, 8, 2, 8, 3,
+                    3, 8, 11, 3, 11, 9, 3, 9, 4,
+                    4, 9, 12, 4, 12, 5, 4, 5, 0,
+                    5, 12, 17, 5, 17, 18, 5, 18, 13,
+                    6, 13, 18, 6, 18, 19, 6, 19, 14,
+                    7, 14, 19, 7, 19, 15, 7, 15, 10,
+                    8, 10, 15, 8, 15, 16, 8, 16, 11,
+                    9, 11, 16, 9, 16, 17, 9, 17, 12,
+                    15, 19, 18, 15, 18, 17, 15, 17, 16
+            );
+            setBuffer(VertexBuffer.Type.Index, MyMesh.vpt, indexBuffer);
+
+        } else {
+            String message = "mode = " + mode;
+            throw new IllegalArgumentException(message);
+        }
+
+        int numInts = indexBuffer.capacity();
+        indexBuffer.limit(numInts);
+        setMode(mode);
         updateBound();
         setStatic();
     }
