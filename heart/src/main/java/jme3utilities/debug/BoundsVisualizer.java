@@ -38,8 +38,10 @@ import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -54,6 +56,7 @@ import jme3utilities.MyAsset;
 import jme3utilities.MySpatial;
 import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
+import jme3utilities.math.MyVector3f;
 
 /**
  * A SubtreeControl to visualize the world bounds of a subject spatial.
@@ -102,6 +105,8 @@ public class BoundsVisualizer extends SubtreeControl {
     /**
      * field names for serialization
      */
+    final private static String tagBillboardAxis = "billboardAxis";
+    final private static String tagCamera = "camera";
     final private static String tagLineMaterial = "lineMaterial";
     final private static String tagLineWidth = "lineWidth";
     final private static String tagSubject = "subject";
@@ -109,9 +114,17 @@ public class BoundsVisualizer extends SubtreeControl {
     // fields
 
     /**
+     * camera for billboarding, or null if not billboarding
+     */
+    private Camera camera = null;
+    /**
      * effective line width (in pixels, &ge;0, values &lt;1 hide the lines)
      */
     private float effectiveLineWidth = defaultLineWidth;
+    /**
+     * local axis for billboarding
+     */
+    private int billboardAxis = MyVector3f.xAxis;
     /**
      * wireframe material for lines (color and depth-test are stored here)
      */
@@ -150,6 +163,16 @@ public class BoundsVisualizer extends SubtreeControl {
     // new methods exposed
 
     /**
+     * Determine which local axis is being used for billboarding.
+     *
+     * @return the axis index (&ge;0, &le;2) or -1 if not billboarding
+     */
+    public int billboardAxis() {
+        int result = (camera == null) ? -1 : billboardAxis;
+        return result;
+    }
+
+    /**
      * Copy the color of the lines.
      *
      * @return a new instance
@@ -177,6 +200,40 @@ public class BoundsVisualizer extends SubtreeControl {
         result.set(color);
 
         return result;
+    }
+
+    /**
+     * Disable billboarding.
+     */
+    public void disableBillboarding() {
+        camera = null;
+    }
+
+    /**
+     * Enable billboarding. Note: billboarding is implemented only for spheres,
+     * not axis-aligned boxes.
+     *
+     * @param camera the camera to use for billboarding (not null, alias
+     * created)
+     * @param axisIndex which local axis should point toward the camera:
+     * 0&rarr;+X, 1&rarr;+Y, 2&rarr;+Z
+     */
+    public void enableBillboarding(Camera camera, int axisIndex) {
+        Validate.nonNull(camera, "camera");
+        Validate.inRange(axisIndex, "axis index", MyVector3f.firstAxis,
+                MyVector3f.lastAxis);
+
+        this.camera = camera;
+        billboardAxis = axisIndex;
+    }
+
+    /**
+     * Access the Camera used for billboarding.
+     *
+     * @return the pre-existing instance (may be null)
+     */
+    public Camera getCamera() {
+        return camera;
     }
 
     /**
@@ -278,6 +335,7 @@ public class BoundsVisualizer extends SubtreeControl {
     public void cloneFields(Cloner cloner, Object original) {
         super.cloneFields(cloner, original);
 
+        camera = cloner.clone(camera);
         lineMaterial = cloner.clone(lineMaterial);
         subject = cloner.clone(subject);
     }
@@ -327,6 +385,8 @@ public class BoundsVisualizer extends SubtreeControl {
         super.read(importer);
         InputCapsule capsule = importer.getCapsule(this);
 
+        billboardAxis = capsule.readInt(tagBillboardAxis, MyVector3f.xAxis);
+        camera = (Camera) capsule.readSavable(tagCamera, null);
         lineMaterial = (Material) capsule.readSavable(tagLineMaterial, null);
         effectiveLineWidth = capsule.readFloat(tagLineWidth, 0f);
         subject = (Spatial) capsule.readSavable(tagSubject, null);
@@ -365,6 +425,8 @@ public class BoundsVisualizer extends SubtreeControl {
         super.write(exporter);
         OutputCapsule capsule = exporter.getCapsule(this);
 
+        capsule.write(billboardAxis, tagBillboardAxis, MyVector3f.xAxis);
+        capsule.write(camera, tagCamera, null);
         capsule.write(lineMaterial, tagLineMaterial, null);
         capsule.write(effectiveLineWidth, tagLineWidth, 0f);
         capsule.write(subject, tagSubject, null);
@@ -455,6 +517,24 @@ public class BoundsVisualizer extends SubtreeControl {
         Transform transform = new Transform();
         Vector3f center = boundingSphere.getCenter();
         transform.setTranslation(center);
+        if (camera != null) {
+            Vector3f offset = camera.getLocation().subtract(center);
+            Vector3f axis1 = new Vector3f();
+            Vector3f axis2 = new Vector3f();
+            MyVector3f.generateBasis(offset, axis1, axis2);
+
+            Quaternion orientation = transform.getRotation();
+            if (billboardAxis == MyVector3f.xAxis) {
+                orientation.fromAxes(offset, axis1, axis2);
+            } else if (billboardAxis == MyVector3f.yAxis) {
+                orientation.fromAxes(axis2, offset, axis1);
+            } else if (billboardAxis == MyVector3f.zAxis) {
+                orientation.fromAxes(axis1, axis2, offset);
+            } else {
+                String message = "billboardAxis = " + billboardAxis;
+                throw new IllegalStateException(message);
+            }
+        }
         float radius = boundingSphere.getRadius();
         transform.setScale(radius);
         MySpatial.setWorldTransform(lines, transform);
