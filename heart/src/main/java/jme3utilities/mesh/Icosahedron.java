@@ -38,7 +38,7 @@ import jme3utilities.math.MyMath;
 
 /**
  * A 3-D, static, Triangles-mode mesh (without indices or texture coordinates)
- * that renders a regular icosahedron. (An regular icosahedron has 20 triangular
+ * that renders a regular icosahedron. (A regular icosahedron has 20 triangular
  * faces.)
  *
  * @author Stephen Gold sgold@sonic.net

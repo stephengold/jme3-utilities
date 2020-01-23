@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 
 /**
- * A point-mode mesh that visualizes a single point.
+ * A Points-mode mesh that visualizes a single point.
  *
  * @author Stephen Gold sgold@sonic.net
  */

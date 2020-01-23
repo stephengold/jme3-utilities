@@ -45,7 +45,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 
 /**
- * A 3-D, static, triangle-mode mesh for a dome (or a pie-cut segment thereof)
+ * A 3-D, static, Triangles-mode mesh for a dome (or a pie-cut segment thereof)
  * with radius=1, centered at the origin, with its top at (0,1,0) and its
  * equator in the X-Z plane.
  * <p>
