@@ -32,9 +32,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.logging.Logger;
-import jme3utilities.MyMesh;
 import jme3utilities.Validate;
 
 /**
@@ -78,7 +76,6 @@ public class LoopMesh extends Mesh {
 
         setMode(Mode.LineLoop);
         updateCoordinates(vertexCount, 1f);
-        updateIndices(vertexCount);
         updateBound();
         setStatic();
     }
@@ -108,7 +105,6 @@ public class LoopMesh extends Mesh {
         FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
         setBuffer(VertexBuffer.Type.Position, numAxes, locBuffer);
 
-        updateIndices(vertexCount);
         updateBound();
         setStatic();
     }
@@ -136,23 +132,5 @@ public class LoopMesh extends Mesh {
 
         positionBuffer.flip();
         setBuffer(VertexBuffer.Type.Position, numAxes, positionBuffer);
-    }
-
-    /**
-     * Update the buffered indices for a new vertex count.
-     */
-    private void updateIndices(int vertexCount) {
-        /*
-         * Allocate an array to hold the vertex indices.
-         */
-        short[] indexArray = new short[vertexCount + 1];
-        for (int vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex) {
-            indexArray[vertexIndex] = (short) vertexIndex;
-        }
-        /*
-         * Allocate and assign a buffer for indices.
-         */
-        ShortBuffer indexBuffer = BufferUtils.createShortBuffer(indexArray);
-        setBuffer(VertexBuffer.Type.Index, MyMesh.vpe, indexBuffer);
     }
 }
