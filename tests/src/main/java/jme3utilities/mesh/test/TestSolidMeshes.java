@@ -53,6 +53,7 @@ import jme3utilities.MyString;
 import jme3utilities.debug.Dumper;
 import jme3utilities.math.MyMath;
 import jme3utilities.mesh.Cone;
+import jme3utilities.mesh.Dodecahedron;
 import jme3utilities.mesh.DomeMesh;
 import jme3utilities.mesh.Icosahedron;
 import jme3utilities.mesh.Icosphere;
@@ -245,7 +246,6 @@ public class TestSolidMeshes
         rootNode.attachChild(geometry);
         geometry.move(0f, 2f, 0f);
 
-        radius = 1f;
         generateNormals = true;
         mesh = new Icosahedron(radius, generateNormals);
         geometry = new Geometry("icosahedron", mesh);
@@ -253,43 +253,40 @@ public class TestSolidMeshes
         geometry.move(0f, 4f, 0f);
 
         int refineSteps = 3;
-        radius = 1f;
         mesh = new Icosphere(refineSteps, radius);
         geometry = new Geometry("icoSphere", mesh);
         rootNode.attachChild(geometry);
         geometry.move(2f, 0f, 0f);
 
-        radius = 1f;
-        generateNormals = true;
         mesh = new Octahedron(radius, generateNormals);
         geometry = new Geometry("octahedron", mesh);
         rootNode.attachChild(geometry);
         geometry.move(2f, 2f, 0f);
 
         numSides = 3;
-        radius = 1f;
-        height = 1f;
-        generateNormals = true;
         mesh = new Prism(numSides, radius, height, generateNormals);
         geometry = new Geometry("prism", mesh);
         rootNode.attachChild(geometry);
         geometry.move(2f, 4f, 0f);
 
         numSides = 4;
-        radius = 1f;
-        height = 1f;
         generatePyramid = true;
         mesh = new Cone(numSides, radius, height, generatePyramid);
         geometry = new Geometry("pyramid", mesh);
         rootNode.attachChild(geometry);
         geometry.move(4f, 0f, 0f);
 
-        radius = 1f;
-        generateNormals = true;
         mesh = new Tetrahedron(radius, generateNormals);
         geometry = new Geometry("tetrahedron", mesh);
         rootNode.attachChild(geometry);
         geometry.move(4f, 2f, 0f);
+
+        mesh = new Dodecahedron(radius);
+        mesh = MyMesh.expand(mesh);
+        MyMesh.generateNormals(mesh);
+        geometry = new Geometry("dodecahedron", mesh);
+        rootNode.attachChild(geometry);
+        geometry.move(4f, 4f, 0f);
 
         allGeometries
                 = MySpatial.listSpatials(rootNode, Geometry.class, null);
@@ -342,6 +339,7 @@ public class TestSolidMeshes
      * Configure the camera during startup.
      */
     private void configureCamera() {
+        flyCam.setMoveSpeed(10f);
         cam.setLocation(new Vector3f(-0.4f, 5.7f, 7.3f));
         cam.setRotation(new Quaternion(0.044f, 0.94556f, -0.2896f, 0.142f));
     }
