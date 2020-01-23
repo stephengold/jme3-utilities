@@ -72,10 +72,23 @@ public class LoopMesh extends Mesh {
      * @param vertexCount the desired number of vertices (&ge;3)
      */
     public LoopMesh(int vertexCount) {
+        this(vertexCount, 1f);
+    }
+
+    /**
+     * Instantiate a regular polygon (or circle) in the X-Z plane.
+     * <p>
+     * The center is at (0,0,0).
+     *
+     * @param vertexCount the desired number of vertices (&ge;3)
+     * @param radius the desired radius (in mesh units, &ge;0)
+     */
+    public LoopMesh(int vertexCount, float radius) {
         Validate.inRange(vertexCount, "vertex count", 3, Integer.MAX_VALUE);
+        Validate.nonNegative(radius, "radius");
 
         setMode(Mode.LineLoop);
-        updateCoordinates(vertexCount, 1f);
+        updateCoordinates(vertexCount, radius);
         updateBound();
         setStatic();
     }
