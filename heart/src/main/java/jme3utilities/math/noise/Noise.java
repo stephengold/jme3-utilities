@@ -117,6 +117,7 @@ final public class Noise {
      * value from the shared generator.
      *
      * @return float value (&ge;0, &lt;1)
+     * @see com.jme3.math.FastMath#nextRandomFloat()
      */
     public static float nextFloat() {
         return generator.nextFloat();
