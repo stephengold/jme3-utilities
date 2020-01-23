@@ -195,6 +195,23 @@ public class MyMesh {
     }
 
     /**
+     * Add normals to a Mesh for an outward-facing sphere.
+     *
+     * @param mesh the Mesh to modify (not null, without normals, modified)
+     */
+    public static void addSphereNormals(Mesh mesh) {
+        Validate.nonNull(mesh, "mesh");
+        assert !hasNormals(mesh);
+
+        FloatBuffer positions = mesh.getFloatBuffer(VertexBuffer.Type.Position);
+        FloatBuffer normals = BufferUtils.clone(positions);
+        int numFloats = positions.limit();
+        MyBuffer.normalize(normals, 0, numFloats);
+        normals.flip();
+        mesh.setBuffer(VertexBuffer.Type.Normal, numAxes, normals);
+    }
+
+    /**
      * Test whether 2 vertices in the specified mesh are identical.
      *
      * @param mesh (not null, unaffected)
@@ -465,6 +482,37 @@ public class MyMesh {
         } else {
             return true;
         }
+    }
+
+    /**
+     * Test whether the specified Mesh is composed of triangles.
+     *
+     * @param mesh the Mesh to test (not null, unaffected)
+     * @return true if the Mesh is composed of triangles, otherwise false
+     */
+    public static boolean hasTriangles(Mesh mesh) {
+        Mesh.Mode mode = mesh.getMode();
+        boolean result;
+        switch (mode) {
+            case Points:
+            case Lines:
+            case LineStrip:
+            case LineLoop:
+                result = false;
+                break;
+
+            case Triangles:
+            case TriangleFan:
+            case TriangleStrip:
+                result = true;
+                break;
+
+            default:
+                String message = "mode = " + mode;
+                throw new IllegalArgumentException(message);
+        }
+
+        return result;
     }
 
     /**
