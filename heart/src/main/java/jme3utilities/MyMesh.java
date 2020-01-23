@@ -73,6 +73,10 @@ public class MyMesh {
      */
     final private static int numAxes = 3;
     /**
+     * number of vertices per edge
+     */
+    final public static int vpe = 2;
+    /**
      * number of vertices per triangle
      */
     final public static int vpt = 3;

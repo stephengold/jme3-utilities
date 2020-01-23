@@ -40,6 +40,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyMesh;
 import jme3utilities.Validate;
 
 /**
@@ -56,10 +57,6 @@ public class LoopMesh extends Mesh {
      * number of axes in a vector
      */
     final private static int numAxes = 3;
-    /**
-     * number of vertices per edge
-     */
-    final private static int vpe = 2;
     /**
      * message logger for this class
      */
@@ -207,6 +204,6 @@ public class LoopMesh extends Mesh {
          * Allocate and assign a buffer for indices.
          */
         ShortBuffer indexBuffer = BufferUtils.createShortBuffer(indexArray);
-        setBuffer(VertexBuffer.Type.Index, vpe, indexBuffer);
+        setBuffer(VertexBuffer.Type.Index, MyMesh.vpe, indexBuffer);
     }
 }

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,8 @@ package jme3utilities.mesh;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import java.util.logging.Logger;
+import jme3utilities.MyMesh;
+import jme3utilities.math.MyVector3f;
 
 /**
  * A 2-D, static, LineLoop-mode mesh that renders the outline of a rectangle in
@@ -69,13 +71,13 @@ public class RectangleOutlineMesh extends Mesh {
     public RectangleOutlineMesh(float x1, float x2, float y1, float y2) {
         setMode(Mode.LineLoop);
 
-        setBuffer(VertexBuffer.Type.Position, 3, new float[]{
+        setBuffer(VertexBuffer.Type.Position, MyVector3f.numAxes, new float[]{
             x1, y1, 0f,
             x1, y2, 0f,
             x2, y2, 0f,
             x2, y1, 0f});
 
-        setBuffer(VertexBuffer.Type.Index, 2, new short[]{0, 1, 2, 3});
+        setBuffer(VertexBuffer.Type.Index, MyMesh.vpe, new short[]{0, 1, 2, 3});
 
         updateBound();
         setStatic();

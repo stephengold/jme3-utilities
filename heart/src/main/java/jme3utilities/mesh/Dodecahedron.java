@@ -55,10 +55,6 @@ public class Dodecahedron extends Mesh {
      */
     final public static float phi = (1f + FastMath.sqrt(5f)) / 2f;
     /**
-     * number of vertices per edge
-     */
-    final private static int vpe = 2;
-    /**
      * message logger for this class
      */
     final public static Logger logger
@@ -148,7 +144,7 @@ public class Dodecahedron extends Mesh {
                     10, 15, 11, 16, 12, 17, 13, 18, 14, 19,
                     15, 16, 16, 17, 17, 18, 18, 19, 19, 15
             );
-            setBuffer(VertexBuffer.Type.Index, vpe, indexBuffer);
+            setBuffer(VertexBuffer.Type.Index, MyMesh.vpe, indexBuffer);
 
         } else if (mode == Mode.Triangles) {
             indexBuffer = BufferUtils.createIntBuffer(
