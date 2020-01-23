@@ -26,19 +26,13 @@
  */
 package jme3utilities.mesh;
 
-import com.jme3.export.InputCapsule;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.util.BufferUtils;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyMesh;
 import jme3utilities.Validate;
@@ -63,13 +57,6 @@ public class LoopMesh extends Mesh {
     final private static Logger logger
             = Logger.getLogger(LoopMesh.class.getName());
     // *************************************************************************
-    // fields
-
-    /**
-     * total number of vertices (&ge;3)
-     */
-    private int vertexCount;
-    // *************************************************************************
     // constructors
 
     /**
@@ -79,9 +66,9 @@ public class LoopMesh extends Mesh {
     }
 
     /**
-     * Instantiate a regular polygon (or circle) in the X-Z plane, with radius=1
-     * and the specified number of vertices.
-     *
+     * Instantiate a regular polygon (or circle) with radius=1, in the X-Z
+     * plane.
+     * <p>
      * The center is at (0,0,0).
      *
      * @param vertexCount the desired number of vertices (&ge;3)
@@ -89,11 +76,9 @@ public class LoopMesh extends Mesh {
     public LoopMesh(int vertexCount) {
         Validate.inRange(vertexCount, "vertex count", 3, Integer.MAX_VALUE);
 
-        this.vertexCount = vertexCount;
         setMode(Mode.LineLoop);
-        updateCoordinates();
-
-        updateIndices();
+        updateCoordinates(vertexCount, 1f);
+        updateIndices(vertexCount);
         updateBound();
         setStatic();
     }
@@ -101,12 +86,12 @@ public class LoopMesh extends Mesh {
     /**
      * Instantiate a 3-D polygon from an array of coordinates.
      *
-     * @param cornerArray the desired local coordinates of the corners, in
+     * @param cornerArray the desired mesh coordinates of the corners, in
      * sequence (not null or containing any nulls, length&ge;3, unaffected)
      */
     public LoopMesh(Vector3f[] cornerArray) {
         Validate.nonNull(cornerArray, "corner list");
-        vertexCount = cornerArray.length;
+        int vertexCount = cornerArray.length;
         Validate.inRange(vertexCount, "length of corner list",
                 3, Integer.MAX_VALUE);
         for (int index = 0; index < vertexCount; ++index) {
@@ -123,75 +108,40 @@ public class LoopMesh extends Mesh {
         FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
         setBuffer(VertexBuffer.Type.Position, numAxes, locBuffer);
 
-        updateIndices();
+        updateIndices(vertexCount);
         updateBound();
         setStatic();
-    }
-    // *************************************************************************
-    // Savable methods
-
-    /**
-     * De-serialize this instance when loading.
-     *
-     * @param importer (not null)
-     * @throws IOException from importer
-     */
-    @Override
-    public void read(JmeImporter importer) throws IOException {
-        super.read(importer);
-
-        InputCapsule capsule = importer.getCapsule(this);
-        vertexCount = capsule.readInt("vertexCount", 60);
-    }
-
-    /**
-     * Serialize this instance when saving.
-     *
-     * @param exporter (not null)
-     * @throws IOException from exporter
-     */
-    @Override
-    public void write(JmeExporter exporter) throws IOException {
-        super.write(exporter);
-
-        OutputCapsule capsule = exporter.getCapsule(this);
-        capsule.write(vertexCount, "vertexCount", 60);
     }
     // *************************************************************************
     // private methods
 
     /**
-     * Update the buffered locations for a regular polygon (or circle) in the XZ
-     * plane, centered at the origin, with radius=1 and the specified number of
-     * vertices.
+     * Update the buffered locations for a regular polygon (or circle) in the
+     * X-Z plane, centered at (0,0,0).
+     *
+     * @param vertexCount (&ge;3)
+     * @param radius (in mesh units, &ge;0)
      */
-    private void updateCoordinates() {
-        /*
-         * Allocate an array to hold the local (XYZ) coordinates.
-         */
-        Vector3f[] locationArray = new Vector3f[vertexCount];
+    private void updateCoordinates(int vertexCount, float radius) {
+        int numFloats = numAxes * vertexCount;
+        FloatBuffer positionBuffer = BufferUtils.createFloatBuffer(numFloats);
 
         float increment = FastMath.TWO_PI / vertexCount;
         for (int vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex) {
             float longitude = increment * vertexIndex;
-            float x = FastMath.cos(longitude);
-            float z = FastMath.sin(longitude);
-
-            logger.log(Level.FINE, "coords {0}", vertexIndex);
-            Vector3f location = new Vector3f(x, 0f, z);
-            locationArray[vertexIndex] = location;
+            float x = radius * FastMath.cos(longitude);
+            float z = radius * FastMath.sin(longitude);
+            positionBuffer.put(x).put(0f).put(z);
         }
-        /*
-         * Allocate and assign a buffer.
-         */
-        FloatBuffer locBuffer = BufferUtils.createFloatBuffer(locationArray);
-        setBuffer(VertexBuffer.Type.Position, numAxes, locBuffer);
+
+        positionBuffer.flip();
+        setBuffer(VertexBuffer.Type.Position, numAxes, positionBuffer);
     }
 
     /**
      * Update the buffered indices for a new vertex count.
      */
-    private void updateIndices() {
+    private void updateIndices(int vertexCount) {
         /*
          * Allocate an array to hold the vertex indices.
          */
