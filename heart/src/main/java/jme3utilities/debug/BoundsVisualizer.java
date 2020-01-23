@@ -56,10 +56,9 @@ import jme3utilities.SubtreeControl;
 import jme3utilities.Validate;
 
 /**
- * A SubtreeControl to visualize the world bound of a subject spatial.
+ * A SubtreeControl to visualize the world bounds of a subject spatial.
  * <p>
- * The controlled spatial must be a Node, but the subject (visualized spatial)
- * may be a Geometry.
+ * The controlled spatial must be a Node, but the subject may be a Geometry.
  * <p>
  * The Control is disabled by default. When enabled, it attaches a Geometry to
  * the subtree.
@@ -118,7 +117,7 @@ public class BoundsVisualizer extends SubtreeControl {
      */
     private Material lineMaterial;
     /**
-     * the spatial whose world bound is being visualized, or null for none
+     * spatial whose world bounds are being visualized, or null for none
      */
     private Spatial subject = null;
     // *************************************************************************
@@ -181,7 +180,16 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Read the depth-test setting.
+     * Access the Spatial whose bounds are being visualized.
+     *
+     * @return the pre-existing instance (may be null)
+     */
+    public Spatial getSubject() {
+        return subject;
+    }
+
+    /**
+     * Determine the depth-test setting.
      * <p>
      * The test provides depth cues, but might hide portions of the
      * visualization.
@@ -196,7 +204,7 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Read the effective line width of the visualization.
+     * Determine the effective line width of the visualization.
      *
      * @return width (in pixels, &ge;0)
      */
@@ -237,9 +245,9 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Alter which Spatial is visualized.
+     * Alter which spatial's bounds are being visualized.
      *
-     * @param newSubject which spatial to visualize (may be null, alias created)
+     * @param newSubject which spatial (may be null, alias created)
      */
     public void setSubject(Spatial newSubject) {
         subject = newSubject;
@@ -300,7 +308,7 @@ public class BoundsVisualizer extends SubtreeControl {
             } else if (bound instanceof BoundingSphere
                     && mesh instanceof WireSphere) {
                 updateSphere();
-            } else { // wrong type of mesh
+            } else { // wrong type of mesh - create a new Geometry
                 subtreeNode.detachAllChildren();
                 addLines();
             }
@@ -392,7 +400,7 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Update existing WireBox lines based on the subject's world bound.
+     * Update the existing box geometry for an axis-aligned bounding box.
      */
     private void updateBox() {
         BoundingVolume bound = subject.getWorldBound();
@@ -422,7 +430,7 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Update the line width.
+     * Update the line width in lineMaterial.
      */
     private void updateLineWidth() {
         Node subtreeNode = (Node) getSubtree();
@@ -434,26 +442,21 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
-     * Update existing WireSphere lines based on the subject's world bound.
+     * Update the existing sphere geometry for a bounding sphere.
      */
     private void updateSphere() {
         BoundingVolume bound = subject.getWorldBound();
         BoundingSphere boundingSphere = (BoundingSphere) bound;
         Node subtreeNode = (Node) getSubtree();
         Geometry lines = (Geometry) subtreeNode.getChild(linesChildPosition);
-        WireSphere sphereMesh = (WireSphere) lines.getMesh();
-        /*
-         * Update the mesh radius.
-         */
-        float radius = boundingSphere.getRadius();
-        assert radius >= 0f : radius;
-        sphereMesh.updatePositions(radius);
         /*
          * Update the transform.
          */
         Transform transform = new Transform();
         Vector3f center = boundingSphere.getCenter();
         transform.setTranslation(center);
+        float radius = boundingSphere.getRadius();
+        transform.setScale(radius);
         MySpatial.setWorldTransform(lines, transform);
 
         updateLineWidth();
