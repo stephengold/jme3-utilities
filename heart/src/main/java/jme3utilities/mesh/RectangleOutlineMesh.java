@@ -31,7 +31,7 @@ import com.jme3.scene.VertexBuffer;
 import java.util.logging.Logger;
 
 /**
- * A 2-D, static, lineloop-mode mesh that renders the outline of a rectangle in
+ * A 2-D, static, LineLoop-mode mesh that renders the outline of a rectangle in
  * the X-Y plane.
  * <p>
  * In local space, the rectangle extends from (x1,y1,0) to (x2,y2,0).
