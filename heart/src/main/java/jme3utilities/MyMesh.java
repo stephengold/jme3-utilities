@@ -48,7 +48,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import jme3utilities.math.MyBuffer;
 import jme3utilities.math.MyVector3f;
@@ -197,7 +199,7 @@ public class MyMesh {
     /**
      * Add normals to a Mesh for an outward-facing sphere.
      *
-     * @param mesh the Mesh to modify (not null, without normals, modified)
+     * @param mesh the Mesh to modify (not null, without normals)
      */
     public static void addSphereNormals(Mesh mesh) {
         Validate.nonNull(mesh, "mesh");
@@ -752,6 +754,75 @@ public class MyMesh {
                     Element.swap(vb, v1Index, v3Index);
                 }
             }
+        }
+    }
+
+    /**
+     * Smooth the normals of a Mesh by averaging them across all uses of each
+     * distinct vertex position.
+     *
+     * @param mesh the Mesh to modify (not null, with normals)
+     */
+    public static void smoothNormals(Mesh mesh) {
+        Validate.nonNull(mesh, "mesh");
+        assert hasNormals(mesh);
+
+        FloatBuffer positionBuffer
+                = mesh.getFloatBuffer(VertexBuffer.Type.Position);
+        int numVertices = positionBuffer.limit() / numAxes;
+
+        Map<Vector3f, Integer> mapPosToDpid = new HashMap<>(numVertices);
+        int numDistinctPositions = 0;
+        for (int vertexIndex = 0; vertexIndex < numVertices; ++vertexIndex) {
+            int start = vertexIndex * numAxes;
+            Vector3f position = new Vector3f();
+            MyBuffer.get(positionBuffer, start, position);
+            MyVector3f.standardize(position, position);
+            if (!mapPosToDpid.containsKey(position)) {
+                mapPosToDpid.put(position, numDistinctPositions);
+                ++numDistinctPositions;
+            }
+        }
+        /*
+         * Initialize the normal sum for each distinct position.
+         */
+        Vector3f[] normalSum = new Vector3f[numDistinctPositions];
+        for (int dpid = 0; dpid < numDistinctPositions; ++dpid) {
+            normalSum[dpid] = new Vector3f(0f, 0f, 0f);
+        }
+
+        IndexBuffer indexList = mesh.getIndicesAsList();
+        int numIndices = indexList.size();
+
+        FloatBuffer normalBuffer
+                = mesh.getFloatBuffer(VertexBuffer.Type.Normal);
+        Vector3f tmpPosition = new Vector3f();
+        Vector3f tmpNormal = new Vector3f();
+        for (int ibPosition = 0; ibPosition < numIndices; ++ibPosition) {
+            int vertexIndex = indexList.get(ibPosition);
+            int start = vertexIndex * numAxes;
+            MyBuffer.get(positionBuffer, start, tmpPosition);
+            MyVector3f.standardize(tmpPosition, tmpPosition);
+            int dpid = mapPosToDpid.get(tmpPosition);
+
+            MyBuffer.get(normalBuffer, start, tmpNormal);
+            normalSum[dpid].addLocal(tmpNormal);
+        }
+        /*
+         * Re-normalize the normal sum for each distinct position.
+         */
+        for (int dpid = 0; dpid < normalSum.length; ++dpid) {
+            normalSum[dpid].normalizeLocal();
+        }
+        /*
+         * Write new normals to the buffer.
+         */
+        for (int vertexIndex = 0; vertexIndex < numVertices; ++vertexIndex) {
+            int start = vertexIndex * numAxes;
+            MyBuffer.get(positionBuffer, start, tmpPosition);
+            MyVector3f.standardize(tmpPosition, tmpPosition);
+            int dpid = mapPosToDpid.get(tmpPosition);
+            MyBuffer.put(normalBuffer, start, normalSum[dpid]);
         }
     }
 
