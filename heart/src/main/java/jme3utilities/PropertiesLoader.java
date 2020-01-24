@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.ui;
+package jme3utilities;
 
 import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetLoader;
@@ -34,13 +34,13 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * Simple loader for Properties assets.
+ * A loader for properties XML assets.
  *
  * @author Stephen Gold sgold@sonic.net
  */
 public class PropertiesLoader implements AssetLoader {
     // *************************************************************************
-    // constants
+    // constants and loggers
 
     /**
      * message logger for this class
@@ -54,10 +54,11 @@ public class PropertiesLoader implements AssetLoader {
      * Load a Properties asset.
      *
      * @param assetInfo (not null)
-     * @return a new Properties instance, or null in case of an error
+     * @return a new Properties instance
+     * @throws java.io.IOException from Properties
      */
     @Override
-    public Object load(AssetInfo assetInfo) {
+    public Object load(AssetInfo assetInfo) throws IOException {
         /*
          * Open the asset stream.
          */
@@ -66,11 +67,7 @@ public class PropertiesLoader implements AssetLoader {
          * Parse the stream's data.
          */
         Properties props = new Properties();
-        try {
-            props.loadFromXML(stream);
-        } catch (IOException exception) {
-            props = null;
-        }
+        props.loadFromXML(stream);
 
         return props;
     }

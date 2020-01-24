@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Misc;
 import jme3utilities.MyString;
+import jme3utilities.PropertiesLoader;
 import jme3utilities.Validate;
 
 /**
