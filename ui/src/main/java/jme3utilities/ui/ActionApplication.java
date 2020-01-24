@@ -168,7 +168,6 @@ abstract public class ActionApplication
      *
      * @param newSpeed animation speed (&gt;0, standard speed &rarr; 1)
      */
-    @Override
     public void setSpeed(float newSpeed) {
         Validate.positive(newSpeed, "speed");
         speed = newSpeed;
