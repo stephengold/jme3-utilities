@@ -9,7 +9,7 @@ Note: the following license does not apply to certain assets/resources
  1 file in tests/src/main/resources/Textures/icons,
  1 file in tests/src/main/resources/Textures/skies/clouds,
  2 files in tests/src/main/resources/Textures/skies/t0neg0d, and
- 3 files in ui/src/main/resources/Textures/cursors)
+ 4 files in ui/src/main/resources/Textures/cursors)
 which are separately licensed.
 
 BSD 3-Clause License
