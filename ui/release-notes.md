@@ -1,5 +1,21 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.8.0for32 released on TBD
+
+ + Moved the `PropertiesLoader` class to the jme3-utilities-heart
+   library. (API change)
+ + Finalized `simpleInitApp()` in the `ActionApplication` class. (API change)
+ + Bufix: corrected the name for `KEY_NUMPADCOMMA` in the `Hotkey` class.
+ + Added names for `KEY_PRTSCR`, `KEY_DECIMAL`, and `KEY_SUBTRACT`
+   to the `HotKey` class.
+ + Added screenshot support to the `ActionApplication` class.
+ + Added black backgrounds to all help nodes.
+ + Added the `TestHotKeys` application to the tests sub-project.
+ + Added a help node to the `TestFlyCam` application.
+ + Added a `dumpAll()` method to the `Locators` class, for debugging.
+ + Added "green.cur" cursor texture to the built-in assets.
+ + Based on version 4.4 of the jme3-utilities-heart library.
+
 ## Version 0.7.10for32 released on 4 January 2020
 
  + Added the `HelpUtils` class.
