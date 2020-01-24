@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ import com.jme3.asset.plugins.HttpZipLocator;
 import com.jme3.asset.plugins.UrlLocator;
 import com.jme3.asset.plugins.ZipLocator;
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -80,6 +81,30 @@ public class Locators {
     final private List<String> rootPaths = new ArrayList<>(6);
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Dump the entire stack of locators to the specified PrintStream.
+     *
+     * @param printStream the output stream (not null)
+     */
+    public static void dumpAll(PrintStream printStream) {
+        Validate.nonNull(printStream, "print stream");
+
+        printStream.printf("%nCurrent locators:%n");
+        int lastIndex = stack.size() - 1;
+        dump(printStream, lastIndex);
+
+        for (int index = lastIndex - 1; index >= 0; --index) {
+            String aside = "";
+            if (index == 0) {
+                aside = " (oldest)";
+            }
+            printStream.printf("%nSaved locators[%d]%s:%n", index, aside);
+            dump(printStream, index);
+        }
+
+        printStream.println();
+    }
 
     /**
      * Access the asset manager.
@@ -377,6 +402,36 @@ public class Locators {
         justUnregisterAll();
         locatorTypes.clear();
         rootPaths.clear();
+    }
+
+    /**
+     * Dump the indexed locator to the specified PrintStream.
+     *
+     * @param printStream the output stream (not null)
+     * @param index (&ge;0)
+     */
+    private static void dump(PrintStream printStream, int index) {
+        Locators locators = stack.get(index);
+
+        int numPaths = locators.rootPaths.size();
+        assert locators.locatorTypes.size() == numPaths : numPaths;
+
+        if (numPaths == 0) {
+            printStream.println("  none!");
+        }
+
+        for (int pathIndex = 0; pathIndex < numPaths; ++pathIndex) {
+            Class locatorType = locators.locatorTypes.get(pathIndex);
+            String typeName = locatorType.getSimpleName();
+            if (typeName.endsWith("Locator")) {
+                typeName = MyString.removeSuffix(typeName, "Locator");
+            }
+
+            String rootPath = locators.rootPaths.get(pathIndex);
+            rootPath = MyString.quote(rootPath);
+
+            printStream.printf("  %s rootPath=%s%n", typeName, rootPath);
+        }
     }
 
     /**
