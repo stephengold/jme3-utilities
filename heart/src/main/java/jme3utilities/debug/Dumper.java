@@ -146,7 +146,7 @@ public class Dumper implements Cloneable {
     /**
      * Instantiate a dumper that will use the specified output stream.
      *
-     * @param printStream output stream (not null)
+     * @param printStream the output stream (not null)
      */
     public Dumper(PrintStream printStream) {
         Validate.nonNull(printStream, "print stream");
