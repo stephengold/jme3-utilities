@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -348,10 +348,12 @@ public class Hotkey {
         addKey(KeyInput.KEY_SYSRQ, "sys rq");
         addKey(KeyInput.KEY_SCROLL, "scroll lock");
         addKey(KeyInput.KEY_PAUSE, "pause");
+        addKey(KeyInput.KEY_PRTSCR, "prtscr");
         /*
          * the numeric keypad
          */
         addKey(KeyInput.KEY_NUMLOCK, "num lock");
+        addKey(KeyInput.KEY_DECIMAL, "numpad decimal");
         addKey(KeyInput.KEY_DIVIDE, "numpad divide");
         addKey(KeyInput.KEY_MULTIPLY, "numpad multiply");
         addKey(KeyInput.KEY_NUMPAD7, "numpad 7");
@@ -366,8 +368,9 @@ public class Hotkey {
         addKey(KeyInput.KEY_NUMPAD3, "numpad 3");
         addKey(KeyInput.KEY_NUMPADENTER, "numpad enter");
         addKey(KeyInput.KEY_NUMPAD0, "numpad 0");
-        addKey(KeyInput.KEY_NUMPADCOMMA, "numpad decimal");
+        addKey(KeyInput.KEY_NUMPADCOMMA, "numpad comma");
         addKey(KeyInput.KEY_NUMPADEQUALS, "numpad equals");
+        addKey(KeyInput.KEY_SUBTRACT, "numpad subtract");
         /*
          * miscellaneous keys
          */
