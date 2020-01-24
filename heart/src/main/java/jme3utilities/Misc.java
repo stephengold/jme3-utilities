@@ -62,7 +62,7 @@ import jme3utilities.math.VectorXZ;
 
 /**
  * Miscellaneous utility methods in the jme3-utilities-heart library. TODO
- * rename com.github.stephengold.heart.Heart
+ * rename Heart
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -363,7 +363,7 @@ public class Misc {
      * @return project name, library name, branch, and revision
      */
     public static String version() {
-        return "jme3-utilities jme3-utilities-heart master $Rev: 4.3.0for33+1 $";
+        return "jme3-utilities jme3-utilities-heart master $Rev: 4.4.0for33 $";
     }
 
     /**

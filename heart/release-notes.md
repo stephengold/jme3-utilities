@@ -1,5 +1,28 @@
 # release notes for the jme3-utilities-heart library and related tests
 
+## Version 4.4.0for33 released on TBD
+
+ + Bugfix: `Generator.nextQuaternion()` returned unnormalized values.
+ + Added `Dodecahedron` and `SphereMeshes` classes.
+ + Incorporated the `PropertiesLoader` class from the UI library.
+ + Added `getSubject()`, `setSphereType()`, and `sphereType()` methods
+   to the `BoundsVisualizer` class.
+ + Added `nextFloat()` and `nextInt()` methods for ranges
+   to the `Generator` class.
+ + Added a radius constructor to the `LoopMesh` class.
+ + Added a `writeJ3O()` method to the `Misc` class.
+ + Added an `isSorted(Comparable[])` method to the `MyArray` class.
+ + Added an `isSorted(List)` method to the `MyMath` class.
+ + Added `addSphereNormals()`, `hasTriangles()`, and `smoothNormals()` methods
+   to the `MyMesh` class.
+ + Added a public constant `vpe` to the `MyMesh` class.
+ + Added `TestBoundsVisualizer` and `TestGenerator` applications
+   to the tests sub-project.
+ + Improved descriptions for `float` values.
+ + Added JME spheres and a textured material
+   to the `TestSolidMeshes` application.
+ + Simplified the `LoopMesh` class, including deletion of its index buffer.
+
 ## Version 4.3.0for33 released on 4 January 2020
 
  + Bugfix: wrong mode in `LoopMesh`.
