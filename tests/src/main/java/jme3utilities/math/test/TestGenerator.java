@@ -274,7 +274,8 @@ public class TestGenerator extends ActionApplication {
         float radius = 1f;
         Mesh sphereMesh = new Icosphere(numRefinementSteps, radius);
         Geometry sphereGeometry = new Geometry("sphere", sphereMesh);
-        Material wireMaterial = MyAsset.createWireframeMaterial(assetManager, ColorRGBA.Red);
+        Material wireMaterial
+                = MyAsset.createWireframeMaterial(assetManager, ColorRGBA.Red);
         sphereGeometry.setMaterial(wireMaterial);
         trialNode.attachChild(sphereGeometry);
         /*

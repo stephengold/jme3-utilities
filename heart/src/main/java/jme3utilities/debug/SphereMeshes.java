@@ -67,7 +67,7 @@ public enum SphereMeshes {
      * Test whether the specified Mesh has the corresponding type.
      *
      * @param mesh (unaffected)
-     * @return
+     * @return true if the correct type, otherwise false
      */
     public boolean isInstance(Mesh mesh) {
         boolean result;

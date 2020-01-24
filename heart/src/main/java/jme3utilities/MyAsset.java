@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -498,7 +498,10 @@ final public class MyAsset {
         Validate.nonNull(assetManager, "asset manager");
         Validate.nonNull(color, "color");
 
-        Material material = createWireframeMaterial(assetManager, color, 1f);
+        float pointSize = 1f;
+        Material material
+                = createWireframeMaterial(assetManager, color, pointSize);
+
         return material;
     }
 
