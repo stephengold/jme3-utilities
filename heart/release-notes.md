@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-heart library and related tests
 
-## Version 4.4.0for32 released on TBD
+## Version 4.4.0for32 released on 24 January 2020
 
  + Bugfix: `Generator.nextQuaternion()` returned unnormalized values.
  + Added `Dodecahedron` and `SphereMeshes` classes.
