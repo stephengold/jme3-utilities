@@ -268,7 +268,7 @@ abstract public class ActionApplication
      * Startup code for this application.
      */
     @Override
-    public void simpleInitApp() {
+    final public void simpleInitApp() {
         if (defaultInputMode != null) {
             throw new IllegalStateException(
                     "application should be initialized only once");
@@ -330,7 +330,7 @@ abstract public class ActionApplication
     }
 
     /**
-     * Callback invoked once per frame. TODO make final?
+     * Callback invoked once per frame.
      *
      * @param tpf time interval between frames (in seconds, &ge;0)
      */
