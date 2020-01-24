@@ -48,7 +48,6 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireBox;
-import com.jme3.scene.debug.WireSphere;
 import com.jme3.util.clone.Cloner;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -109,6 +108,7 @@ public class BoundsVisualizer extends SubtreeControl {
     final private static String tagCamera = "camera";
     final private static String tagLineMaterial = "lineMaterial";
     final private static String tagLineWidth = "lineWidth";
+    final private static String tagSphereType = "sphereType";
     final private static String tagSubject = "subject";
     // *************************************************************************
     // fields
@@ -133,6 +133,10 @@ public class BoundsVisualizer extends SubtreeControl {
      * spatial whose world bounds are being visualized, or null for none
      */
     private Spatial subject = null;
+    /**
+     * type of visualization for spheres
+     */
+    private SphereMeshes sphereType = SphereMeshes.WireSphere;
     // *************************************************************************
     // constructors
 
@@ -155,6 +159,7 @@ public class BoundsVisualizer extends SubtreeControl {
                 defaultLineColor);
         RenderState rs = lineMaterial.getAdditionalRenderState();
         rs.setDepthTest(defaultDepthTest);
+        lineMaterial.setName("bound mat");
 
         assert !isEnabled();
     }
@@ -301,12 +306,32 @@ public class BoundsVisualizer extends SubtreeControl {
     }
 
     /**
+     * Alter the type of Mesh used to visualize spheres.
+     *
+     * @param type (not null)
+     */
+    public void setSphereType(SphereMeshes type) {
+        Validate.nonNull(type, "type");
+        sphereType = type;
+    }
+
+    /**
      * Alter which spatial's bounds are being visualized.
      *
      * @param newSubject which spatial (may be null, alias created)
      */
     public void setSubject(Spatial newSubject) {
         subject = newSubject;
+    }
+
+    /**
+     * Read the type of Mesh used to visualize spheres.
+     *
+     * @return an enum value (not null)
+     */
+    public SphereMeshes sphereType() {
+        assert sphereType != null;
+        return sphereType;
     }
     // *************************************************************************
     // SubtreeControl methods
@@ -363,7 +388,7 @@ public class BoundsVisualizer extends SubtreeControl {
             if (bound instanceof BoundingBox && mesh instanceof WireBox) {
                 updateBox();
             } else if (bound instanceof BoundingSphere
-                    && mesh instanceof WireSphere) {
+                    && sphereType.isInstance(mesh)) {
                 updateSphere();
             } else { // wrong type of mesh - create a new Geometry
                 subtreeNode.detachAllChildren();
@@ -388,6 +413,7 @@ public class BoundsVisualizer extends SubtreeControl {
         camera = (Camera) capsule.readSavable(tagCamera, null);
         lineMaterial = (Material) capsule.readSavable(tagLineMaterial, null);
         effectiveLineWidth = capsule.readFloat(tagLineWidth, 0f);
+        sphereType = capsule.readEnum(tagSphereType, SphereMeshes.class, null);
         subject = (Spatial) capsule.readSavable(tagSubject, null);
     }
 
@@ -428,6 +454,7 @@ public class BoundsVisualizer extends SubtreeControl {
         capsule.write(camera, tagCamera, null);
         capsule.write(lineMaterial, tagLineMaterial, null);
         capsule.write(effectiveLineWidth, tagLineWidth, 0f);
+        capsule.write(sphereType, tagSphereType, null);
         capsule.write(subject, tagSubject, null);
     }
     // *************************************************************************
@@ -444,7 +471,10 @@ public class BoundsVisualizer extends SubtreeControl {
         if (bound instanceof BoundingBox) {
             mesh = new WireBox();
         } else if (bound instanceof BoundingSphere) {
-            mesh = new WireSphere();
+            float radius = 1f;
+            boolean wantNormals = false;
+            boolean wantUVs = false;
+            mesh = sphereType.makeSphere(radius, wantNormals, wantUVs);
         } else {
             throw new IllegalStateException();
         }
