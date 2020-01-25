@@ -79,24 +79,24 @@ public class Tetrahedron extends Mesh {
     public Tetrahedron(float radius, boolean generateNormals) {
         Validate.positive(radius, "radius");
 
-        float h = radius / FastMath.sqrt(2f);
+        float h = radius / FastMath.sqrt(3f);
 
         FloatBuffer positionBuffer = BufferUtils.createFloatBuffer(
-                0f, +h, +h, // A
-                0f, +h, -h, // B
-                -h, -h, 0f, // D
+                -h, +h, +h, // A
+                +h, +h, -h, // B
+                -h, -h, -h, // D
 
-                0f, +h, +h, // A
-                +h, -h, 0f, // C
-                0f, +h, -h, // B
+                -h, +h, +h, // A
+                +h, -h, +h, // C
+                +h, +h, -h, // B
 
-                0f, +h, +h, // A
-                -h, -h, 0f, // D
-                +h, -h, 0f, // C
+                -h, +h, +h, // A
+                -h, -h, -h, // D
+                +h, -h, +h, // C
 
-                -h, -h, 0f, // D
-                0f, +h, -h, // B
-                +h, -h, 0f // C
+                -h, -h, -h, // D
+                +h, +h, -h, // B
+                +h, -h, +h // C
         );
         setBuffer(VertexBuffer.Type.Position, numAxes, positionBuffer);
         int numFloats = positionBuffer.capacity();
