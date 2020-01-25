@@ -76,7 +76,7 @@ public class Dodecahedron extends Mesh {
      *
      * @param radius the desired distance of the vertices from the center (in
      * mesh units, &gt;0)
-     * @param mode mode for the Mesh (Lines or Triangles)
+     * @param mode the desired mode of the Mesh (Lines or Points or Triangles)
      */
     public Dodecahedron(float radius, Mode mode) {
         Validate.positive(radius, "radius");
@@ -144,6 +144,8 @@ public class Dodecahedron extends Mesh {
                     10, 15, 11, 16, 12, 17, 13, 18, 14, 19,
                     15, 16, 16, 17, 17, 18, 18, 19, 19, 15
             );
+            int numInts = indexBuffer.capacity();
+            indexBuffer.limit(numInts);
             setBuffer(VertexBuffer.Type.Index, MyMesh.vpe, indexBuffer);
 
         } else if (mode == Mode.Triangles) {
@@ -161,15 +163,15 @@ public class Dodecahedron extends Mesh {
                     9, 11, 16, 9, 16, 17, 9, 17, 12,
                     15, 19, 18, 15, 18, 17, 15, 17, 16
             );
+            int numInts = indexBuffer.capacity();
+            indexBuffer.limit(numInts);
             setBuffer(VertexBuffer.Type.Index, MyMesh.vpt, indexBuffer);
 
-        } else {
+        } else if (mode != Mode.Points) {
             String message = "mode = " + mode;
             throw new IllegalArgumentException(message);
         }
 
-        int numInts = indexBuffer.capacity();
-        indexBuffer.limit(numInts);
         setMode(mode);
         updateBound();
         setStatic();
