@@ -49,13 +49,16 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import jme3utilities.math.MyBuffer;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorSet;
 import jme3utilities.math.VectorSetUsingBuffer;
+import jme3utilities.mesh.IntPair;
 
 /**
  * Utility methods for meshes and mesh vertices.
@@ -818,6 +821,48 @@ public class MyMesh {
             int dpid = mapPosToDpid.get(tmpPosition);
             MyBuffer.put(normalBuffer, start, normalSum[dpid]);
         }
+    }
+
+    /**
+     * Convert mesh triangles to lines.
+     *
+     * @param mesh the mesh to modify (not null,
+     * mode=Triangles/TriangleFan/TriangleStrip)
+     */
+    public static void trianglesToLines(Mesh mesh) {
+        Validate.nonNull(mesh, "mesh");
+        assert hasTriangles(mesh);
+
+        IndexBuffer indexList = mesh.getIndicesAsList();
+        int numTriangles = indexList.size() / vpt;
+        Set<IntPair> edgeSet = new HashSet<>(vpt * numTriangles);
+        for (int triIndex = 0; triIndex < numTriangles; ++triIndex) {
+            int intOffset = vpt * triIndex;
+            int ti0 = indexList.get(intOffset);
+            int ti1 = indexList.get(intOffset + 1);
+            int ti2 = indexList.get(intOffset + 2);
+
+            edgeSet.add(new IntPair(ti0, ti1));
+            edgeSet.add(new IntPair(ti0, ti2));
+            edgeSet.add(new IntPair(ti1, ti2));
+        }
+        int numEdges = edgeSet.size();
+        int numIndices = vpe * numEdges;
+        int numVertices = mesh.getVertexCount();
+
+        mesh.clearBuffer(VertexBuffer.Type.Index);
+
+        IndexBuffer ib = IndexBuffer.createIndexBuffer(numVertices, numIndices);
+        for (IntPair edge : edgeSet) {
+            ib.put(edge.smaller());
+            ib.put(edge.larger());
+        }
+        VertexBuffer.Format ibFormat = ib.getFormat();
+        Buffer ibData = ib.getBuffer();
+        ibData.flip();
+        mesh.setBuffer(VertexBuffer.Type.Index, vpe, ibFormat, ibData);
+
+        mesh.setMode(Mesh.Mode.Lines);
     }
 
     /**
