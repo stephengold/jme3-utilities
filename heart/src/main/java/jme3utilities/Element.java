@@ -78,10 +78,12 @@ public class Element {
         Validate.inRange(sourceIndex, "source index", 0, sourceCount - 1);
         int targetCount = target.getNumElements();
         Validate.inRange(targetIndex, "target index", 0, targetCount - 1);
-
-        assert source.getBufferType() == target.getBufferType();
-        assert source.getFormat() == target.getFormat();
-        assert source.getNumComponents() == target.getNumComponents();
+        Validate.require(source.getBufferType() == target.getBufferType(),
+                "same buffer type");
+        Validate.require(source.getFormat() == target.getFormat(),
+                "same format");
+        Validate.require(source.getNumComponents() == target.getNumComponents(),
+                "same number of components");
 
         int numComponents = target.getNumComponents();
         VertexBuffer.Format format = target.getFormat();

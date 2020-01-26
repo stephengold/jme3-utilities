@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -867,6 +867,29 @@ final public class Validate {
                 what = description;
             }
             String message = what + " must have all components positive.";
+            throw new IllegalArgumentException(message);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate an arbitrary boolean-valued expression involving method
+     * arguments.
+     *
+     * @param value the value of the expression (required to be true)
+     * @param what a description of the requirement
+     * @return true
+     * @throws IllegalArgumentException if the value is false
+     */
+    public static boolean require(boolean value, String what) {
+        if (!value) {
+            String message;
+            if (what == null) {
+                message = "";
+            } else {
+                message = "Must have " + what + ".";
+            }
             throw new IllegalArgumentException(message);
         }
 
