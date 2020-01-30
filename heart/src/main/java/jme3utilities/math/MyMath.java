@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -412,6 +412,7 @@ public class MyMath {
      * @param list the list to analyze (not null, unaffected)
      * @return true if sorted, otherwise false
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static boolean isSorted(List<Comparable> list) {
         for (int i = 0; i < list.size() - 1; ++i) {
