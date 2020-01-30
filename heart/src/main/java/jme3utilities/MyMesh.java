@@ -761,6 +761,32 @@ public class MyMesh {
     }
 
     /**
+     * Replace the BoneIndexBuffer of a Mesh.
+     *
+     * @param mesh the Mesh to modify (not null)
+     * @param wpv the number of bone weights per vertex (&ge;1, &le;4)
+     * @param indexBuffer the desired IndexBuffer (not null, alias created)
+     */
+    public static void setBoneIndexBuffer(Mesh mesh, int wpv,
+            IndexBuffer indexBuffer) {
+        Validate.nonNull(mesh, "mesh");
+        Validate.inRange(wpv, "weights per vertex", 1, maxWeights);
+
+        Buffer buffer = indexBuffer.getBuffer();
+        VertexBuffer.Type type = VertexBuffer.Type.BoneIndex;
+        if (buffer instanceof ByteBuffer) {
+            mesh.setBuffer(type, wpv, (ByteBuffer) buffer);
+        } else if (buffer instanceof IntBuffer) {
+            mesh.setBuffer(type, wpv, (IntBuffer) buffer);
+        } else if (buffer instanceof ShortBuffer) {
+            mesh.setBuffer(type, wpv, (ShortBuffer) buffer);
+        } else {
+            String message = buffer.getClass().getName();
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
      * Smooth the normals of a Mesh by averaging them across all uses of each
      * distinct vertex position.
      *
