@@ -266,6 +266,22 @@ final public class MyArray {
     }
 
     /**
+     * Test whether the specified array is sorted in ascending order with no
+     * duplicates.
+     *
+     * @param array the array to analyze (not null, unaffected)
+     * @return true if sorted, otherwise false
+     */
+    public static boolean isSorted(float[] array) {
+        for (int i = 0; i < array.length - 1; ++i) {
+            if (array[i] >= array[i + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Calculate the arithmetic mean of the 3-D vectors in the specified float
      * array.
      *
