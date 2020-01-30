@@ -317,6 +317,24 @@ public class MyString {
     }
 
     /**
+     * Test whether the specified List is lexicographically sorted in ascending
+     * order with no duplicates.
+     *
+     * @param list the List to analyze (not null, unaffected)
+     * @return true if sorted, otherwise false
+     */
+    public static boolean isSorted(List<String> list) {
+        int len = list.size();
+        for (int i = 0; i < len - 1; ++i) {
+            if (list.get(i).compareTo(list.get(i + 1)) >= 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Join an array of objects into a text string using spaces for separators
      * and ignoring any empties/nulls.
      *
