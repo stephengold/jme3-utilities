@@ -859,9 +859,11 @@ public class MyMesh {
         mesh.clearBuffer(VertexBuffer.Type.Index);
 
         IndexBuffer ib = IndexBuffer.createIndexBuffer(numVertices, numIndices);
+        int bufferPosition = 0;
         for (IntPair edge : edgeSet) {
-            ib.put(edge.smaller());
-            ib.put(edge.larger());
+            ib.put(bufferPosition, edge.smaller());
+            ib.put(bufferPosition + 1, edge.larger());
+            bufferPosition += vpe;
         }
         Buffer ibData = ib.getBuffer();
         VertexBuffer.Format ibFormat;
@@ -871,7 +873,7 @@ public class MyMesh {
             assert ibData instanceof IntBuffer;
             ibFormat = VertexBuffer.Format.UnsignedInt;
         }
-        ibData.flip();
+        ibData.limit(bufferPosition);
         mesh.setBuffer(VertexBuffer.Type.Index, vpe, ibFormat, ibData);
 
         mesh.setMode(Mesh.Mode.Lines);
