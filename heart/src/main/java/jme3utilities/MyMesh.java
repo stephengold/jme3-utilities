@@ -58,7 +58,7 @@ import jme3utilities.math.MyBuffer;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.VectorSet;
 import jme3utilities.math.VectorSetUsingBuffer;
-import jme3utilities.mesh.IntPair;
+import jme3utilities.math.IntPair;
 
 /**
  * Utility methods for meshes and mesh vertices.
