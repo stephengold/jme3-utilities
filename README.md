@@ -94,7 +94,7 @@ Since September 2015, the Jme3-utilities Project has been hosted at
 [GitHub](https://github.com/stephengold/jme3-utilities).
 
 From November 2013 to September 2015, it was hosted at
-[Google Code](http://code.google.com/p/jme3-utilities).
+[Google Code](https://code.google.com/archive/).
 
 Old (2014) versions of the Jme3-utilities Project can still be found in
 [the jMonkeyEngine-Contributions Project](https://github.com/jMonkeyEngine-Contributions/SkyControl).
