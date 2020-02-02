@@ -2,7 +2,7 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
-description = 'generate texture assets used by jme3-utilities-debug and SkyControl'
+description = 'generate texture assets used by SkyControl'
 ext {
     bsc = 'src/main/resources/bsc5.dat'
     skies = '../SkyControl/src/main/resources/Textures/skies'
