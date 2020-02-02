@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
 import jme3utilities.sky.LunarPhase;
@@ -102,12 +102,12 @@ public class MakeMoons {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         /*
          * Set the logging level for this class and also for writeMap().
          */
         //logger.setLevel(Level.INFO);
-        //Logger.getLogger(Misc.class.getName()).setLevel(Level.INFO);
+        //Logger.getLogger(Heart.class.getName()).setLevel(Level.INFO);
         /*
          * Instantiate the application.
          */
@@ -194,7 +194,7 @@ public class MakeMoons {
                     brightness = FastMath.pow(brightness, inverseGamma);
                 }
 
-                Misc.setGrayPixel(graphics, x, y, brightness, opacity);
+                Heart.setGrayPixel(graphics, x, y, brightness, opacity);
             }
         }
         /*
@@ -203,7 +203,7 @@ public class MakeMoons {
         String assetPath = phase.imagePath("-nonviral");
         String filePath = String.format("%s/%s", assetDirPath, assetPath);
         try {
-            Misc.writeMap(filePath, image);
+            Heart.writeImage(filePath, image);
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.math.noise.Noise;
 import jme3utilities.math.noise.Perlin2;
@@ -90,12 +90,12 @@ public class MakeClouds {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         /*
          * Set the logging level for this class and also for writeMap().
          */
         //logger.setLevel(Level.INFO);
-        //Logger.getLogger(jme3utilities.Misc.class.getName())
+        //Logger.getLogger(jme3utilities.Heart.class.getName())
         //        .setLevel(Level.INFO);
         /*
          * Instantiate the application.
@@ -217,7 +217,7 @@ public class MakeClouds {
                 float alpha = samples[x][y];
                 alpha = (alpha - blackCutoff) / (whiteCutoff - blackCutoff);
                 alpha = FastMath.saturate(alpha);
-                Misc.setGrayPixel(graphics, x, y, alpha, 1f);
+                Heart.setGrayPixel(graphics, x, y, alpha, 1f);
             }
         }
 
@@ -246,7 +246,7 @@ public class MakeClouds {
          */
         for (int x = 0; x < textureSize; x++) {
             for (int y = 0; y < textureSize; y++) {
-                Misc.setGrayPixel(graphics, x, y, alpha, 1f);
+                Heart.setGrayPixel(graphics, x, y, alpha, 1f);
             }
         }
 
@@ -267,6 +267,6 @@ public class MakeClouds {
         assert image != null;
 
         String filePath = String.format("%s/%s.png", outputDirPath, fileName);
-        Misc.writeMap(filePath, image);
+        Heart.writeImage(filePath, image);
     }
 }

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyAsset;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
@@ -68,6 +68,7 @@ public class MakeStarMaps {
      * exception to indicate unexpected invalid data in a catalog entry
      */
     static private class InvalidEntryException extends Exception {
+
         static final long serialVersionUID = 1L;
 
         InvalidEntryException(String message) {
@@ -80,6 +81,7 @@ public class MakeStarMaps {
      * such entries can be ignored
      */
     static private class InvalidMagnitudeException extends Exception {
+
         static final long serialVersionUID = 1L;
     }
     // *************************************************************************
@@ -201,12 +203,12 @@ public class MakeStarMaps {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         /*
          * Set the logging level for this class and also for writeMap().
          */
         //logger.setLevel(Level.INFO);
-        //Logger.getLogger(jme3utilities.Misc.class.getName())
+        //Logger.getLogger(jme3utilities.Heart.class.getName())
         //        .setLevel(Level.INFO);
         /*
          * Instantiate the application.
@@ -461,7 +463,7 @@ public class MakeStarMaps {
                         preset.textureFileName(), faceName[faceIndex],
                         faceIndex + 1);
                 try {
-                    Misc.writeMap(filePath, images[faceIndex]);
+                    Heart.writeImage(filePath, images[faceIndex]);
                 } catch (IOException exception) {
                     // ignored
                 }
@@ -476,7 +478,7 @@ public class MakeStarMaps {
             String filePath = String.format("%s/%s.png", outputDirPath,
                     preset.textureFileName());
             try {
-                Misc.writeMap(filePath, image);
+                Heart.writeImage(filePath, image);
             } catch (IOException exception) {
                 // ignored
             }

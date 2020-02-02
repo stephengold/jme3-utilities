@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.math.MyMath;
 import jme3utilities.sky.Constants;
@@ -102,12 +102,12 @@ public class MakeSun {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         /*
          * Set the logging level for this class and also for writeMap().
          */
         //logger.setLevel(Level.INFO);
-        //Logger.getLogger(jme3utilities.Misc.class.getName())
+        //Logger.getLogger(jme3utilities.Heart.class.getName())
         //        .setLevel(Level.INFO);
         /*
          * Instantiate the application.
@@ -232,7 +232,7 @@ public class MakeSun {
 
         RenderedImage image = makeSun(discSharpness, surroundAlpha, numRays);
         String filePath = String.format("%s/%s.png", outputDirPath, styleName);
-        Misc.writeMap(filePath, image);
+        Heart.writeImage(filePath, image);
     }
 
     /**
@@ -283,7 +283,7 @@ public class MakeSun {
                     alpha = Math.max(alpha, hazeAlpha);
                 }
                 alpha = FastMath.saturate(alpha);
-                Misc.setGrayPixel(graphics, x, y, 1f, alpha);
+                Heart.setGrayPixel(graphics, x, y, 1f, alpha);
             }
         }
 

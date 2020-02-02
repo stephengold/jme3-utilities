@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyCamera;
 import jme3utilities.MySpatial;
 import jme3utilities.MyString;
@@ -149,7 +149,7 @@ public class TestSkyMaterial extends GuiApplication {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
@@ -272,7 +272,7 @@ public class TestSkyMaterial extends GuiApplication {
         BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
         int numSamples = settings.getSamples();
         FilterPostProcessor fpp
-                = Misc.getFpp(viewPort, assetManager, numSamples);
+                = Heart.getFpp(viewPort, assetManager, numSamples);
         fpp.addFilter(bloom);
 
         initializeUserInterface(material, bloom);

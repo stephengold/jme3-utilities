@@ -39,7 +39,7 @@ import com.jme3.util.BufferUtils;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.PropertiesLoader;
 import jme3utilities.Validate;
@@ -118,7 +118,7 @@ abstract public class ActionApplication
         Validate.nonNull(assetPath, "asset path");
 
         File file = new File(writtenAssetDir, assetPath);
-        String result = Misc.fixedPath(file);
+        String result = Heart.fixedPath(file);
 
         assert !result.isEmpty();
         return result;
@@ -191,7 +191,7 @@ abstract public class ActionApplication
      * @return the canonical pathname (not null, not empty)
      */
     public static String writtenAssetPath() {
-        String path = Misc.fixedPath(writtenAssetDir);
+        String path = Heart.fixedPath(writtenAssetDir);
 
         assert !path.isEmpty();
         return path;

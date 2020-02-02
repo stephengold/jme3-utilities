@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@ package jme3utilities.math.test;
 import com.jme3.math.Vector3f;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.VectorXZ;
 import jme3utilities.math.polygon.GenericPolygon3f;
@@ -82,7 +82,7 @@ public class TestPolygon3f {
      * @param ignored command-line arguments
      */
     public static void main(String[] ignored) {
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         System.out.printf("Test results for Polygon3f, GenericPolygon3f, "
                 + "and SimplePolygon3f:%n%n");
 
