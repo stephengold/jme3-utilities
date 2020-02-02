@@ -2,26 +2,28 @@
 
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
-It contains 8 sub-projects:
+It contains 7 sub-projects:
 
- 1. heart: the `jme3-utilities-heart` library of core classes
- 2. SkyControl: the `SkyControl` library for sky simulation
- 3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
- 4. tests: demos, examples, and test software
- 5. textures: generate textures used by `jme3-utilities-heart` and `SkyControl`
- 6. ui: the `jme3-utilities-ui` library for building user interfaces
- 7. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
+ 1. SkyControl: the `SkyControl` library for sky simulation
+ 2. moon-ccbysa: assets for a realistic Moon in `SkyControl`
+ 3. tests: demos, examples, and test software
+ 4. textures: generate textures used by `SkyControl`
+ 5. ui: the `jme3-utilities-ui` library for building user interfaces
+ 6. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
     interfaces with jMonkeyEngine
- 8. x: the `jme3-utilities-x` library of experimental software
+ 7. x: the `jme3-utilities-x` library of experimental software
 
-The `jme3-utilities-debug` library, formerly a sub-project, has merged
-into the `jme3-utilities-heart` library.
+The `jme3-utilities-debug` library, formerly a sub-project, is now part of
+[the Heart Library](https://github.com/stephengold/Heart).
 
 The `Minie` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Minie).
 
 The `Wes` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Wes).
+
+The `jme3-utilities-heart` library, formerly a sub-project, is now a separate project
+at [GitHub](https://github.com/stephengold/Heart).
 
 Java source code is provided under
 [a FreeBSD license](https://github.com/stephengold/jme3-utilities/blob/master/license.txt).
@@ -99,7 +101,6 @@ Old (2014) versions of the Jme3-utilities Project can still be found in
 
 The evolution of each sub-project is chronicled in its release notes:
 
- + [heart](https://github.com/stephengold/jme3-utilities/blob/master/heart/release-notes.md)
  + [SkyControl](https://github.com/stephengold/jme3-utilities/blob/master/SkyControl/release-notes.md)
  + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
  + [ui](https://github.com/stephengold/jme3-utilities/blob/master/ui/release-notes.md)
@@ -182,7 +183,7 @@ Clone the Jme3-utilities repository using Git:
 11. When the "Clone Completed" dialog appears, click on the "Open Project..."
     button.
 12. Expand the root project node to reveal the 8 sub-projects.
-13. To start with, I recommend opening 4 sub-projects:  "heart", "SkyControl",
+13. To start with, I recommend opening 3 sub-projects:  "SkyControl",
     "tests", and "textures".  Select them using control-click, then click on the
     "Open" button.
 14. There will be errors in the "textures" sub-project.  However, the build
@@ -227,312 +228,6 @@ Adding it to an existing JME3 project should be a simple 6-step process:
  4. Configure the `SkyControl` instance.
  5. Enable the `SkyControl` instance.
  6. Test and tune as necessary.
-
-To demonstrate this process, we'll apply it to `BasicGame` and then to
-`CubeMapExample`, a more sophisticated application. I encourage you to
-follow along in your development environment.
-
-### BasicGame example
-
-You'll need:
-
- + A development system with the JME3 SDK installed.
- + A clean build of the jme3-utilities JARs, either downloaded from
-   [GitHub](https://github.com/stephengold/jme3-utilities/releases) or built yourself.
-
-Instantiate a BasicGame Project:
-
- 1. Open the "New Project" wizard in the IDE:
-    + Menu bar -> "File" -> "New Project..."
- 2. Under "Categories:" select "JME3".
- 3. Under "Projects:" select "BasicGame".
- 4. Click on the "Next >" button.
- 5. For "Project Location:" specify a writable folder (on a local filesystem)
-    which doesn't already contain "BasicGame".
- 6. Click on the "Finish" button.
-
-If you're unfamiliar with BasicGame, you may wish to run it (and/or examine
-the source code) to see how it works before modifying it.
-
- + To rotate the camera, move the mouse.
- + The W/A/S/D/Q/Z keys translate (move) the camera.
- + To exit, press the Esc key.
-
-#### Add the SkyControl JARs to the project
-
-Open the project's properties in the IDE:
-
- 1. Right-click on the BasicGame project (not its assets) in the "Projects"
-    window.
- 2. Select "Properties to open the "Project Properties" dialog.
- 3. Under "Categories:" select "Libraries".
- 4. Click on the "Compile" tab.
- 5. Add the `jme3-utilities-heart` class jar:
-    + Click on the "Add JAR/Folder" button.
-    + Navigate to the "jme3-utilities" project folder.
-    + Open the "heart" sub-project folder.
-    + Navigate to the "build/libs" folder.
-    + Select the "jme3-utilities-heart-4.3.0for32.jar" file.
-    + Click on the "Open" button.
- 6. (optional) Add jars for javadoc and sources:
-    + Click on the "Edit" button.
-    + Click on the "Browse..." button to the right of "Javadoc:"
-    + Select the "jme3-utilities-heart-4.3.0for32-javadoc.jar" file.
-    + Click on the "Open" button.
-    + Click on the "Browse..." button to the right of "Sources:"
-    + Select the "jme3-utilities-heart-4.3.0for32-sources.jar" file.
-    + Click on the "Open" button again.
-    + Click on the "OK" button to close the "Edit Jar Reference dialog.
- 7. Add the "SkyControl" class JAR:
-    + Click on the "Add JAR/Folder" button.
-    + Navigate to the "jme3-utilities" project folder.
-    + Open the "SkyControl" sub-project folder.
-    + Navigate to the "build/libs" folder.
-    + Select the "SkyControl-0.9.24for32.jar" file.
-    + Click on the "Open" button.
- 8. (optional) Add JARs for javadoc and sources:
-    + Click on the "Edit" button.
-    + Click on the "Browse..." button to the right of "Javadoc:"
-    + Select the "SkyControl-0.9.24for32-javadoc.jar" file.
-    + Click on the "Open" button.
-    + Click on the "Browse..." button to the right of "Sources:"
-    + Select the "SkyControl-0.9.24for32-sources.jar" file.
-    + Click on the "Open" button again.
-    + Click on the "OK" button to close the "Edit Jar Reference dialog.
- 9. Click on the "OK" button to exit the "Project Properties" dialog.
-
-#### Disable existing sky
-
-Since BasicGame has no sky -- just the default (black)
-viewport background -- there is nothing to disable.
-
-#### Add a SkyControl instance to the scene graph
-
-The scene graph of BasicGame has only one node, the root node. The root node is
-typically a good place to add `SkyControl`.
-
- 1. Open the "Main.java" source file in the IDE:
-    + In the "Projects" window, expand the BasicGame project node.
-    + Expand the "Source Packages" node under the BasicGame project.
-    + Expand the "mygame" package under "Source Packages".
-    + Select "Main.java" file under the "mygame" package.
-    + Double-click to open the file.
-
- 2. In the import section of "Main.java", add the following code:
-
-        import jme3utilities.sky.SkyControl;
-        import jme3utilities.sky.StarsOption;
-
- 3. Scroll down to the `simpleInitApp()` method and insert the following code just
-    before the final close-brace:
-
-        SkyControl sc = new SkyControl(assetManager, cam, 0.9f, StarsOption.Cube, true);
-        rootNode.addControl(sc);
-
-The parameters of the constructor are documented in the Javadoc for the
-`SkyControl` class.
-
-#### Configure the SkyControl instance
-
-By default, `SkyControl` simulates midnight on March 21st in Wiltshire, England,
-with no clouds and a full moon. Instead, let's configure 6 a.m. on February 10th
-in Sunnyvale, California with dense clouds:
-
- 1. In the import section of "Main.java", add the following code:
-
-        import com.jme3.math.FastMath;
-        import java.util.Calendar;
-        import jme3utilities.sky.SunAndStars;
-
- 2. In `simpleInitApp()`, insert the following code just before the final
-    close brace:
-
-        SunAndStars sns = sc.getSunAndStars();
-        sns.setHour(6f);
-        sns.setObserverLatitude(37.4046f * FastMath.DEG_TO_RAD);
-        sns.setSolarLongitude(Calendar.FEBRUARY, 10);
-        sc.setCloudiness(1f);
-
-Other configuration methods are documented in the Javadoc for the `SkyControl`,
-`SkyControlCore`, `SunAndStars`, `CloudLayer`, and `Updater` classes.
-
-#### Enable the SkyControl instance
-
-If you run the modified BasicGame at this point, you'll find no visible change.
-Unlike most JME3 controls, `SkyControl` instantiates in a disabled state. In order
-to see the sky, you must enable the control:
-
- 1. In simpleInitApp(), insert the following code just before the final
-    close-brace:
-
-        sc.setEnabled(true);
-
-#### Test
-
-To test the modified BasicGame, right-click in the "Main.java" editor window and
-select "Run File (Shift+F6)".
-
-
-### CubeMapExample
-
-Sometimes you'll want to combine SkyControl with other sky elements. The
-Jme3-utilities Project includes CubeMapExample, a slightly more sophisticated
-application than BasicGame. CubeMapExample includes a cube-mapped sky, lit
-terrain, and multiple light sources. In this section, you'll see how SkyControl
-can be used to add sun, moon, and clouds to CubeMapExample.
-
-In the "Projects" window of the IDE, expand the "tests" sub-project node
-and the "jme3utilities.sky.test" source package.  Open the "CubeMapExample.java"
-file to examine the code and run it.
-
- + To rotate the camera, drag with the left mouse button.
- + The W/A/S/D/Q/Z keys translate (move) the camera.
- + To exit, press the Esc key.
-
-Since CubeMapExample is part of the Jme3-utilities Project, there's no need
-to add anything to the classpath.  And since we plan to use the existing cube
-map, there's nothing to remove.
-
-#### Add a SkyControl instance to the scene graph
-
-Both SkyFactory and SkyControl add geometries to Bucket.Sky. In the absence of a
-custom GeometryComparator, geometries in this bucket are rendered in scene graph
-order. Since the cube map is opaque, we want to SkyControl to add its geometries
-after the sky cube in the scene graph.
-
- 1. In the import section of "CubeMapExample.java", add the following code:
-
-        import jme3utilities.sky.SkyControl;
-        import jme3utilities.sky.StarsOption;
-
- 2. Scroll down to the `initializeSky()` method and insert the following code just
-    before the final close-brace:
-
-        SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.TopDome, true);
-        rootNode.addControl(sc);
-
-For now, we've turned star motion off, since that simplifies things. The lower
-value (0.8) for cloud flattening will make it easier to compensate for the
-scene's low horizon.
-
-#### Configure the SkyControl instance
-
- 1. It's important to disable the SkyControl's built-in star maps so that the
-    cube map's stars will be visible at night:
-
-        sc.clearStarMaps();
-
- 2. Adjust the cloudiness so that clouds will be visible:
-
-        sc.setCloudiness(0.8f);
-
-#### Enable the SkyControl instance
-
-In `initializeSky()`, insert the following code just before the final close-brace:
-
-        sc.setEnabled(true);
-
-#### Tuning
-
-At this point, the application should run successfully. (Look!  A cloud!)
-However, for the best result, it needs some tuning.
-
- 1. To lower the edge of the cloud dome so that it's hidden by the terrain, add
-    the following code:
-
-        sc.setCloudsYOffset(0.4f);
-
- 2. To see the scene in daylight, add this:
-
-        sc.getSunAndStars().setHour(12f);
-
- 3. To synchronize the lights with SkyControl, add this to the import section:
-
-        import com.jme3.light.Light;
-
-    and this to the end of the `initializeSky()` method:
-
-        for (Light light : rootNode.getLocalLightList()) {
-            if (light.getName().equals("ambient")) {
-                sc.getUpdater().setAmbientLight((AmbientLight) light);
-            } else if (light.getName().equals("main")) {
-                sc.getUpdater().setMainLight((DirectionalLight) light);
-            }
-        }
-
-The uneven shading of the level terrain is due to sunlight coming in at a low
-angle. Since it's noon, the easiest way to raise the sun's elevation is to
-decrease the observer's latitude.  Also, the terrain is too dark.
-Try, for instance:
-
-    sc.getSunAndStars().setObserverLatitude(0.2f);
-    sc.getUpdater().setMainMultiplier(2f);
-
-The sun looks like a boring white disc in the southern sky.
-For a more dazzling sun, apply a bloom filter to the viewport:
-
-    import com.jme3.post.filters.BloomFilter;
-    import jme3utilities.Misc;
-...
-
-    BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);
-    bloom.setBlurScale(2.5f);
-    bloom.setExposurePower(1f);
-    int numSamples = settings.getSamples();
-    Misc.getFpp(viewPort, assetManager, numSamples).addFilter(bloom);
-    sc.getUpdater().addBloomFilter(bloom);
-
-#### Adding star motion
-
-To add star motion, it's not sufficient simply to change the control's
-constructor from
-
-    SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.TopDome, true);
-to
-
-    SkyControl sc = new SkyControl(assetManager, cam, 0.8f, StarsOption.Cube, true);
-
-It's also necessary to rotate the cube map to match SkyControl's notions of time
-and space.  To achieve this, override the application's `simpleUpdate()` method:
-
-    @Override
-    public void simpleUpdate(float unused) {
-        Spatial starMap = rootNode.getChild("Sky");
-        SkyControl sc = rootNode.getControl(SkyControl.class);
-        sc.getSunAndStars().orientEquatorialSky(starMap, true);
-    }
-
-To simulate the passage of time, we need state and a mechanism to update it.
-The jme3utilities.TimeOfDay appstate fills this need.
-
- 1. Import the class:
-
-        import jme3utilities.TimeOfDay;
-
- 2. Declare a field in `CubeMapExample`:
-
-        TimeOfDay timeOfDay;
-
- 3. Initialize and attach it in `simpleInitApp()`:
-
-        timeOfDay = new TimeOfDay(19f);
-        stateManager.attach(timeOfDay);
-        timeOfDay.setRate(1000f);
-
-    All that remains is to update the control.
-
- 4. Add 2 lines to `simpleUpdate()`, right before the invocation of
-    `orientExternalSky()`:
-
-        float hour = timeOfDay.hour();
-        sc.getSunAndStars().setHour(hour);
-
-### Next steps
-
-To see how some of the other features of SkyControl
-can be used, you may wish to study "TestSkyControl.java" in the
-"tests" sub-project.  The easiest way to run TestSkyControl is to right-click
-on the "tests" sub-project and select "Tasks" -> "run" -> "runTestSkyControl".
 
 [Jump to table of contents](#toc)
 

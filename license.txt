@@ -1,11 +1,10 @@
 com.jme3 software packages Copyright (c) 2009-2019 jMonkeyEngine
-jme3utilities software packages except Icosphere.java Copyright (c) 2013-2020 Stephen Gold
+jme3utilities software Copyright (c) 2013-2020 Stephen Gold
 
 All rights reserved.
 
 Note: the following license does not apply to certain assets/resources
 (6 files in moon-ccby-sa/src/main/resources/Textures/skies/moon,
- 1 file in tests/src/main/resources/Models/indicators/3d cursor,
  1 file in tests/src/main/resources/Textures/icons,
  1 file in tests/src/main/resources/Textures/skies/clouds,
  2 files in tests/src/main/resources/Textures/skies/t0neg0d, and

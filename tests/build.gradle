@@ -15,8 +15,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
     runtimeOnly 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 
-    //implementation "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    implementation project(':heart')
+    implementation "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
 
     //implementation "jme3utilities:SkyControl:$skycontrolVersion"
     implementation project(':SkyControl')
@@ -52,26 +51,11 @@ task cleanWrittenAssets(type: Delete) {
     delete 'Written Assets'
 }
 
-task runPoseDemo(type: JavaExec) {
-    main 'jme3utilities.debug.test.PoseDemo'
-}
-task TestPas(type: JavaExec) {
-    main 'jme3utilities.debug.test.TestPas'
-}
-task TestMyMath(type: JavaExec) {
-    main 'jme3utilities.math.test.TestMyMath'
-}
-task TestMyVector3f(type: JavaExec) {
-    main 'jme3utilities.math.test.TestMyVector3f'
-}
 task TestPolygon3f(type: JavaExec) {
     main 'jme3utilities.math.test.TestPolygon3f'
 }
 task TestMyShell3f(type: JavaExec) {
     main 'jme3utilities.math.test.TestShell3f'
-}
-task TestVectorXZ(type: JavaExec) {
-    main 'jme3utilities.math.test.TestVectorXZ'
 }
 
 task ClockDemo(type: JavaExec) {
@@ -131,17 +115,4 @@ task runTestSkyMaterial(type: JavaExec) {
 }
 task TestSunAndStars(type: JavaExec) {
     main 'jme3utilities.sky.test.TestSunAndStars'
-}
-
-task TestMySkeleton(type: JavaExec) {
-    main 'jme3utilities.test.TestMySkeleton'
-}
-task TestMySpatial(type: JavaExec) {
-    main 'jme3utilities.test.TestMySpatial'
-}
-task TestMyString(type: JavaExec) {
-    main 'jme3utilities.test.TestMyString'
-}
-task TestNameGenerator(type: JavaExec) {
-    main 'jme3utilities.test.TestNameGenerator'
 }
