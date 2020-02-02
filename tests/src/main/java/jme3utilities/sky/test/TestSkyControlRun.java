@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyAsset;
 import jme3utilities.MyCamera;
 import jme3utilities.MySpatial;
@@ -529,7 +529,7 @@ public class TestSkyControlRun
         bloom.setBlurScale(2.5f);
         bloom.setExposurePower(1f);
         int numSamples = TestSkyControl.numSamples;
-        Misc.getFpp(viewPort, assetManager, numSamples).addFilter(bloom);
+        Heart.getFpp(viewPort, assetManager, numSamples).addFilter(bloom);
         skyControl.getUpdater().addBloomFilter(bloom);
     }
 
@@ -543,7 +543,7 @@ public class TestSkyControlRun
 
         cartoonEdgeFilter = new CartoonEdgeFilter();
         int numSamples = TestSkyControl.numSamples;
-        Misc.getFpp(viewPort, assetManager, numSamples)
+        Heart.getFpp(viewPort, assetManager, numSamples)
                 .addFilter(cartoonEdgeFilter);
     }
 
@@ -563,7 +563,7 @@ public class TestSkyControlRun
             dlsf.setEdgeFilteringMode(EdgeFilteringMode.PCF8);
             dlsf.setLight(mainLight);
             int numSamples = TestSkyControl.numSamples;
-            Misc.getFpp(viewPort, assetManager, numSamples).addFilter(dlsf);
+            Heart.getFpp(viewPort, assetManager, numSamples).addFilter(dlsf);
             updater.addShadowFilter(dlsf);
 
         } else {

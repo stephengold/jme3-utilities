@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ import com.jme3.texture.Texture2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.ContrastAdjustmentFilter;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MySpatial;
 import jme3utilities.SimpleAppState;
 import jme3utilities.Validate;
@@ -365,7 +365,7 @@ public class GlobeRenderer extends SimpleAppState {
          * Apply a contrast correction filter to the render.
          */
         FilterPostProcessor fpp
-                = Misc.getFpp(offscreenViewPort, assetManager, 1);
+                = Heart.getFpp(offscreenViewPort, assetManager, 1);
         fpp.setFrameBufferFormat(outputFormat);
         filter = new ContrastAdjustmentFilter(initialExponent);
         fpp.addFilter(filter);

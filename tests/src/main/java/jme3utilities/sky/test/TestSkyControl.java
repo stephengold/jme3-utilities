@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.bind.BindScreen;
@@ -103,7 +103,7 @@ public class TestSkyControl extends GuiApplication {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
         /*
@@ -159,7 +159,7 @@ public class TestSkyControl extends GuiApplication {
         logger.log(Level.INFO, "SkyControl version is {0}",
                 MyString.quote(Constants.versionShort()));
 
-        //Misc.detachAll(stateManager, DebugKeysAppState.class);
+        //Heart.detachAll(stateManager, DebugKeysAppState.class);
         /*
          * Capture a screenshot each time the KEY_SYSRQ hotkey is pressed.
          */

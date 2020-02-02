@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.mesh.DomeMesh;
 
@@ -97,12 +97,12 @@ public class MakeRamps {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         /*
          * Set the logging level for this class and also for writeMap().
          */
         //logger.setLevel(Level.INFO);
-        //Logger.getLogger(jme3utilities.Misc.class.getName())
+        //Logger.getLogger(jme3utilities.Heart.class.getName())
         //        .setLevel(Level.INFO);
         /*
          * Instantiate the application.
@@ -187,7 +187,7 @@ public class MakeRamps {
 
         RenderedImage image = makeRamp(flattening);
         String filePath = String.format("%s/%s.png", outputDirPath, fileName);
-        Misc.writeMap(filePath, image);
+        Heart.writeImage(filePath, image);
     }
 
     /**
@@ -218,7 +218,7 @@ public class MakeRamps {
                     elevationAngle = FastMath.atan(tan);
                 }
                 float alpha = hazeAlpha(elevationAngle);
-                Misc.setGrayPixel(graphics, x, y, alpha, 1f);
+                Heart.setGrayPixel(graphics, x, y, alpha, 1f);
             }
         }
 

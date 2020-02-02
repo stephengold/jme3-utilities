@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jme3utilities.Misc;
+import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
@@ -137,7 +137,7 @@ public class TestBindScreen extends GuiApplication {
         /*
          * Mute the chatty loggers found in some imported packages.
          */
-        Misc.setLoggingLevels(Level.WARNING);
+        Heart.setLoggingLevels(Level.WARNING);
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
@@ -182,8 +182,8 @@ public class TestBindScreen extends GuiApplication {
          */
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
-        logger.log(Level.INFO, "jme3-utilities-heart version is {0}",
-                MyString.quote(Misc.versionShort()));
+        logger.log(Level.INFO, "Heart version is {0}",
+                MyString.quote(Heart.versionShort()));
         logger.log(Level.INFO, "jme3-utilities-ui version is {0}",
                 MyString.quote(UiVersion.versionShort()));
         logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",
