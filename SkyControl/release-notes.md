@@ -1,9 +1,14 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.25for33 released on TBD
+
+Notable changes:
+ + base on version 5.0.0for33 of the heart library
+
 ## Version 0.9.24for33 released on 4 January 2020
 
 Notable changes:
- + base on version 4.3.0for33 of the heart library 
+ + base on version 4.3.0for33 of the heart library
    and target the NEW JME 3.3.0-beta1
 
 ## Version 0.9.23for33 released on 8 December 2019

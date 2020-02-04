@@ -2,7 +2,7 @@
 
 apply plugin: 'java'
 
-group = 'jme3utilities'
+group = 'com.github.stephengold'
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
@@ -33,10 +33,10 @@ ext {
     jcommanderVersion = '1.74'
     heartVersion = '5.0.0for33'
     jme3utilitiesniftyVersion = '0.9.12for33'
-    jme3utilitiesuiVersion = '0.8.0for33'
-    jme3utilitiesxVersion = '0.2.17for33'
+    jme3utilitiesuiVersion = '0.8.1for33'
+    jme3utilitiesxVersion = '0.2.18for33'
     jmonkeyengineVersion = '3.3.0-beta1'
-    skycontrolVersion = '0.9.24for33'
+    skycontrolVersion = '0.9.25for33'
 }
 
 repositories {
