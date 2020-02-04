@@ -15,7 +15,7 @@ dependencies {
     implementation "org.jmonkeyengine:jme3-terrain:$jmonkeyengineVersion"
     runtimeOnly 'org.jmonkeyengine:jme3-testdata:3.1.0-stable'
 
-    implementation "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    implementation 'com.github.stephengold:Heart:' + heartVersion
 
     //implementation "jme3utilities:SkyControl:$skycontrolVersion"
     implementation project(':SkyControl')

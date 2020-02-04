@@ -18,10 +18,10 @@ sourceSets {
 }
 
 dependencies {
-    implementation "com.beust:jcommander:$jcommanderVersion"
-    implementation "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
-    implementation "org.jmonkeyengine:jme3-core:$jmonkeyengineVersion"
-    implementation "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
+    implementation 'com.beust:jcommander:' + jcommanderVersion
+    implementation 'com.github.stephengold:Heart:' + heartVersion
+    implementation 'org.jmonkeyengine:jme3-core:' + jmonkeyengineVersion
+    implementation 'org.jmonkeyengine:jme3-effects:' + jmonkeyengineVersion
 }
 
 clean {
