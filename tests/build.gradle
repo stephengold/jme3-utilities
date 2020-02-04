@@ -17,16 +17,16 @@ dependencies {
 
     implementation 'com.github.stephengold:Heart:' + heartVersion
 
-    //implementation "jme3utilities:SkyControl:$skycontrolVersion"
+    //implementation "com.github.stephengold:SkyControl:$skycontrolVersion"
     implementation project(':SkyControl')
 
-    //implementation "jme3utilities:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
+    //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
     implementation project(':nifty')
 
-    //implementation "jme3utilities:jme3-utilities-ui:$jme3utilitiesuiVersion"
+    //implementation "com.github.stephengold:jme3-utilities-ui:$jme3utilitiesuiVersion"
     implementation project(':ui')
 
-    //implementation "jme3utilities:jme3-utilities-x:$jme3utilitiesxVersion"
+    //implementation "com.github.stephengold:jme3-utilities-x:$jme3utilitiesxVersion"
     implementation project(':x')
 
     runtimeOnly project(':moon-ccbysa')
