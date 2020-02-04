@@ -32,7 +32,7 @@ ext {
     // current versions of various libraries
     jcommanderVersion = '1.74'
     heartVersion = '5.0.0for32'
-    jme3utilitiesniftyVersion = '0.9.12for32'
+    jme3utilitiesniftyVersion = '0.9.13for32'
     jme3utilitiesuiVersion = '0.8.1for32'
     jme3utilitiesxVersion = '0.2.18for32'
     jmonkeyengineVersion = '3.2.4-stable'
@@ -41,7 +41,7 @@ ext {
 
 repositories {
     //mavenLocal()
-    maven { url 'https://dl.bintray.com/stephengold/jme3utilities' }
+    maven { url 'https://dl.bintray.com/stephengold/com.github.stephengold' }
     maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for jme3-testdata
     jcenter()
     maven { url 'https://nifty-gui.sourceforge.net/nifty-maven-repo' }
