@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.13for33 released on TBD
+
+ + Change the Maven groupId from "jme3utilities" to "com.github.stephengold"
+ + Base on version 5.0 of the Heart Library
+
 ## Version 0.9.12for33 released on 4 January 2020
 
 Base on version 4.3 of the jme3-utilities-heart library
