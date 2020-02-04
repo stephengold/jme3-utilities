@@ -1,5 +1,9 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.8.1for32 released on TBD
+
+Based on version 5.0 of the Heart Library.
+
 ## Version 0.8.0for32 released on 24 January 2020
 
  + Moved the `PropertiesLoader` class to the jme3-utilities-heart
