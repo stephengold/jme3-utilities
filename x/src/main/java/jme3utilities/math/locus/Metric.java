@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -106,7 +106,7 @@ public enum Metric {
                 double dx = offset.x;
                 double dy = offset.y;
                 double dz = offset.z;
-                result = MyMath.max(dx * dx, dy * dy, dz * dz);
+                result = MyMath.maxDouble(dx * dx, dy * dy, dz * dz);
                 break;
 
             case MANHATTAN:
@@ -144,7 +144,7 @@ public enum Metric {
                 double dx = Math.abs(offset.x);
                 double dy = Math.abs(offset.y);
                 double dz = Math.abs(offset.z);
-                result = MyMath.max(dx, dy, dz);
+                result = MyMath.maxDouble(dx, dy, dz);
                 break;
 
             case MANHATTAN:

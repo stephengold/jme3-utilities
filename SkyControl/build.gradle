@@ -18,11 +18,11 @@ jar { archiveBaseName = project.ext.baseName }
 javadocJar { archiveBaseName = project.ext.baseName }
 sourcesJar { archiveBaseName = project.ext.baseName }
 
-processResources { dependsOn ':textures:skyTextures' }
+processResources.dependsOn(':textures:skyTextures')
 
 dependencies {
-    api "org.jmonkeyengine:jme3-effects:$jmonkeyengineVersion"
-    api "jme3utilities:jme3-utilities-heart:$jme3utilitiesheartVersion"
+    api 'org.jmonkeyengine:jme3-effects:' + jmonkeyengineVersion
+    api 'com.github.stephengold:Heart:' + heartVersion
 }
 
 build.dependsOn('pom')
