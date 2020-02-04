@@ -1,8 +1,9 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.18for32 released on TBD
+## Version 0.2.18for32 released on 4 February 2020
 
-Based on version 5.0.0for32 of the Heart Library.
+ + Changed the Maven groupId from "jme3utilities" to "com.github.stephengold"
+ + Based on version 5.0.0for32 of the Heart Library.
 
 ## Version 0.2.17for32 released on 4 January 2020
 

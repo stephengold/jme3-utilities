@@ -1,8 +1,9 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.25for32 released on TBD
+## Version 0.9.25for32 released on 4 February 2020
 
 Notable changes:
+ + Changed the Maven groupId from "jme3utilities" to "com.github.stephengold"
  + base on version 5.0.0for32 of the heart library
 
 ## Version 0.9.24for32 released on 4 January 2020
