@@ -23,15 +23,15 @@ gradle.projectsEvaluated {
         //jvmArgs '-Xbatch'
         //jvmArgs '-Xms512m', '-Xmx512m'
         //jvmArgs '-XX:+PrintCompilation'
-        jvmArgs '-XX:+UseConcMarkSweepGC'
-        //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
+        //jvmArgs '-XX:+UseConcMarkSweepGC'
+        jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
     }
 }
 
 ext {
     // current versions of various libraries
     jcommanderVersion = '1.74'
-    heartVersion = '5.1.0for33'
+    heartVersion = '5.2.0for33'
     jme3utilitiesniftyVersion = '0.9.13for33'
     jme3utilitiesuiVersion = '0.8.1for33'
     jme3utilitiesxVersion = '0.2.18for33'
