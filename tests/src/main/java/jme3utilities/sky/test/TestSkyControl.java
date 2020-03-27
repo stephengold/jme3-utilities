@@ -27,7 +27,6 @@
 package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
-import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
@@ -161,12 +160,6 @@ public class TestSkyControl extends GuiApplication {
 
         //Heart.detachAll(stateManager, DebugKeysAppState.class);
         /*
-         * Capture a screenshot each time the KEY_SYSRQ hotkey is pressed.
-         */
-        ScreenshotAppState screenShotState = new ScreenshotAppState();
-        boolean success = stateManager.attach(screenShotState);
-        assert success;
-        /*
          * Disable display of jME3 statistics.
          * These displays can be re-enabled by pressing the F5 hotkey.
          */
@@ -176,7 +169,7 @@ public class TestSkyControl extends GuiApplication {
          * Create and attach the heads-up display (HUD), the scene manger,
          * and the hotkey bindings editor.
          */
-        success = stateManager.attach(hud);
+        boolean success = stateManager.attach(hud);
         assert success;
         success = stateManager.attach(run);
         assert success;

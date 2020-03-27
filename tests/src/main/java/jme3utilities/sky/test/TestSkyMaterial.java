@@ -28,7 +28,6 @@ package jme3utilities.sky.test;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.ModelKey;
 import com.jme3.audio.openal.ALAudioRenderer;
@@ -359,17 +358,11 @@ public class TestSkyMaterial extends GuiApplication {
         assert material != null;
         assert bloom != null;
         /*
-         * Capture a screenshot each time the KEY_SYSRQ hotkey is pressed.
-         */
-        ScreenshotAppState screenShotState = new ScreenshotAppState();
-        boolean success = stateManager.attach(screenShotState);
-        assert success;
-        /*
          * Create and attach the heads-up display (HUD).
          */
         hud = new TestSkyMaterialHud(bloom);
         hud.setMaterial(material);
-        success = stateManager.attach(hud);
+        boolean success = stateManager.attach(hud);
         assert success;
     }
 
