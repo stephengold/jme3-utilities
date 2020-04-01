@@ -1,4 +1,11 @@
-# release notes for the jme3-utilities-nifty library and related tests
+# release log for the jme3-utilities-nifty library and related tests
+
+## Version 0.9.14 released on TBD
+
+ + Raise the log priorities of 3 warning messages in `GuiScreenController`.
+ + Base on version 3.3.0-stable of jMonkeyEngine,
+   version 5.2.1 of the Heart Library,
+   and version 0.8.2 of the jme3-utilities-ui library.
 
 ## Version 0.9.13for33 released on 4 February 2020
 
