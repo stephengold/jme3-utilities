@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -460,7 +460,7 @@ public class GuiScreenController extends PopScreenController {
         try {
             button.select();
         } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen {0} lacks radio button {1}",
+            logger.log(Level.WARNING, "screen {0} lacks radio button {1}",
                     new Object[]{
                         MyString.quote(getScreenId()),
                         MyString.quote(elementId)
@@ -486,7 +486,7 @@ public class GuiScreenController extends PopScreenController {
                 button.disable();
             }
         } catch (NullPointerException exception) {
-            logger.log(Level.INFO, "screen {0} lacks radio button {1}",
+            logger.log(Level.WARNING, "screen {0} lacks radio button {1}",
                     new Object[]{
                         MyString.quote(getScreenId()),
                         MyString.quote(elementId)
@@ -540,7 +540,7 @@ public class GuiScreenController extends PopScreenController {
 
         Element element = getScreen().findElementById(elementId);
         if (element == null) {
-            logger.log(Level.INFO, "screen {0} lacks element {1}", // TODO warn
+            logger.log(Level.WARNING, "screen {0} lacks element {1}",
                     new Object[]{
                         MyString.quote(getScreenId()),
                         MyString.quote(elementId)
