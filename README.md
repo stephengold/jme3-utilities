@@ -63,7 +63,7 @@ Recent releases can be downloaded from
 [GitHub](https://github.com/stephengold/jme3-utilities/releases).
 
 Maven artifacts are available from
-[JFrog Bintray](https://bintray.com/stephengold/jme3utilities).
+[JFrog Bintray](https://bintray.com/stephengold/com.github.stephengold).
 
 [Jump to table of contents](#toc)
 
@@ -71,10 +71,8 @@ Maven artifacts are available from
 
 ## Conventions
 
-Since the Jme3-utilities Project is not associated with an Internet domain,
-package names generally begin with `jme3utilities`.  Packages copied from
-jMonkeyEngine and the BVH Retarget Project,
-however, retain their original names, which began with `com.jme3`.
+Most package names begin with `jme3utilities`.  Packages copied from
+jMonkeyEngine, however, retain their original names, which began with `com.jme3`.
 
 Both the source code and the pre-built libraries are compatible with JDK 7.
 
@@ -113,14 +111,14 @@ The evolution of each sub-project is chronicled in its release notes:
 
 ## How to build Jme3-utilities from source
 
-Jme-utilities currently targets Version 3.2.4 of jMonkeyEngine.
-You are welcome to use the Engine without installing
-its Integrated Development Environment (IDE),
-but I use the IDE, so I tend to assume you will too.
-
 ### IDE setup
 
-If you already have the IDE installed, skip to step 6.
+ + The setup instructions in this section are for jMonkeyEngine 3.2 SDKs
+   (which are based on the NetBeans 8 IDE) and aren't expected to work with
+   jMonkeyEngine 3.3 SDKs (which are based on the NetBeans 11 IDE).
+ + It's easy to develop jMonkeyEngine 3.3 applications on a
+   jMonkeyEngine 3.2 SDK, provided you use Gradle instead of Ant.
+ + If you already have a jMonkeyEngine 3.2 SDK installed, skip to step 6.
 
 The hardware and software requirements of the IDE are documented at
 [the JME wiki](https://jmonkeyengine.github.io/wiki/jme3/requirements.html).
@@ -304,7 +302,7 @@ For this I thank:
 + Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
 + Tom Ruen
 
-I am grateful to JFrog, Google, and Github] for providing free hosting for the
+I am grateful to JFrog, Google, and Github for providing free hosting for the
 Jme3-utilities Project and many other open-source projects.
 
 I'm also grateful to Quinn (for lending me one of her microphones) and finally

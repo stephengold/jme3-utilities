@@ -1,9 +1,9 @@
 # release notes for the SkyControl library and related tests
 
-## Version 0.9.26 released on TBD
+## Version 0.9.26 released on 1 April 2020
 
 Notable changes:
- + 
+ + use JCommander version 1.78 in tests
  + base on version 5.2.1 of the Heart Library and target JME 3.3.0-stable
 
 ## Version 0.9.25for33 released on 4 February 2020
