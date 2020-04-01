@@ -1,5 +1,10 @@
 # release notes for the jme3-utilities-ui library and related tests
 
+## Version 0.8.2 released on TBD
+
+ + Based on version 5.2.1 of the Heart Library.
+ + Use JCommander version 1.78 in tests.
+
 ## Version 0.8.1for33 released on 4 February 2020
 
  + Changed the Maven groupId from "jme3utilities" to "com.github.stephengold"

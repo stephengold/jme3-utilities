@@ -1,35 +1,41 @@
 # release notes for the SkyControl library and related tests
 
+## Version 0.9.26 released on TBD
+
+Notable changes:
+ + 
+ + base on version 5.2.1 of the Heart Library and target JME 3.3.0-stable
+
 ## Version 0.9.25for33 released on 4 February 2020
 
 Notable changes:
  + Changed the Maven groupId from "jme3utilities" to "com.github.stephengold"
- + base on version 5.0.0for33 of the heart library
+ + base on version 5.0.0for33 of the Heart Library
 
 ## Version 0.9.24for33 released on 4 January 2020
 
 Notable changes:
- + base on version 4.3.0for33 of the heart library
+ + base on version 4.3.0for33 of the Heart Library
    and target the NEW JME 3.3.0-beta1
 
 ## Version 0.9.23for33 released on 8 December 2019
 
 Notable changes:
- + base on version 4.2.0for33 of the heart library and target JME v3.3.0-beta1,
+ + base on version 4.2.0for33 of the Heart Library and target JME v3.3.0-beta1,
    which was later deleted!
 
 ## Version 0.9.22for33 released on 23 September 2019
 
 Notable changes:
  + protect no-arg constructors used only for serialization
- + base on version 4.0.0for33 of the heart library and target JME 3.3.0-alpha5
+ + base on version 4.0.0for33 of the Heart Library and target JME 3.3.0-alpha5
 
 ## Version 0.9.21for33 released on 25 August 2019
 
 Notable changes:
  + remove 2 deprecated constructors
  + update the FloorControl quad's transform in case the frustum changes
- + base on version 3.0.0for33 of the heart library
+ + base on version 3.0.0for33 of the Heart Library
 
 ## Version 0.9.20for33 released on 7 August 2019
 
