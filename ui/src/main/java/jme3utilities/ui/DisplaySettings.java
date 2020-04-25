@@ -566,4 +566,15 @@ public class DisplaySettings {
         settings.setResizable(false);
         settings.setTitle(title);
     }
+
+    /**
+     * Access the application.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    protected ActionApplication getApplication() {
+        ActionApplication result = application;
+        assert result != null;
+        return result;
+    }
 }
