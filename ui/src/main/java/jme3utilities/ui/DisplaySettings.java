@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -199,24 +199,7 @@ public class DisplaySettings {
      * @return true if can be applied, otherwise false
      */
     public boolean canApply() {
-        AppSettings current = application.getSettings();
-
-        int currentBpp = current.getBitsPerPixel();
-        boolean bppChange = currentBpp != colorDepth();
-
-        boolean currentGamma = current.isGammaCorrection();
-        boolean gammaChange = currentGamma != isGammaCorrection();
-
-        int currentMsaa = current.getSamples();
-        boolean msaaChange = currentMsaa != msaaFactor();
-
-        boolean result;
-        if (bppChange || gammaChange || msaaChange) {
-            result = false; // work around JME issue #801 and related issues
-        } else {
-            result = areValid();
-        }
-
+        boolean result = areValid();
         return result;
     }
 
@@ -237,23 +220,6 @@ public class DisplaySettings {
      * @return message text (not null)
      */
     public String feedbackApplicable() {
-        AppSettings current = application.getSettings();
-
-        int currentBpp = current.getBitsPerPixel();
-        if (currentBpp != colorDepth()) {
-            return "Can't apply BPP change.";
-        }
-
-        boolean currentGamma = current.isGammaCorrection();
-        if (currentGamma != isGammaCorrection()) {
-            return "Can't apply gamma change.";
-        }
-
-        int currentMsaa = current.getSamples();
-        if (currentMsaa != msaaFactor()) {
-            return "Can't apply MSAA change.";
-        }
-
         return "";
     }
 
