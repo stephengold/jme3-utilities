@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019, Stephen Gold
+ Copyright (c) 2019-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -82,6 +82,13 @@ public class DsInputMode extends InputMode {
      */
     @Override
     protected void defaultBindings() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("linux")) {
+            bind("ScreenShot", KeyInput.KEY_SCROLL); // window mgr blocks SYSRQ
+        } else {
+            bind("ScreenShot", KeyInput.KEY_SYSRQ);
+        }
+
         bind("return", KeyInput.KEY_ESCAPE);
         bind(SimpleApplication.INPUT_MAPPING_HIDE_STATS, KeyInput.KEY_F5);
         bind(SimpleApplication.INPUT_MAPPING_MEMORY, KeyInput.KEY_M);

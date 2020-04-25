@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019, Stephen Gold
+ Copyright (c) 2019-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -166,6 +166,7 @@ public class DsScreen
      * @param event details of the event (not null)
      */
     @NiftyEventSubscriber(pattern = ".*CheckBox")
+    @Override
     public void onCheckBoxChanged(final String checkBoxId,
             final CheckBoxStateChangedEvent event) {
         Validate.nonNull(checkBoxId, "check box id");
@@ -356,6 +357,7 @@ public class DsScreen
                     displaySettings.applyToDisplay();
                     return;
 
+                case "Screenshot":
                 case SimpleApplication.INPUT_MAPPING_HIDE_STATS:
                 case SimpleApplication.INPUT_MAPPING_MEMORY:
                     defaultMode.onAction(actionString, ongoing, tpf);
