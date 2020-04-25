@@ -41,7 +41,6 @@ import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.MessageDisplay;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.nifty.displaysettings.DsScreen;
-import jme3utilities.ui.DisplaySettings;
 import jme3utilities.ui.DisplaySizeLimits;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.UiVersion;
@@ -105,10 +104,6 @@ public class TestBindScreen extends GuiApplication {
      */
     private BindScreen bindScreen;
     /**
-     * display settings (set by main())
-     */
-    private static DisplaySettings displaySettings;
-    /**
      * editor for display settings (set by guiInitializeApplication())
      */
     private DsScreen dsScreen;
@@ -125,6 +120,10 @@ public class TestBindScreen extends GuiApplication {
      * app state to animate a field of stars (set by guiInitializeApplication())
      */
     private StarfieldState starfield;
+    /**
+     * display settings (set by main())
+     */
+    private static TbsDisplaySettings displaySettings;
     // *************************************************************************
     // new methods exposed
 
@@ -147,7 +146,7 @@ public class TestBindScreen extends GuiApplication {
                 2_048, 1_080 // max width, height
         );
         displaySettings
-                = new DisplaySettings(application, applicationName, dsl) {
+                = new TbsDisplaySettings(application, applicationName, dsl) {
             @Override
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);
