@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-ui library and related tests
 
-## Version 0.8.3 released on TBD
+## Version 0.8.3 released on 27 April 2020
 
  + Updated the `DisplaySettings` class to allow BPP, MSAA, and gamma-correction
    changes to be applied via a restart, since JME issue #801 is fixed.
