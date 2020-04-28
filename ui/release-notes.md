@@ -1,4 +1,11 @@
-# release notes for the jme3-utilities-ui library and related tests
+# release log for the jme3-utilities-ui library and related tests
+
+## Version 0.8.3 released on TBD
+
+ + Updated the `DisplaySettings` class to allow BPP, MSAA, and gamma-correction
+   changes to be applied via a restart, since JME issue #801 is fixed.
+ + Added a `getApplication()` method to the `DisplaySettings` class.
+ + Based on version 5.3.0 of the Heart Library.
 
 ## Version 0.8.2 released on 1 April 2020
 
