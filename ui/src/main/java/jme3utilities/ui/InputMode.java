@@ -179,18 +179,19 @@ abstract public class InputMode
     }
 
     /**
-     * Bind the named action to a keyboard key, but don't map it yet. Any
-     * existing binding for the key is removed.
+     * Bind the named action to the specified keyboard keys, but don't map it
+     * yet. Any existing bindings for those keys are removed.
      *
      * @param actionName the name of the action (not null)
-     * @param keyCode the key code
+     * @param keyCodes key codes from {@link com.jme3.input.KeyInput}
      */
-    public void bind(String actionName, int keyCode) {
+    public void bind(String actionName, int... keyCodes) {
         Validate.nonNull(actionName, "action name");
-        Validate.inRange(keyCode, "key code", 0, KeyInput.KEY_LAST);
 
-        Hotkey hotkey = Hotkey.findKey(keyCode);
-        bind(actionName, hotkey);
+        for (int keyCode : keyCodes) {
+            Hotkey hotkey = Hotkey.findKey(keyCode);
+            bind(actionName, hotkey);
+        }
     }
 
     /**
@@ -298,7 +299,7 @@ abstract public class InputMode
     /**
      * Access the active mode, if any.
      *
-     * @return pre-existing instance (or null if none active)
+     * @return the pre-existing instance (or null if none active)
      */
     public static InputMode getActiveMode() {
         return activeMode;
