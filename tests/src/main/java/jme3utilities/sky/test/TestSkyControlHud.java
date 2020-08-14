@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ import jme3utilities.TimeOfDay;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.SliderTransform;
+import jme3utilities.sky.GlobeRenderer;
 import jme3utilities.sky.LunarPhase;
 import jme3utilities.sky.SkyControl;
 import jme3utilities.sky.SunAndStars;
@@ -749,9 +750,16 @@ public class TestSkyControlHud
      * Display a menu of lunar phases.
      */
     private void showPhaseMenu() {
-        showPopupMenu("phase ", new String[]{
-            "custom", "full", "none", "waning", "waxing"
-        });
+        GlobeRenderer renderer = stateManager.getState(GlobeRenderer.class);
+        if (renderer == null) {
+            showPopupMenu("phase ", new String[]{
+                "full", "none", "waning", "waxing"
+            });
+        } else {
+            showPopupMenu("phase ", new String[]{
+                "custom", "full", "none", "waning", "waxing"
+            });
+        }
     }
 
     /**

@@ -708,22 +708,26 @@ public class TestSkyControlRun
             mainLayer.setTexture("Textures/skies/clouds/cyclone.png", 0.3f);
             skyControl.getCloudLayer(1).clearTexture();
         }
-        /*
-         * Set up a globe renderer for the Moon.
-         */
-        boolean mipmaps = false;
-        Texture moonTexture = MyAsset.loadTexture(assetManager,
-                "Textures/skies/moon/clementine.png", mipmaps);
-        Material moonMaterial = MyAsset.createShadedMaterial(assetManager,
-                moonTexture);
-        int equatorSamples = 12;
-        int meridianSamples = 24;
-        int resolution = 512;
-        GlobeRenderer moonRenderer = new GlobeRenderer(moonMaterial,
-                Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
-                resolution);
-        stateManager.attach(moonRenderer);
-        skyControl.setMoonRenderer(moonRenderer);
+        try {
+            /*
+             * Set up a globe renderer for the Moon.
+             */
+            boolean mipmaps = false;
+            Texture moonTexture = MyAsset.loadTexture(assetManager,
+                    "Textures/skies/moon/clementine.png", mipmaps);
+            Material moonMaterial = MyAsset.createShadedMaterial(assetManager,
+                    moonTexture);
+            int equatorSamples = 12;
+            int meridianSamples = 24;
+            int resolution = 512;
+            GlobeRenderer moonRenderer = new GlobeRenderer(moonMaterial,
+                    Image.Format.Luminance8Alpha8, equatorSamples, meridianSamples,
+                    resolution);
+            stateManager.attach(moonRenderer);
+            skyControl.setMoonRenderer(moonRenderer);
+        } catch (AssetNotFoundException exception) {
+
+        }
         /*
          * Put SkyControl in charge of updating both lights plus the
          * viewport background. (all optional)
