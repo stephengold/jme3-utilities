@@ -17,9 +17,6 @@ dependencies {
 
     implementation 'com.github.stephengold:Heart:' + heartVersion
 
-    //implementation "com.github.stephengold:SkyControl:$skycontrolVersion"
-    implementation project(':SkyControl')
-
     //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
     implementation project(':nifty')
 
@@ -28,8 +25,6 @@ dependencies {
 
     //implementation "com.github.stephengold:jme3-utilities-x:$jme3utilitiesxVersion"
     implementation project(':x')
-
-    runtimeOnly project(':moon-ccbysa')
 }
 
 // cleanup tasks
@@ -69,50 +64,4 @@ task TestMultipleScreens(type: JavaExec) {
 }
 task TestPopups(type: JavaExec) {
     main 'jme3utilities.nifty.test.TestPopups'
-}
-
-task runCubeMapExample(type: JavaExec) {
-    main 'jme3utilities.sky.test.CubeMapExample'
-}
-task runTestGlobeRenderer(type: JavaExec) {
-    main 'jme3utilities.sky.test.TestGlobeRenderer'
-}
-
-task debugTestSkyControl(type: JavaExec) {
-    debug true
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-task runTestSkyControl(type: JavaExec) {
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-task runTestSkyControlCyclone(type: JavaExec) {
-    args = ['-c']
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-task runTestSkyControlShadowFilter(type: JavaExec) {
-    args = ['-f']
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-task runTestSkyControlNoCubes(type: JavaExec) {
-    args = ['-n']
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-task runTestSkyControlSingleDome(type: JavaExec) {
-    args = ['-s']
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-task runTestSkyControlUsage(type: JavaExec) {
-    args = ['-u']
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-task runTestSkyControlWater(type: JavaExec) {
-    args = ['-w']
-    main 'jme3utilities.sky.test.TestSkyControl'
-}
-
-task runTestSkyMaterial(type: JavaExec) {
-    main 'jme3utilities.sky.test.TestSkyMaterial'
-}
-task TestSunAndStars(type: JavaExec) {
-    main 'jme3utilities.sky.test.TestSunAndStars'
 }

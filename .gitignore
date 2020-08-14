@@ -3,16 +3,11 @@
 /moon-ccbysa/build/
 /nifty/build/
 /nifty/private/
-/SkyControl/build/
-/SkyControl/src/main/resources/Textures/skies/
 /tests/*.dll
 /tests/*.so
 /tests/build/
 /tests/private/
 /tests/src/main/java/jme3test/
 /tests/Written Assets/
-/textures/build/
-/textures/src/main/resources/bsc5.dat
-/textures/src/main/resources/bsc5.dat.gz
 /ui/build/
 /x/build/

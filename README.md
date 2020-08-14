@@ -2,16 +2,23 @@
 
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
-It contains 7 sub-projects:
+It contains 5 sub-projects:
 
- 1. SkyControl: the `SkyControl` library for sky simulation
- 2. moon-ccbysa: assets for a realistic Moon in `SkyControl`
- 3. tests: demos, examples, and test software
- 4. textures: generate textures used by `SkyControl`
- 5. ui: the `jme3-utilities-ui` library for building user interfaces
- 6. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
+ 1. ui: the `jme3-utilities-ui` library for building user interfaces
+ 2. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
     interfaces with jMonkeyEngine
- 7. x: the `jme3-utilities-x` library of experimental software
+ 3. x: the `jme3-utilities-x` library of experimental software
+ 4. moon-ccbysa: assets for a realistic Moon in `SkyControl`
+ 5. tests: demos, examples, and test software
+
+The `SkyControl` library, formerly a sub-project, is now a separate project
+at [GitHub](https://github.com/stephengold/SkyControl).
+
+The textures sub-project is now part of
+[the SkyControl Project](https://github.com/stephengold/SkyControl).
+
+The `jme3-utilities-heart` library, formerly a sub-project, is now a separate project
+at [GitHub](https://github.com/stephengold/Heart).
 
 The `jme3-utilities-debug` library, formerly a sub-project, is now part of
 [the Heart Library](https://github.com/stephengold/Heart).
@@ -22,26 +29,8 @@ at [GitHub](https://github.com/stephengold/Minie).
 The `Wes` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Wes).
 
-The `jme3-utilities-heart` library, formerly a sub-project, is now a separate project
-at [GitHub](https://github.com/stephengold/Heart).
-
-Java source code is provided under
-[a FreeBSD license](https://github.com/stephengold/jme3-utilities/blob/master/license.txt).
-
-Summary of SkyControl features:
-
- + sun, moon, stars, horizon haze, and up to 6 cloud layers
- + compatible with static backgrounds such as cube maps
- + high resolution textures are provided -- or customize with your own textures
- + compatible with effects such as `SimpleWater`, shadows, bloom, and cartoon edges
- + continuous and reversible motion and blending of cloud layers
- + option to foreshorten clouds near the horizon
- + continuous and reversible motion of sun, moon, and stars based on time of day
- + updater to synchronize lighting and shadows with sun, moon, and clouds
- + continuous scaling of sun, moon, and clouds
- + option for continuously variable phase of the moon
- + demonstration apps and online tutorial provided
- + complete source code provided under FreeBSD license
+Complete source code (in Java) is provided under
+[a 3-clause BSD license](https://github.com/stephengold/jme3-utilities/blob/master/license.txt).
 
 <a name="toc"/>
 
@@ -51,7 +40,6 @@ Summary of SkyControl features:
  + [Conventions](#conventions)
  + [History](#history)
  + [How to build Jme3-utilities from source](#build)
- + [How to add SkyControl to an existing game](#addsky)
  + [External links](#links)
  + [Acknowledgments](#acks)
 
@@ -99,7 +87,6 @@ Old (2014) versions of the Jme3-utilities Project can still be found in
 
 The evolution of each sub-project is chronicled in its release notes:
 
- + [SkyControl](https://github.com/stephengold/jme3-utilities/blob/master/SkyControl/release-notes.md)
  + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
  + [ui](https://github.com/stephengold/jme3-utilities/blob/master/ui/release-notes.md)
  + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
@@ -121,7 +108,7 @@ The evolution of each sub-project is chronicled in its release notes:
  + If you already have a jMonkeyEngine 3.2 SDK installed, skip to step 6.
 
 The hardware and software requirements of the IDE are documented at
-[the JME wiki](https://jmonkeyengine.github.io/wiki/jme3/requirements.html).
+[the JME wiki](https://wiki.jmonkeyengine.org/docs/3.3/getting-started/requirements.html).
 
  1. Download a jMonkeyEngine 3.2 Software Development Kit (SDK) from
     [GitHub](https://github.com/jMonkeyEngine/sdk/releases).
@@ -180,12 +167,10 @@ Clone the Jme3-utilities repository using Git:
 10. Click on the "Finish" button.
 11. When the "Clone Completed" dialog appears, click on the "Open Project..."
     button.
-12. Expand the root project node to reveal the 8 sub-projects.
-13. To start with, I recommend opening 3 sub-projects:  "SkyControl",
-    "tests", and "textures".  Select them using control-click, then click on the
+12. Expand the root project node to reveal the 5 sub-projects.
+13. To start with, I recommend opening 3 sub-projects:  "nifty",
+    "tests", and "ui".  Select them using control-click, then click on the
     "Open" button.
-14. There will be errors in the "textures" sub-project.  However, the build
-    task should resolve them.
 
 ### Build the project
 
@@ -202,7 +187,7 @@ Clone the Jme3-utilities repository using Git:
  2. Download and extract the source code from GitHub:
      + `git clone https://github.com/stephengold/jme3-utilities.git`
      + `cd jme3-utilities`
-     + `git checkout -b latest nifty-0.9.14`
+     + `git checkout -b latest ui-0.8.3`
  3. Set the `JAVA_HOME` environment variable:
    + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
    + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`
@@ -212,31 +197,11 @@ Clone the Jme3-utilities repository using Git:
 
 After a successful build, new jars will be found in `*/build/libs`.
 
-<a name="addsky"/>
-
-## How to add SkyControl to an existing game
-
-SkyControl is a reusable sky simulation for jMonkeyEngine games.
-
-Adding it to an existing JME3 project should be a simple 6-step process:
-
- 1. Add jme3-utilities JARs to the classpath.
- 2. Disable any existing sky which might interfere with SkyControl.
- 3. Add a `SkyControl` instance to some node in the scene graph.
- 4. Configure the `SkyControl` instance.
- 5. Enable the `SkyControl` instance.
- 6. Test and tune as necessary.
-
-[Jump to table of contents](#toc)
-
 <a name="links"/>
 
 ## External links
 
-  + November 2013 [SkyControl demo video](https://www.youtube.com/watch?v=FsJRM6tr3oQ)
-  + January 2014 [SkyControl update video](https://www.youtube.com/watch?v=gE4wxgBIkaw)
   + A [maze game](https://github.com/stephengold/jme3-maze) that uses the Jme3-utilities libraries.
-  + A [flight simulation game](https://github.com/ZoltanTheHun/SkyHussars) that uses SkyControl.
 
 [Jump to table of contents](#toc)
 
@@ -287,7 +252,7 @@ artists and software developers:
     + the Markdown document conversion tool
     + Microsoft Windows
     + the NetBeans integrated development environment
-    + the Nifty graphical user interface library
+    + the Nifty graphical user-interface library
     + Open Broadcaster Software Studio
     + the PMD source-code analyzer
     + the RealWorld Cursor Editor
@@ -302,8 +267,9 @@ For this I thank:
 + Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
 + Tom Ruen
 
-I am grateful to JFrog, Google, and Github for providing free hosting for the
-Jme3-utilities Project and many other open-source projects.
+I am grateful to GitHub, JFrog, YouTube, and Imgur
+for providing free hosting for this project
+and many other open-source projects.
 
 I'm also grateful to Quinn (for lending me one of her microphones) and finally
 my dear Holly, for keeping me sane.
