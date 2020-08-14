@@ -82,9 +82,6 @@ Since September 2015, the Jme3-utilities Project has been hosted at
 From November 2013 to September 2015, it was hosted at
 [Google Code](https://code.google.com/archive/).
 
-Old (2014) versions of the Jme3-utilities Project can still be found in
-[the jMonkeyEngine-Contributions Project](https://github.com/jMonkeyEngine-Contributions/SkyControl).
-
 The evolution of each sub-project is chronicled in its release notes:
 
  + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
@@ -211,36 +208,14 @@ After a successful build, new jars will be found in `*/build/libs`.
 
 Like most projects, the Jme3-utilities Project builds on the work of many who
 have gone before.  I therefore acknowledge the following
-artists and software developers:
+software developers:
 
-+ Cris (aka "t0neg0d") for creating SkyDome (which provided both an inspiration
-  and a starting point for SkyControl) and also for encouraging me to run with
-  it ... thank you yet again!
 + Paul Speed, for helpful insights which got me unstuck during debugging
 + Rémy Bouquet (aka "nehon") for many helpful insights
-+ Alexandr Brui (aka "javasabr") for a solving a problem with the
-  de-serialization of `SkyControl`
-+ the brave souls who volunteered to be alpha testers for SkyControl, including:
-    + Davis Rollman
-    + "Lockhead"
-    + Jonatan Dahl
-    + Mindaugas (aka "eraslt")
-    + Thomas Kluge
-    + "pixelapp"
-    + Roger (aka "stenb")
-+ the beta testers for SkyControl, including:
-    + "madjack"
-    + Benjamin D.
-    + "Fissll"
-    + Davis Rollman
-+ users who found and reported bugs in later versions:
-    + Anton Starastsin (aka "Antonystar")
 + the creators of (and contributors to) the following software:
     + Adobe Photoshop Elements
     + the Ant and Gradle build tools
-    + the Blender 3-D animation suite
     + the FindBugs source-code analyzer
-    + Gimp, the GNU Image Manipulation Program
     + the Git and Subversion revision-control systems
     + the Google Chrome web browser
     + Guava core libraries for Java
@@ -249,30 +224,19 @@ artists and software developers:
     + jMonkeyEngine and the jME3 Software Development Kit
     + the Linux Mint operating system
     + LWJGL, the Lightweight Java Game Library
-    + the Markdown document conversion tool
+    + the Markdown document-conversion tool
     + Microsoft Windows
     + the NetBeans integrated development environment
     + the Nifty graphical user-interface library
-    + Open Broadcaster Software Studio
     + the PMD source-code analyzer
     + the RealWorld Cursor Editor
-    + Alex Peterson's Spacescape tool
     + the WinMerge differencing and merging tool
 
-Many of SkyControl's assets were based on the works of others who licensed their
-works under liberal terms or contributed them to the public domain.
-For this I thank:
-
-+ Cris (aka "t0neg0d")
-+ Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC
-+ Tom Ruen
-
-I am grateful to GitHub, JFrog, YouTube, and Imgur
+I am grateful to GitHub, JFrog, and Imgur
 for providing free hosting for this project
 and many other open-source projects.
 
-I'm also grateful to Quinn (for lending me one of her microphones) and finally
-my dear Holly, for keeping me sane.
+I'm also grateful to my dear Holly, for keeping me sane.
 
 If I've misattributed anything or left anyone out, please let me know so I can
 correct the situation: sgold@sonic.net
