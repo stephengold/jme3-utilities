@@ -28,6 +28,7 @@ package jme3utilities.ui.test;
 
 import com.jme3.app.StatsAppState;
 import com.jme3.cursors.plugins.JmeCursor;
+import com.jme3.font.BitmapText;
 import com.jme3.font.Rectangle;
 import com.jme3.input.KeyInput;
 import com.jme3.scene.Node;
@@ -59,7 +60,10 @@ public class TestCursors extends ActionApplication {
     // *************************************************************************
     // fields
 
-    private JmeCursor defaultCursor, dialogCursor, greenCursor, menuCursor;
+    /**
+     * status displayed in the upper-left corner of the GUI node
+     */
+    private BitmapText statusText;
     // *************************************************************************
     // new methods exposed
 
@@ -100,17 +104,6 @@ public class TestCursors extends ActionApplication {
      */
     @Override
     public void actionInitializeApplication() {
-        String defaultCursorPath = "Textures/cursors/default.cur";
-        defaultCursor = (JmeCursor) assetManager.loadAsset(defaultCursorPath);
-
-        String dialogCursorPath = "Textures/cursors/dialog.cur";
-        dialogCursor = (JmeCursor) assetManager.loadAsset(dialogCursorPath);
-
-        String greenCursorPath = "Textures/cursors/green.cur";
-        greenCursor = (JmeCursor) assetManager.loadAsset(greenCursorPath);
-
-        String menuCursorPath = "Textures/cursors/menu.cur";
-        menuCursor = (JmeCursor) assetManager.loadAsset(menuCursorPath);
         /*
          * Avert warnings about signals not added.
          */
@@ -119,6 +112,14 @@ public class TestCursors extends ActionApplication {
          * Hide the render-statistics overlay.
          */
         stateManager.getState(StatsAppState.class).toggleStats();
+        /*
+         * Add the status text to the GUI.
+         */
+        statusText = new BitmapText(guiFont, false);
+        statusText.setLocalTranslation(0f, cam.getHeight(), 0f);
+        guiNode.attachChild(statusText);
+
+        setCursor("default");
     }
 
     /**
@@ -127,13 +128,13 @@ public class TestCursors extends ActionApplication {
     @Override
     public void moreDefaultBindings() {
         InputMode dim = getDefaultInputMode();
-        dim.bind("cursor default", KeyInput.KEY_1);
-        dim.bind("cursor dialog", KeyInput.KEY_2);
-        dim.bind("cursor green", KeyInput.KEY_3);
-        dim.bind("cursor menu", KeyInput.KEY_4);
+        dim.bind("cursor default", KeyInput.KEY_1, KeyInput.KEY_F1);
+        dim.bind("cursor dialog", KeyInput.KEY_2, KeyInput.KEY_F2);
+        dim.bind("cursor green", KeyInput.KEY_3, KeyInput.KEY_F3);
+        dim.bind("cursor menu", KeyInput.KEY_4, KeyInput.KEY_F4);
 
         float x = 10f;
-        float y = cam.getHeight() - 10f;
+        float y = cam.getHeight() - 30f;
         float width = cam.getWidth() - 20f;
         float height = cam.getHeight() - 20f;
         Rectangle bounds = new Rectangle(x, y, width, height);
@@ -155,19 +156,30 @@ public class TestCursors extends ActionApplication {
         if (ongoing) {
             switch (actionString) {
                 case "cursor default":
-                    inputManager.setMouseCursor(defaultCursor);
+                    setCursor("default");
                     return;
                 case "cursor dialog":
-                    inputManager.setMouseCursor(dialogCursor);
+                    setCursor("dialog");
                     return;
                 case "cursor green":
-                    inputManager.setMouseCursor(greenCursor);
+                    setCursor("green");
                     return;
                 case "cursor menu":
-                    inputManager.setMouseCursor(menuCursor);
+                    setCursor("menu");
                     return;
             }
         }
         super.onAction(actionString, ongoing, tpf);
+    }
+    // *************************************************************************
+    // private methods
+
+    private void setCursor(String cursorName) {
+        String message = "cursor = " + cursorName;
+        statusText.setText(message);
+
+        String assetPath = String.format("Textures/cursors/%s.cur", cursorName);
+        JmeCursor cursor = (JmeCursor) assetManager.loadAsset(assetPath);
+        inputManager.setMouseCursor(cursor);
     }
 }
