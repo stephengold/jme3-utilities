@@ -114,6 +114,10 @@ abstract public class InputMode
      */
     private JmeCursor cursor = null;
     /**
+     * LIFO stack of suspended input modes TODO use a Deque
+     */
+    final private static List<InputMode> suspendedModes = new ArrayList<>(4);
+    /**
      * map from short names to initialized input modes
      */
     final private static Map<String, InputMode> modes = new TreeMap<>();
@@ -374,6 +378,24 @@ abstract public class InputMode
     }
 
     /**
+     * Disable the active input mode and resume the most recently suspended
+     * mode.
+     */
+    public static void resumeLifo() {
+        InputMode activeMode = InputMode.getActiveMode();
+        if (activeMode != null) {
+            activeMode.setEnabled(false);
+        }
+
+        int numSuspended = suspendedModes.size();
+        assert numSuspended > 0 : numSuspended;
+        InputMode mostRecent = suspendedModes.remove(numSuspended - 1);
+        if (mostRecent != null) {
+            mostRecent.resume();
+        }
+    }
+
+    /**
      * Save all hotkey bindings to the configuration asset.
      */
     public void saveBindings() {
@@ -425,6 +447,24 @@ abstract public class InputMode
 
         deactivate();
         isSuspended = true;
+    }
+
+    /**
+     * Save and suspend the active input mode (if any) and activate the
+     * specified mode.
+     *
+     * @param newMode the desired input mode, or null for none
+     */
+    public static void suspendAndActivate(InputMode newMode) {
+        InputMode oldMode = InputMode.getActiveMode();
+        if (oldMode != null) {
+            oldMode.suspend();
+        }
+        suspendedModes.add(oldMode);
+
+        if (newMode != null) {
+            newMode.setEnabled(true);
+        }
     }
 
     /**
