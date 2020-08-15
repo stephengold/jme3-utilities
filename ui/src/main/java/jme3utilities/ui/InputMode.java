@@ -114,7 +114,7 @@ abstract public class InputMode
      */
     private JmeCursor cursor = null;
     /**
-     * LIFO stack of suspended input modes TODO use a Deque
+     * LIFO stack of suspended input modes TODO use a Stack
      */
     final private static List<InputMode> suspendedModes = new ArrayList<>(4);
     /**
@@ -367,28 +367,18 @@ abstract public class InputMode
     }
 
     /**
-     * Reactivate this (enabled) mode after a suspension.
-     */
-    public void resume() {
-        assert isEnabled();
-        assert isSuspended;
-
-        activate();
-        isSuspended = false;
-    }
-
-    /**
      * Disable the active input mode and resume the most recently suspended
      * mode.
      */
     public static void resumeLifo() {
+        int numSuspended = suspendedModes.size();
+        assert numSuspended > 0 : numSuspended;
+
         InputMode activeMode = InputMode.getActiveMode();
         if (activeMode != null) {
             activeMode.setEnabled(false);
         }
 
-        int numSuspended = suspendedModes.size();
-        assert numSuspended > 0 : numSuspended;
         InputMode mostRecent = suspendedModes.remove(numSuspended - 1);
         if (mostRecent != null) {
             mostRecent.resume();
@@ -436,17 +426,6 @@ abstract public class InputMode
     public void setCursor(JmeCursor newCursor) {
         assert !isInitialized();
         cursor = newCursor;
-    }
-
-    /**
-     * Temporarily deactivate this enabled mode without disabling its app state.
-     */
-    public void suspend() {
-        assert isEnabled();
-        assert !isSuspended;
-
-        deactivate();
-        isSuspended = true;
     }
 
     /**
@@ -767,6 +746,17 @@ abstract public class InputMode
     }
 
     /**
+     * Reactivate this (enabled) mode after a suspension.
+     */
+    private void resume() {
+        assert isEnabled();
+        assert isSuspended;
+
+        activate();
+        isSuspended = false;
+    }
+
+    /**
      * Save hotkey bindings to an output stream.
      *
      * @param stream output stream to save to (not null)
@@ -847,6 +837,17 @@ abstract public class InputMode
         String actionString = String.format("%s %d", actionName, keyCode);
 
         return actionString;
+    }
+
+    /**
+     * Temporarily deactivate this enabled mode without disabling its app state.
+     */
+    private void suspend() {
+        assert isEnabled();
+        assert !isSuspended;
+
+        deactivate();
+        isSuspended = true;
     }
 
     /**
