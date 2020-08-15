@@ -31,8 +31,8 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -45,7 +45,8 @@ import jme3utilities.ui.HelpUtils;
 import jme3utilities.ui.InputMode;
 
 /**
- * An ActionApplication to test a help node and the default hotkey bindings.
+ * An ActionApplication to test/demonstrate a help node and the default hotkey
+ * bindings.
  */
 public class TestFlyCam extends ActionApplication {
     // *************************************************************************
@@ -64,7 +65,12 @@ public class TestFlyCam extends ActionApplication {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
+    /**
+     * Main entry point for the TestFlyCam application.
+     *
+     * @param ignored array of command-line arguments (not null)
+     */
+    public static void main(String[] ignored) {
         /*
          * Instantiate the application.
          */
@@ -74,6 +80,11 @@ public class TestFlyCam extends ActionApplication {
          */
         AppSettings settings = new AppSettings(true);
         settings.setTitle(applicationName);
+
+        settings.setAudioRenderer(null);
+        settings.setGammaCorrection(true);
+        settings.setSamples(4); // anti-aliasing
+        settings.setVSync(true);
         application.setSettings(settings);
         /*
          * Invoke the JME startup code,
@@ -90,9 +101,13 @@ public class TestFlyCam extends ActionApplication {
     @Override
     public void actionInitializeApplication() {
         flyCam.setDragToRotate(true); // TODO only works for dragToRotate=true?
-        flyCam.setMoveSpeed(10f);
+        flyCam.setMoveSpeed(5f);
+        cam.setLocation(new Vector3f(-4f, 4f, 9f));
+        cam.setRotation(new Quaternion(0.038f, 0.96148f, -0.1897f, 0.1951f));
 
-        viewPort.setBackgroundColor(ColorRGBA.Gray);
+        ColorRGBA skyColor = new ColorRGBA(0.1f, 0.1f, 0.1f, 1f);
+        viewPort.setBackgroundColor(skyColor);
+
         addLighting();
         addBox();
     }
@@ -103,14 +118,14 @@ public class TestFlyCam extends ActionApplication {
     @Override
     public void moreDefaultBindings() {
         float x = 10f;
-        float y = cam.getHeight() - 80f;
+        float y = cam.getHeight() - 10f;
         float width = cam.getWidth() - 20f;
         float height = cam.getHeight() - 20f;
-        Rectangle rectangle = new Rectangle(x, y, width, height);
+        Rectangle bounds = new Rectangle(x, y, width, height);
 
         InputMode dim = getDefaultInputMode();
         float space = 20f;
-        Node helpNode = HelpUtils.buildNode(dim, rectangle, guiFont, space);
+        Node helpNode = HelpUtils.buildNode(dim, bounds, guiFont, space);
         guiNode.attachChild(helpNode);
     }
     // *************************************************************************
@@ -125,21 +140,20 @@ public class TestFlyCam extends ActionApplication {
         Geometry box = new Geometry("box", boxMesh);
         rootNode.attachChild(box);
 
-        ColorRGBA color = new ColorRGBA(0.3f, 0.7f, 0.3f, 1f);
+        ColorRGBA color = new ColorRGBA(0f, 0.3f, 0f, 1f);
         Material material = MyAsset.createShadedMaterial(assetManager, color);
         box.setMaterial(material);
-        box.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
     }
 
     /**
      * Add lighting to the scene.
      */
     private void addLighting() {
-        ColorRGBA ambientColor = new ColorRGBA(0.7f, 0.7f, 0.7f, 1f);
+        ColorRGBA ambientColor = new ColorRGBA(0.1f, 0.1f, 0.1f, 1f);
         AmbientLight ambient = new AmbientLight(ambientColor);
         rootNode.addLight(ambient);
 
-        Vector3f direction = new Vector3f(1f, -2f, -1f).normalizeLocal();
+        Vector3f direction = new Vector3f(1f, -2f, -3f).normalizeLocal();
         DirectionalLight sun = new DirectionalLight(direction);
         rootNode.addLight(sun);
     }
