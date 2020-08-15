@@ -205,7 +205,7 @@ abstract public class InputMode
         Validate.nonNull(actionName, "action name");
         Validate.nonNull(hotkeyName, "hotkey name");
 
-        assert Hotkey.find(hotkeyName) != null;
+        assert Hotkey.find(hotkeyName) != null : hotkeyName;
         hotkeyBindings.put(hotkeyName, actionName);
         addActionName(actionName);
     }
