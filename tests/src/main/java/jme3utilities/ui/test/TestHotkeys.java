@@ -54,7 +54,12 @@ public class TestHotkeys extends ActionApplication {
     // *************************************************************************
     // new methods exposed
 
-    public static void main(String[] args) {
+    /**
+     * Main entry point for the TestHotKeys application.
+     *
+     * @param ignored array of command-line arguments (not null)
+     */
+    public static void main(String[] ignored) {
         /*
          * Instantiate the application.
          */
@@ -62,8 +67,10 @@ public class TestHotkeys extends ActionApplication {
         /*
          * Customize the window's title bar.
          */
-        AppSettings settings = new AppSettings(true);
+        boolean loadDefaults = true;
+        AppSettings settings = new AppSettings(loadDefaults);
         settings.setTitle(applicationName);
+        settings.setAudioRenderer(null);
         application.setSettings(settings);
         /*
          * Invoke the JME startup code,
@@ -115,5 +122,6 @@ public class TestHotkeys extends ActionApplication {
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         // do nothing
+        // This avoids warnings about ongoing actions not handled.
     }
 }
