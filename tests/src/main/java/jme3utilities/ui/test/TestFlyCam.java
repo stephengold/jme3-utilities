@@ -38,7 +38,9 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.Heart;
 import jme3utilities.MyAsset;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.HelpUtils;
@@ -71,6 +73,10 @@ public class TestFlyCam extends ActionApplication {
      * @param ignored array of command-line arguments (not null)
      */
     public static void main(String[] ignored) {
+        /*
+         * Mute the chatty loggers in certain packages.
+         */
+        Heart.setLoggingLevels(Level.WARNING);
         /*
          * Instantiate the application.
          */
@@ -113,10 +119,14 @@ public class TestFlyCam extends ActionApplication {
     }
 
     /**
-     * Attach a help node to the GUI node.
+     * Callback invoked immediately after initializing the hotkey bindings of
+     * the default input mode.
      */
     @Override
     public void moreDefaultBindings() {
+        /*
+         * Build and attach the help node.
+         */
         float x = 10f;
         float y = cam.getHeight() - 10f;
         float width = cam.getWidth() - 20f;
