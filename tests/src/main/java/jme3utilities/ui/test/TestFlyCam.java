@@ -49,6 +49,8 @@ import jme3utilities.ui.InputMode;
 /**
  * An ActionApplication to test/demonstrate a help node and the default hotkey
  * bindings.
+ *
+ * @author Stephen Gold sgold@sonic.net
  */
 public class TestFlyCam extends ActionApplication {
     // *************************************************************************
@@ -102,7 +104,7 @@ public class TestFlyCam extends ActionApplication {
     // ActionApplication methods
 
     /**
-     * Initialize this application.
+     * Initialize this Application.
      */
     @Override
     public void actionInitializeApplication() {
