@@ -86,7 +86,7 @@ abstract public class InputMode
     // *************************************************************************
     // constants and loggers
 
-    /*
+    /**
      * action-string prefix for a signal action
      */
     final public static String signalActionPrefix = "signal ";
@@ -158,22 +158,6 @@ abstract public class InputMode
     // new methods exposed
 
     /**
-     * Activate this mode.
-     */
-    protected void activate() {
-        setActiveMode(this);
-
-        if (cursor == null) {
-            inputManager.setCursorVisible(false);
-        } else {
-            inputManager.setMouseCursor(cursor);
-            inputManager.setCursorVisible(true);
-        }
-
-        mapBoundHotkeys();
-    }
-
-    /**
      * Add the specified action name without binding anything to it.
      *
      * @param name action name (not null)
@@ -242,15 +226,6 @@ abstract public class InputMode
 
         String actionName = getActionName(hotkey);
         return actionName != null;
-    }
-
-    /**
-     * Deactivate this mode.
-     */
-    protected void deactivate() {
-        setActiveMode(null);
-        inputManager.setCursorVisible(false);
-        unmapBoundHotkeys();
     }
 
     /**
@@ -475,6 +450,31 @@ abstract public class InputMode
     }
     // *************************************************************************
     // new protected methods
+
+    /**
+     * Activate this mode.
+     */
+    protected void activate() {
+        setActiveMode(this);
+
+        if (cursor == null) {
+            inputManager.setCursorVisible(false);
+        } else {
+            inputManager.setMouseCursor(cursor);
+            inputManager.setCursorVisible(true);
+        }
+
+        mapBoundHotkeys();
+    }
+
+    /**
+     * Deactivate this mode.
+     */
+    protected void deactivate() {
+        setActiveMode(null);
+        inputManager.setCursorVisible(false);
+        unmapBoundHotkeys();
+    }
 
     /**
      * Add the default hotkey bindings. The bindings to be used if no custom
