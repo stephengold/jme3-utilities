@@ -161,9 +161,10 @@ public class HelpUtils {
         Validate.nonNull(actionName, "action name");
 
         String result = actionName;
-        if (result.startsWith("signal ")) {
-            result = MyString.remainder(result, "signal ");
+        if (result.startsWith(InputMode.signalActionPrefix)) {
+            result = MyString.remainder(result, InputMode.signalActionPrefix);
         }
+
         if (result.startsWith("SIMPLEAPP_")) {
             String suffix = MyString.remainder(result, "SIMPLEAPP_");
             result = MyString.firstToLower(suffix);
