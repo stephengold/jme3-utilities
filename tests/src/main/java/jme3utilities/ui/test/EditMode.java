@@ -28,6 +28,7 @@ package jme3utilities.ui.test;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
+import com.jme3.scene.Node;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
@@ -51,6 +52,10 @@ class EditMode extends InputMode {
     // *************************************************************************
     // fields
 
+    /**
+     * help node for this mode
+     */
+    private Node helpNode;
     /**
      * text that's being edited
      */
@@ -79,6 +84,24 @@ class EditMode extends InputMode {
     // InputMode methods
 
     /**
+     * Activate this mode.
+     */
+    @Override
+    protected void activate() {
+        super.activate();
+        guiNode.attachChild(helpNode);
+    }
+
+    /**
+     * Deactivate this mode.
+     */
+    @Override
+    protected void deactivate() {
+        super.deactivate();
+        helpNode.removeFromParent();
+    }
+
+    /**
      * Add all hotkey bindings for this mode.
      */
     @Override
@@ -95,10 +118,8 @@ class EditMode extends InputMode {
         bind("commit", KeyInput.KEY_RETURN, KeyInput.KEY_TAB);
         bind("signal shift", KeyInput.KEY_LSHIFT, KeyInput.KEY_RSHIFT);
         bind(SimpleApplication.INPUT_MAPPING_EXIT, KeyInput.KEY_ESCAPE);
-        /*
-         * Ask the application build to the help node for this mode.
-         */
-        ((TestTwoModes) actionApplication).buildEditHelp(this);
+
+        helpNode = ((TestTwoModes) actionApplication).buildHelpNode(this);
     }
 
     /**

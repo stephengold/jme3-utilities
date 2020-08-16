@@ -77,19 +77,16 @@ public class TestTwoModes extends ActionApplication {
      * help for the default input mode
      */
     private Node defaultHelp;
-    /**
-     * help for edit mode
-     */
-    private Node editHelp;
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Build the help node for edit mode.
+     * Build the help node for the specified mode.
      *
-     * @param editMode the input mode (not null)
+     * @param mode the input mode (not null)
+     * @return a new orphan Node, suitable for attachment to the GUI node
      */
-    void buildEditHelp(EditMode editMode) {
+    Node buildHelpNode(InputMode mode) {
         float x = 10f;
         float y = cam.getHeight() - 30f;
         float width = cam.getWidth() - 20f;
@@ -97,7 +94,9 @@ public class TestTwoModes extends ActionApplication {
         Rectangle bounds = new Rectangle(x, y, width, height);
 
         float space = 20f;
-        editHelp = HelpUtils.buildNode(editMode, bounds, guiFont, space);
+        Node result = HelpUtils.buildNode(mode, bounds, guiFont, space);
+
+        return result;
     }
 
     /**
@@ -142,7 +141,6 @@ public class TestTwoModes extends ActionApplication {
         editMode.setEnabled(false);
         dim.setEnabled(true);
 
-        editHelp.removeFromParent();
         guiNode.attachChild(defaultHelp);
     }
     // *************************************************************************
@@ -191,14 +189,7 @@ public class TestTwoModes extends ActionApplication {
         /*
          * Build and attach the help node for default mode.
          */
-        float x = 10f;
-        float y = cam.getHeight() - 30f;
-        float width = cam.getWidth() - 20f;
-        float height = cam.getHeight() - 20f;
-        Rectangle bounds = new Rectangle(x, y, width, height);
-
-        float space = 20f;
-        defaultHelp = HelpUtils.buildNode(dim, bounds, guiFont, space);
+        defaultHelp = buildHelpNode(dim);
         guiNode.attachChild(defaultHelp);
     }
 
@@ -222,7 +213,6 @@ public class TestTwoModes extends ActionApplication {
             editMode.setEnabled(true);
 
             defaultHelp.removeFromParent();
-            guiNode.attachChild(editHelp);
             return;
         }
 
