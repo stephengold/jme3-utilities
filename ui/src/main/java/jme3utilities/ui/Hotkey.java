@@ -401,7 +401,7 @@ public class Hotkey {
      * @param actionString action string (not null)
      * @param inputManager application's input manager (not null)
      */
-    public void map(String actionString, InputManager inputManager) {
+    void map(String actionString, InputManager inputManager) {
         Validate.nonNull(actionString, "action");
         Validate.nonNull(inputManager, "manager");
 
@@ -425,7 +425,7 @@ public class Hotkey {
      * @param actionString action string (not null)
      * @param inputManager which input manager (not null)
      */
-    public void unmap(String actionString, InputManager inputManager) {
+    void unmap(String actionString, InputManager inputManager) {
         Validate.nonNull(actionString, "action");
         Validate.nonNull(inputManager, "manager");
 
