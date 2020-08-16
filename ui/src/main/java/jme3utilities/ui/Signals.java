@@ -28,6 +28,7 @@ package jme3utilities.ui;
 
 import com.jme3.input.controls.ActionListener;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -36,9 +37,9 @@ import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
- * Track the active/inactive status of named command signals. A signal may
- * originate from multiple sources such as buttons or hotkeys. A signal is
- * active as long as any of its sources is active.
+ * Track the active/inactive status of named signals. A signal may originate
+ * from multiple sources such as buttons or hotkeys. A signal is active as long
+ * as any of its sources is active. TODO rename SignalTracker
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -57,7 +58,7 @@ public class Signals implements ActionListener {
     /**
      * map signal names to statuses
      */
-    final private Map<String, TreeSet<Integer>> statusMap = new TreeMap<>();
+    final private Map<String, Set<Integer>> statusMap = new TreeMap<>();
     // *************************************************************************
     // new methods exposed
 
@@ -65,12 +66,12 @@ public class Signals implements ActionListener {
      * Add a new signal with all of its sources inactive. If the signal name is
      * already in use, this has no effect.
      *
-     * @param name name of the command signal (not null)
+     * @param name the name for the signal (not null)
      */
     public void add(String name) {
         Validate.nonNull(name, "signal name");
 
-        TreeSet<Integer> status = statusMap.get(name);
+        Set<Integer> status = statusMap.get(name);
         if (status == null) {
             status = new TreeSet<>();
             statusMap.put(name, status);
@@ -80,13 +81,13 @@ public class Signals implements ActionListener {
     /**
      * Test whether the named signal is active.
      *
-     * @param name the signal's name (not null)
+     * @param name the name of the signal (not null)
      * @return true if any of the signal's sources is active, otherwise false
      */
     public boolean test(String name) {
         Validate.nonNull(name, "signal name");
 
-        TreeSet<Integer> status = statusMap.get(name);
+        Set<Integer> status = statusMap.get(name);
         if (status == null) {
             logger.log(Level.WARNING,
                     "Testing a signal which has not yet been added: {0}.",
@@ -131,16 +132,16 @@ public class Signals implements ActionListener {
     /**
      * Update whether a named signal source is active.
      *
-     * @param name signal's name (not null)
-     * @param sourceIndex index of the signal source (key or button) which is
-     * being updated
-     * @param newState true if the source is active; false is the source is
-     * inactive
+     * @param name the signal's name (not null)
+     * @param sourceIndex the index of the signal source (key or button) which
+     * is being updated
+     * @param newState true if the source has gone active; false is the source
+     * has gone inactive
      */
     private void update(String name, int sourceIndex, boolean newState) {
         assert name != null;
 
-        TreeSet<Integer> status = statusMap.get(name);
+        Set<Integer> status = statusMap.get(name);
         if (status == null) {
             logger.log(Level.WARNING, "Unknown signal: {0}",
                     MyString.quote(name));
