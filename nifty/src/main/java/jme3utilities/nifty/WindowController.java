@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -106,16 +106,6 @@ public class WindowController extends GuiAppState {
         Element element = getWindow().getElement();
         assert element != null;
         return element;
-    }
-
-    /**
-     * Read the id of the window.
-     *
-     * @return Nifty id string (not null)
-     */
-    public String getId() {
-        assert controlId != null;
-        return controlId;
     }
 
     /**
