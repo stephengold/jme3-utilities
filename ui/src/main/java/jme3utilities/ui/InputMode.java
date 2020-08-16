@@ -441,12 +441,7 @@ abstract public class InputMode
         assert isInitialized();
 
         String hotkeyName = hotkey.getName();
-        if (hotkeyBindings.containsKey(hotkeyName)) {
-            /*
-             * Remove the binding.
-             */
-            hotkeyBindings.remove(hotkeyName);
-        }
+        hotkeyBindings.remove(hotkeyName);
     }
     // *************************************************************************
     // new protected methods
