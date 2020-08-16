@@ -64,12 +64,6 @@ jMonkeyEngine, however, retain their original names, which began with `com.jme3`
 
 Both the source code and the pre-built libraries are compatible with JDK 7.
 
-World coordinate system:
-
- + the `+X` axis points toward the northern horizon
- + the `+Y` axis points up (toward the zenith)
- + the `+Z` axis points toward the eastern horizon
-
 [Jump to table of contents](#toc)
 
 <a name="history"/>
