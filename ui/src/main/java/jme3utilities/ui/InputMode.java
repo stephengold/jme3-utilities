@@ -265,6 +265,20 @@ abstract public class InputMode
     }
 
     /**
+     * Bind the named signal to the specified key codes, but don't map it yet.
+     * Any existing bindings for those keys are removed.
+     *
+     * @param actionName the name of the action (not null)
+     * @param keyCodes key codes from {@link com.jme3.input.KeyInput}
+     */
+    public void bindSignal(String signalName, int... keyCodes) {
+        Validate.nonNull(signalName, "action name");
+
+        String actionName = InputMode.signalActionPrefix + signalName;
+        bind(actionName, keyCodes);
+    }
+
+    /**
      * Determine the path to the configuration asset.
      *
      * @return current asset path (or null if the bindings are not

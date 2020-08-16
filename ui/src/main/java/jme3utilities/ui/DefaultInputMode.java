@@ -147,20 +147,6 @@ class DefaultInputMode extends InputMode {
     // private methods
 
     /**
-     * Bind the named signal to a keyboard key, but don't map it yet.
-     *
-     * @param signalName which signal (not null, not empty)
-     * @param keyCode code for hotkey
-     */
-    private void bindSignal(String signalName, int keyCode) {
-        assert signalName != null;
-        assert !signalName.isEmpty();
-
-        String actionName = InputMode.signalActionPrefix + signalName;
-        bind(actionName, keyCode);
-    }
-
-    /**
      * Delete any mapping of the specified action string in the specified input
      * manager.
      *

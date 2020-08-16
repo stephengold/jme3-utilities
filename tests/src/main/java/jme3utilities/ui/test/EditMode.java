@@ -116,7 +116,7 @@ class EditMode extends InputMode {
         bind("appendSpace", KeyInput.KEY_SPACE);
         bind("backspace", KeyInput.KEY_BACK, KeyInput.KEY_DELETE);
         bind("commit", KeyInput.KEY_RETURN, KeyInput.KEY_TAB);
-        bind("signal shift", KeyInput.KEY_LSHIFT, KeyInput.KEY_RSHIFT);
+        bindSignal("shift", KeyInput.KEY_LSHIFT, KeyInput.KEY_RSHIFT);
         bind(SimpleApplication.INPUT_MAPPING_EXIT, KeyInput.KEY_ESCAPE);
 
         helpNode = ((TestTwoModes) actionApplication).buildHelpNode(this);
