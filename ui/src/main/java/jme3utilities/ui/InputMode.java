@@ -160,7 +160,7 @@ abstract public class InputMode
     /**
      * Activate this mode.
      */
-    public void activate() {
+    protected void activate() {
         setActiveMode(this);
 
         if (cursor == null) {
@@ -247,7 +247,7 @@ abstract public class InputMode
     /**
      * Deactivate this mode.
      */
-    public void deactivate() {
+    protected void deactivate() {
         setActiveMode(null);
         inputManager.setCursorVisible(false);
         unmapBoundHotkeys();
@@ -375,7 +375,7 @@ abstract public class InputMode
         int numSuspended = suspendedModes.size();
         assert numSuspended > 0 : numSuspended;
 
-        InputMode activeMode = InputMode.getActiveMode();
+        InputMode activeMode = InputMode.getActiveMode(); // TODO rename var
         if (activeMode != null) {
             activeMode.setEnabled(false);
         }
