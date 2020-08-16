@@ -92,10 +92,6 @@ abstract public class InputMode
      */
     final private static int numCodes = KeyInput.KEY_LAST + 4;
     /**
-     * action-string prefix for a signal action
-     */
-    final public static String signalActionPrefix = "signal ";
-    /**
      * message logger for this class
      */
     final private static Logger logger
@@ -104,6 +100,10 @@ abstract public class InputMode
      * action-string prefix for a combo action
      */
     final public static String comboActionPrefix = "combo ";
+    /**
+     * action-string prefix for a signal action
+     */
+    final public static String signalActionPrefix = "signal ";
     // *************************************************************************
     // fields
 
@@ -129,10 +129,6 @@ abstract public class InputMode
     @SuppressWarnings("unchecked")
     final private Map<Combo, String>[] comboBindings = new Map[numCodes];
     /**
-     * LIFO stack of suspended input modes - TODO re-order fields
-     */
-    final private static Stack<InputMode> suspendedModes = new Stack<>();
-    /**
      * map from short names to initialized input modes
      */
     final private static Map<String, InputMode> modes = new TreeMap<>();
@@ -146,6 +142,10 @@ abstract public class InputMode
      * all known action names, bound and unbound
      */
     final private Set<String> actionNames = new TreeSet<>();
+    /**
+     * LIFO stack of suspended input modes
+     */
+    final private static Stack<InputMode> suspendedModes = new Stack<>();
     /**
      * path to configuration asset for loading and saving hotkey bindings (or
      * null if not loadable/savable): set by #setConfigPath()
