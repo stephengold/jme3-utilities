@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-ui library and related tests
 
-## Version 0.9.0 released on TBD
+## Version 0.9.0 released on 16 August 2020
 
  + Redesigned the API of the `InputMode` class:
    + Renamed the `findHotkeys()`, `getActionName()`, `getConfigPath()`,
