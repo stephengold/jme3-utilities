@@ -123,7 +123,7 @@ class HotkeyItem {
         String name = hotkey.getName();
         String result = String.format(" [ %s ]    ... ", name);
         if (isBound()) {
-            String action = mode.getActionName(hotkey);
+            String action = mode.findActionName(hotkey);
             result += String.format("bound to %s", MyString.quote(action));
         } else {
             result += "not bound";

@@ -524,7 +524,7 @@ public class BindScreen
 
         Hotkey hotkey = item.getHotkey();
         if (subjectMode.binds(hotkey)) {
-            String actionName = subjectMode.getActionName(hotkey);
+            String actionName = subjectMode.findActionName(hotkey);
             ActionItem actionItem = findActionItem(actionName);
             ListBox<ActionItem> actionBox = getActionBox();
             actionBox.selectItem(actionItem);

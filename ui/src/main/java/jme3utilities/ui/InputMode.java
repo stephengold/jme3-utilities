@@ -224,7 +224,7 @@ abstract public class InputMode
     public boolean binds(Hotkey hotkey) {
         Validate.nonNull(hotkey, "hotkey");
 
-        String actionName = getActionName(hotkey);
+        String actionName = findActionName(hotkey);
         return actionName != null;
     }
 
@@ -237,6 +237,19 @@ abstract public class InputMode
     public String configPath() {
         String path = configAssetPath;
         return path;
+    }
+
+    /**
+     * Look up the action bound to a hotkey.
+     *
+     * @param hotkey (not null)
+     * @return hotkey's action name, or null if the hotkey isn't bound
+     */
+    public String findActionName(Hotkey hotkey) {
+        String keyName = hotkey.getName();
+        String actionName = hotkeyBindings.getProperty(keyName);
+
+        return actionName;
     }
 
     /**
@@ -272,19 +285,6 @@ abstract public class InputMode
         Validate.nonNull(shortName, "name");
         InputMode result = modes.get(shortName);
         return result;
-    }
-
-    /**
-     * Look up the action bound to a hotkey.
-     *
-     * @param hotkey (not null)
-     * @return hotkey's action name, or null if the hotkey isn't bound
-     */
-    public String getActionName(Hotkey hotkey) {
-        String keyName = hotkey.getName();
-        String actionName = hotkeyBindings.getProperty(keyName);
-
-        return actionName;
     }
 
     /**
