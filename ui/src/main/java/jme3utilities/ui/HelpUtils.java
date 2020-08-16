@@ -148,34 +148,6 @@ public class HelpUtils {
 
         return result;
     }
-
-    /**
-     * For the specified InputMode, construct a Map from beautified action names
-     * to comma-separated, compressed hotkey names.
-     *
-     * @param inputMode (not null, unaffected)
-     * @return a new String-to-String Map
-     */
-    public static Map<String, String> mapActions(InputMode inputMode) {
-        List<String> actionNames = inputMode.listActionNames();
-        Map<String, String> actionsToHots = new TreeMap<>();
-        for (String actionName : actionNames) {
-            Collection<String> hotkeyNames = inputMode.findHotkeys(actionName);
-            for (String hotkeyName : hotkeyNames) {
-                String action = beautify(actionName);
-                String hot = compress(hotkeyName);
-                if (actionsToHots.containsKey(action)) {
-                    String oldList = actionsToHots.get(action);
-                    String newList = oldList + "/" + hot;
-                    actionsToHots.put(action, newList);
-                } else {
-                    actionsToHots.put(action, hot);
-                }
-            }
-        }
-
-        return actionsToHots;
-    }
     // *************************************************************************
     // private methods
 
@@ -251,5 +223,33 @@ public class HelpUtils {
         result.setMaterial(backgroundMaterial);
 
         return result;
+    }
+
+    /**
+     * For the specified InputMode, construct a Map from beautified action names
+     * to comma-separated, compressed hotkey names.
+     *
+     * @param inputMode (not null, unaffected)
+     * @return a new String-to-String Map
+     */
+    private static Map<String, String> mapActions(InputMode inputMode) {
+        List<String> actionNames = inputMode.listActionNames();
+        Map<String, String> actionsToHots = new TreeMap<>();
+        for (String actionName : actionNames) {
+            Collection<String> hotkeyNames = inputMode.findHotkeys(actionName);
+            for (String hotkeyName : hotkeyNames) {
+                String action = beautify(actionName);
+                String hot = compress(hotkeyName);
+                if (actionsToHots.containsKey(action)) {
+                    String oldList = actionsToHots.get(action);
+                    String newList = oldList + "/" + hot;
+                    actionsToHots.put(action, newList);
+                } else {
+                    actionsToHots.put(action, hot);
+                }
+            }
+        }
+
+        return actionsToHots;
     }
 }
