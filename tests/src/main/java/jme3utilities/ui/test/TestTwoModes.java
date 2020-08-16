@@ -151,7 +151,7 @@ public class TestTwoModes extends ActionApplication {
      */
     @Override
     public void actionInitializeApplication() {
-        flyCam.setDragToRotate(true); // TODO only works for dragToRotate=true?
+        flyCam.setDragToRotate(true);
         flyCam.setMoveSpeed(5f);
         cam.setLocation(new Vector3f(-4f, 4f, 9f));
         cam.setRotation(new Quaternion(0.038f, 0.96148f, -0.1897f, 0.1951f));

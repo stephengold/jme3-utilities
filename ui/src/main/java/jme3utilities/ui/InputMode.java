@@ -268,7 +268,7 @@ abstract public class InputMode
      * Bind the named signal to the specified key codes, but don't map it yet.
      * Any existing bindings for those keys are removed.
      *
-     * @param actionName the name of the action (not null)
+     * @param signalName the name of the signal (not null)
      * @param keyCodes key codes from {@link com.jme3.input.KeyInput}
      */
     public void bindSignal(String signalName, int... keyCodes) {
