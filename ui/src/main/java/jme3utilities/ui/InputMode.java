@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -114,9 +115,9 @@ abstract public class InputMode
      */
     private JmeCursor cursor = null;
     /**
-     * LIFO stack of suspended input modes TODO use a Stack
+     * LIFO stack of suspended input modes
      */
-    final private static List<InputMode> suspendedModes = new ArrayList<>(4);
+    final private static Stack<InputMode> suspendedModes = new Stack<>();
     /**
      * map from short names to initialized input modes
      */
@@ -379,10 +380,8 @@ abstract public class InputMode
             activeMode.setEnabled(false);
         }
 
-        InputMode mostRecent = suspendedModes.remove(numSuspended - 1);
-        if (mostRecent != null) {
-            mostRecent.resume();
-        }
+        InputMode mostRecent = suspendedModes.pop();
+        mostRecent.resume();
     }
 
     /**
@@ -438,8 +437,8 @@ abstract public class InputMode
         InputMode oldMode = InputMode.getActiveMode();
         if (oldMode != null) {
             oldMode.suspend();
+            suspendedModes.push(oldMode);
         }
-        suspendedModes.add(oldMode);
 
         if (newMode != null) {
             newMode.setEnabled(true);
