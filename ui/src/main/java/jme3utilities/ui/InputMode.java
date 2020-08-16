@@ -253,12 +253,12 @@ abstract public class InputMode
     }
 
     /**
-     * Find the names of all hotkeys bound to a named action.
+     * Enumerate all hotkeys bound to a named action.
      *
      * @param actionName name of action (not null)
-     * @return new collection of hotkey names in lexicographic order
+     * @return a new collection of names in lexicographic order
      */
-    public Collection<String> findHotkeys(String actionName) {
+    public Collection<String> listHotkeys(String actionName) {
         Validate.nonNull(actionName, "name");
 
         Collection<String> result = new TreeSet<>();

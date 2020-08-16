@@ -236,7 +236,7 @@ public class HelpUtils {
         List<String> actionNames = inputMode.listActionNames();
         Map<String, String> actionsToHots = new TreeMap<>();
         for (String actionName : actionNames) {
-            Collection<String> hotkeyNames = inputMode.findHotkeys(actionName);
+            Collection<String> hotkeyNames = inputMode.listHotkeys(actionName);
             for (String hotkeyName : hotkeyNames) {
                 String action = beautify(actionName);
                 String hot = compress(hotkeyName);

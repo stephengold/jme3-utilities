@@ -92,7 +92,7 @@ class ActionItem {
     @Override
     public String toString() {
         String result = String.format("  %s", MyString.quote(actionName));
-        Collection<String> names = mode.findHotkeys(actionName);
+        Collection<String> names = mode.listHotkeys(actionName);
         if (!names.isEmpty()) {
             result += String.format(":     %s", formatList(names));
         }
