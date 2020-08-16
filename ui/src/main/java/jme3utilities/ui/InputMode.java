@@ -350,9 +350,9 @@ abstract public class InputMode
         int numSuspended = suspendedModes.size();
         assert numSuspended > 0 : numSuspended;
 
-        InputMode activeMode = InputMode.getActiveMode(); // TODO rename var
-        if (activeMode != null) {
-            activeMode.setEnabled(false);
+        InputMode active = InputMode.getActiveMode();
+        if (active != null) {
+            active.setEnabled(false);
         }
 
         InputMode mostRecent = suspendedModes.pop();
