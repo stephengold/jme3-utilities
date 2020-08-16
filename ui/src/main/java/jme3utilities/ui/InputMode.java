@@ -229,7 +229,7 @@ abstract public class InputMode
     }
 
     /**
-     * Read the path to the configuration asset.
+     * Determine the path to the configuration asset.
      *
      * @return current asset path (or null if the bindings are not
      * loadable/savable)
@@ -393,7 +393,7 @@ abstract public class InputMode
     }
 
     /**
-     * Read the short-form name for this mode.
+     * Determine the short-form name for this mode.
      *
      * @return name (not null)
      */

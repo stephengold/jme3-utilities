@@ -175,7 +175,7 @@ abstract public class ActionApplication
     }
 
     /**
-     * Read the effective speed of physics and animations.
+     * Determine the effective speed of physics and animations.
      *
      * @return the speed (&gt;0, standard speed &rarr; 1)
      */

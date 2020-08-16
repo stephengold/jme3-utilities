@@ -101,7 +101,7 @@ public class HelpUtils {
      * @param font (not null, unaffected)
      * @param space amount of extra space between hotkey descriptions (in
      * pixels)
-     * @return a new Node, suitable for attachment to the GUI node
+     * @return a new orphan Node, suitable for attachment to the GUI node
      */
     public static Node buildNode(InputMode inputMode, Rectangle bounds,
             BitmapFont font, float space) {

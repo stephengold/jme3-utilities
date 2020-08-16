@@ -117,7 +117,7 @@ public class Locators {
     }
 
     /**
-     * Read the root path of the sole locator in the current configuration.
+     * Determine the root path of the sole locator in the current configuration.
      *
      * @return root path, or "" if there isn't exactly one locator or if the
      * locator isn't a FileLocator/ZipLocator
@@ -298,7 +298,7 @@ public class Locators {
     }
 
     /**
-     * Read the root path of the sole locator in this configuration.
+     * Determine the root path of the sole locator in this configuration.
      *
      * @return root path, or "" if there isn't exactly one locator or if the
      * locator isn't a FileLocator/ZipLocator

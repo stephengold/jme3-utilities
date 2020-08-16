@@ -55,7 +55,7 @@ public class UiVersion {
     // new methods exposed
 
     /**
-     * Read the terse version string for this library.
+     * Determine the terse version string for this library.
      *
      * @return branch and revision (not null, not empty)
      */

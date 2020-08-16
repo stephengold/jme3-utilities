@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2019, Stephen Gold
+ Copyright (c) 2018-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -103,7 +103,7 @@ public class CameraOrbitAppState extends ActionAppState {
     // new methods exposed
 
     /**
-     * Read the signal name for orbiting in the counter-clockwise (+Y)
+     * Determine the signal name for orbiting in the counter-clockwise (+Y)
      * direction.
      *
      * @return the name (not null, not empty)
@@ -115,7 +115,7 @@ public class CameraOrbitAppState extends ActionAppState {
     }
 
     /**
-     * Read the center location.
+     * Determine the center location.
      *
      * @return a location vector (not null)
      */
@@ -125,7 +125,7 @@ public class CameraOrbitAppState extends ActionAppState {
     }
 
     /**
-     * Read the signal name for orbiting in the clockwise (-Y) direction.
+     * Determine the signal name for orbiting in the clockwise (-Y) direction.
      *
      * @return the name (not null, not empty)
      */
@@ -136,7 +136,7 @@ public class CameraOrbitAppState extends ActionAppState {
     }
 
     /**
-     * Read the rate of orbiting.
+     * Determine the rate of orbiting.
      *
      * @return the angular rate (in radians/second, &ge;0, default=1)
      */

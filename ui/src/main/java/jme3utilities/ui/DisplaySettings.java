@@ -204,7 +204,7 @@ public class DisplaySettings {
     }
 
     /**
-     * Read the color depth.
+     * Determine the color depth.
      *
      * @return depth (in bits per pixel, &gt;0)
      */
@@ -273,7 +273,7 @@ public class DisplaySettings {
     }
 
     /**
-     * Read the display height.
+     * Determine the display height.
      *
      * @return height (in pixels, &gt;0)
      */
@@ -362,7 +362,7 @@ public class DisplaySettings {
     }
 
     /**
-     * Read the sampling factor for multi-sample anti-aliasing (MSAA).
+     * Determine the sampling factor for multi-sample anti-aliasing (MSAA).
      *
      * @return sampling factor (in samples per pixel, &ge;0)
      */
@@ -373,8 +373,8 @@ public class DisplaySettings {
     }
 
     /**
-     * Read the display's refresh rate, which is relevant only to full-screen
-     * displays.
+     * Determine the display's refresh rate, which is relevant only to
+     * full-screen displays.
      *
      * @return frequency (in Hertz, &ge;1) or -1 for unknown
      */
@@ -536,7 +536,7 @@ public class DisplaySettings {
     }
 
     /**
-     * Read the display width.
+     * Determine the display width.
      *
      * @return width (in pixels, &gt;0)
      */
