@@ -229,6 +229,17 @@ abstract public class InputMode
     }
 
     /**
+     * Read the path to the configuration asset.
+     *
+     * @return current asset path (or null if the bindings are not
+     * loadable/savable)
+     */
+    public String configPath() {
+        String path = configAssetPath;
+        return path;
+    }
+
+    /**
      * Find the names of all hotkeys bound to a named action.
      *
      * @param actionName name of action (not null)
@@ -283,27 +294,6 @@ abstract public class InputMode
      */
     public static InputMode getActiveMode() {
         return activeMode;
-    }
-
-    /**
-     * Read the path to the configuration asset.
-     *
-     * @return current asset path (or null if the bindings are not
-     * loadable/savable)
-     */
-    public String configPath() {
-        String path = configAssetPath;
-        return path;
-    }
-
-    /**
-     * Read the short-form name for this mode.
-     *
-     * @return name (not null)
-     */
-    public String shortName() {
-        assert shortName != null;
-        return shortName;
     }
 
     /**
@@ -400,6 +390,16 @@ abstract public class InputMode
     public void setCursor(JmeCursor newCursor) {
         assert !isInitialized();
         cursor = newCursor;
+    }
+
+    /**
+     * Read the short-form name for this mode.
+     *
+     * @return name (not null)
+     */
+    public String shortName() {
+        assert shortName != null;
+        return shortName;
     }
 
     /**
