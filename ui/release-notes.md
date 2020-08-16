@@ -1,5 +1,28 @@
 # release log for the jme3-utilities-ui library and related tests
 
+## Version 0.9.0 released on TBD
+
+ + Redesigned the API of the `InputMode` class:
+   + Renamed the `findHotkeys()`, `getActionName()`, `getConfigPath()`,
+     and `getShortName()` methods.
+   + Privatized the `suspend()` and `resume()` methods.
+   + Protected the `activate()` and `deactivate()` methods.
+   + Extended the `bind(String, int)` method to accept multiple keycodes.
+ + Redesigned the API of the `Hotkey` class:
+   + De-publicized the `map()` and `unmap()` methods.
+   + Renamed the `getButtonCode()`, `getCode()`, `getKeyCode()`, and `getName()`
+     methods.
+ + Other changes to the library API:
+   + Deleted the `exists()` method from the `Signals` class.
+   + Privatized the `mapActions()` method from the `HelpUtils` class.
+ + Implemented combos and combo actions, including a `Combo` class.
+ + Implemented a suspend/resume stack and added `suspendAndActivate()`
+   and `resumeLifo()` methods to the `InputMode` class.
+ + Added the `bindSignal()` convenience methods to the `InputMode` class.
+ + Added the `TestCaos`, `TestCombo`, `TestCursors`,
+   and `TestTwoModes` applications.
+ + Based on version 6.0.0 of the Heart Library.
+
 ## Version 0.8.3 released on 27 April 2020
 
  + Updated the `DisplaySettings` class to allow BPP, MSAA, and gamma-correction
