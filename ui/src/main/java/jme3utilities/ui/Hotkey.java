@@ -66,17 +66,17 @@ public class Hotkey {
     // fields
 
     /**
-     * a universal code for this hotkey: either a key code (from
+     * universal code for this hotkey: either a key code (from
      * {@link com.jme3.input.KeyInput}) or buttonFirst + a button code (from
      * {@link com.jme3.input.MouseInput})
      */
     final private int code;
     /**
-     * map to look up a hotkey by its description
+     * map descriptions to hotkeys
      */
     final private static Map<String, Hotkey> byName = new TreeMap<>();
     /**
-     * map to look up a hotkey by its universal code
+     * map universal codes to hotkeys
      */
     final private static Map<Integer, Hotkey> byUniversalCode = new TreeMap<>();
     /**
@@ -91,7 +91,7 @@ public class Hotkey {
     // constructors
 
     /**
-     * Instantiate a hotkey with the specified universal code, name, and
+     * Instantiate a Hotkey with the specified universal code, name, and
      * trigger.
      *
      * @param code a universal code: either a key code (from
@@ -113,6 +113,36 @@ public class Hotkey {
     }
     // *************************************************************************
     // new methods exposed
+
+    /**
+     * Determine the button code of this hotkey.
+     *
+     * @return a button code (from {@link com.jme3.input.MouseInput}) or -1 if
+     * none
+     */
+    public int buttonCode() {
+        int buttonCode;
+        if (code < firstButton) {
+            buttonCode = -1;
+        } else {
+            buttonCode = code - firstButton;
+        }
+
+        assert buttonCode >= -1 : buttonCode;
+        assert buttonCode <= lastButton - firstButton : buttonCode;
+        return buttonCode;
+    }
+
+    /**
+     * Determine the universal code of this hotkey.
+     *
+     * @return a universal code
+     */
+    public int code() {
+        assert code >= 0 : code;
+        assert code <= lastButton : code;
+        return code;
+    }
 
     /**
      * Find a hotkey by its universal code.
@@ -162,65 +192,6 @@ public class Hotkey {
         Validate.inRange(keyCode, "key code", 0, KeyInput.KEY_LAST);
         Hotkey result = find(keyCode);
         return result;
-    }
-
-    /**
-     * Read the universal code of this hotkey.
-     *
-     * @return a universal code
-     */
-    public int code() {
-        assert code >= 0 : code;
-        assert code <= lastButton : code;
-        return code;
-    }
-
-    /**
-     * Read the button code of this hotkey.
-     *
-     * @return a button code (from {@link com.jme3.input.MouseInput}) or -1 if
-     * none
-     */
-    public int buttonCode() {
-        int buttonCode;
-        if (code < firstButton) {
-            buttonCode = -1;
-        } else {
-            buttonCode = code - firstButton;
-        }
-
-        assert buttonCode >= -1 : buttonCode;
-        assert buttonCode <= lastButton - firstButton : buttonCode;
-        return buttonCode;
-    }
-
-    /**
-     * Read the key code of this hotkey.
-     *
-     * @return a key code (from {@link com.jme3.input.KeyInput}) or -1 if none
-     */
-    public int keyCode() {
-        int keyCode;
-        if (code < firstButton) {
-            keyCode = code;
-        } else {
-            keyCode = -1;
-        }
-
-        assert keyCode >= -1 : keyCode;
-        assert keyCode <= KeyInput.KEY_LAST : keyCode;
-        return keyCode;
-    }
-
-    /**
-     * Read the name of this hotkey.
-     *
-     * @return descriptive name (not null, not empty)
-     */
-    public String name() {
-        assert name != null;
-        assert !name.isEmpty();
-        return name;
     }
 
     /**
@@ -392,6 +363,24 @@ public class Hotkey {
     }
 
     /**
+     * Determine the key code of this hotkey.
+     *
+     * @return a key code (from {@link com.jme3.input.KeyInput}) or -1 if none
+     */
+    public int keyCode() {
+        int keyCode;
+        if (code < firstButton) {
+            keyCode = code;
+        } else {
+            keyCode = -1;
+        }
+
+        assert keyCode >= -1 : keyCode;
+        assert keyCode <= KeyInput.KEY_LAST : keyCode;
+        return keyCode;
+    }
+
+    /**
      * Enumerate all known hotkeys.
      *
      * @return a new list
@@ -417,6 +406,17 @@ public class Hotkey {
         Validate.nonNull(inputManager, "manager");
 
         inputManager.addMapping(actionString, trigger);
+    }
+
+    /**
+     * Determine the name of this hotkey.
+     *
+     * @return descriptive name (not null, not empty)
+     */
+    public String name() {
+        assert name != null;
+        assert !name.isEmpty();
+        return name;
     }
 
     /**
