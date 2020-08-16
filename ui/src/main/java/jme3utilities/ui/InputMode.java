@@ -291,7 +291,7 @@ abstract public class InputMode
      * @return current asset path (or null if the bindings are not
      * loadable/savable)
      */
-    public String getConfigPath() {
+    public String configPath() {
         String path = configAssetPath;
         return path;
     }
@@ -301,7 +301,7 @@ abstract public class InputMode
      *
      * @return name (not null)
      */
-    public String getShortName() {
+    public String shortName() {
         assert shortName != null;
         return shortName;
     }
@@ -320,7 +320,7 @@ abstract public class InputMode
      * Load a set of hotkey bindings from the configuration asset.
      */
     public void loadBindings() {
-        String assetPath = getConfigPath();
+        String assetPath = configPath();
         if (assetPath == null) {
             logger.log(Level.WARNING,
                     "bindings not loaded: config path not set");
@@ -365,7 +365,7 @@ abstract public class InputMode
     public void saveBindings() {
         assert isInitialized();
 
-        String assetPath = getConfigPath();
+        String assetPath = configPath();
         if (assetPath == null) {
             logger.log(Level.WARNING,
                     "Hotkey bindings not saved: config path not set");
@@ -598,7 +598,7 @@ abstract public class InputMode
          * Attempt to load custom hotkey bindings from the configuration asset.
          * If that fails, load the default bindings for this mode.
          */
-        String path = getConfigPath();
+        String path = configPath();
         try {
             loadBindings(path);
 

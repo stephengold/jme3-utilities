@@ -315,10 +315,10 @@ public class BindScreen
 
         String modeStatus = String.format(
                 "Edit hotkey bindings for %s input mode",
-                MyString.quote(subjectMode.getShortName()));
+                MyString.quote(subjectMode.shortName()));
         setStatusText("modeStatus", modeStatus);
 
-        String configPath = subjectMode.getConfigPath();
+        String configPath = subjectMode.configPath();
         if (configPath == null) {
             setStatusText("configStatus", "");
         } else {
@@ -553,7 +553,7 @@ public class BindScreen
         setButtonText("bind", bindLabel);
 
         String returnLabel = String.format("Return to %s mode",
-                MyString.quote(subjectMode.getShortName()));
+                MyString.quote(subjectMode.shortName()));
         setButtonText("return", returnLabel);
 
         String unbindLabel = "";
@@ -564,7 +564,7 @@ public class BindScreen
 
         String loadLabel = "";
         String saveLabel = "";
-        if (subjectMode.getConfigPath() != null) {
+        if (subjectMode.configPath() != null) {
             loadLabel = "Load from file";
             saveLabel = "Save to file";
         }

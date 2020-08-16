@@ -604,7 +604,7 @@ public class DsScreen
 
         InputMode defaultMode = actionApplication.getDefaultInputMode();
         String returnLabel = String.format("Return to %s mode",
-                MyString.quote(defaultMode.getShortName()));
+                MyString.quote(defaultMode.shortName()));
         setButtonText("return", returnLabel);
     }
 }
