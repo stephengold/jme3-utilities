@@ -5,7 +5,6 @@
 description = 'demos, examples, and tests that do not generate reports'
 
 dependencies {
-    implementation "com.beust:jcommander:$jcommanderVersion"
     runtimeOnly 'com.github.nifty-gui:nifty-style-black:1.4.3'
     runtimeOnly "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
     implementation "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
