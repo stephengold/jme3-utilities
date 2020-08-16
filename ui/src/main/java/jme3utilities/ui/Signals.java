@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -78,24 +78,10 @@ public class Signals implements ActionListener {
     }
 
     /**
-     * Test whether a signal exists.
-     *
-     * @param name signal's name (not null)
-     * @return true if a signal with that name exists
-     */
-    public boolean exists(String name) {
-        Validate.nonNull(name, "signal name");
-
-        TreeSet<Integer> status = statusMap.get(name);
-        return status != null;
-    }
-
-    /**
      * Test whether the named signal is active.
      *
-     * @param name signal's name (not null)
-     * @return true if any of the signal's sources is active; false if all of
-     * the signal's sources are inactive
+     * @param name the signal's name (not null)
+     * @return true if any of the signal's sources is active, otherwise false
      */
     public boolean test(String name) {
         Validate.nonNull(name, "signal name");
@@ -109,6 +95,7 @@ public class Signals implements ActionListener {
             statusMap.put(name, status);
         }
         boolean result = !status.isEmpty();
+
         return result;
     }
     // *************************************************************************
@@ -133,6 +120,7 @@ public class Signals implements ActionListener {
                     "Signal name cannot contain spaces."); // TODO relax this
         }
         assert "signal".equals(words[0]);
+
         String name = words[1];
         int sourceIndex = Integer.parseInt(words[2]);
         update(name, sourceIndex, isOngoing);
