@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -87,6 +88,10 @@ abstract public class InputMode
     // constants and loggers
 
     /**
+     * highest-numbered universal code + 1
+     */
+    final private static int numCodes = KeyInput.KEY_LAST + 4;
+    /**
      * action-string prefix for a signal action
      */
     final public static String signalActionPrefix = "signal ";
@@ -95,6 +100,10 @@ abstract public class InputMode
      */
     final private static Logger logger
             = Logger.getLogger(InputMode.class.getName());
+    /**
+     * action-string prefix for a combo action
+     */
+    final public static String comboActionPrefix = "combo ";
     // *************************************************************************
     // fields
 
@@ -115,7 +124,12 @@ abstract public class InputMode
      */
     private JmeCursor cursor = null;
     /**
-     * LIFO stack of suspended input modes
+     * map combos to action names for each universal code
+     */
+    @SuppressWarnings("unchecked")
+    final private Map<Combo, String>[] comboBindings = new Map[numCodes];
+    /**
+     * LIFO stack of suspended input modes - TODO re-order fields
      */
     final private static Stack<InputMode> suspendedModes = new Stack<>();
     /**
@@ -151,8 +165,13 @@ abstract public class InputMode
      */
     public InputMode(String shortName) {
         super(false);
+
         Validate.nonNull(shortName, "name");
         this.shortName = shortName;
+
+        for (int code = 0; code < numCodes; ++code) {
+            comboBindings[code] = new HashMap<Combo, String>(8);
+        }
     }
     // *************************************************************************
     // new methods exposed
@@ -168,8 +187,25 @@ abstract public class InputMode
     }
 
     /**
-     * Bind the named action to the specified keyboard keys, but don't map it
-     * yet. Any existing bindings for those keys are removed.
+     * Bind the named action to the specified Combo. Any existing binding for
+     * the Combo is removed.
+     *
+     * @param actionName name of the action (not null)
+     * @param combo which Combo to bind (not null)
+     */
+    public void bind(String actionName, Combo combo) {
+        Validate.nonNull(actionName, "action name");
+        Validate.nonNull(combo, "hotkey");
+
+        int triggerCode = combo.triggerCode();
+        comboBindings[triggerCode].put(combo, actionName);
+
+        addActionName(actionName);
+    }
+
+    /**
+     * Bind the named action to the specified key codes, but don't map it yet.
+     * Any existing bindings for those keys are removed.
      *
      * @param actionName the name of the action (not null)
      * @param keyCodes key codes from {@link com.jme3.input.KeyInput}
@@ -333,6 +369,24 @@ abstract public class InputMode
     }
 
     /**
+     * Process a "combo" action.
+     *
+     * @param code the universal code of the action (&ge;0)
+     * @param tpf the time interval between frames (in seconds, &ge;0)
+     */
+    void processCombos(int code, float tpf) {
+        Map<Combo, String> map = comboBindings[code];
+        for (Map.Entry<Combo, String> entry : map.entrySet()) {
+            Combo combo = entry.getKey();
+            if (combo.testAll(signals)) {
+                String actionString = entry.getValue();
+                boolean ongoing = true;
+                onAction(actionString, ongoing, tpf);
+            }
+        }
+    }
+
+    /**
      * Disable the active input mode and resume the most recently suspended
      * mode.
      */
@@ -458,8 +512,25 @@ abstract public class InputMode
             inputManager.setMouseCursor(cursor);
             inputManager.setCursorVisible(true);
         }
-
-        mapBoundHotkeys();
+        /*
+         * Map all bound hotkeys to their actions.
+         */
+        for (String keyName : hotkeyBindings.stringPropertyNames()) {
+            String actionName = hotkeyBindings.getProperty(keyName);
+            Hotkey hotkey = Hotkey.find(keyName);
+            mapActionName(actionName, hotkey);
+        }
+        /*
+         * Map all bound combos to their actions.
+         */
+        for (int code = 0; code < numCodes; ++code) {
+            Map<Combo, String> map = comboBindings[code];
+            if (!map.isEmpty()) {
+                String actionName = comboActionPrefix + Integer.toString(code);
+                Hotkey hotkey = Hotkey.find(code);
+                mapNonsignalHotkey(actionName, hotkey);
+            }
+        }
     }
 
     /**
@@ -468,7 +539,28 @@ abstract public class InputMode
     protected void deactivate() {
         setActiveMode(null);
         inputManager.setCursorVisible(false);
-        unmapBoundHotkeys();
+        /**
+         * Unmap all Hotkey actions.
+         */
+        for (String keyName : hotkeyBindings.stringPropertyNames()) {
+            String actionName = hotkeyBindings.getProperty(keyName);
+            Hotkey hotkey = Hotkey.find(keyName);
+            unmapHotkey(actionName, hotkey);
+        }
+        /*
+         * Unmap all Combo actions.
+         */
+        for (int code = 0; code < numCodes; ++code) {
+            Map<Combo, String> map = comboBindings[code];
+            if (!map.isEmpty()) {
+                String actionString
+                        = comboActionPrefix + Integer.toString(code);
+                Hotkey hotkey = Hotkey.find(code);
+                hotkey.unmap(actionString, inputManager);
+            }
+        }
+
+        inputManager.removeListener(this);
     }
 
     /**
@@ -501,7 +593,7 @@ abstract public class InputMode
         if (this == aa.getDefaultInputMode()) {
             /*
              * Give the application an opportunity to override the
-             * initial hotkey bindings.
+             * initial bindings.
              */
             aa.moreDefaultBindings();
         }
@@ -668,30 +760,6 @@ abstract public class InputMode
     }
 
     /**
-     * Map a hotkey to an action string in the input manager. Overrides any
-     * previous mapping for the hotkey.
-     *
-     * @param actionString action string to map (not null)
-     * @param hotkey (not null)
-     */
-    private void mapActionString(String actionString, Hotkey hotkey) {
-        assert actionString != null;
-        hotkey.map(actionString, inputManager);
-    }
-
-    /**
-     * Map all bound keys to their actions.
-     */
-    private void mapBoundHotkeys() {
-        for (String keyName : hotkeyBindings.stringPropertyNames()) {
-            String actionName = hotkeyBindings.getProperty(keyName);
-            Hotkey hotkey = Hotkey.find(keyName);
-            assert hotkey != null : keyName;
-            mapActionName(actionName, hotkey);
-        }
-    }
-
-    /**
      * Map a hotkey to a non-signal action.
      *
      * @param actionName name of the non-signal action (not null)
@@ -706,7 +774,7 @@ abstract public class InputMode
          * For a non-signal action, the action string is simply the name.
          * Add the mapping to the input manager.
          */
-        mapActionString(actionName, hotkey);
+        hotkey.map(actionName, inputManager);
     }
 
     /**
@@ -736,7 +804,7 @@ abstract public class InputMode
         /*
          * Add the mapping to the input manager.
          */
-        mapActionString(actionString, hotkey);
+        hotkey.map(actionString, inputManager);
     }
 
     /**
@@ -801,10 +869,10 @@ abstract public class InputMode
     }
 
     /**
-     * Alter the static reference to the currently active input mode. At most
-     * one mode is active at a time.
+     * Alter the static reference to the active InputMode. At most one InputMode
+     * is active at a time.
      *
-     * @param mode (or null if none)
+     * @param the desired InputMode (or null if none)
      */
     private static void setActiveMode(InputMode mode) {
         if (mode != null && activeMode != null) {
@@ -842,19 +910,6 @@ abstract public class InputMode
 
         deactivate();
         isSuspended = true;
-    }
-
-    /**
-     * Delete all hotkey mappings associated with this input mode.
-     */
-    private void unmapBoundHotkeys() {
-        for (String keyName : hotkeyBindings.stringPropertyNames()) {
-            String actionName = hotkeyBindings.getProperty(keyName);
-            Hotkey hotkey = Hotkey.find(keyName);
-            assert hotkey != null : keyName;
-            unmapHotkey(actionName, hotkey);
-        }
-        inputManager.removeListener(this);
     }
 
     /**

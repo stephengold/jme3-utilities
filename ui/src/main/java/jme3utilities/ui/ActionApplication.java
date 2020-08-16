@@ -208,11 +208,24 @@ abstract public class ActionApplication
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
-        /*
-         * Handle actions whose mappings may have been deleted by
-         * DefaultInputMode.initialize().
-         */
         if (ongoing) {
+            /*
+             * Process combo actions.
+             */
+            if (actionString.startsWith(InputMode.comboActionPrefix)) {
+                InputMode mode = InputMode.getActiveMode();
+                if (mode != null) {
+                    String arg = MyString.remainder(actionString,
+                            InputMode.comboActionPrefix);
+                    int code = Integer.parseInt(arg);
+                    mode.processCombos(code, tpf);
+                    return;
+                }
+            }
+            /*
+             * Process actions whose mappings may have been deleted by
+             * DefaultInputMode.initialize().
+             */
             switch (actionString) {
                 case "ScreenShot":
                     ScreenshotAppState screenshotAppState
