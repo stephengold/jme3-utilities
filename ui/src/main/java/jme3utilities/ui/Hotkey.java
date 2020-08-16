@@ -169,7 +169,7 @@ public class Hotkey {
      *
      * @return a universal code
      */
-    public int getCode() {
+    public int code() {
         assert code >= 0 : code;
         assert code <= lastButton : code;
         return code;
@@ -181,7 +181,7 @@ public class Hotkey {
      * @return a button code (from {@link com.jme3.input.MouseInput}) or -1 if
      * none
      */
-    public int getButtonCode() {
+    public int buttonCode() {
         int buttonCode;
         if (code < firstButton) {
             buttonCode = -1;
@@ -199,7 +199,7 @@ public class Hotkey {
      *
      * @return a key code (from {@link com.jme3.input.KeyInput}) or -1 if none
      */
-    public int getKeyCode() {
+    public int keyCode() {
         int keyCode;
         if (code < firstButton) {
             keyCode = code;
@@ -217,7 +217,7 @@ public class Hotkey {
      *
      * @return descriptive name (not null, not empty)
      */
-    public String getName() {
+    public String name() {
         assert name != null;
         assert !name.isEmpty();
         return name;

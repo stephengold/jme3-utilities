@@ -107,7 +107,7 @@ public class TestHotkeys extends ActionApplication {
          * Rebind all hotkeys.
          */
         for (Hotkey key : allKeys) {
-            String actionName = key.getName();
+            String actionName = key.name();
             dim.bind(actionName, key);
         }
     }

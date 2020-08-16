@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ public class BindInputMode extends InputMode {
             if (BindScreen.isExempt(hotkey)) {
                 continue;
             }
-            int code = hotkey.getCode();
+            int code = hotkey.code();
             String actionString = String.format("select %d", code);
             bind(actionString, hotkey);
         }

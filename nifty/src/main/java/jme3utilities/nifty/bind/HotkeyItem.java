@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ class HotkeyItem {
      * @return true if it corresponds, else false
      */
     boolean isForCode(int code) {
-        int thisCode = hotkey.getCode();
+        int thisCode = hotkey.code();
         if (thisCode == code) {
             return true;
         } else {
@@ -120,7 +120,7 @@ class HotkeyItem {
         if (mode == null) {
             return "";
         }
-        String name = hotkey.getName();
+        String name = hotkey.name();
         String result = String.format(" [ %s ]    ... ", name);
         if (isBound()) {
             String action = mode.findActionName(hotkey);

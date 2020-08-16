@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -137,7 +137,7 @@ public class BindScreen
     static boolean isExempt(Hotkey hotkey) {
         assert hotkey != null;
 
-        int keyCode = hotkey.getKeyCode();
+        int keyCode = hotkey.keyCode();
         /*
          * Windows uses these hotkeys:
          *  KEY_LMETA to open the Windows menu
