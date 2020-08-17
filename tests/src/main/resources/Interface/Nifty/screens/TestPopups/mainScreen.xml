@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -41,17 +41,23 @@
                 <panel/>
                 <control name="button" id="id91ToAvoidOffendingNifty"
                          label="Select a file"
-                         width="100px">
+                         width="90px">
                     <interact onRelease="perform(open /)"/>
                 </control>
                 <panel/>
                 <control name="button" id="id92ToAvoidOffendingNifty"
                          label="Set search string"
-                         width="100px">
+                         width="110px">
                     <interact onRelease="perform(search)"/>
                 </control>
                 <panel/>
-                <control name="button" id="id93ToAvoidOffendingNifty"
+                <control name="button" id="id94ToAvoidOffendingNifty"
+                         label="Set CPU temperature"
+                         width="140px">
+                    <interact onRelease="perform(set temperature)"/>
+                </control>
+                <panel/>
+                <control name="button" id="id95ToAvoidOffendingNifty"
                          label="About this app"
                          width="100px">
                     <interact onRelease="perform(about)"/>

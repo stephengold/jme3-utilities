@@ -37,6 +37,7 @@ import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
+import jme3utilities.nifty.dialog.FloatSliderDialog;
 import jme3utilities.nifty.dialog.MinimalDialog;
 import jme3utilities.ui.InputMode;
 
@@ -67,9 +68,17 @@ public class TestPopups extends GuiApplication {
      * action prefix for the "search string" dialog
      */
     final private static String searchDialogPrefix = "set search ";
+    /**
+     * action prefix for the "temperature" dialog
+     */
+    final private static String setTemperaturePrefix = "set temperature ";
     // *************************************************************************
     // fields
 
+    /**
+     * most recent setting for temperature
+     */
+    private float temperature = 20f;
     /**
      * controller for the screen: set in guiInitializeApplication()
      */
@@ -165,11 +174,26 @@ public class TestPopups extends GuiApplication {
                         new SearchDialogController());
                 return;
 
+            } else if (actionString.equals("set temperature")) {
+                String temperatureString = Float.toString(temperature);
+                screen.showTextAndSliderDialog("Enter new temperature:",
+                        temperatureString, setTemperaturePrefix,
+                        new FloatSliderDialog("Set", -273f, 100f));
+                return;
+
             } else if (actionString.startsWith(searchDialogPrefix)) {
                 searchString
-                        = actionString.substring(searchDialogPrefix.length());
+                        = MyString.remainder(actionString, searchDialogPrefix);
                 String line = String.format("Search string is %s.",
                         MyString.quote(searchString));
+                updateStatusLine(line);
+                return;
+
+            } else if (actionString.startsWith(setTemperaturePrefix)) {
+                String arg = MyString.remainder(actionString,
+                        setTemperaturePrefix);
+                temperature = Float.parseFloat(arg);
+                String line = String.format("Temperature is %f.", temperature);
                 updateStatusLine(line);
                 return;
 
