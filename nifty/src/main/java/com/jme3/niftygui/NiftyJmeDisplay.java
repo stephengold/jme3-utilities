@@ -75,6 +75,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
 
     protected class ResourceLocationJme implements ResourceLocation {
 
+        @Override
         public InputStream getResourceAsStream(String path) {
             AssetKey<Object> key = new AssetKey<Object>(path);
             AssetInfo info = assetManager.locateAsset(key);
@@ -85,6 +86,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
             }
         }
 
+        @Override
         public URL getResource(String path) {
             throw new UnsupportedOperationException();
         }
@@ -281,6 +283,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
       this.inputSys = new InputSystemJme(inputManager);
     }
 
+    @Override
     public void initialize(RenderManager rm, ViewPort vp) {
         this.renderManager = rm;
         if (renderDev != null) {
@@ -329,6 +332,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
         return renderer;
     }
 
+    @Override
     public void reshape(ViewPort vp, int w, int h) {
         this.w = w;
         this.h = h;
@@ -336,13 +340,16 @@ public class NiftyJmeDisplay implements SceneProcessor {
         nifty.resolutionChanged();
     }
 
+    @Override
     public boolean isInitialized() {
         return inited;
     }
 
+    @Override
     public void preFrame(float tpf) {
     }
 
+    @Override
     public void postQueue(RenderQueue rq) {
         // render nifty before anything else
         renderManager.setCamera(vp.getCamera(), true);
@@ -351,9 +358,11 @@ public class NiftyJmeDisplay implements SceneProcessor {
         renderManager.setCamera(vp.getCamera(), false);
     }
 
+    @Override
     public void postFrame(FrameBuffer out) {
     }
 
+    @Override
     public void cleanup() {
         inited = false;
         inputSys.reset();
