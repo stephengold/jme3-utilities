@@ -68,7 +68,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
     protected SoundDeviceJme soundDev;
     protected Renderer renderer;
     protected ViewPort vp;
-    
+
     protected ResourceLocationJme resourceLocation;
 
     protected int w, h;
@@ -104,8 +104,9 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * goal is to render all Nifty components in a single (or at least very few)
      * draw calls. This should speed up rendering quite a bit.
      *
-     * This call will use a default BatchRenderConfiguration for Nifty.
-     * See the other method {@link #newNiftyJmeDisplay(com.jme3.asset.AssetManager, com.jme3.input.InputManager, com.jme3.audio.AudioRenderer, com.jme3.renderer.ViewPort, de.lessvoid.nifty.render.batch.BatchRenderConfiguration) }
+     * This call will use a default BatchRenderConfiguration for Nifty. See the
+     * other method {@link #newNiftyJmeDisplay(com.jme3.asset.AssetManager, com.jme3.input.InputManager, com.jme3.audio.AudioRenderer, com.jme3.renderer.ViewPort, de.lessvoid.nifty.render.batch.BatchRenderConfiguration)
+     * }
      * when you want to change the default BatchRenderConfiguration and provide
      * your own.
      *
@@ -116,10 +117,10 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * @return a new display
      */
     public static NiftyJmeDisplay newNiftyJmeDisplay(
-        final AssetManager assetManager,
-        final InputManager inputManager,
-        final AudioRenderer audioRenderer,
-        final ViewPort viewport) {
+            final AssetManager assetManager,
+            final InputManager inputManager,
+            final AudioRenderer audioRenderer,
+            final ViewPort viewport) {
         return newNiftyJmeDisplay(
                 assetManager,
                 inputManager,
@@ -141,17 +142,17 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * @param audioRenderer jME AudioRenderer
      * @param viewport Viewport to use
      * @param batchRenderConfiguration the Nifty BatchRenderConfiguration that
-     *        you can use to further configure batch rendering. If unsure you
-     *        can simply use new BatchRenderConfiguration() in here for the
-     *        default configuration which should give you good default values.
+     * you can use to further configure batch rendering. If unsure you can
+     * simply use new BatchRenderConfiguration() in here for the default
+     * configuration which should give you good default values.
      * @return a new display
      */
     public static NiftyJmeDisplay newNiftyJmeDisplay(
-        final AssetManager assetManager,
-        final InputManager inputManager,
-        final AudioRenderer audioRenderer,
-        final ViewPort viewport,
-        final BatchRenderConfiguration batchRenderConfiguration) {
+            final AssetManager assetManager,
+            final InputManager inputManager,
+            final AudioRenderer audioRenderer,
+            final ViewPort viewport,
+            final BatchRenderConfiguration batchRenderConfiguration) {
         return new NiftyJmeDisplay(
                 assetManager,
                 inputManager,
@@ -161,102 +162,111 @@ public class NiftyJmeDisplay implements SceneProcessor {
     }
 
     /**
-     * Create a new NiftyJmeDisplay for use with the Batched Nifty Renderer (improved Nifty rendering performance).
+     * Create a new NiftyJmeDisplay for use with the Batched Nifty Renderer
+     * (improved Nifty rendering performance).
      *
-     * Nifty will use a single texture of the given dimensions (see atlasWidth and atlasHeight parameters). Every
-     * graphical asset you're rendering through Nifty will be placed into this big texture. The goal is to render
-     * all Nifty components in a single (or at least very few) draw calls. This should speed up rendering quite a
-     * bit.
+     * Nifty will use a single texture of the given dimensions (see atlasWidth
+     * and atlasHeight parameters). Every graphical asset you're rendering
+     * through Nifty will be placed into this big texture. The goal is to render
+     * all Nifty components in a single (or at least very few) draw calls. This
+     * should speed up rendering quite a bit.
      *
-     * Currently you have to make sure to not use more image space than this single texture provides. However, Nifty
-     * tries to be smart about this and internally will make sure that only the images are uploaded that your GUI
+     * Currently you have to make sure to not use more image space than this
+     * single texture provides. However, Nifty tries to be smart about this and
+     * internally will make sure that only the images are uploaded that your GUI
      * really needs. So in general this shouldn't be an issue.
      *
-     * A complete re-organisation of the texture atlas happens when a Nifty screen ends and another begins. Dynamically
-     * adding images while a screen is running is supported as well.
-     * 
+     * A complete re-organisation of the texture atlas happens when a Nifty
+     * screen ends and another begins. Dynamically adding images while a screen
+     * is running is supported as well.
+     *
      * @param assetManager jME AssetManager
      * @param inputManager jME InputManager
      * @param audioRenderer jME AudioRenderer
      * @param viewport Viewport to use
-     * @param atlasWidth the width of the texture atlas Nifty uses to speed up rendering (2048 is a good value)
-     * @param atlasHeight the height of the texture atlas Nifty uses to speed up rendering (2048 is a good value)
+     * @param atlasWidth the width of the texture atlas Nifty uses to speed up
+     * rendering (2048 is a good value)
+     * @param atlasHeight the height of the texture atlas Nifty uses to speed up
+     * rendering (2048 is a good value)
      *
-     * @deprecated use the static factory methods {@link #newNiftyJmeDisplay(com.jme3.asset.AssetManager, com.jme3.input.InputManager, com.jme3.audio.AudioRenderer, com.jme3.renderer.ViewPort) }
-     * or {@link #newNiftyJmeDisplay(com.jme3.asset.AssetManager, com.jme3.input.InputManager, com.jme3.audio.AudioRenderer, com.jme3.renderer.ViewPort, de.lessvoid.nifty.render.batch.BatchRenderConfiguration) }
+     * @deprecated use the static factory methods {@link #newNiftyJmeDisplay(com.jme3.asset.AssetManager, com.jme3.input.InputManager, com.jme3.audio.AudioRenderer, com.jme3.renderer.ViewPort)
+     * }
+     * or {@link #newNiftyJmeDisplay(com.jme3.asset.AssetManager, com.jme3.input.InputManager, com.jme3.audio.AudioRenderer, com.jme3.renderer.ViewPort, de.lessvoid.nifty.render.batch.BatchRenderConfiguration)
+     * }
      * instead of this constructor.
      */
     public NiftyJmeDisplay(
-        final AssetManager assetManager,
-        final InputManager inputManager,
-        final AudioRenderer audioRenderer,
-        final ViewPort viewport,
-        final int atlasWidth,
-        final int atlasHeight) {
-      // The code duplication in here really sucks - it's a copy of the
-      // private constructor below that takes a BatchRenderConfiguration as an
-      // additional parameter. This method should really be removed soon and
-      // users should simply call the new factory methods.
-      //
-      // For now I keep this constructor as-is but have marked it as deprecated
-      // to allow migration to the new way to instantiate this class.
-      initialize(assetManager, inputManager, audioRenderer, viewport);
+            final AssetManager assetManager,
+            final InputManager inputManager,
+            final AudioRenderer audioRenderer,
+            final ViewPort viewport,
+            final int atlasWidth,
+            final int atlasHeight) {
+        // The code duplication in here really sucks - it's a copy of the
+        // private constructor below that takes a BatchRenderConfiguration as an
+        // additional parameter. This method should really be removed soon and
+        // users should simply call the new factory methods.
+        //
+        // For now I keep this constructor as-is but have marked it as deprecated
+        // to allow migration to the new way to instantiate this class.
+        initialize(assetManager, inputManager, audioRenderer, viewport);
 
-      this.renderDev = null;
-      this.batchRendererBackend = new JmeBatchRenderBackend(this);
+        this.renderDev = null;
+        this.batchRendererBackend = new JmeBatchRenderBackend(this);
 
-      BatchRenderConfiguration batchRenderConfiguration = new BatchRenderConfiguration();
-      batchRenderConfiguration.atlasWidth = atlasWidth;
-      batchRenderConfiguration.atlasHeight = atlasHeight;
+        BatchRenderConfiguration batchRenderConfiguration = new BatchRenderConfiguration();
+        batchRenderConfiguration.atlasWidth = atlasWidth;
+        batchRenderConfiguration.atlasHeight = atlasHeight;
 
-      nifty = new Nifty(
-          new BatchRenderDevice(batchRendererBackend, batchRenderConfiguration),
-          soundDev,
-          inputSys,
-          new AccurateTimeProvider());
-      inputSys.setNifty(nifty);
+        nifty = new Nifty(
+                new BatchRenderDevice(batchRendererBackend, batchRenderConfiguration),
+                soundDev,
+                inputSys,
+                new AccurateTimeProvider());
+        inputSys.setNifty(nifty);
 
-      resourceLocation = new ResourceLocationJme();
-      nifty.getResourceLoader().removeAllResourceLocations();
-      nifty.getResourceLoader().addResourceLocation(resourceLocation);
+        resourceLocation = new ResourceLocationJme();
+        nifty.getResourceLoader().removeAllResourceLocations();
+        nifty.getResourceLoader().addResourceLocation(resourceLocation);
     }
 
     private NiftyJmeDisplay(
-        final AssetManager assetManager,
-        final InputManager inputManager,
-        final AudioRenderer audioRenderer,
-        final ViewPort viewport,
-        final BatchRenderConfiguration batchRenderConfiguration) {
-      initialize(assetManager, inputManager, audioRenderer, viewport);
+            final AssetManager assetManager,
+            final InputManager inputManager,
+            final AudioRenderer audioRenderer,
+            final ViewPort viewport,
+            final BatchRenderConfiguration batchRenderConfiguration) {
+        initialize(assetManager, inputManager, audioRenderer, viewport);
 
-      this.renderDev = null;
-      this.batchRendererBackend = new JmeBatchRenderBackend(this);
+        this.renderDev = null;
+        this.batchRendererBackend = new JmeBatchRenderBackend(this);
 
-      nifty = new Nifty(
-          new BatchRenderDevice(batchRendererBackend, batchRenderConfiguration),
-          soundDev,
-          inputSys,
-          new AccurateTimeProvider());
-      inputSys.setNifty(nifty);
+        nifty = new Nifty(
+                new BatchRenderDevice(batchRendererBackend, batchRenderConfiguration),
+                soundDev,
+                inputSys,
+                new AccurateTimeProvider());
+        inputSys.setNifty(nifty);
 
-      resourceLocation = new ResourceLocationJme();
-      nifty.getResourceLoader().removeAllResourceLocations();
-      nifty.getResourceLoader().addResourceLocation(resourceLocation);
+        resourceLocation = new ResourceLocationJme();
+        nifty.getResourceLoader().removeAllResourceLocations();
+        nifty.getResourceLoader().addResourceLocation(resourceLocation);
     }
 
     /**
-     * Create a standard NiftyJmeDisplay. This uses the old Nifty renderer. It's probably slower then the batched
-     * renderer and is mainly here for backwards compatibility.
+     * Create a standard NiftyJmeDisplay. This uses the old Nifty renderer. It's
+     * probably slower then the batched renderer and is mainly here for
+     * backwards compatibility.
      *
      * @param assetManager jME AssetManager
      * @param inputManager jME InputManager
      * @param audioRenderer jME AudioRenderer
      * @param vp Viewport to use
      */
-    public NiftyJmeDisplay(AssetManager assetManager, 
-                           InputManager inputManager,
-                           AudioRenderer audioRenderer,
-                           ViewPort vp){
+    public NiftyJmeDisplay(AssetManager assetManager,
+            InputManager inputManager,
+            AudioRenderer audioRenderer,
+            ViewPort vp) {
         initialize(assetManager, inputManager, audioRenderer, vp);
 
         this.renderDev = new RenderDeviceJme(this);
@@ -271,25 +281,25 @@ public class NiftyJmeDisplay implements SceneProcessor {
     }
 
     private void initialize(
-        final AssetManager assetManager,
-        final InputManager inputManager,
-        final AudioRenderer audioRenderer,
-        final ViewPort viewport) {
-      this.assetManager = assetManager;
-      this.inputManager = inputManager;
-      this.w = viewport.getCamera().getWidth();
-      this.h = viewport.getCamera().getHeight();
-      this.soundDev = new SoundDeviceJme(assetManager, audioRenderer);
-      this.inputSys = new InputSystemJme(inputManager);
+            final AssetManager assetManager,
+            final InputManager inputManager,
+            final AudioRenderer audioRenderer,
+            final ViewPort viewport) {
+        this.assetManager = assetManager;
+        this.inputManager = inputManager;
+        this.w = viewport.getCamera().getWidth();
+        this.h = viewport.getCamera().getHeight();
+        this.soundDev = new SoundDeviceJme(assetManager, audioRenderer);
+        this.inputSys = new InputSystemJme(inputManager);
     }
 
     @Override
     public void initialize(RenderManager rm, ViewPort vp) {
         this.renderManager = rm;
         if (renderDev != null) {
-          renderDev.setRenderManager(rm);
+            renderDev.setRenderManager(rm);
         } else {
-          batchRendererBackend.setRenderManager(rm);
+            batchRendererBackend.setRenderManager(rm);
         }
 
         if (inputManager != null) {
@@ -299,7 +309,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
         inited = true;
         this.vp = vp;
         this.renderer = rm.getRenderer();
-        
+
         inputSys.reset();
         inputSys.setHeight(vp.getCamera().getHeight());
     }
@@ -308,8 +318,8 @@ public class NiftyJmeDisplay implements SceneProcessor {
         return nifty;
     }
 
-    public void simulateKeyEvent( KeyInputEvent event ) {
-        inputSys.onKeyEvent(event);        
+    public void simulateKeyEvent(KeyInputEvent event) {
+        inputSys.onKeyEvent(event);
     }
 
     AssetManager getAssetManager() {
@@ -328,7 +338,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
         return w;
     }
 
-    Renderer getRenderer(){
+    Renderer getRenderer() {
         return renderer;
     }
 
