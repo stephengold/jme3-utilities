@@ -46,12 +46,13 @@ import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.spi.input.InputSystem;
 import de.lessvoid.nifty.tools.resourceloader.NiftyResourceLoader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class InputSystemJme implements InputSystem, RawInputListener {
 
-    private final ArrayList<InputEvent> inputQueue = new ArrayList<InputEvent>();
+    private final List<InputEvent> inputQueue = new ArrayList<>();
     final private InputManager inputManager;
     final private boolean[] niftyOwnsDragging = new boolean[3];
     private int inputPointerId = -1;

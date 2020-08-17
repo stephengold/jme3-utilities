@@ -75,7 +75,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
 
         @Override
         public InputStream getResourceAsStream(String path) {
-            AssetKey<Object> key = new AssetKey<Object>(path);
+            AssetKey<Object> key = new AssetKey<>(path);
             AssetInfo info = assetManager.locateAsset(key);
             if (info != null) {
                 return info.openStream();

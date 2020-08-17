@@ -75,16 +75,16 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     final private static Logger log = Logger.getLogger(JmeBatchRenderBackend.class.getName());
 
     private final ObjectPool<Batch> batchPool;
-    private final List<Batch> batches = new ArrayList<Batch>();
+    private final List<Batch> batches = new ArrayList<>();
 
     // a modify texture call needs a jme Renderer to execute. if we're called to modify a texture but don't
     // have a Renderer yet - since it was not initialized on the jme side - we'll cache the modify texture calls
     // in here and execute them later (at the next beginFrame() call).
-    private final List<ModifyTexture> modifyTextureCalls = new ArrayList<ModifyTexture>();
+    private final List<ModifyTexture> modifyTextureCalls = new ArrayList<>();
 
     private RenderManager renderManager;
     private NiftyJmeDisplay display;
-    private Map<Integer, Texture2D> textures = new HashMap<Integer, Texture2D>();
+    private Map<Integer, Texture2D> textures = new HashMap<>();
     private int textureAtlasId = 1;
     private Batch currentBatch;
     private Matrix4f tempMat = new Matrix4f();
@@ -98,7 +98,8 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
     public JmeBatchRenderBackend(final NiftyJmeDisplay display) {
         this.display = display;
-        this.batchPool = new ObjectPool<Batch>(new Factory<Batch>() {
+        this.batchPool = new ObjectPool<>(new Factory<Batch>() {
+
             @Override
             public Batch createNew() {
                 return new Batch();

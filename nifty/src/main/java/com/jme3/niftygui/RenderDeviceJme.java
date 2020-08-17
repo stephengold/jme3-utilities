@@ -57,13 +57,14 @@ import de.lessvoid.nifty.tools.resourceloader.NiftyResourceLoader;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
+import java.util.Map;
 
 public class RenderDeviceJme implements RenderDevice {
     final private NiftyJmeDisplay display;
     private RenderManager rm;
     private Renderer r;
-    private HashMap<CachedTextKey, BitmapText> textCacheLastFrame = new HashMap<CachedTextKey, BitmapText>();
-    private HashMap<CachedTextKey, BitmapText> textCacheCurrentFrame = new HashMap<CachedTextKey, BitmapText>();
+    private Map<CachedTextKey, BitmapText> textCacheLastFrame = new HashMap<>();
+    private Map<CachedTextKey, BitmapText> textCacheCurrentFrame = new HashMap<>();
     private final Quad quad = new Quad(1, -1, true);
     private final Geometry quadGeom = new Geometry("nifty-quad", quad);
     private boolean clipWasSet = false;
@@ -188,7 +189,7 @@ public class RenderDeviceJme implements RenderDevice {
 
     @Override
     public void endFrame() {
-        HashMap<CachedTextKey, BitmapText> temp = textCacheLastFrame;
+        Map<CachedTextKey, BitmapText> temp = textCacheLastFrame;
         textCacheLastFrame = textCacheCurrentFrame;
         textCacheCurrentFrame = temp;
         textCacheCurrentFrame.clear();
