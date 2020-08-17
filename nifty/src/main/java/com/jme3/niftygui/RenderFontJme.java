@@ -71,6 +71,7 @@ public class RenderFontJme implements RenderFont {
      *
      * @return height
      */
+    @Override
     public int getHeight() {
         return (int) text.getLineHeight();
     }
@@ -81,6 +82,7 @@ public class RenderFontJme implements RenderFont {
      * @param str text
      * @return width of the given text for the current font
      */
+    @Override
     public int getWidth(final String str) {
         if (str.length() == 0) {
             return 0;
@@ -100,6 +102,7 @@ public class RenderFontJme implements RenderFont {
         return result;
     }
 
+    @Override
     public int getWidth(final String str, final float size) {
         // Note: This is supposed to return the width of the String when scaled
         //       with the size factor. Since I don't know how to do that with
@@ -117,10 +120,12 @@ public class RenderFontJme implements RenderFont {
      * @return width of the character or null when no information for the
      * character is available
      */
+    @Override
     public int getCharacterAdvance(final char currentCharacter, final char nextCharacter, final float size) {
         return Math.round(font.getCharacterAdvance(currentCharacter, nextCharacter, size));
     }
 
+    @Override
     public void dispose() {
     }
 }

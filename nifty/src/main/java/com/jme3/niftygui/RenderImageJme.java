@@ -75,14 +75,17 @@ public class RenderImageJme implements RenderImage {
         return texture;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public void dispose() {
     }
 }

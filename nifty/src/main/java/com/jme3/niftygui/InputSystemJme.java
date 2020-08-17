@@ -65,6 +65,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
         this.inputManager = inputManager;
     }
 
+    @Override
     public void setResourceLoader(NiftyResourceLoader niftyResourceLoader) {
     }
 
@@ -100,13 +101,16 @@ public class InputSystemJme implements InputSystem, RawInputListener {
         this.height = height;
     }
 
+    @Override
     public void setMousePosition(int x, int y) {
         // TODO: When does nifty use this?
     }
 
+    @Override
     public void beginInput() {
     }
 
+    @Override
     public void endInput() {
         boolean result = nifty.update();
     }
@@ -250,6 +254,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
         }
     }
 
+    @Override
     public void onMouseMotionEvent(MouseMotionEvent evt) {
         // Only forward the event if there's actual motion involved.
         if (inputManager.isCursorVisible() && (evt.getDX() != 0
@@ -259,6 +264,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
         }
     }
 
+    @Override
     public void onMouseButtonEvent(MouseButtonEvent evt) {
         if (evt.getButtonIndex() >= 0 && evt.getButtonIndex() <= 2) {
             if (evt.isReleased() || inputManager.isCursorVisible()) {
@@ -269,20 +275,25 @@ public class InputSystemJme implements InputSystem, RawInputListener {
         }
     }
 
+    @Override
     public void onJoyAxisEvent(JoyAxisEvent evt) {
     }
 
+    @Override
     public void onJoyButtonEvent(JoyButtonEvent evt) {
     }
 
+    @Override
     public void onKeyEvent(KeyInputEvent evt) {
         inputQueue.add(evt);
     }
 
+    @Override
     public void onTouchEvent(TouchEvent evt) {
         inputQueue.add(evt);
     }
 
+    @Override
     public void forwardEvents(NiftyInputConsumer nic) {
         int queueSize = inputQueue.size();
 
@@ -316,6 +327,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
                     }
 
                     softTextDialogInput.requestDialog(SoftTextDialogInput.TEXT_ENTRY_DIALOG, "Enter Text", initialValue, new SoftTextDialogInputListener() {
+                        @Override
                         public void onSoftText(int action, String text) {
                             if (action == SoftTextDialogInputListener.COMPLETE) {
                                 textField.setText(text);

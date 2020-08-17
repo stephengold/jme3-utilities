@@ -136,6 +136,7 @@ public class RenderDeviceJme implements RenderDevice {
         renderState.setDepthWrite(false);
     }
 
+    @Override
     public void setResourceLoader(NiftyResourceLoader niftyResourceLoader) {
     }
 
@@ -145,8 +146,10 @@ public class RenderDeviceJme implements RenderDevice {
     }
 
     // TODO: Cursor support
+    @Override
     public MouseCursor createMouseCursor(String str, int x, int y) {
         return new MouseCursor() {
+            @Override
             public void dispose() {
             }
 
@@ -160,24 +163,30 @@ public class RenderDeviceJme implements RenderDevice {
         };
     }
 
+    @Override
     public void enableMouseCursor(MouseCursor cursor) {
     }
 
+    @Override
     public void disableMouseCursor() {
     }
 
+    @Override
     public RenderImage createImage(String filename, boolean linear) {
         //System.out.println("createImage(" + filename + ", " + linear + ")");
         return new RenderImageJme(filename, linear, display);
     }
 
+    @Override
     public RenderFont createFont(String filename) {
         return new RenderFontJme(filename, display);
     }
 
+    @Override
     public void beginFrame() {
     }
 
+    @Override
     public void endFrame() {
         HashMap<CachedTextKey, BitmapText> temp = textCacheLastFrame;
         textCacheLastFrame = textCacheCurrentFrame;
@@ -186,17 +195,21 @@ public class RenderDeviceJme implements RenderDevice {
         rm.setForcedRenderState(null);
     }
 
+    @Override
     public int getWidth() {
         return display.getWidth();
     }
 
+    @Override
     public int getHeight() {
         return display.getHeight();
     }
 
+    @Override
     public void clear() {
     }
 
+    @Override
     public void setBlendMode(BlendMode blendMode) {
         renderState.setBlendMode(convertBlend(blendMode));
     }
@@ -262,6 +275,7 @@ public class RenderDeviceJme implements RenderDevice {
 //        System.out.format("renderFont(%s, %s, %d, %d, %s, %f, %f)\n", jmeFont.getFont(), str, x, y, color.toString(), sizeX, sizeY);
     }
 
+    @Override
     public void renderImage(RenderImage image, int x, int y, int w, int h,
             int srcX, int srcY, int srcW, int srcH,
             Color color, float scale,
@@ -312,6 +326,7 @@ public class RenderDeviceJme implements RenderDevice {
         //                                                                                       color.toString(), scale, centerX, centerY);
     }
 
+    @Override
     public void renderImage(RenderImage image, int x, int y, int width, int height,
             Color color, float imageScale) {
 
@@ -337,6 +352,7 @@ public class RenderDeviceJme implements RenderDevice {
         //System.out.format("renderImage1(%s, %d, %d, %d, %d, %s, %f)\n", jmeImage.getTexture().getKey().toString(), x, y, width, height, color.toString(), imageScale);
     }
 
+    @Override
     public void renderQuad(int x, int y, int width, int height, Color color) {
         //We test for alpha >0 as an optimization to prevent the render of completely transparent quads.
         //Nifty use layers that are often used for logical positionning and not rendering.
@@ -358,6 +374,7 @@ public class RenderDeviceJme implements RenderDevice {
         //System.out.format("renderQuad1(%d, %d, %d, %d, %s)\n", x, y, width, height, color.toString());
     }
 
+    @Override
     public void renderQuad(int x, int y, int width, int height,
             Color topLeft, Color topRight, Color bottomRight, Color bottomLeft) {
 
@@ -387,11 +404,13 @@ public class RenderDeviceJme implements RenderDevice {
         //                                                                                        bottomLeft.toString());
     }
 
+    @Override
     public void enableClip(int x0, int y0, int x1, int y1) {
         clipWasSet = true;
         r.setClipRect(x0, getHeight() - y1, x1 - x0, y1 - y0);
     }
 
+    @Override
     public void disableClip() {
         if (clipWasSet) {
             r.clearClipRect();
