@@ -34,7 +34,9 @@ package com.jme3.niftygui;
 import com.jme3.asset.TextureKey;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix4f;
+import com.jme3.renderer.Caps;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.scene.Geometry;
@@ -47,6 +49,7 @@ import com.jme3.texture.Texture.MagFilter;
 import com.jme3.texture.Texture.MinFilter;
 import com.jme3.texture.Texture2D;
 import com.jme3.texture.image.ColorSpace;
+import com.jme3.texture.image.ImageRaster;
 import com.jme3.util.BufferUtils;
 import de.lessvoid.nifty.render.BlendMode;
 import de.lessvoid.nifty.render.batch.spi.BatchRenderBackend;
@@ -202,18 +205,8 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
     @Override
     public void clearTextureAtlas(final int atlasId) {
-        com.jme3.texture.Image atlasImage = getTextureAtlas(atlasId).getImage();
-        ByteBuffer atlasBuffer = atlasImage.getData(0);
-        atlasBuffer.rewind();
-        for (int i = 0; i < atlasImage.getWidth() * atlasImage.getHeight(); i++) {
-            atlasBuffer.put((byte) 0x00);
-            atlasBuffer.put((byte) 0xff);
-            atlasBuffer.put((byte) 0x00);
-            atlasBuffer.put((byte) 0xff);
-        }
-        atlasBuffer.rewind();
-        atlasImage.setUpdateNeeded();
-        // could use atlasImage.setData(atlasBuffer); instead
+        initialData.rewind();
+        getTextureAtlas(atlasId).getImage().setData(initialData);
     }
 
     @Override
@@ -223,6 +216,31 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
         key.setGenerateMips(false);
 
         Texture2D texture = (Texture2D) display.getAssetManager().loadTexture(key);
+        // Fix GLES format incompatibility issue with glTexSubImage
+        Renderer renderer = display.getRenderer();
+        if (renderer == null || renderer.getCaps().contains(Caps.OpenGLES20)) {
+            if (texture.getImage().getFormat() != Format.RGBA8) {
+                com.jme3.texture.Image sourceImage = texture.getImage();
+                int size = sourceImage.getWidth() * sourceImage.getHeight() * 4;
+                ByteBuffer buffer = BufferUtils.createByteBuffer(size);
+                com.jme3.texture.Image rgba8Image = new com.jme3.texture.Image(Format.RGBA8,
+                        sourceImage.getWidth(),
+                        sourceImage.getHeight(),
+                        buffer,
+                        sourceImage.getColorSpace());
+
+                ImageRaster input = ImageRaster.create(sourceImage, 0, 0, false);
+                ImageRaster output = ImageRaster.create(rgba8Image, 0, 0, false);
+                ColorRGBA color = new ColorRGBA();
+
+                for (int y = 0; y < sourceImage.getHeight(); y++) {
+                    for (int x = 0; x < sourceImage.getWidth(); x++) {
+                        output.setPixel(x, y, input.getPixel(x, y, color));
+                    }
+                }
+                return new ImageImpl(rgba8Image);
+            }
+        }
         return new ImageImpl(texture.getImage());
     }
 
