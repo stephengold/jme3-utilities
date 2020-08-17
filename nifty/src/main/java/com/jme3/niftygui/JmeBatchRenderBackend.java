@@ -343,7 +343,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
      * {@link de.lessvoid.nifty.render.batch.spi.BatchRenderBackend}
      * implementation
      *
-     * @param shouldUseHighQualityTextures
+     * @param shouldUseHighQualityTextures ignored
      */
     @Override
     public void useHighQualityTextures(final boolean shouldUseHighQualityTextures) {
@@ -358,7 +358,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
      * debugging when visually inspecting the atlas, since there will not be
      * portions of old images visible in currently unused atlas space.
      *
-     * @param shouldFill
+     * @param shouldFill true&rarr;overwrite, false&rarr;don't overwrite
      */
     @Override
     public void fillRemovedImagesInAtlas(final boolean shouldFill) {
