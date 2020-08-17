@@ -46,7 +46,7 @@ public class SoundHandleJme implements SoundHandle {
     private String fileName;
     private float volume = 1;
 
-    public SoundHandleJme(AudioRenderer ar, AudioNode node){
+    public SoundHandleJme(AudioRenderer ar, AudioNode node) {
         if (ar == null || node == null) {
             throw new NullPointerException();
         }
@@ -56,11 +56,12 @@ public class SoundHandleJme implements SoundHandle {
 
     /**
      * For streaming music only. (May need to loop..)
+     *
      * @param ar which audio renderer to use
      * @param am which asset manager to use
      * @param fileName filename for sound
      */
-    public SoundHandleJme(AudioRenderer ar, AssetManager am, String fileName){
+    public SoundHandleJme(AudioRenderer ar, AssetManager am, String fileName) {
         Validate.nonNull(ar, "audio renderer");
         Validate.nonNull(am, "asset manager");
         Validate.nonNull(fileName, "audio filename");
@@ -70,22 +71,22 @@ public class SoundHandleJme implements SoundHandle {
     }
 
     public void play() {
-        if (fileName != null){
-            if (node != null){
+        if (fileName != null) {
+            if (node != null) {
                 node.stop();
             }
 
-            node = new AudioNode(am, fileName,AudioData.DataType.Stream);
+            node = new AudioNode(am, fileName, AudioData.DataType.Stream);
             node.setPositional(false);
             node.setVolume(volume);
             node.play();
-        }else{
+        } else {
             node.playInstance();
         }
     }
 
     public void stop() {
-        if (node != null){
+        if (node != null) {
             node.stop();
             // Do not nullify the node for non-streaming nodes!
             if (fileName != null) {

@@ -45,7 +45,7 @@ public class SoundDeviceJme implements SoundDevice {
     protected AssetManager assetManager;
     protected AudioRenderer ar;
 
-    public SoundDeviceJme(AssetManager assetManager, AudioRenderer ar){
+    public SoundDeviceJme(AssetManager assetManager, AudioRenderer ar) {
         this.assetManager = assetManager;
         this.ar = ar;
     }
@@ -65,5 +65,5 @@ public class SoundDeviceJme implements SoundDevice {
 
     public void update(int delta) {
     }
-    
+
 }

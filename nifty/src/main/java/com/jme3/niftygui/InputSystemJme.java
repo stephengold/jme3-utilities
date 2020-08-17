@@ -78,9 +78,8 @@ public class InputSystemJme implements InputSystem, RawInputListener {
     }
 
     /**
-     * Reset internal state of the input system.
-     * Must be called when the display is reinitialized
-     * or when the internal state becomes invalid.
+     * Reset internal state of the input system. Must be called when the display
+     * is reinitialized or when the internal state becomes invalid.
      */
     public void reset() {
         x = 0;
@@ -94,8 +93,8 @@ public class InputSystemJme implements InputSystem, RawInputListener {
     }
 
     /**
-     * @param height The height of the viewport. Used to convert
-     * bottom-left origin to upper-left origin.
+     * @param height The height of the viewport. Used to convert bottom-left
+     * origin to upper-left origin.
      */
     public void setHeight(int height) {
         this.height = height;
@@ -121,7 +120,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
             // processMouseEvent doesn't return true even if cursor is above
             // a nifty element (bug).
             boolean consumed = nic.processMouseEvent(x, y, 0, button, true)
-                             | nifty.getCurrentScreen().isMouseOverElement();
+                    | nifty.getCurrentScreen().isMouseOverElement();
             niftyOwnsDragging[button] = consumed;
             if (consumed) {
                 evt.setConsumed();
@@ -165,13 +164,13 @@ public class InputSystemJme implements InputSystem, RawInputListener {
             // which is good ;-) If that ever happens to someone there is an easy fix possible:
             // nifty.setIgnoreMouseEvents() to completely stop Nifty from processing events.
 
-                boolean consumed = nic.processMouseEvent(x, y, 0, button, false);
+            boolean consumed = nic.processMouseEvent(x, y, 0, button, false);
 
-                // Only consume event if it ORIGINATED in nifty!
-                if (niftyOwnsDragging[button] && consumed) {
-                    evt.setConsumed();
-                    processSoftKeyboard();
-                }
+            // Only consume event if it ORIGINATED in nifty!
+            if (niftyOwnsDragging[button] && consumed) {
+                evt.setConsumed();
+                processSoftKeyboard();
+            }
 
             niftyOwnsDragging[button] = false;
             //System.out.format("niftyMouse(%d, %d, %d, false) = %b\n", x, y, button, consumed);
