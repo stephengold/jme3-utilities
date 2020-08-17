@@ -239,7 +239,7 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Associate the named slider with the tool that manages it.
+     * Associate the named slider with the Tool that manages it.
      *
      * @param sliderName the name (unique id prefix) of the slider (not null)
      * @param managingTool (not null, alias created)
@@ -292,16 +292,17 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Callback handler that Nifty invokes after a slider changes.
+     * Callback handler that Nifty invokes after a screen/tool slider changes.
      *
-     * @param sliderId Nifty element ID of the slider (not null)
+     * @param sliderId Nifty element ID of the slider (not null, "Slider"
+     * suffix)
      * @param event details of the event (not null, ignored)
      */
     @NiftyEventSubscriber(pattern = ".*Slider")
     public void onSliderChanged(final String sliderId,
             final SliderChangedEvent event) {
         Validate.nonNull(sliderId, "slider ID");
-        assert sliderId.endsWith("Slider") : sliderId;
+        Validate.require(sliderId.endsWith("Slider"), "expected suffix");
         Validate.nonNull(event, "event");
 
         if (!isIgnoreGuiChanges() && hasStarted()) {

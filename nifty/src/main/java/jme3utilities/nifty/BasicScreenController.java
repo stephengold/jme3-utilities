@@ -396,8 +396,8 @@ public class BasicScreenController
      */
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        assert nifty == getNifty() : nifty;
-        assert screen == getScreen() : screen;
+        Validate.require(nifty == getNifty(), "same Nifty instance");
+        Validate.require(screen == getScreen(), "same screen");
     }
 
     /**

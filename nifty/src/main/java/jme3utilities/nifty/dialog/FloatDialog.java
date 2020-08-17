@@ -74,7 +74,7 @@ public class FloatDialog extends TextEntryDialog {
     public FloatDialog(String description, float min, float max,
             boolean allowNull) {
         super(description);
-        assert min < max : max;
+        Validate.require(min < max, "min < max");
 
         minValue = min;
         maxValue = max;
