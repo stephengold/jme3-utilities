@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 jMonkeyEngine
+ * Copyright (c) 2009-2019 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -322,7 +322,9 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
      * textures, and vice versa. How high quality textures are rendered versus
      * low quality textures will vary depending on the
      * {@link de.lessvoid.nifty.render.batch.spi.BatchRenderBackend}
-     * implementation.
+     * implementation
+     *
+     * @param shouldUseHighQualityTextures
      */
     @Override
     public void useHighQualityTextures(final boolean shouldUseHighQualityTextures) {
@@ -336,6 +338,8 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
      * Setting to true will result in slower performance, but may be useful in
      * debugging when visually inspecting the atlas, since there will not be
      * portions of old images visible in currently unused atlas space.
+     *
+     * @param shouldFill
      */
     @Override
     public void fillRemovedImagesInAtlas(final boolean shouldFill) {
