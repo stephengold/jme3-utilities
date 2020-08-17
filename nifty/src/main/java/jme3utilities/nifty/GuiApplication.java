@@ -182,7 +182,7 @@ abstract public class GuiApplication extends ActionApplication {
         nifty.fromXmlWithoutStartScreen(assetPath);
 
         for (String dialogName : new String[]{
-            "confirm", "info10", "multiSelect", "text-entry"
+            "confirm", "info10", "multiSelect", "text-and-slider", "text-entry"
         }) {
             assetPath = String.format("/Interface/Nifty/dialogs/%s.xml",
                     dialogName);
