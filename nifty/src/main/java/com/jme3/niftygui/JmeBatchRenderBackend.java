@@ -561,12 +561,15 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
         private RenderState.BlendMode convertBlend(final BlendMode blendMode) {
             if (blendMode == null) {
                 return RenderState.BlendMode.Off;
-            } else if (blendMode == BlendMode.BLEND) {
-                return RenderState.BlendMode.Alpha;
-            } else if (blendMode == BlendMode.MULIPLY) {
-                return RenderState.BlendMode.Alpha;
             } else {
-                throw new UnsupportedOperationException();
+                switch (blendMode) {
+                    case BLEND:
+                        return RenderState.BlendMode.Alpha;
+                    case MULIPLY:
+                        return RenderState.BlendMode.Alpha;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
             }
         }
 
