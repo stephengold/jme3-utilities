@@ -45,6 +45,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.nifty.dialog.DialogController;
+import jme3utilities.nifty.dialog.FloatSliderDialog;
 
 /**
  * A PopScreenController with added support for Nifty controls such as check
@@ -310,6 +312,29 @@ public class GuiScreenController extends PopScreenController {
             Tool manager = findSliderTool(sliderName);
             if (manager != null) {
                 manager.onSliderChanged(sliderName);
+            }
+        }
+    }
+
+    /**
+     * Callback handler that Nifty invokes after a dialog slider changes.
+     *
+     * @param sliderId Nifty element ID of the slider (not null, "#dialogslider"
+     * suffix)
+     * @param event details of the event (not null, ignored)
+     */
+    @NiftyEventSubscriber(pattern = ".*#dialogslider")
+    public void onSliderChangedInDialog(final String sliderId,
+            final SliderChangedEvent event) {
+        Validate.nonNull(sliderId, "slider ID");
+        Validate.require(sliderId.endsWith("#dialogslider"), "expected suffix");
+        Validate.nonNull(event, "event");
+
+        if (hasStarted()) {
+            DialogController dc = getActiveDialog();
+            if (dc instanceof FloatSliderDialog) {
+                Element dialogElement = getDialogElement();
+                ((FloatSliderDialog) dc).onSliderChanged(dialogElement);
             }
         }
     }
