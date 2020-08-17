@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,12 @@ package jme3utilities.nifty;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Logger;
 import jme3utilities.ui.ActionAppState;
 
 /**
- * An ActionAppState with protected fields analogous to the private fields of
- * GuiApplication.
+ * An ActionAppState in a GuiApplication.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -54,15 +52,7 @@ public class GuiAppState extends ActionAppState {
     /**
      * GUI application instance: set by initialize()
      */
-    protected GuiApplication guiApplication;
-    /**
-     * Nifty instance: set by initialize()
-     */
-    protected Nifty nifty;
-    /**
-     * Nifty display: set by initialize()
-     */
-    protected NiftyJmeDisplay niftyDisplay;
+    private GuiApplication guiApplication;
     // *************************************************************************
     // constructor
 
@@ -73,6 +63,32 @@ public class GuiAppState extends ActionAppState {
      */
     public GuiAppState(boolean enabled) {
         super(enabled);
+    }
+    // *************************************************************************
+    // new methods exposed
+
+    /**
+     * Access the Nifty instance.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    public Nifty getNifty() {
+        Nifty result = guiApplication.getNifty();
+
+        assert result != null;
+        return result;
+    }
+    // *************************************************************************
+    // new protected methods
+
+    /**
+     * Access the application instance.
+     *
+     * @return the pre-existing instance (not null)
+     */
+    protected GuiApplication getApplication() {
+        assert guiApplication != null;
+        return guiApplication;
     }
     // *************************************************************************
     // ActionAppState methods
@@ -91,11 +107,6 @@ public class GuiAppState extends ActionAppState {
         }
 
         super.initialize(sm, app);
-
         guiApplication = (GuiApplication) app;
-        nifty = guiApplication.getNifty();
-        assert nifty != null;
-        niftyDisplay = guiApplication.getNiftyDisplay();
-        assert niftyDisplay != null;
     }
 }

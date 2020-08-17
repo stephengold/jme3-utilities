@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Vector2f;
+import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventAnnotationProcessor;
 import de.lessvoid.nifty.elements.Element;
@@ -143,22 +144,12 @@ public class BasicScreenController
     }
 
     /**
-     * Access the Nifty instance that owns the controlled screen.
-     *
-     * @return the pre-existing instance (not null)
-     */
-    public Nifty getNifty() {
-        assert nifty != null;
-        return nifty;
-    }
-
-    /**
      * Access the controlled screen.
      *
      * @return the pre-existing instance (not null)
      */
     public Screen getScreen() {
-        Screen screen = nifty.getScreen(screenId);
+        Screen screen = getNifty().getScreen(screenId);
         assert screen != null;
         return screen;
     }
@@ -243,7 +234,7 @@ public class BasicScreenController
         logger.log(Level.INFO, "actionString={0}",
                 MyString.quote(actionString));
 
-        BasicScreenController screen = guiApplication.getEnabledScreen();
+        BasicScreenController screen = getApplication().getEnabledScreen();
         ActionListener actionListener = screen.getListener();
         boolean isOngoing = true;
         float tpf = 0f;
@@ -251,7 +242,7 @@ public class BasicScreenController
             actionListener.onAction(actionString, isOngoing, tpf);
         } catch (Throwable throwable) {
             logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
-            guiApplication.stop(false);
+            getApplication().stop(false);
         }
     }
 
@@ -274,7 +265,7 @@ public class BasicScreenController
             actionListener.onAction(actionString, isOngoing, tpf);
         } catch (Throwable throwable) {
             logger.log(Level.SEVERE, "Caught unexpected throwable:", throwable);
-            guiApplication.stop(false);
+            getApplication().stop(false);
         }
     }
 
@@ -297,17 +288,19 @@ public class BasicScreenController
         assert isInitialized();
         assert isEnabled();
 
-        BasicScreenController enabledScreen = guiApplication.getEnabledScreen();
+        BasicScreenController enabledScreen
+                = getApplication().getEnabledScreen();
         assert enabledScreen == this : enabledScreen;
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
         /*
          * Detatch Nifty from the viewport.
          */
-        guiViewPort.removeProcessor(niftyDisplay);
+        NiftyJmeDisplay display = getApplication().getNiftyDisplay();
+        guiViewPort.removeProcessor(display);
 
         NiftyEventAnnotationProcessor.unprocess(this);
 
-        guiApplication.setEnabledScreen(null);
+        getApplication().setEnabledScreen(null);
         super.setEnabled(false);
     }
 
@@ -322,12 +315,13 @@ public class BasicScreenController
         /*
          * Attach Nifty to the viewport.
          */
-        guiViewPort.addProcessor(niftyDisplay);
+        NiftyJmeDisplay display = getApplication().getNiftyDisplay();
+        guiViewPort.addProcessor(display);
 
-        nifty.gotoScreen(screenId);
+        getNifty().gotoScreen(screenId);
         NiftyEventAnnotationProcessor.process(this);
 
-        guiApplication.setEnabledScreen(this);
+        getApplication().setEnabledScreen(this);
         super.setEnabled(true);
     }
     // *************************************************************************
@@ -357,7 +351,7 @@ public class BasicScreenController
             Application application) {
         super.initialize(stateManager, application);
 
-        nifty.registerScreenController(this);
+        getNifty().registerScreenController(this);
         validateAndLoad();
         if (enableDuringInitialization) {
             enable();
@@ -439,7 +433,7 @@ public class BasicScreenController
         Level save = niftyLogger.getLevel();
         niftyLogger.setLevel(Level.SEVERE);
         try {
-            nifty.addXml(xmlAssetPath);
+            getNifty().addXml(xmlAssetPath);
         } catch (Throwable e) {
             String message = "while loading ScreenController layout from asset "
                     + MyString.quote(xmlAssetPath);

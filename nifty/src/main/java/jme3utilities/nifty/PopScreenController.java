@@ -128,7 +128,7 @@ public class PopScreenController extends BasicScreenController {
         }
 
         String popupId = dialogElement.getId();
-        nifty.closePopup(popupId);
+        getNifty().closePopup(popupId);
         dialogActionPrefix = null;
         setActiveDialog(null);
         InputMode.resumeLifo();
@@ -290,7 +290,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/confirm" layout as a base.
          * Nifty assigns the popup a new id.
          */
-        dialogElement = nifty.createPopup("dialogs/confirm");
+        dialogElement = getNifty().createPopup("dialogs/confirm");
         String popupId = dialogElement.getId();
         assert popupId != null;
 
@@ -322,9 +322,9 @@ public class PopScreenController extends BasicScreenController {
          */
         if (numLines > 10 || numChars > 200) { // TODO use font information
             String masterId = registerInfoScrollDialog(numLines + 2);
-            dialogElement = nifty.createPopup(masterId);
+            dialogElement = getNifty().createPopup(masterId);
         } else {
-            dialogElement = nifty.createPopup("dialogs/info10");
+            dialogElement = getNifty().createPopup("dialogs/info10");
         }
         String popupId = dialogElement.getId();
         assert popupId != null;
@@ -363,7 +363,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/multiSelect" layout as a base.
          * Nifty assigns the popup a new id.
          */
-        dialogElement = nifty.createPopup("dialogs/multiSelect");
+        dialogElement = getNifty().createPopup("dialogs/multiSelect");
         String popupId = dialogElement.getId();
         assert popupId != null;
 
@@ -453,7 +453,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using "popup-menu" as a base.
          * Nifty assigns the popup a new id.
          */
-        Element element = nifty.createPopup("popup-menu");
+        Element element = getNifty().createPopup("popup-menu");
         /*
          * Add items to the new popup's menu.
          */
@@ -545,7 +545,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/text-entry" layout as a base.
          * Nifty assigns the popup a new id.
          */
-        dialogElement = nifty.createPopup("dialogs/text-entry");
+        dialogElement = getNifty().createPopup("dialogs/text-entry");
         String popupId = dialogElement.getId();
         assert popupId != null;
 
@@ -582,7 +582,7 @@ public class PopScreenController extends BasicScreenController {
         /*
          * Make the popup visible, setting the keyboard focus.
          */
-        Screen screen = nifty.getCurrentScreen();
+        Screen screen = getNifty().getCurrentScreen();
         assert screen != null;
         Element focusElement;
         if (focusElementId == null) {
@@ -590,7 +590,7 @@ public class PopScreenController extends BasicScreenController {
         } else {
             focusElement = dialogElement.findElementById(focusElementId);
         }
-        nifty.showPopup(screen, popupId, focusElement);
+        getNifty().showPopup(screen, popupId, focusElement);
 
         InputMode dialogMode = InputMode.findMode(DialogInputMode.name);
         InputMode.suspendAndActivate(dialogMode);
@@ -637,9 +637,9 @@ public class PopScreenController extends BasicScreenController {
         /*
          * Subscribe to menu events.
          */
-        Screen screen = nifty.getCurrentScreen();
+        Screen screen = getNifty().getCurrentScreen();
         String controlId = menu.getId();
-        nifty.subscribe(screen, controlId, MenuItemActivatedEvent.class,
+        getNifty().subscribe(screen, controlId, MenuItemActivatedEvent.class,
                 popupMenu);
         /*
          * The menu will appear at the mouse pointer.  For a submenu,
@@ -648,7 +648,7 @@ public class PopScreenController extends BasicScreenController {
          * to drift downward and the right.
          */
         if (activePopupMenu != null) {
-            NiftyMouse mouse = nifty.getNiftyMouse();
+            NiftyMouse mouse = getNifty().getNiftyMouse();
             float floatX = mouse.getX();
             float floatY = mouse.getY();
 
@@ -664,7 +664,7 @@ public class PopScreenController extends BasicScreenController {
          * Make the popup visible without specifying a focus element.
          */
         String elementId = popupMenu.getElementId();
-        nifty.showPopup(screen, elementId, null);
+        getNifty().showPopup(screen, elementId, null);
 
         if (activePopupMenu == null) {
             InputMode menuMode = InputMode.findMode(MenuInputMode.name);
@@ -762,7 +762,7 @@ public class PopScreenController extends BasicScreenController {
                     }
                 });
             }
-        }.registerPopup(nifty);
+        }.registerPopup(getNifty());
 
         return masterId;
     }
