@@ -54,7 +54,7 @@ public class GuiEvent extends AbstractCinematicEvent {
     /**
      * message logger for this class
      */
-    static final Logger log = Logger.getLogger(GuiEvent.class.getName());
+    final private static Logger log = Logger.getLogger(GuiEvent.class.getName());
     // *************************************************************************
     // fields
 

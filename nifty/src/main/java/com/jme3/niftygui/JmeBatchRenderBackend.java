@@ -72,7 +72,7 @@ import java.util.logging.Logger;
  * @author void
  */
 public class JmeBatchRenderBackend implements BatchRenderBackend {
-    private static Logger log = Logger.getLogger(JmeBatchRenderBackend.class.getName());
+    final private static Logger log = Logger.getLogger(JmeBatchRenderBackend.class.getName());
 
     private final ObjectPool<Batch> batchPool;
     private final List<Batch> batches = new ArrayList<Batch>();
