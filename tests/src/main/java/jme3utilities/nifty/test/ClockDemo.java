@@ -69,7 +69,7 @@ public class ClockDemo extends GuiApplication {
         ClockDemo application = new ClockDemo();
         application.start();
         /*
-         * ... and onward to TestMultipleScreens.guiInitializeApplication()!
+         * ... and onward to ClockDemo.guiInitializeApplication()!
          */
     }
     // *************************************************************************
