@@ -113,7 +113,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
 
     @Override
     public void endInput() {
-        boolean result = nifty.update();
+        nifty.update();
     }
 
     private void handleMouseEvent(int button, boolean value, NiftyInputConsumer nic, InputEvent evt) {
@@ -230,8 +230,8 @@ public class InputSystemJme implements InputSystem, RawInputListener {
     }
 
     private void onMouseButtonEventQueued(MouseButtonEvent evt, NiftyInputConsumer nic) {
-        x = (int) evt.getX();
-        y = (int) (height - evt.getY());
+        x = evt.getX();
+        y = height - evt.getY();
         handleMouseEvent(evt.getButtonIndex(), evt.isPressed(), nic, evt);
     }
 
