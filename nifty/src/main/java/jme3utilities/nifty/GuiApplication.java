@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2018, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -52,31 +52,6 @@ abstract public class GuiApplication extends ActionApplication {
      */
     final private static Logger logger
             = Logger.getLogger(GuiApplication.class.getName());
-    /**
-     * asset path to Nifty XML for a confirmation dialog box
-     */
-    final private static String confirmDialogAssetPath
-            = "Interface/Nifty/dialogs/confirm.xml";
-    /**
-     * asset path to Nifty XML for a 10-line informational dialog box
-     */
-    final private static String infoSmallDialogAssetPath
-            = "Interface/Nifty/dialogs/info10.xml";
-    /**
-     * asset path to Nifty XML for a multi-select dialog box
-     */
-    final private static String multiSelectDialogAssetPath
-            = "Interface/Nifty/dialogs/multiSelect.xml";
-    /**
-     * asset path to Nifty XML for a generic popup menu
-     */
-    final private static String popupMenuAsssetPath
-            = "Interface/Nifty/popup-menu.xml";
-    /**
-     * asset path to Nifty XML for a text-entry dialog box
-     */
-    final private static String textEntryDialogAssetPath
-            = "Interface/Nifty/dialogs/text-entry.xml";
     // *************************************************************************
     // fields
 
@@ -203,11 +178,16 @@ abstract public class GuiApplication extends ActionApplication {
          * Load the Nifty XML for generic popups.  For some reason the
          * assets do not validate, so skip validation.
          */
-        nifty.fromXmlWithoutStartScreen(confirmDialogAssetPath);
-        nifty.fromXmlWithoutStartScreen(infoSmallDialogAssetPath);
-        nifty.fromXmlWithoutStartScreen(multiSelectDialogAssetPath);
-        nifty.fromXmlWithoutStartScreen(popupMenuAsssetPath);
-        nifty.fromXmlWithoutStartScreen(textEntryDialogAssetPath);
+        String assetPath = "Interface/Nifty/popup-menu.xml";
+        nifty.fromXmlWithoutStartScreen(assetPath);
+
+        for (String dialogName : new String[]{
+            "confirm", "info10", "multiSelect", "text-entry"
+        }) {
+            assetPath = String.format("/Interface/Nifty/dialogs/%s.xml",
+                    dialogName);
+            nifty.fromXmlWithoutStartScreen(assetPath);
+        }
         /*
          * Invoke the startup code of the subclass.
          */
