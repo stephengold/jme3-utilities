@@ -104,6 +104,8 @@ public class TestPopups extends GuiApplication {
          */
         AppSettings settings = new AppSettings(true);
         settings.setTitle(applicationName);
+
+        settings.setAudioRenderer(null);
         application.setSettings(settings);
         application.start();
         /*
@@ -123,7 +125,7 @@ public class TestPopups extends GuiApplication {
          */
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
-        logger.log(Level.INFO, "jme3-utilities-heart version is {0}",
+        logger.log(Level.INFO, "Heart version is {0}",
                 MyString.quote(Heart.versionShort()));
 
         InputMode inputMode = getDefaultInputMode();

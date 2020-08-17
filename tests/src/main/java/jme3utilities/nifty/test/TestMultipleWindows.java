@@ -27,6 +27,7 @@
 package jme3utilities.nifty.test;
 
 import com.jme3.audio.openal.ALAudioRenderer;
+import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,6 +80,10 @@ public class TestMultipleWindows extends GuiApplication {
         logger.setLevel(Level.INFO);
 
         TestMultipleWindows application = new TestMultipleWindows();
+
+        AppSettings settings = new AppSettings(true);
+        settings.setAudioRenderer(null);
+        application.setSettings(settings);
         application.start();
         /*
          * ... and onward to TestMultipleWindows.guiInitializeApplication()!
@@ -97,7 +102,7 @@ public class TestMultipleWindows extends GuiApplication {
          */
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
-        logger.log(Level.INFO, "jme3-utilities-heart version is {0}",
+        logger.log(Level.INFO, "Heart version is {0}",
                 MyString.quote(Heart.versionShort()));
 
         InputMode inputMode = getDefaultInputMode();
