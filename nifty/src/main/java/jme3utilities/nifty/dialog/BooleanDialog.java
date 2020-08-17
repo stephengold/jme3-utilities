@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -51,11 +51,6 @@ public class BooleanDialog extends TextEntryDialog {
      */
     final private static Pattern falsePattern
             = Pattern.compile("\\s*false\\s*");
-    /**
-     * pattern for matching the word "null"
-     */
-    final private static Pattern nullPattern
-            = Pattern.compile("\\s*null\\s*");
     /**
      * pattern for matching the word "true"
      */
@@ -118,21 +113,6 @@ public class BooleanDialog extends TextEntryDialog {
         assert lcText != null;
 
         Matcher matcher = falsePattern.matcher(lcText);
-        boolean result = matcher.matches();
-
-        return result;
-    }
-
-    /**
-     * Test whether the specified string matches nullPattern.
-     *
-     * @param lcText text string (not null, assumed to be in lower case)
-     * @return true for match, otherwise false
-     */
-    private boolean matchesNull(String lcText) {
-        assert lcText != null;
-
-        Matcher matcher = nullPattern.matcher(lcText);
         boolean result = matcher.matches();
 
         return result;

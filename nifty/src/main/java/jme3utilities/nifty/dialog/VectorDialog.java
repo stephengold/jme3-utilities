@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -57,11 +57,6 @@ public class VectorDialog extends TextEntryDialog {
      */
     final private static Pattern elementPattern
             = Pattern.compile("([^)(,\\s]+)");
-    /**
-     * pattern for matching the word null
-     */
-    final private static Pattern nullPattern
-            = Pattern.compile("\\s*null\\s*");
     // *************************************************************************
     // fields
 
@@ -180,21 +175,6 @@ public class VectorDialog extends TextEntryDialog {
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Test whether the specified string matches nullPattern.
-     *
-     * @param lcText text string (converted to lower case)
-     * @return true for match, otherwise false
-     */
-    private boolean matchesNull(String lcText) {
-        assert lcText != null;
-
-        Matcher matcher = nullPattern.matcher(lcText);
-        boolean result = matcher.matches();
-
-        return result;
-    }
 
     /**
      * Generate a feedback message when the text does not represent a vector.

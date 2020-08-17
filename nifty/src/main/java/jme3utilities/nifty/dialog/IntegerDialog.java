@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,6 @@ package jme3utilities.nifty.dialog;
 
 import java.util.Locale;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import jme3utilities.Validate;
 
 /**
@@ -47,11 +45,6 @@ public class IntegerDialog extends TextEntryDialog {
      */
     final private static Logger logger
             = Logger.getLogger(IntegerDialog.class.getName());
-    /**
-     * pattern for matching the word "null"
-     */
-    final private static Pattern nullPattern
-            = Pattern.compile("\\s*null\\s*");
     // *************************************************************************
     // fields
 
@@ -121,21 +114,6 @@ public class IntegerDialog extends TextEntryDialog {
     }
     // *************************************************************************
     // private methods
-
-    /**
-     * Test whether the specified string matches nullPattern.
-     *
-     * @param lcText text string (not null, assumed to be in lower case)
-     * @return true for match, otherwise false
-     */
-    private boolean matchesNull(String lcText) {
-        assert lcText != null;
-
-        Matcher matcher = nullPattern.matcher(lcText);
-        boolean result = matcher.matches();
-
-        return result;
-    }
 
     /**
      * Generate a feedback message when the text does not represent a number.
