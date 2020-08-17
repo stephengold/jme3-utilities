@@ -1,5 +1,16 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.15 released on TBD
+
+ + Remove the `getId()` method from the `WindowController` class.
+ + Rename the `setActiveDialog()` method in the `PopScreenController` class.
+ + Revert the fix for the multi-atlas batch render issue.
+ + Bind the "ScreenShot" hotkey when editing display settings.
+ + Add the `FloatSliderDialog` class.
+ + Base on version 3.3.2-stable of jMonkeyEngine,
+   version 6.0.0 of the Heart Library,
+   and version 0.9.0 of the jme3-utilities-ui library.
+
 ## Version 0.9.14 released on 1 April 2020
 
  + Raise the log priorities of 3 warning messages in `GuiScreenController`.

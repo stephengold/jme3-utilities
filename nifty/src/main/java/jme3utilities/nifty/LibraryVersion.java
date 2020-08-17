@@ -55,11 +55,11 @@ public class LibraryVersion {
     // new methods exposed
 
     /**
-     * Read the terse version string for this library.
+     * Determine the terse version string for this library.
      *
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.9.14-SNAPSHOT";
+        return "master 0.9.15";
     }
 }
