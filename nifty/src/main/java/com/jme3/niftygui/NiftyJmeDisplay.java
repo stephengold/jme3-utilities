@@ -31,9 +31,6 @@
  */
 package com.jme3.niftygui;
 
-import java.io.InputStream;
-import java.net.URL;
-
 import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
@@ -48,12 +45,13 @@ import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.texture.FrameBuffer;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.render.batch.BatchRenderConfiguration;
 import de.lessvoid.nifty.render.batch.BatchRenderDevice;
 import de.lessvoid.nifty.spi.time.impl.AccurateTimeProvider;
 import de.lessvoid.nifty.tools.resourceloader.ResourceLocation;
+import java.io.InputStream;
+import java.net.URL;
 
 public class NiftyJmeDisplay implements SceneProcessor {
 
