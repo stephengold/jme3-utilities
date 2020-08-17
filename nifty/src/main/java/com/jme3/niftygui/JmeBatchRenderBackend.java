@@ -428,10 +428,10 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
      */
     private static class ModifyTexture {
 
-        private Texture2D atlas;
-        private com.jme3.texture.Image image;
-        private int x;
-        private int y;
+        final private Texture2D atlas;
+        final private com.jme3.texture.Image image;
+        final private int x;
+        final private int y;
 
         private ModifyTexture(final Texture2D atlas, final com.jme3.texture.Image image, final int x, final int y) {
             this.atlas = atlas;
@@ -477,10 +477,10 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
         private final Geometry meshGeometry = new Geometry("nifty-quad", mesh);
         private final RenderState renderState = new RenderState();
 
-        private FloatBuffer vertexPosBuffer;
-        private FloatBuffer vertexTexCoordBuffer;
-        private FloatBuffer vertexColorBuffer;
-        private ShortBuffer indexBufferBuffer;
+        final private FloatBuffer vertexPosBuffer;
+        final private FloatBuffer vertexTexCoordBuffer;
+        final private FloatBuffer vertexColorBuffer;
+        final private ShortBuffer indexBufferBuffer;
 
         // number of quads already added to this batch.
         private int quadCount;
@@ -489,7 +489,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
         // current blend mode
         private BlendMode blendMode = BlendMode.BLEND;
         private Texture2D texture;
-        private Material material;
+        final private Material material;
 
         public Batch() {
             // setup mesh

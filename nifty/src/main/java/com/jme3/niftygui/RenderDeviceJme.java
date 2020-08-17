@@ -59,7 +59,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 
 public class RenderDeviceJme implements RenderDevice {
-    private NiftyJmeDisplay display;
+    final private NiftyJmeDisplay display;
     private RenderManager rm;
     private Renderer r;
     private HashMap<CachedTextKey, BitmapText> textCacheLastFrame = new HashMap<CachedTextKey, BitmapText>();
@@ -67,16 +67,16 @@ public class RenderDeviceJme implements RenderDevice {
     private final Quad quad = new Quad(1, -1, true);
     private final Geometry quadGeom = new Geometry("nifty-quad", quad);
     private boolean clipWasSet = false;
-    private VertexBuffer quadDefaultTC = quad.getBuffer(Type.TexCoord);
-    private VertexBuffer quadModTC = quadDefaultTC.clone();
-    private VertexBuffer quadColor;
-    private Matrix4f tempMat = new Matrix4f();
-    private ColorRGBA tempColor = new ColorRGBA();
-    private RenderState renderState = new RenderState();
+    final private VertexBuffer quadDefaultTC = quad.getBuffer(Type.TexCoord);
+    final private VertexBuffer quadModTC = quadDefaultTC.clone();
+    final private VertexBuffer quadColor;
+    final private Matrix4f tempMat = new Matrix4f();
+    final private ColorRGBA tempColor = new ColorRGBA();
+    final private RenderState renderState = new RenderState();
 
-    private Material colorMaterial;
-    private Material textureColorMaterial;
-    private Material vertexColorMaterial;
+    final private Material colorMaterial;
+    final private Material textureColorMaterial;
+    final private Material vertexColorMaterial;
 
     private static class CachedTextKey {
 

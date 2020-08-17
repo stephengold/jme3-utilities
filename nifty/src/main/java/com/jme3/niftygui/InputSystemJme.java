@@ -52,8 +52,8 @@ import java.util.logging.Logger;
 public class InputSystemJme implements InputSystem, RawInputListener {
 
     private final ArrayList<InputEvent> inputQueue = new ArrayList<InputEvent>();
-    private InputManager inputManager;
-    private boolean[] niftyOwnsDragging = new boolean[3];
+    final private InputManager inputManager;
+    final private boolean[] niftyOwnsDragging = new boolean[3];
     private int inputPointerId = -1;
     private int x, y;
     private int height;

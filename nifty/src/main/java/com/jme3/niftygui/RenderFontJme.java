@@ -37,9 +37,9 @@ import de.lessvoid.nifty.spi.render.RenderFont;
 
 public class RenderFontJme implements RenderFont {
 
-    private BitmapFont font;
-    private BitmapText text;
-    private float actualSize;
+    final private BitmapFont font;
+    final private BitmapText text;
+    final private float actualSize;
 
     /**
      * Initialize the font.
