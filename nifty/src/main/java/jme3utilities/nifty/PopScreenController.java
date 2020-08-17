@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2020, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -130,7 +130,7 @@ public class PopScreenController extends BasicScreenController {
         String popupId = dialogElement.getId();
         getNifty().closePopup(popupId);
         dialogActionPrefix = null;
-        setActiveDialog(null);
+        setDialogElement(null);
         InputMode.resumeLifo();
         dialogController = null;
     }
@@ -604,7 +604,7 @@ public class PopScreenController extends BasicScreenController {
      *
      * @param element which element to activate, or null to deactivate
      */
-    protected void setActiveDialog(Element element) {
+    protected void setDialogElement(Element element) {
         dialogElement = element;
     }
     // *************************************************************************
