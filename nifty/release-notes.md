@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.15 released on TBD
+## Version 0.9.15 released on 17 August 2020
 
  + Remove the `getId()` method from the `WindowController` class.
  + Rename the `setActiveDialog()` method in the `PopScreenController` class.
