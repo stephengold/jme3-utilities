@@ -11,7 +11,7 @@ description = 'NiftyGUI library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-nifty'
     version = jme3utilitiesniftyVersion
-    baseName = "$artifact-$version"
+    baseName = "${artifact}-${version}" // for POM and class JAR
 }
 
 jar { archiveBaseName = project.ext.baseName }
@@ -32,6 +32,10 @@ task('pom', type: Copy) {
     from "${buildDir}/publications/maven/pom-default.xml"
     into "${buildDir}/libs"
     rename '.*', baseName + '.pom'
+}
+
+publishToMavenLocal.doLast {
+    println 'published to ' + baseName
 }
 
 publishing {
