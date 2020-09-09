@@ -60,6 +60,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RenderDeviceJme implements RenderDevice {
+    final private boolean colorsAsSrgb;
     final private NiftyJmeDisplay display;
     private RenderManager rm;
     private Renderer r;
@@ -110,7 +111,12 @@ public class RenderDeviceJme implements RenderDevice {
     }
 
     public RenderDeviceJme(NiftyJmeDisplay display) {
+        this(display, false);
+    }
+
+    public RenderDeviceJme(NiftyJmeDisplay display, boolean colorsAsSrgb) {
         this.display = display;
+        this.colorsAsSrgb = colorsAsSrgb;
 
         quadColor = new VertexBuffer(Type.Color);
         quadColor.setNormalized(true);
@@ -240,7 +246,16 @@ public class RenderDeviceJme implements RenderDevice {
     }
 
     private ColorRGBA convertColor(Color inColor, ColorRGBA outColor) {
-        return outColor.set(inColor.getRed(), inColor.getGreen(), inColor.getBlue(), inColor.getAlpha());
+        float red = inColor.getRed();
+        float green = inColor.getGreen();
+        float blue = inColor.getBlue();
+        float alpha = inColor.getAlpha();
+
+        if (colorsAsSrgb) {
+            return outColor.setAsSrgb(red, green, blue, alpha);
+        } else {
+            return outColor.set(red, green, blue, alpha);
+        }
     }
 
     @Override

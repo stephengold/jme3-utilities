@@ -266,9 +266,17 @@ public class NiftyJmeDisplay implements SceneProcessor {
             InputManager inputManager,
             AudioRenderer audioRenderer,
             ViewPort vp) {
+        this(assetManager, inputManager, audioRenderer, vp, false);
+    }
+
+    public NiftyJmeDisplay(AssetManager assetManager,
+            InputManager inputManager,
+            AudioRenderer audioRenderer,
+            ViewPort vp,
+            boolean colorsAsSrgb) {
         initialize(assetManager, inputManager, audioRenderer, vp);
 
-        this.renderDev = new RenderDeviceJme(this);
+        this.renderDev = new RenderDeviceJme(this, colorsAsSrgb);
         this.batchRendererBackend = null;
 
         nifty = new Nifty(renderDev, soundDev, inputSys, new AccurateTimeProvider());
