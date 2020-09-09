@@ -116,6 +116,7 @@ public class TestPopups extends GuiApplication {
 
         settings.setAudioRenderer(null);
         application.setSettings(settings);
+        //application.setNiftyColorsAsSrgb();
         application.start();
         /*
          * ... and onward to TestPopups.guiInitializeApplication()!

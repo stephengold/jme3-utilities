@@ -88,6 +88,7 @@ public class TestMultipleScreens extends GuiApplication {
         logger.setLevel(Level.INFO);
 
         TestMultipleScreens application = new TestMultipleScreens();
+        //application.setNiftyColorsAsSrgb();
         application.start();
         /*
          * ... and onward to TestMultipleScreens.guiInitializeApplication()!

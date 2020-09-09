@@ -84,6 +84,8 @@ public class TestMultipleWindows extends GuiApplication {
         AppSettings settings = new AppSettings(true);
         settings.setAudioRenderer(null);
         application.setSettings(settings);
+
+        //application.setNiftyColorsAsSrgb();
         application.start();
         /*
          * ... and onward to TestMultipleWindows.guiInitializeApplication()!

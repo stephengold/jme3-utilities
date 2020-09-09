@@ -67,6 +67,7 @@ public class ClockDemo extends GuiApplication {
                 .setLevel(Level.SEVERE);
 
         ClockDemo application = new ClockDemo();
+        //application.setNiftyColorsAsSrgb();
         application.start();
         /*
          * ... and onward to ClockDemo.guiInitializeApplication()!

@@ -150,6 +150,7 @@ public class TestBindScreen extends GuiApplication {
             @Override
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);
+                settings.setGammaCorrection(true);
                 settings.setSamples(8);
                 settings.setVSync(true);
             }
@@ -162,6 +163,10 @@ public class TestBindScreen extends GuiApplication {
              * by DisplaySettings.initialize().
              */
             application.setShowSettings(false);
+
+            if (displaySettings.isGammaCorrection()) {
+                application.setNiftyColorsAsSrgb();
+            }
             application.start();
             /*
              * ... and onward to TestBindScreen.guiInitializeApplication()!
