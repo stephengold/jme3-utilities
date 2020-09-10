@@ -1,5 +1,11 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.16 released on TBD
+
+Added a `setNiftyColorsAsSrgb()` method to the `GuiApplication` class,
+to specify that Nifty colors are defined in sRGB space. This setting is
+useful when gamma correction will be enabled.
+
 ## Version 0.9.15 released on 17 August 2020
 
  + Remove the `getId()` method from the `WindowController` class.
