@@ -299,7 +299,7 @@ public class Combo {
 
     /**
      * Find the specified String value in an array, using a linear search. The
-     * array need not be sorted. TODO move to library
+     * array need not be sorted. TODO use Heart library
      *
      * @param array the array to search (not null, unaffected)
      * @param value the value to find (not null)
