@@ -180,24 +180,6 @@ public class HelpUtils {
     }
 
     /**
-     * Compactly describe the named hotkey. TODO re-order methods
-     *
-     * @param hotkeyName the hotkey name (not null)
-     * @return the compressed name (not null)
-     */
-    private static String compress(String hotkeyName) {
-        Validate.nonNull(hotkeyName, "hotkey name");
-
-        String result = hotkeyName;
-        if (result.endsWith(" arrow")) {
-            result = MyString.removeSuffix(result, " arrow");
-        }
-        result = result.replace("numpad ", "num");
-
-        return result;
-    }
-
-    /**
      * Generate a background geometry for the help node.
      *
      * @param bounds (in screen coordinates, not null, unaffected)
@@ -222,6 +204,24 @@ public class HelpUtils {
         Material backgroundMaterial
                 = MyAsset.createUnshadedMaterial(assetManager, backgroundColor);
         result.setMaterial(backgroundMaterial);
+
+        return result;
+    }
+
+    /**
+     * Compactly describe the named hotkey.
+     *
+     * @param hotkeyName the hotkey name (not null)
+     * @return the compressed name (not null)
+     */
+    private static String compress(String hotkeyName) {
+        Validate.nonNull(hotkeyName, "hotkey name");
+
+        String result = hotkeyName;
+        if (result.endsWith(" arrow")) {
+            result = MyString.removeSuffix(result, " arrow");
+        }
+        result = result.replace("numpad ", "num");
 
         return result;
     }
