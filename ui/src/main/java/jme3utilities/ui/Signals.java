@@ -135,7 +135,7 @@ public class Signals implements ActionListener {
      * @param name the signal's name (not null)
      * @param sourceIndex the index of the signal source (key or button) which
      * is being updated
-     * @param newState true if the source has gone active; false is the source
+     * @param newState true if the source has gone active; false if the source
      * has gone inactive
      */
     private void update(String name, int sourceIndex, boolean newState) {
