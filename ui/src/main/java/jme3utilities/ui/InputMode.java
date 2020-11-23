@@ -343,7 +343,7 @@ abstract public class InputMode
     public Collection<Combo> listCombos(String actionName) {
         Validate.nonNull(actionName, "name");
 
-        Collection<Combo> result = new HashSet<>();
+        Collection<Combo> result = new HashSet<>(32);
         for (int code = 0; code < numCodes; ++code) {
             Map<Combo, String> map = comboBindings[code];
             for (Map.Entry<Combo, String> entry : map.entrySet()) {
