@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -330,6 +331,30 @@ abstract public class InputMode
      */
     public List<String> listActionNames() {
         List<String> result = new ArrayList<>(actionNames);
+        return result;
+    }
+
+    /**
+     * Enumerate all combos bound to the named action.
+     *
+     * @param actionName the action name (not null)
+     * @return a new collection of combos
+     */
+    public Collection<Combo> listCombos(String actionName) {
+        Validate.nonNull(actionName, "name");
+
+        Collection<Combo> result = new HashSet<>();
+        for (int code = 0; code < numCodes; ++code) {
+            Map<Combo, String> map = comboBindings[code];
+            for (Map.Entry<Combo, String> entry : map.entrySet()) {
+                String action = entry.getValue();
+                if (action.equals(actionName)) {
+                    Combo combo = entry.getKey();
+                    result.add(combo);
+                }
+            }
+        }
+
         return result;
     }
 
