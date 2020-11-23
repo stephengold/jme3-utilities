@@ -75,7 +75,7 @@ public class Signals
         String args = MyString.remainder(actionString, requiredPrefix);
         Validate.require(args.contains(" "), "a source index");
 
-        int spacePosition = args.lastIndexOf(" ");
+        int spacePosition = args.lastIndexOf(' ');
         assert spacePosition != -1 : spacePosition;
         String signalName = args.substring(0, spacePosition);
         String sourceString = args.substring(spacePosition + 1);
