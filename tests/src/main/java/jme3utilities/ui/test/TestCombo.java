@@ -109,15 +109,17 @@ public class TestCombo extends ActionApplication {
         dim.bindSignal("ctrl", KeyInput.KEY_LCONTROL, KeyInput.KEY_RCONTROL);
         dim.bindSignal("shift", KeyInput.KEY_LSHIFT, KeyInput.KEY_RSHIFT);
 
-        Hotkey c = Hotkey.find(KeyInput.KEY_C);
-        dim.bind("hint", new Combo(c, "ctrl", false));
-        Combo ctrlC = new Combo(c, "ctrl", true);
-        dim.bind(SimpleApplication.INPUT_MAPPING_EXIT, ctrlC);
+        Hotkey e = Hotkey.find(KeyInput.KEY_E);
+        Combo ctrl_e = new Combo(e, "ctrl", true);
+        Combo noctrl_e = new Combo(e, "ctrl", false);
+        dim.bind(SimpleApplication.INPUT_MAPPING_EXIT, ctrl_e);
+        dim.bind("hint", noctrl_e);
 
-        Hotkey z = Hotkey.find(KeyInput.KEY_Z);
-        dim.bind("hint", new Combo(z, "shift", false));
-        Combo shiftZ = new Combo(z, "shift", true);
-        dim.bind(SimpleApplication.INPUT_MAPPING_EXIT, shiftZ);
+        Hotkey r = Hotkey.find(KeyInput.KEY_R);
+        Combo shift_r = new Combo(r, "shift", true);
+        Combo noshift_r = new Combo(r, "shift", false);
+        dim.bind(SimpleApplication.INPUT_MAPPING_EXIT, shift_r);
+        dim.bind("hint", noshift_r);
         /*
          * Build and attach the help node.
          */
@@ -145,7 +147,7 @@ public class TestCombo extends ActionApplication {
             switch (actionString) {
                 case "hint":
                     System.out.println();
-                    System.out.println("Use Ctrl+C or Shift+Z to quit.");
+                    System.out.println("Use Ctrl+E or Shift+R to quit.");
                     System.out.println();
                     return;
             }
