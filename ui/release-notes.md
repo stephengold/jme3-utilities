@@ -1,5 +1,16 @@
 # release log for the jme3-utilities-ui library and related tests
 
+## Version 0.9.1 released on TBD
+
+ + Added combo hints to help screens.
+ + Allowed spaces in signal names (should still be discouraged).
+ + Added the `listCombos()` method to the `InputMode` class.
+ + Added `countSignals()`, `isPositive()`, and `signalName()` methods
+   to the `Combo` class.
+ + Clarified the `TestCombo` application.
+ + Reimplemented `Signals` as a subclass of `SignalTracker`.
+ + Based on version 6.2.0 of the Heart Library.
+
 ## Version 0.9.0 released on 16 August 2020
 
  + Redesigned the API of the `InputMode` class:
