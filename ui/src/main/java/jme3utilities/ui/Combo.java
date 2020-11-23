@@ -130,6 +130,30 @@ public class Combo {
     // new methods exposed
 
     /**
+     * Count the signals.
+     *
+     * @return the number of signals (&ge;0)
+     */
+    int countSignals() {
+        int result = signalNames.length;
+        return result;
+    }
+
+    /**
+     * Determine the polarity of the indexed signal.
+     *
+     * @param signalIndex which signal (&ge;0, &lt;numSignals)
+     * @return true if the signal is required, false if it is excluded
+     */
+    boolean isPositive(int signalIndex) {
+        Validate.inRange(signalIndex, "signal index", 0,
+                positiveFlags.length - 1);
+        boolean result = positiveFlags[signalIndex];
+
+        return result;
+    }
+
+    /**
      * Map this Combo in an InputManager.
      *
      * @param inputManager the application's InputManager (not null)
@@ -139,6 +163,19 @@ public class Combo {
 
         String actionString = String.format("combo %d", hotkey.code());
         hotkey.map(actionString, inputManager);
+    }
+
+    /**
+     * Determine the name of the indexed signal.
+     *
+     * @param signalIndex which signal (&ge;0, &lt;numSignals)
+     * @return the name
+     */
+    String signalName(int signalIndex) {
+        Validate.inRange(signalIndex, "signal index", 0,
+                signalNames.length - 1);
+        String result = signalNames[signalIndex];
+        return result;
     }
 
     /**
