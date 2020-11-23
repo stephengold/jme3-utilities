@@ -180,7 +180,7 @@ public class HelpUtils {
     }
 
     /**
-     * Compress the specified hotkey name.
+     * Compactly describe the named hotkey. TODO re-order methods
      *
      * @param hotkeyName the hotkey name (not null)
      * @return the compressed name (not null)
@@ -227,6 +227,37 @@ public class HelpUtils {
     }
 
     /**
+     * Compactly describe the specified Combo using beautified hotkey names.
+     * Compare with Combo.toString().
+     *
+     * @param combo the Combo to describe (not null)
+     * @return a textual description (not null)
+     */
+    private static String describe(Combo combo) {
+        StringBuilder result = new StringBuilder(40);
+
+        int numSignals = combo.countSignals();
+        for (int signalIndex = 0; signalIndex < numSignals; ++signalIndex) {
+            boolean positiveFlag = combo.isPositive(signalIndex);
+            if (!positiveFlag) {
+                result.append("no");
+            }
+
+            String signalName = combo.signalName(signalIndex);
+            result.append(signalName);
+            result.append('+');
+        }
+
+        int code = combo.triggerCode();
+        Hotkey hotkey = Hotkey.find(code);
+        String hotkeyName = hotkey.name();
+        hotkeyName = compress(hotkeyName);
+        result.append(hotkeyName);
+
+        return result.toString();
+    }
+
+    /**
      * For the specified InputMode, construct a Map from beautified action names
      * to comma-separated, compressed hotkey names.
      *
@@ -236,17 +267,31 @@ public class HelpUtils {
     private static Map<String, String> mapActions(InputMode inputMode) {
         List<String> actionNames = inputMode.listActionNames();
         Map<String, String> actionsToHots = new TreeMap<>();
+
         for (String actionName : actionNames) {
+            String action = beautify(actionName);
+
             Collection<String> hotkeyNames = inputMode.listHotkeys(actionName);
             for (String hotkeyName : hotkeyNames) {
-                String action = beautify(actionName);
-                String hot = compress(hotkeyName);
+                String description = compress(hotkeyName);
                 if (actionsToHots.containsKey(action)) {
                     String oldList = actionsToHots.get(action);
-                    String newList = oldList + "/" + hot;
+                    String newList = oldList + "/" + description;
                     actionsToHots.put(action, newList);
                 } else {
-                    actionsToHots.put(action, hot);
+                    actionsToHots.put(action, description);
+                }
+            }
+
+            Collection<Combo> combos = inputMode.listCombos(actionName);
+            for (Combo combo : combos) {
+                String description = describe(combo);
+                if (actionsToHots.containsKey(action)) {
+                    String oldList = actionsToHots.get(action);
+                    String newList = oldList + "/" + description;
+                    actionsToHots.put(action, newList);
+                } else {
+                    actionsToHots.put(action, description);
                 }
             }
         }
