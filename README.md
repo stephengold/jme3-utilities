@@ -178,7 +178,7 @@ Clone the Jme3-utilities repository using Git:
  2. Download and extract the source code from GitHub:
      + `git clone https://github.com/stephengold/jme3-utilities.git`
      + `cd jme3-utilities`
-     + `git checkout -b latest nifty-0.9.15`
+     + `git checkout -b latest ui-0.9.1`
  3. Set the `JAVA_HOME` environment variable:
    + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
    + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`

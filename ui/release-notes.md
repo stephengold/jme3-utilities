@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-ui library and related tests
 
-## Version 0.9.1 released on TBD
+## Version 0.9.1 released on 23 November 2020
 
  + Added combo hints to help screens.
  + Allowed spaces in signal names (should still be discouraged).
