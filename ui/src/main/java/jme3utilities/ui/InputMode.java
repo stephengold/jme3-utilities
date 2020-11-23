@@ -204,6 +204,22 @@ abstract public class InputMode
     }
 
     /**
+     * Bind the named action to the specified hotkey, but don't map it yet. Any
+     * existing binding for the hotkey is removed.
+     *
+     * @param actionName name of the action (not null)
+     * @param hotkey which hotkey to bind (not null)
+     */
+    public void bind(String actionName, Hotkey hotkey) {
+        Validate.nonNull(actionName, "action name");
+        Validate.nonNull(hotkey, "hotkey");
+
+        String description = hotkey.name();
+        hotkeyBindings.put(description, actionName);
+        addActionName(actionName);
+    }
+
+    /**
      * Bind the named action to the specified key codes, but don't map it yet.
      * Any existing bindings for those keys are removed.
      *
@@ -232,22 +248,6 @@ abstract public class InputMode
 
         assert Hotkey.find(hotkeyName) != null : hotkeyName;
         hotkeyBindings.put(hotkeyName, actionName);
-        addActionName(actionName);
-    }
-
-    /**
-     * Bind the named action to the specified hotkey, but don't map it yet. Any
-     * existing binding for the hotkey is removed.
-     *
-     * @param actionName name of the action (not null)
-     * @param hotkey which hotkey to bind (not null)
-     */
-    public void bind(String actionName, Hotkey hotkey) {
-        Validate.nonNull(actionName, "action name");
-        Validate.nonNull(hotkey, "hotkey");
-
-        String description = hotkey.name();
-        hotkeyBindings.put(description, actionName);
         addActionName(actionName);
     }
 
@@ -303,29 +303,6 @@ abstract public class InputMode
     }
 
     /**
-     * Enumerate all hotkeys bound to a named action.
-     *
-     * @param actionName name of action (not null)
-     * @return a new collection of names in lexicographic order
-     */
-    public Collection<String> listHotkeys(String actionName) {
-        Validate.nonNull(actionName, "name");
-
-        Collection<String> result = new TreeSet<>();
-        for (String keyName : hotkeyBindings.stringPropertyNames()) {
-            String property = hotkeyBindings.getProperty(keyName);
-            /*
-             * Note that action string comparisons are sensitive to both
-             * case and whitespace.
-             */
-            if (property.equals(actionName)) {
-                result.add(keyName);
-            }
-        }
-        return result;
-    }
-
-    /**
      * Find an initialized mode by its short name.
      *
      * @param shortName (not null)
@@ -353,6 +330,30 @@ abstract public class InputMode
      */
     public List<String> listActionNames() {
         List<String> result = new ArrayList<>(actionNames);
+        return result;
+    }
+
+    /**
+     * Enumerate all hotkeys bound to a named action.
+     *
+     * @param actionName name of action (not null)
+     * @return a new collection of names in lexicographic order
+     */
+    public Collection<String> listHotkeys(String actionName) {
+        Validate.nonNull(actionName, "name");
+
+        Collection<String> result = new TreeSet<>();
+        for (String keyName : hotkeyBindings.stringPropertyNames()) {
+            String property = hotkeyBindings.getProperty(keyName);
+            /*
+             * Note that action string comparisons are sensitive to both
+             * case and whitespace.
+             */
+            if (property.equals(actionName)) {
+                result.add(keyName);
+            }
+        }
+
         return result;
     }
 
@@ -489,18 +490,6 @@ abstract public class InputMode
     }
 
     /**
-     * Unbind the specified keyboard key.
-     *
-     * @param keyCode the key code
-     */
-    public void unbind(int keyCode) {
-        Validate.inRange(keyCode, "key code", 0, KeyInput.KEY_LAST);
-
-        Hotkey hotkey = Hotkey.findKey(keyCode);
-        unbind(hotkey);
-    }
-
-    /**
      * Unbind the specified hotkey.
      *
      * @param hotkey (not null)
@@ -510,6 +499,18 @@ abstract public class InputMode
 
         String hotkeyName = hotkey.name();
         hotkeyBindings.remove(hotkeyName);
+    }
+
+    /**
+     * Unbind the specified keyboard key.
+     *
+     * @param keyCode the key code
+     */
+    public void unbind(int keyCode) {
+        Validate.inRange(keyCode, "key code", 0, KeyInput.KEY_LAST);
+
+        Hotkey hotkey = Hotkey.findKey(keyCode);
+        unbind(hotkey);
     }
     // *************************************************************************
     // new protected methods
