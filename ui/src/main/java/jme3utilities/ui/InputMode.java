@@ -171,7 +171,7 @@ abstract public class InputMode
         this.shortName = shortName;
 
         for (int code = 0; code < numCodes; ++code) {
-            comboBindings[code] = new HashMap<Combo, String>(8);
+            comboBindings[code] = new HashMap<>(8);
         }
     }
     // *************************************************************************
