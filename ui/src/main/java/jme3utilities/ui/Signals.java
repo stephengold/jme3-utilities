@@ -27,78 +27,27 @@
 package jme3utilities.ui;
 
 import com.jme3.input.controls.ActionListener;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.MyString;
-import jme3utilities.Validate;
+import jme3utilities.SignalTracker;
 
 /**
- * Track the active/inactive status of named signals. A signal may originate
- * from multiple sources such as buttons or hotkeys. A signal is active as long
- * as any of its sources is active. TODO rename SignalTracker
+ * A SignalTracker to handle actions that start with "signal ".
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class Signals implements ActionListener {
+public class Signals
+        extends SignalTracker
+        implements ActionListener {
     // *************************************************************************
     // constants and loggers
 
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final private static Logger logger2
             = Logger.getLogger(Signals.class.getName());
-    // *************************************************************************
-    // fields
-
-    /**
-     * map signal names to statuses
-     */
-    final private Map<String, Set<Integer>> statusMap = new TreeMap<>();
-    // *************************************************************************
-    // new methods exposed
-
-    /**
-     * Add a new signal with all of its sources inactive. If the signal name is
-     * already in use, this has no effect.
-     *
-     * @param name the name for the signal (not null)
-     */
-    public void add(String name) {
-        Validate.nonNull(name, "signal name");
-
-        Set<Integer> status = statusMap.get(name);
-        if (status == null) {
-            status = new TreeSet<>();
-            statusMap.put(name, status);
-        }
-    }
-
-    /**
-     * Test whether the named signal is active.
-     *
-     * @param name the name of the signal (not null)
-     * @return true if any of the signal's sources is active, otherwise false
-     */
-    public boolean test(String name) {
-        Validate.nonNull(name, "signal name");
-
-        Set<Integer> status = statusMap.get(name);
-        if (status == null) {
-            logger.log(Level.WARNING,
-                    "Testing a signal which has not yet been added: {0}.",
-                    MyString.quote(name));
-            status = new TreeSet<>();
-            statusMap.put(name, status);
-        }
-        boolean result = !status.isEmpty();
-
-        return result;
-    }
     // *************************************************************************
     // ActionListener methods
 
@@ -107,7 +56,7 @@ public class Signals implements ActionListener {
      *
      * @param actionString textual description of the action (not null)
      * @param isOngoing true if the action is ongoing, otherwise false
-     * @param unused time per frame (in seconds)
+     * @param unused time interval between frames (in seconds, &ge;0)
      */
     @Override
     public void onAction(String actionString, boolean isOngoing, float unused) {
@@ -124,37 +73,6 @@ public class Signals implements ActionListener {
 
         String name = words[1];
         int sourceIndex = Integer.parseInt(words[2]);
-        update(name, sourceIndex, isOngoing);
-    }
-    // *************************************************************************
-    // private methods
-
-    /**
-     * Update whether a named signal source is active.
-     *
-     * @param name the signal's name (not null)
-     * @param sourceIndex the index of the signal source (key or button) which
-     * is being updated
-     * @param newState true if the source has gone active; false if the source
-     * has gone inactive
-     */
-    private void update(String name, int sourceIndex, boolean newState) {
-        assert name != null;
-
-        Set<Integer> status = statusMap.get(name);
-        if (status == null) {
-            logger.log(Level.WARNING, "Unknown signal: {0}",
-                    MyString.quote(name));
-            return;
-        }
-        logger.log(Level.INFO, "name = {0}, newState = {1}", new Object[]{
-            MyString.quote(name), newState
-        });
-
-        if (newState) {
-            status.add(sourceIndex);
-        } else {
-            status.remove(sourceIndex);
-        }
+        setActive(name, sourceIndex, isOngoing);
     }
 }
