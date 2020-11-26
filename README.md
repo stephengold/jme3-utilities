@@ -170,10 +170,7 @@ Clone the Jme3-utilities repository using Git:
 
 ### How to build Jme3-utilities without an IDE
 
- 1. Install build software:
-   + a Java Development Kit,
-   + Gradle, and
-   + Git
+ 1. Install Git and a Java Development Kit (JDK), if you don't already have one.
  2. Download and extract the source code from GitHub:
      + `git clone https://github.com/stephengold/jme3-utilities.git`
      + `cd jme3-utilities`
