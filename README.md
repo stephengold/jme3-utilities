@@ -40,7 +40,6 @@ Complete source code (in Java) is provided under
  + [Conventions](#conventions)
  + [History](#history)
  + [How to build Jme3-utilities from source](#build)
- + [External links](#links)
  + [Acknowledgments](#acks)
 
 <a name="downloads"/>
@@ -187,14 +186,6 @@ Clone the Jme3-utilities repository using Git:
    + using Windows Command Prompt:  `.\gradlew build`
 
 After a successful build, new jars will be found in `*/build/libs`.
-
-<a name="links"/>
-
-## External links
-
-  + A [maze game](https://github.com/stephengold/jme3-maze) that uses the Jme3-utilities libraries.
-
-[Jump to table of contents](#toc)
 
 <a name="acks"/>
 
