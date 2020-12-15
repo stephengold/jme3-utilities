@@ -1,9 +1,9 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.17 released on TBD
+## Version 0.9.17 released on 15 Decemeber 2020
 
  + Add a "text-and-check" dialog.
- + Base on version 6.2.0 of the Heart Library,
+ + Base on version 6.2.0 of the Heart Library
    and version 0.9.1 of the jme3-utilities-ui library.
 
 ## Version 0.9.16 released on 9 Sepetember 2020
