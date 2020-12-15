@@ -503,6 +503,69 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
+     * Create, customize, and activate a modal text-and-check dialog box:
+     * simplified interface where the controller labels the commit button.
+     *
+     * @param promptMessage text to display above the textfield (not null)
+     * @param defaultValue default text for the textfield (not null)
+     * @param actionPrefix prefix for generating the commit action (not null,
+     * usually the final character will be a space)
+     * @param controller controller for the dialog box (not null)
+     */
+    public void showTextAndCheckDialog(String promptMessage,
+            String defaultValue, String actionPrefix,
+            DialogController controller) {
+        Validate.nonNull(promptMessage, "prompt message");
+        Validate.nonNull(defaultValue, "default value");
+        Validate.nonNull(actionPrefix, "action prefix");
+        Validate.nonNull(controller, "controller");
+
+        showTextAndCheckDialog(promptMessage, defaultValue, "", actionPrefix,
+                controller);
+    }
+
+    /**
+     * Create, customize, and activate a modal text-and-check dialog box.
+     *
+     * @param promptMessage text to display above the textfield (not null)
+     * @param defaultValue default text for the textfield (not null)
+     * @param commitLabel text for the commit-button label (not null)
+     * @param actionPrefix prefix for the commit action (not null, usually the
+     * final character will be a space)
+     * @param controller controller for the dialog box (not null)
+     */
+    public void showTextAndCheckDialog(String promptMessage,
+            String defaultValue, String commitLabel, String actionPrefix,
+            DialogController controller) {
+        Validate.nonNull(promptMessage, "prompt message");
+        Validate.nonNull(defaultValue, "default value");
+        Validate.nonNull(commitLabel, "commit-button label");
+        Validate.nonNull(actionPrefix, "action prefix");
+        Validate.nonNull(controller, "controller");
+        /*
+         * Create a popup using the "dialogs/text-and-check" layout as a base.
+         * Nifty assigns the popup a new ID.
+         */
+        dialogElement = getNifty().createPopup("dialogs/text-and-check");
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        Element prompt = dialogElement.findElementById("#prompt");
+        TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
+        textRenderer.setText(promptMessage);
+
+        TextField textField
+                = dialogElement.findNiftyControl("#textfield", TextField.class);
+        textField.setText(defaultValue);
+
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
+        commitButton.setText(commitLabel);
+
+        activateDialog(popupId, actionPrefix, "#textfield", controller);
+    }
+
+    /**
      * Create, customize, and activate a modal text-and-slider dialog box:
      * simplified interface where the controller labels the commit button.
      *
@@ -521,27 +584,6 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(controller, "controller");
 
         showTextAndSliderDialog(promptMessage, defaultValue, "", actionPrefix,
-                controller);
-    }
-
-    /**
-     * Create, customize, and activate a modal text-entry dialog box: simplified
-     * interface where the controller labels the commit button.
-     *
-     * @param promptMessage text to display above the textfield (not null)
-     * @param defaultValue default text for the textfield (not null)
-     * @param actionPrefix prefix for generating the commit action (not null,
-     * usually the final character will be a space)
-     * @param controller controller for the dialog box (not null)
-     */
-    public void showTextEntryDialog(String promptMessage, String defaultValue,
-            String actionPrefix, DialogController controller) {
-        Validate.nonNull(promptMessage, "prompt message");
-        Validate.nonNull(defaultValue, "default value");
-        Validate.nonNull(actionPrefix, "action prefix");
-        Validate.nonNull(controller, "controller");
-
-        showTextEntryDialog(promptMessage, defaultValue, "", actionPrefix,
                 controller);
     }
 
@@ -584,6 +626,27 @@ public class PopScreenController extends BasicScreenController {
         commitButton.setText(commitLabel);
 
         activateDialog(popupId, actionPrefix, "#textfield", controller);
+    }
+
+    /**
+     * Create, customize, and activate a modal text-entry dialog box: simplified
+     * interface where the controller labels the commit button.
+     *
+     * @param promptMessage text to display above the textfield (not null)
+     * @param defaultValue default text for the textfield (not null)
+     * @param actionPrefix prefix for generating the commit action (not null,
+     * usually the final character will be a space)
+     * @param controller controller for the dialog box (not null)
+     */
+    public void showTextEntryDialog(String promptMessage, String defaultValue,
+            String actionPrefix, DialogController controller) {
+        Validate.nonNull(promptMessage, "prompt message");
+        Validate.nonNull(defaultValue, "default value");
+        Validate.nonNull(actionPrefix, "action prefix");
+        Validate.nonNull(controller, "controller");
+
+        showTextEntryDialog(promptMessage, defaultValue, "", actionPrefix,
+                controller);
     }
 
     /**
