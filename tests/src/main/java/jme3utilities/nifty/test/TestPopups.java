@@ -69,6 +69,11 @@ public class TestPopups extends GuiApplication {
      */
     final private static String searchDialogPrefix = "set search ";
     /**
+     * action prefix for the "password" dialog: arguments are a boolean and a
+     * text string
+     */
+    final private static String setPasswordPrefix = "set password ";
+    /**
      * action prefix for the "temperature" dialog
      */
     final private static String setTemperaturePrefix = "set temperature ";
@@ -175,6 +180,13 @@ public class TestPopups extends GuiApplication {
                         new SearchDialogController());
                 return;
 
+            } else if (actionString.equals("set password")) {
+                String defaultPassword = "admin123";
+                screen.showTextAndCheckDialog("Enter new password:",
+                        defaultPassword, setPasswordPrefix,
+                        new TAndCDialogController("Set", "salted"));
+                return;
+
             } else if (actionString.equals("set temperature")) {
                 String temperatureString = Float.toString(temperature);
                 screen.showTextAndSliderDialog("Enter new temperature:",
@@ -189,6 +201,20 @@ public class TestPopups extends GuiApplication {
                         MyString.quote(searchString));
                 updateStatusLine(line);
                 return;
+
+            } else if (actionString.startsWith(setPasswordPrefix)) {
+                String argList = MyString.remainder(actionString,
+                        setPasswordPrefix);
+                if (argList.contains(" ")) {
+                    String[] args = argList.split(" ");
+                    boolean salted = Boolean.valueOf(args[0]);
+                    String pw = MyString.remainder(argList, args[0] + " ");
+                    String line = String.format(
+                            "The password is %s and salted is %s.",
+                            MyString.quote(pw), salted);
+                    updateStatusLine(line);
+                    return;
+                }
 
             } else if (actionString.startsWith(setTemperaturePrefix)) {
                 String arg = MyString.remainder(actionString,

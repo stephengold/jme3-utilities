@@ -51,6 +51,12 @@
                     <interact onRelease="perform(search)"/>
                 </control>
                 <panel/>
+                <control name="button" id="id93ToAvoidOffendingNifty"
+                         label="Set password"
+                         width="90px">
+                    <interact onRelease="perform(set password)"/>
+                </control>
+                <panel/>
                 <control name="button" id="id94ToAvoidOffendingNifty"
                          label="Set CPU temperature"
                          width="140px">
