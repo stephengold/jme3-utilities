@@ -8,7 +8,7 @@ plugins {
     id 'signing'
 }
 
-description = 'NiftyGUI library for jMonkeyEngine'
+description = 'a NiftyGUI library for jMonkeyEngine'
 ext {
     artifact = 'jme3-utilities-nifty'
     version = jme3utilitiesniftyVersion
@@ -51,6 +51,13 @@ publishing {
             artifactId artifact
             from components.java
             pom {
+                description = project.description
+                developers {
+                    developer {
+                        email = 'sgold@sonic.net'
+                        name = 'Stephen Gold'
+                    }
+                }
                 licenses {
                     license {
                         distribution = 'repo'
@@ -58,6 +65,13 @@ publishing {
                         url = 'https://opensource.org/licenses/BSD-3-Clause'
                     }
                 }
+                name = 'com.github.stephengold:' + artifact
+                scm {
+                    connection = 'scm:git:git://github.com/stephengold/jme3-utilities.git'
+                    developerConnection = 'scm:git:ssh://github.com:stephengold/jme3-utilities.git'
+                    url = 'https://github.com/stephengold/jme3-utilities/tree/master'
+                }
+                url = 'https://github.com/stephengold/jme3-utilities'
             }
             version project.ext.version
         }
