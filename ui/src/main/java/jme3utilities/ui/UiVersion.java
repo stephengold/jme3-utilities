@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ public class UiVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(UiVersion.class.getName());
     // *************************************************************************
     // constructors
@@ -60,6 +60,6 @@ public class UiVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.9.1-SNAPSHOT";
+        return "master 0.9.2";
     }
 }

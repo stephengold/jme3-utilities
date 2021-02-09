@@ -1,5 +1,10 @@
 # release log for the jme3-utilities-ui library and related tests
 
+## Version 0.9.2 released on TBD
+
+ + Published to MavenLocal instead of JCenter.
+ + Based on version 6.4.2 of the Heart Library.
+
 ## Version 0.9.1 released on 23 November 2020
 
  + Added combo hints to help screens.

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ public class XVersion {
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final public static Logger logger
             = Logger.getLogger(XVersion.class.getName());
     // *************************************************************************
     // constructors
@@ -55,11 +55,11 @@ public class XVersion {
     // new methods exposed
 
     /**
-     * Read the terse version string for this library.
+     * Determine the terse version string for this library.
      *
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.2.19+SNAPSHOT";
+        return "master 0.2.20";
     }
 }
