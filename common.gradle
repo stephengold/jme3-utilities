@@ -8,13 +8,13 @@ sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
 gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) { // compile-time options:
+    tasks.withType(JavaCompile) { // Java compile-time options:
         options.compilerArgs << '-Xdiags:verbose'
         options.compilerArgs << '-Xlint:unchecked'
         //options.deprecation = true
         options.encoding = 'UTF-8'
     }
-    tasks.withType(JavaExec) { // runtime options:
+    tasks.withType(JavaExec) { // Java runtime options:
         classpath sourceSets.main.runtimeClasspath
         //debug true
         //doFirst { println commandLine }
@@ -30,7 +30,7 @@ gradle.projectsEvaluated {
 
 ext {
     // current versions of various libraries
-    heartVersion = '6.4.0'
+    heartVersion = '6.4.2'
     jme3utilitiesniftyVersion = '0.9.17'
     jme3utilitiesuiVersion = '0.9.1'
     jme3utilitiesxVersion = '0.2.19'
@@ -40,6 +40,7 @@ ext {
 repositories {
     //mavenLocal()
     maven { url 'https://dl.bintray.com/stephengold/org.jmonkeyengine' } // for jme3-testdata
+    mavenCentral()
     jcenter()
     maven { url 'https://nifty-gui.sourceforge.net/nifty-maven-repo' }
 }
@@ -49,6 +50,7 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
     dependsOn 'classes'
     description 'Create a JAR of source files.'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from sourceSets.main.allJava
 }
 task javadocJar(type: Jar) {
