@@ -5,6 +5,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'signing'
 }
 
 description = 'a user-interface library for jMonkeyEngine'
@@ -22,12 +23,18 @@ dependencies {
     api 'com.github.stephengold:Heart:' + heartVersion
 }
 
-build.dependsOn('pom')
+build.dependsOn('pom', 'pomAsc')
 task('pom', type: Copy) {
     dependsOn 'generatePomFileForMavenPublication'
     from "${buildDir}/publications/maven/pom-default.xml"
     into "${buildDir}/libs"
-    rename '.*', baseName + '.pom'
+    rename 'pom-default.xml', baseName + '.pom'
+}
+task('pomAsc', type: Copy) {
+    dependsOn 'signMavenPublication'
+    from "${buildDir}/publications/maven/pom-default.xml.asc"
+    into "${buildDir}/libs"
+    rename 'pom-default.xml.asc', baseName + '.pom.asc'
 }
 
 publishToMavenLocal.doLast {
@@ -51,4 +58,12 @@ publishing {
             version project.ext.version
         }
     }
+}
+
+signing {
+    sign configurations.archives
+    sign publishing.publications.maven
+}
+tasks.withType(Sign) {
+    onlyIf { gradle.rootProject.hasProperty('signing.keyId') }
 }
