@@ -49,7 +49,12 @@ Complete source code (in Java) is provided under
 Recent releases can be downloaded from
 [GitHub](https://github.com/stephengold/jme3-utilities/releases).
 
-Maven artifacts are available from
+Recent Maven artifacts (since ui v0.9.2 and x v0.2.20)
+are available from MavenCentral:
+[ui](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-ui/)
+and [x](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-x/).
+
+Older Maven artifacts are available from
 [JFrog Bintray](https://bintray.com/stephengold/com.github.stephengold).
 
 [Jump to table of contents](#toc)
@@ -174,7 +179,7 @@ Clone the Jme3-utilities repository using Git:
  2. Download and extract the source code from GitHub:
      + `git clone https://github.com/stephengold/jme3-utilities.git`
      + `cd jme3-utilities`
-     + `git checkout -b latest ui-0.9.1`
+     + `git checkout -b latest ui-0.9.2`
  3. Set the `JAVA_HOME` environment variable:
    + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
    + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`
@@ -214,7 +219,7 @@ software developers:
     + the RealWorld Cursor Editor
     + the WinMerge differencing and merging tool
 
-I am grateful to GitHub, JFrog, and Imgur
+I am grateful to GitHub, [Sonatype], JFrog, and Imgur
 for providing free hosting for this project
 and many other open-source projects.
 
@@ -224,3 +229,6 @@ If I've misattributed anything or left anyone out, please let me know so I can
 correct the situation: sgold@sonic.net
 
 [Jump to table of contents](#toc)
+
+
+[sonatype]: https://www.sonatype.com "Sonatype"

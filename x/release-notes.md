@@ -1,6 +1,6 @@
 # release notes for the jme3-utilities-x library and related tests
 
-## Version 0.2.20 released on TBD
+## Version 0.2.20 released on 9 February 2021
 
  + Published to MavenLocal instead of JCenter.
  + Targeted version 3.3.2-stable of jMonkeyEngine.
