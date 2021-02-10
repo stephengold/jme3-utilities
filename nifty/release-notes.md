@@ -1,7 +1,8 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.18 released on TBD
+## Version 0.9.18 released on 9 February 2021
 
+ + Publish to MavenLocal instead of JCenter.
  + Base on version 6.4.2 of the Heart Library
    and version 0.9.2 of the jme3-utilities-ui library.
 

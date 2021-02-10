@@ -49,9 +49,10 @@ Complete source code (in Java) is provided under
 Recent releases can be downloaded from
 [GitHub](https://github.com/stephengold/jme3-utilities/releases).
 
-Recent Maven artifacts (since ui v0.9.2 and x v0.2.20)
+Recent Maven artifacts (since nifty v0.9.18, ui v0.9.2, and x v0.2.20)
 are available from MavenCentral:
-[ui](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-ui/)
+[nifty](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-nifty),
+[ui](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-ui/),
 and [x](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-x/).
 
 Older Maven artifacts are available from
