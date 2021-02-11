@@ -2,7 +2,7 @@
 
 ## Version 0.2.20 released on 9 February 2021
 
- + Published to MavenLocal instead of JCenter.
+ + Published to MavenCentral instead of JCenter.
  + Targeted version 3.3.2-stable of jMonkeyEngine.
  + Based on version 6.4.2 of the Heart Library.
 
