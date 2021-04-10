@@ -85,9 +85,9 @@ publishing {
         }
     }
 }
+generateMetadataFileForMavenPublication.dependsOn('pom')
 
 signing {
-    sign configurations.archives
     sign publishing.publications.maven
 }
 tasks.withType(Sign) {
