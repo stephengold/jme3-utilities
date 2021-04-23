@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -169,6 +169,9 @@ public class StarfieldState extends SimpleAppState {
 
     /**
      * Initialize this application.
+     *
+     * @param sm the manager for appstates (not null)
+     * @param app the application which owns this AppState (not null)
      */
     @Override
     public void initialize(AppStateManager sm, Application app) {
