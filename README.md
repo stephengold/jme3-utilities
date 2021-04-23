@@ -30,7 +30,7 @@ The `Wes` library, formerly a sub-project, is now a separate project
 at [GitHub](https://github.com/stephengold/Wes).
 
 Complete source code (in Java) is provided under
-[a 3-clause BSD license](https://github.com/stephengold/jme3-utilities/blob/master/license.txt).
+[a 3-clause BSD license](https://github.com/stephengold/jme3-utilities/blob/for_jME3.3/license.txt).
 
 <a name="toc"/>
 
@@ -83,10 +83,10 @@ From November 2013 to September 2015, it was hosted at
 
 The evolution of each sub-project is chronicled in its release notes:
 
- + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
- + [ui](https://github.com/stephengold/jme3-utilities/blob/master/ui/release-notes.md)
- + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
- + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
+ + [debug](https://github.com/stephengold/jme3-utilities/blob/for_jME3.3/debug/release-notes.md)
+ + [ui](https://github.com/stephengold/jme3-utilities/blob/for_jME3.3/ui/release-notes.md)
+ + [nifty](https://github.com/stephengold/jme3-utilities/blob/for_jME3.3/nifty/release-notes.md)
+ + [x](https://github.com/stephengold/jme3-utilities/blob/for_jME3.3/x/release-notes.md)
 
 [Jump to table of contents](#toc)
 
@@ -156,9 +156,9 @@ Clone the Jme3-utilities repository using Git:
  4. For "Clone into:" specify a writable folder (on a local filesystem)
     that doesn't already contain "jme3-utilities".
  5. Click on the "Next >" button.
- 6. Make sure the "master" remote branch is checked.
+ 6. Make sure the "for_jME3.3" remote branch is checked.
  7. Click on the "Next >" button again.
- 8. Make sure the Checkout Branch is set to "master".
+ 8. Make sure the Checkout Branch is set to "for_jME3.3".
  9. Make sure the "Scan for NetBeans Projects after Clone" box is checked.
 10. Click on the "Finish" button.
 11. When the "Clone Completed" dialog appears, click on the "Open Project..."

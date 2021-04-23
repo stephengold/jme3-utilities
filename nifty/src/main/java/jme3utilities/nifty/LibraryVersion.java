@@ -60,6 +60,6 @@ public class LibraryVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.9.19-SNAPSHOT";
+        return "for_jME3.3 0.9.19+for33-SNAPSHOT";
     }
 }

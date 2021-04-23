@@ -60,6 +60,6 @@ public class XVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.2.21-SNAPSHOT";
+        return "for_jME3.3 0.2.21+for33-SNAPSHOT";
     }
 }
