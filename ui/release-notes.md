@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-ui library and related tests
 
-## Version 0.9.3+for33 released on TBD
+## Version 0.9.3+for33 released on 23 April 2021
 
 Based on version 6.4.3+for33 of the Heart Library.
 
