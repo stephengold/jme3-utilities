@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2018, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@ class SearchDialogController extends TextEntryDialog {
     /**
      * Instantiate a controller.
      */
-    public SearchDialogController() {
+    SearchDialogController() {
         super("Set");
     }
     // *************************************************************************
