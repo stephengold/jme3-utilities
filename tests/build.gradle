@@ -6,7 +6,7 @@ description = 'demos, examples, and tests that do not generate reports'
 
 dependencies {
     runtimeOnly 'com.github.nifty-gui:nifty-style-black:1.4.3'
-    runtimeOnly "org.jmonkeyengine:jme3-blender:$jmonkeyengineVersion"
+    runtimeOnly 'org.jmonkeyengine:jme3-blender:3.3.2-stable'
     implementation "org.jmonkeyengine:jme3-desktop:$jmonkeyengineVersion"
     runtimeOnly "org.jmonkeyengine:jme3-jogg:$jmonkeyengineVersion"
     runtimeOnly "org.jmonkeyengine:jme3-lwjgl3:$jmonkeyengineVersion"
