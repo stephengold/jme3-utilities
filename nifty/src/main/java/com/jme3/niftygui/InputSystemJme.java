@@ -323,10 +323,6 @@ public class InputSystemJme implements InputSystem, RawInputListener {
                 if (textField != null) {
                     Logger.getLogger(InputSystemJme.class.getName()).log(Level.FINE, "Current TextField: {0}", textField.getId());
                     String initialValue = textField.getRealText();
-                    if (initialValue == null) {
-                        initialValue = "";
-                    }
-
                     softTextDialogInput.requestDialog(SoftTextDialogInput.TEXT_ENTRY_DIALOG, "Enter Text", initialValue, new SoftTextDialogInputListener() {
                         @Override
                         public void onSoftText(int action, String text) {
