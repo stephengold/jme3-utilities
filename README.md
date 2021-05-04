@@ -55,9 +55,6 @@ are available from MavenCentral:
 [ui](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-ui/),
 and [x](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-x/).
 
-Older Maven artifacts are available from
-[JFrog Bintray](https://bintray.com/stephengold/com.github.stephengold).
-
 [Jump to table of contents](#toc)
 
 <a name="conventions"/>
