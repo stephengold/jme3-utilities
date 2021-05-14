@@ -8,7 +8,7 @@ plugins {
     id 'signing'
 }
 
-description = 'a user-interface library for jMonkeyEngine'
+description = 'A user-interface library for jMonkeyEngine.'
 ext {
     artifact = 'jme3-utilities-ui'
     version = jme3utilitiesuiVersion
@@ -22,6 +22,8 @@ sourcesJar { archiveBaseName = project.ext.baseName }
 dependencies {
     api 'com.github.stephengold:Heart:' + heartVersion
 }
+
+// publishing tasks
 
 build.dependsOn('pom', 'pomAsc')
 task('pom', type: Copy) {
@@ -78,8 +80,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = project.hasProperty('ossrhUsername') ? ossrhUsername : "Unknown user"
-                password = project.hasProperty('ossrhPassword') ? ossrhPassword : "Unknown password"
+                username = project.hasProperty('ossrhUsername') ? ossrhUsername : 'Unknown user'
+                password = project.hasProperty('ossrhPassword') ? ossrhPassword : 'Unknown password'
             }
             name = 'OSSRH'
             url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
@@ -87,6 +89,8 @@ publishing {
     }
 }
 generateMetadataFileForMavenPublication.dependsOn('pom')
+
+// signing tasks
 
 signing {
     sign publishing.publications.maven

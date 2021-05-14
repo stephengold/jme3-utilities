@@ -8,7 +8,7 @@ plugins {
     id 'signing'
 }
 
-description = 'a NiftyGUI library for jMonkeyEngine'
+description = 'A NiftyGUI library for jMonkeyEngine.'
 ext {
     artifact = 'jme3-utilities-nifty'
     version = jme3utilitiesniftyVersion
@@ -26,6 +26,8 @@ dependencies {
     //api 'com.github.stephengold:jme3-utilities-ui:' + jme3utilitiesuiVersion
     api project(':ui')
 }
+
+// publishing tasks
 
 build.dependsOn('pom', 'pomAsc')
 task('pom', type: Copy) {
@@ -91,6 +93,8 @@ publishing {
     }
 }
 generateMetadataFileForMavenPublication.dependsOn('pom')
+
+// signing tasks
 
 signing {
     sign publishing.publications.maven
