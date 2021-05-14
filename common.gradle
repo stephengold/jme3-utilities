@@ -34,7 +34,7 @@ ext {
     jme3utilitiesniftyVersion = '0.9.20+for34-SNAPSHOT'
     jme3utilitiesuiVersion = '0.9.3+for34'
     jme3utilitiesxVersion = '0.2.20'
-    jmonkeyengineVersion = '3.4.0-beta1'
+    jmonkeyengineVersion = '3.4.0-beta4'
 }
 
 repositories {
