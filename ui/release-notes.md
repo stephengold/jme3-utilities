@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-ui library and related tests
 
-## Version 0.9.4 released on TBD
+## Version 0.9.4 released on 31 May 2021
 
 Based on jMonkeyEngine version 3.4.0-stable and Heart version 6.4.4.
 
