@@ -23,8 +23,8 @@ dependencies {
     api 'com.github.nifty-gui:nifty:1.4.3'
     api 'com.github.nifty-gui:nifty-default-controls:1.4.3'
 
-    api 'com.github.stephengold:jme3-utilities-ui:' + jme3utilitiesuiVersion
-    //api project(':ui')
+    //api 'com.github.stephengold:jme3-utilities-ui:' + jme3utilitiesuiVersion
+    api project(':ui')
 }
 
 // publishing tasks
