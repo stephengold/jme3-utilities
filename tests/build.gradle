@@ -46,21 +46,21 @@ task cleanWrittenAssets(type: Delete) {
 }
 
 task TestPolygon3f(type: JavaExec) {
-    main 'jme3utilities.math.test.TestPolygon3f'
+    mainClass = 'jme3utilities.math.test.TestPolygon3f'
 }
 task TestMyShell3f(type: JavaExec) {
-    main 'jme3utilities.math.test.TestShell3f'
+    mainClass = 'jme3utilities.math.test.TestShell3f'
 }
 
 task ClockDemo(type: JavaExec) {
-    main 'jme3utilities.nifty.test.ClockDemo'
+    mainClass = 'jme3utilities.nifty.test.ClockDemo'
 }
 task runTestBindScreen(type: JavaExec) {
-    main 'jme3utilities.nifty.test.TestBindScreen'
+    mainClass = 'jme3utilities.nifty.test.TestBindScreen'
 }
 task TestMultipleScreens(type: JavaExec) {
-    main 'jme3utilities.nifty.test.TestMultipleScreens'
+    mainClass = 'jme3utilities.nifty.test.TestMultipleScreens'
 }
 task TestPopups(type: JavaExec) {
-    main 'jme3utilities.nifty.test.TestPopups'
+    mainClass = 'jme3utilities.nifty.test.TestPopups'
 }
