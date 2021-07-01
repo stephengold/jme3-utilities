@@ -4,8 +4,7 @@ jme3utilities software packages Copyright (c) 2013-2021 Stephen Gold
 All rights reserved.
 
 Note: the following license does not apply to certain assets/resources
-(3 files in nifty/src/main/resources/Textures/icons
- 6 files in moon-ccby-sa/src/main/resources/Textures/skies/moon and
+(6 files in moon-ccby-sa/src/main/resources/Textures/skies/moon and
  1 file in tests/src/main/resources/Textures/icons)
 which are separately licensed.
 
