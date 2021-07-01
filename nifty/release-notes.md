@@ -1,5 +1,9 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.21 released on TBD
+
+Add the "dialog", "submenu", and "tool" icon textures, from Maud.
+
 ## Version 0.9.20 released on 31 May 2021
 
 Base on version 6.4.4 of the Heart Library and version 0.9.4 of
