@@ -1,4 +1,5 @@
 /.gradle/
+/.idea/
 /.nb-gradle/
 /moon-ccbysa/build/
 /nifty/build/
