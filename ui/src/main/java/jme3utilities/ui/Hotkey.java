@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -197,7 +197,7 @@ public class Hotkey {
     /**
      * Instantiate known hotkeys.
      */
-    public static void intialize() {
+    public static void initialize() {
         /*
          * mouse buttons
          */
