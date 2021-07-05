@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -424,7 +424,7 @@ public class TestPolygon3f {
         /*
          * Classify the polygon as degenerate, planar, etc.
          */
-        System.out.printf(" This polygon");
+        System.out.print(" This polygon");
         if (simple != null) {
             System.out.printf(" %s convex,",
                     simple.isConvex() ? "IS" : "is NOT");

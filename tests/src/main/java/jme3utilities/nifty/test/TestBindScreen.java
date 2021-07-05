@@ -357,7 +357,7 @@ public class TestBindScreen extends GuiApplication {
         if (warpFactor > 0) {
             line = String.format("Ahead, warp factor %d!", warpFactor);
         } else if (warpFactor == 0) {
-            line = String.format("Full stop!");
+            line = "Full stop!";
         } else {
             line = String.format("Reverse, warp factor %d!", -warpFactor);
         }
