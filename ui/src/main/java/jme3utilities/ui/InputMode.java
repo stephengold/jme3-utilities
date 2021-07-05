@@ -756,8 +756,7 @@ abstract public class InputMode
      *
      * @param assetPath asset path (not null)
      */
-    private void loadBindings(String assetPath)
-            throws AssetNotFoundException, IOException {
+    private void loadBindings(String assetPath) throws IOException {
         assert assetPath != null;
 
         logger.log(Level.INFO, "Loading hotkey bindings from asset {0}.",
