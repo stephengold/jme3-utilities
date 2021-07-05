@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -579,7 +579,7 @@ abstract public class InputMode
     protected void deactivate() {
         setActiveMode(null);
         inputManager.setCursorVisible(false);
-        /**
+        /*
          * Unmap all Hotkey actions.
          */
         for (String keyName : hotkeyBindings.stringPropertyNames()) {
@@ -625,7 +625,7 @@ abstract public class InputMode
         InputMode prior = modes.put(shortName, this);
         assert prior == null : shortName;
         /*
-         * Load the intitial hotkey bindings.
+         * Load the initial hotkey bindings.
          */
         initializeHotkeyBindings();
 
@@ -912,7 +912,7 @@ abstract public class InputMode
      * Alter the static reference to the active InputMode. At most one InputMode
      * is active at a time.
      *
-     * @param the desired InputMode (or null if none)
+     * @param mode the desired InputMode (or null if none)
      */
     private static void setActiveMode(InputMode mode) {
         if (mode != null && activeMode != null) {

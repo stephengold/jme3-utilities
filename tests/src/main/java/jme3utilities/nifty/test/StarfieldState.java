@@ -292,7 +292,7 @@ public class StarfieldState extends SimpleAppState {
      * Wrap an object coordinate to {-zoneRadius, +zoneRadius} in order to keep
      * it in a cubical zone centered on the origin.
      *
-     * @param input object coordinate
+     * @param coordinate the object coordinate
      * @return wrapped coordinate
      */
     private float wrapToZone(float coordinate) {

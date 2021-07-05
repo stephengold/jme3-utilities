@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2020, Stephen Gold
+ Copyright (c) 2018-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -227,7 +227,7 @@ public class TestTwoModes extends ActionApplication {
     @Override
     public void simpleUpdate(float tpf) {
         super.simpleUpdate(tpf);
-        /**
+        /*
          * Update the displayed status.
          */
         EditMode editMode = (EditMode) InputMode.findMode("edit");
