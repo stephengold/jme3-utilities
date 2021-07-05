@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -291,8 +291,7 @@ public class Solution {
     @Override
     public int hashCode() {
         int result = 13;
-        for (int i = 0; i < parameters.length; i++) {
-            float ss = parameters[i];
+        for (float ss : parameters) {
             int bits = Float.floatToIntBits(ss);
             result = 17 * result + bits;
         }
