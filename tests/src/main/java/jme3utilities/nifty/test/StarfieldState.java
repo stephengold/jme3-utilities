@@ -182,7 +182,7 @@ public class StarfieldState extends SimpleAppState {
         cam.setLocation(new Vector3f(0f, 0f, 0f));
         /*
          * The objects zone extends halfway to the far
-         * plane of the view frustrum.
+         * plane of the view frustum.
          */
         zoneRadius = 0.5f * cam.getFrustumFar();
         /*
