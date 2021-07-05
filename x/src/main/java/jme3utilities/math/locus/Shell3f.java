@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ import jme3utilities.math.spline.Spline3f;
  * results. If the maximum metric is positive, a hole (negative shape) results.
  * <p>
  * The choice of metric determines the general shape of the region. An
- * unweighted 3-D Euclidian metric produces a spherical shape. An unweighted
+ * unweighted 3-D Euclidean metric produces a spherical shape. An unweighted
  * Chebyshev metric produces a cubic shape. An unweighted Manhattan metric
  * produces an octahedral shape.
  * <p>

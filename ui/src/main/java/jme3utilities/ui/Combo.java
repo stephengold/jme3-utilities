@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020, Stephen Gold
+ Copyright (c) 2020-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -255,7 +255,7 @@ public class Combo {
     }
 
     /**
-     * Generate the hash code for this instnace.
+     * Generate the hash code for this instance.
      *
      * @return the value to use for hashing
      */

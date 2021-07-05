@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -332,7 +332,7 @@ public class GenericPolygon3f extends Polygon3f {
          */
         Vector3f segmentOffset = end.subtract(start);
         /*
-         * If the segment has zero length, test its stert for coincidence
+         * If the segment has zero length, test its start for coincidence
          * with the corner.
          */
         double segmentDS = MyVector3f.lengthSquared(segmentOffset);

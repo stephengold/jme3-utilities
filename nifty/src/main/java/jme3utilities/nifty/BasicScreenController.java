@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2020, Stephen Gold
+ Copyright (c) 2014-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -293,7 +293,7 @@ public class BasicScreenController
         assert enabledScreen == this : enabledScreen;
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
         /*
-         * Detatch Nifty from the viewport.
+         * Detach Nifty from the viewport.
          */
         NiftyJmeDisplay display = getApplication().getNiftyDisplay();
         guiViewPort.removeProcessor(display);

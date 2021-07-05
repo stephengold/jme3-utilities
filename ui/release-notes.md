@@ -68,7 +68,7 @@ Based on version 5.2.1 of the Heart Library.
  + Moved the `PropertiesLoader` class to the jme3-utilities-heart
    library. (API change)
  + Finalized `simpleInitApp()` in the `ActionApplication` class. (API change)
- + Bufix: corrected the name for `KEY_NUMPADCOMMA` in the `Hotkey` class.
+ + Bugfix: corrected the name for `KEY_NUMPADCOMMA` in the `Hotkey` class.
  + Added names for `KEY_PRTSCR`, `KEY_DECIMAL`, and `KEY_SUBTRACT`
    to the `HotKey` class.
  + Added screenshot support to the `ActionApplication` class.
@@ -203,7 +203,7 @@ Based on heart library v2.0 to make this library physics-independent.
 ## Version 0.5.5 released on 16 July 2017
 
 Publicized `InputMode.activate()` and `InputMode.deactivate()` so they can be
-overriden.
+overridden.
 
 ## Version 0.5.4 released on 15 July 2017
 

@@ -20,13 +20,13 @@ the jme3-utilities-ui library.
  + Base on version 6.4.2 of the Heart Library
    and version 0.9.2 of the jme3-utilities-ui library.
 
-## Version 0.9.17 released on 15 Decemeber 2020
+## Version 0.9.17 released on 15 December 2020
 
  + Add a "text-and-check" dialog.
  + Base on version 6.2.0 of the Heart Library
    and version 0.9.1 of the jme3-utilities-ui library.
 
-## Version 0.9.16 released on 9 Sepetember 2020
+## Version 0.9.16 released on 9 September 2020
 
 Add a `setNiftyColorsAsSrgb()` method to the `GuiApplication` class,
 to specify that Nifty colors are defined in sRGB space. This setting is
