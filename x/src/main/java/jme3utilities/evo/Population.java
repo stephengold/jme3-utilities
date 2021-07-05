@@ -304,9 +304,7 @@ public class Population<Fitness extends Comparable<Fitness>, Element> {
                 currentIndex += list.size();
             } else {
                 Fitness score = entry.getKey();
-                Iterator<Element> it = list.iterator();
-                while (it.hasNext()) {
-                    Element element = it.next();
+                for (Element element : list) {
                     if (currentIndex == nextIndex) {
                         destination.add(element, score);
                         numMerged++;
