@@ -207,7 +207,7 @@ public class TestPopups extends GuiApplication {
                         setPasswordPrefix);
                 if (argList.contains(" ")) {
                     String[] args = argList.split(" ");
-                    boolean salted = Boolean.valueOf(args[0]);
+                    boolean salted = Boolean.parseBoolean(args[0]);
                     String pw = MyString.remainder(argList, args[0] + " ");
                     String line = String.format(
                             "The password is %s and salted is %s.",
