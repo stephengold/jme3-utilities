@@ -46,6 +46,7 @@ import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.spi.input.InputSystem;
 import de.lessvoid.nifty.tools.resourceloader.NiftyResourceLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,9 +88,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
         x = 0;
         y = 0;
         inputPointerId = -1;
-        for (int i = 0; i < niftyOwnsDragging.length; i++) {
-            niftyOwnsDragging[i] = false;
-        }
+        Arrays.fill(niftyOwnsDragging, false);
         shiftDown = false;
         ctrlDown = false;
     }
