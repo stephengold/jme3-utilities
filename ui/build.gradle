@@ -73,7 +73,6 @@ publishing {
                 }
                 url = 'https://github.com/stephengold/jme3-utilities'
             }
-            suppressPomMetadataWarningsFor("apiElements") // Gradle issue #16555
             version project.ext.version
         }
     }
