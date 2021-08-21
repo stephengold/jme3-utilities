@@ -206,6 +206,31 @@ public class Combo {
     }
 
     /**
+     * Represent this instance as a String, using the local name of the hotkey.
+     *
+     * @return a descriptive string of text (not null, not empty)
+     */
+    public String toStringLocal() {
+        StringBuilder result = new StringBuilder(40);
+
+        int numSignals = signalNames.length;
+        for (int signalIndex = 0; signalIndex < numSignals; ++signalIndex) {
+            String name = signalNames[signalIndex];
+            result.append(name);
+
+            boolean positiveFlag = positiveFlags[signalIndex];
+            if (positiveFlag) {
+                result.append('+');
+            } else {
+                result.append('-');
+            }
+        }
+        result.append(hotkey.localName());
+
+        return result.toString();
+    }
+
+    /**
      * Determine the universal code of the Hotkey that triggers this Combo.
      *
      * @return a universal code (&ge;0)
@@ -271,7 +296,7 @@ public class Combo {
     }
 
     /**
-     * Represent this instance as a String.
+     * Represent this instance as a String, using the US name of the hotkey.
      *
      * @return a descriptive string of text (not null, not empty)
      */
