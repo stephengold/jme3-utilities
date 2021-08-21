@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020, Stephen Gold
+ Copyright (c) 2020-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ import com.jme3.font.Rectangle;
 import com.jme3.input.KeyInput;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
@@ -120,6 +121,12 @@ public class TestCombo extends ActionApplication {
         Combo noshift_r = new Combo(r, "shift", false);
         dim.bind(SimpleApplication.INPUT_MAPPING_EXIT, shift_r);
         dim.bind("hint", noshift_r);
+
+        Hotkey yKey = Hotkey.find(KeyInput.KEY_Y);
+        Combo shift_y = new Combo(yKey, "shift", true);
+        Combo noshift_y = new Combo(yKey, "shift", false);
+        dim.bind(SimpleApplication.INPUT_MAPPING_EXIT, noshift_y);
+        dim.bind("hint", shift_y);
         /*
          * Build and attach the help node.
          */
@@ -146,8 +153,18 @@ public class TestCombo extends ActionApplication {
         if (ongoing) {
             switch (actionString) {
                 case "hint":
+                    InputMode dim = getDefaultInputMode();
+                    Collection<Combo> quitCombos = dim.listCombos(
+                            SimpleApplication.INPUT_MAPPING_EXIT);
+                    Combo[] array = new Combo[quitCombos.size()];
+                    quitCombos.toArray(array);
+                    String qc0 = array[0].toStringLocal();
+                    String qc1 = array[1].toStringLocal();
+                    String qc2 = array[2].toStringLocal();
+
                     System.out.println();
-                    System.out.println("Use Ctrl+E or Shift+R to quit.");
+                    System.out.println("Use " + qc0 + ", " + qc1 + ", or "
+                            + qc2 + " to quit.");
                     System.out.println();
                     return;
             }
