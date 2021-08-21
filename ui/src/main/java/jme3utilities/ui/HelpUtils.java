@@ -227,8 +227,8 @@ public class HelpUtils {
     }
 
     /**
-     * Compactly describe the specified Combo using beautified hotkey names.
-     * Compare with Combo.toString().
+     * Compactly describe the specified Combo using beautified local hotkey
+     * names. Compare with Combo.toString().
      *
      * @param combo the Combo to describe (not null)
      * @return a textual description (not null)
@@ -271,9 +271,10 @@ public class HelpUtils {
         for (String actionName : actionNames) {
             String action = beautify(actionName);
 
-            Collection<String> hotkeyNames = inputMode.listHotkeys(actionName);
-            for (String hotkeyName : hotkeyNames) {
-                String description = compress(hotkeyName);
+            Collection<String> localHotkeyNames
+                    = inputMode.listHotkeysLocal(actionName);
+            for (String localHotkeyName : localHotkeyNames) {
+                String description = compress(localHotkeyName);
                 if (actionsToHots.containsKey(action)) {
                     String oldList = actionsToHots.get(action);
                     String newList = oldList + "/" + description;

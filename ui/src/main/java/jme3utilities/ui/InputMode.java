@@ -342,7 +342,7 @@ abstract public class InputMode
      * @return a new collection of combos
      */
     public Collection<Combo> listCombos(String actionName) {
-        Validate.nonNull(actionName, "name");
+        Validate.nonNull(actionName, "action name");
 
         Collection<Combo> result = new HashSet<>(32);
         for (int code = 0; code < numCodes; ++code) {
@@ -362,21 +362,23 @@ abstract public class InputMode
     /**
      * Enumerate all hotkeys bound to a named action.
      *
-     * @param actionName name of action (not null)
-     * @return a new collection of names in lexicographic order
+     * @param actionName the name of an action (not null)
+     * @return a new collection of local names in lexicographic order
      */
-    public Collection<String> listHotkeys(String actionName) {
-        Validate.nonNull(actionName, "name");
+    public Collection<String> listHotkeysLocal(String actionName) {
+        Validate.nonNull(actionName, "action name");
 
         Collection<String> result = new TreeSet<>();
-        for (String keyName : hotkeyBindings.stringPropertyNames()) {
-            String property = hotkeyBindings.getProperty(keyName);
+        for (String usName : hotkeyBindings.stringPropertyNames()) {
+            String property = hotkeyBindings.getProperty(usName);
             /*
-             * Note that action string comparisons are sensitive to both
+             * Note that action-name comparisons are sensitive to both
              * case and whitespace.
              */
             if (property.equals(actionName)) {
-                result.add(keyName);
+                Hotkey hotkey = Hotkey.findUs(usName);
+                String localName = hotkey.localName();
+                result.add(localName);
             }
         }
 
