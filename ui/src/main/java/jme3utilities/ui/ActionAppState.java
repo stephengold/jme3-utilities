@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -50,11 +50,11 @@ public class ActionAppState extends SimpleAppState {
     // fields
 
     /**
-     * action application instance: set by initialize()
+     * action application instance: set by initialize() TODO privatize
      */
     protected ActionApplication actionApplication;
     /**
-     * signal tracker: set by initialize()
+     * signal tracker: set by initialize() TODO privatize
      */
     protected Signals signals = null;
     // *************************************************************************
