@@ -32,12 +32,16 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.Trigger;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -460,18 +464,73 @@ public class Hotkey {
     }
 
     /**
-     * Add a new hotkey for a keyboard key.
+     * Add a hotkey for a keyboard key. For systems with non-US keyboards, the
+     * name of the key may be localized.
      *
-     * @param keyCode an unused key code from {@link com.jme3.input.KeyInput}
-     * @param name a descriptive name not already in use (not null, not empty)
+     * @param keyCode a key code from {@link com.jme3.input.KeyInput} that
+     * doesn't yet have a hotkey
+     * @param usName the key's descriptive name on US keyboards (not null, not
+     * empty)
      */
-    private static void addKey(int keyCode, String name) {
+    private static void addKey(int keyCode, String usName) {
         assert keyCode >= 0 : keyCode;
         assert keyCode <= KeyInput.KEY_LAST : keyCode;
-        assert name != null;
-        assert !name.isEmpty();
-        assert findKey(keyCode) == null;
-        assert find(name) == null;
+        assert findKey(keyCode) == null :
+                "key" + keyCode + " already has a hotkey";
+        assert usName != null;
+        assert !usName.isEmpty();
+        /*
+         * Attempt to localize the descriptive name.
+         */
+        String name = usName;
+        boolean isNameLocalized = false;
+        if (!usName.startsWith("numpad ")) { // not a numpad key
+            String glfwName = glfwName(keyCode);
+
+            if (glfwName != null) { // key is printable
+                name = englishName(glfwName);
+                isNameLocalized = true;
+
+                if (!name.equals(usName)) {
+                    String usQ = MyString.quote(usName);
+                    String localQ = MyString.quote(name);
+                    if (name.length() == 1) {
+                        int ch = name.charAt(0);
+                        String unicodeName = Character.getName(ch);
+                        localQ += String.format("    (\"\\u%04x\": %s)",
+                                ch, unicodeName);
+                    }
+                    logger.log(Level.INFO,
+                            "localizing the hotkey name for key{0}: {1} -> {2}",
+                            new Object[]{keyCode, usQ, localQ});
+                }
+            }
+        }
+        /*
+         * In case of a duplicate name (such as "circumflex"), the hotkey with
+         * the localized name is preferred.  If both hotkeys have localized
+         * names, the new one overrides the pre-existing one.
+         */
+        Hotkey preexistingHotkey = find(name);
+        if (preexistingHotkey != null) {
+            int preexistingCode = preexistingHotkey.keyCode();
+            String nameQ = MyString.quote(usName);
+            if (isNameLocalized) {
+                logger.log(Level.INFO,
+                        "Key{0} overrides pre-existing key{1} that was "
+                        + "also named {2}.", new Object[]{
+                            keyCode, preexistingCode, nameQ});
+
+                byName.remove(name);
+                byUniversalCode.remove(preexistingCode);
+            } else {
+                logger.log(Level.INFO,
+                        "Ignore key{0} because pre-existing key{1} is "
+                        + "also named {2}.", new Object[]{
+                            keyCode, preexistingCode, nameQ});
+                return;
+            }
+        }
 
         int universalCode = keyCode;
         Trigger trigger = new KeyTrigger(keyCode);
@@ -479,5 +538,107 @@ public class Hotkey {
 
         byUniversalCode.put(universalCode, instance);
         byName.put(name, instance);
+    }
+
+    /**
+     * Transform the GLFW name of a printable keyboard key into a descriptive
+     * name. Only a few common cases are handled. TODO handle additional cases
+     *
+     * @param glfwKeyName a key name obtained from GLFW (not null, typically a
+     * single Unicode character)
+     * @return a descriptive name for the hotkey (in English, not null)
+     */
+    private static String englishName(String glfwKeyName) {
+        assert glfwKeyName != null;
+
+        switch (glfwKeyName) {
+            case "\u00B4":
+                return "acute";
+            case "'":
+                return "apostrophe";
+            case "\\":
+                return "backslash";
+            case "`":
+                return "backtick";
+            case "\u005E":
+                return "circumflex";
+            case ",":
+                return "comma";
+            case "\u00A8":
+                return "diaeresis";
+            case "=":
+                return "equals";
+            case "\u00A1":
+                return "exclaim";
+            case "\u00BD":
+                return "half";
+            case "#":
+                return "hash";
+            case "[":
+                return "left bracket";
+            case "-":
+                return "minus";
+            case "\u00BA":
+                return "ordinal";
+            case ".":
+                return "period";
+            case "+":
+                return "plus";
+            case "]":
+                return "right bracket";
+            case "\u00A7":
+                return "section";
+            case ";":
+                return "semicolon";
+            case "/":
+                return "slash";
+            case "\u0384":
+                return "tonos";
+            default:
+                return glfwKeyName;
+        }
+    }
+
+    /**
+     * Determine GLFW's layout-specific name for the specified keyboard key.
+     *
+     * @param jmeKeyCode the JMonkeyEngine key code
+     * @return a descriptive name, or null if GLFW is unavailable OR the key is
+     * unknown to GLFW OR the key isn't printable
+     */
+    private static String glfwName(int jmeKeyCode) {
+        String result = null;
+
+        try {
+            /*
+             * Translate the JME code to a GLFW code.
+             */
+            Class<?> glfwKeyMapClass
+                    = Class.forName("com.jme3.input.lwjgl.GlfwKeyMap");
+            Method method = glfwKeyMapClass.getDeclaredMethod("fromJmeKeyCode",
+                    int.class);
+            method.setAccessible(true);
+            int glfwKeyCode = (int) method.invoke(null, jmeKeyCode);
+
+            if (glfwKeyCode != -1) {
+                /*
+                 * The key is known to GLFW.
+                 * Look up its name, assuming it's a printable key.
+                 */
+                Class<?> glfwClass = Class.forName("org.lwjgl.glfw.GLFW");
+                method = glfwClass.getDeclaredMethod("glfwGetKeyName",
+                        int.class, int.class);
+                method.setAccessible(true);
+                result = (String) method.invoke(null, glfwKeyCode, 0);
+            }
+
+        } catch (ClassNotFoundException
+                | IllegalAccessException
+                | InvocationTargetException
+                | NoSuchMethodException exception) {
+            // GLFW is unavailable, so return null.
+        }
+
+        return result;
     }
 }
