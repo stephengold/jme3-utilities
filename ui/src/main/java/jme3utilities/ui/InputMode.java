@@ -246,8 +246,9 @@ abstract public class InputMode
     public void bind(String actionName, String hotkeyName) {
         Validate.nonNull(actionName, "action name");
         Validate.nonNull(hotkeyName, "hotkey name");
+        boolean hotkeyExists = (Hotkey.find(hotkeyName) != null);
+        Validate.require(hotkeyExists, "the name of a hotkey");
 
-        assert Hotkey.find(hotkeyName) != null : hotkeyName;
         hotkeyBindings.put(hotkeyName, actionName);
         addActionName(actionName);
     }
