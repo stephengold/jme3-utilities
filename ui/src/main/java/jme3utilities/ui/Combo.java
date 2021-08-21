@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+import jme3utilities.MyString;
 import jme3utilities.Validate;
 
 /**
@@ -119,7 +120,7 @@ public class Combo {
         positiveFlags = new boolean[numSignals];
         for (int sortedI = 0; sortedI < numSignals; ++sortedI) {
             String name = signalNames[sortedI];
-            int originalI = findIndex(names, name);
+            int originalI = MyString.findIndex(names, name);
             assert originalI >= 0 : originalI;
             assert names[originalI].equals(name) : name;
 
@@ -293,28 +294,5 @@ public class Combo {
         result.append(hotkey.name());
 
         return result.toString();
-    }
-    // *************************************************************************
-    // private methods
-
-    /**
-     * Find the specified String value in an array, using a linear search. The
-     * array need not be sorted. TODO use Heart library
-     *
-     * @param array the array to search (not null, unaffected)
-     * @param value the value to find (not null)
-     * @return the index of the first match (&ge;0) or -1 if not found
-     */
-    private static int findIndex(String[] array, String value) {
-        assert array != null;
-        assert value != null;
-
-        for (int i = 0; i < array.length; ++i) {
-            if (value.equals(array[i])) {
-                return i;
-            }
-        }
-
-        return -1;
     }
 }
