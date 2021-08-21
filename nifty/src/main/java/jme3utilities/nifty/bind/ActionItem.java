@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@ class ActionItem {
     @Override
     public String toString() {
         String result = String.format("  %s", MyString.quote(actionName));
-        Collection<String> names = mode.listHotkeys(actionName);
+        Collection<String> names = mode.listHotkeysLocal(actionName);
         if (!names.isEmpty()) {
             result += String.format(":     %s", formatList(names));
         }
