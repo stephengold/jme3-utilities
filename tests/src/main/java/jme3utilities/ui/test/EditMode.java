@@ -110,7 +110,7 @@ class EditMode extends InputMode {
         for (char c = 'a'; c <= 'z'; ++c) {
             tmpArray[0] = c;
             String letter = new String(tmpArray);
-            bind("appendLetter " + letter, letter);
+            bindLocal("appendLetter " + letter, letter);
         }
 
         bind("appendSpace", KeyInput.KEY_SPACE);
