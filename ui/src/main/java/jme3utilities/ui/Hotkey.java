@@ -601,6 +601,8 @@ public class Hotkey {
         switch (glfwKeyName) {
             case "\u00B4":
                 return "acute";
+            case "&":
+                return "ampersand";
             case "'":
                 return "apostrophe";
             case "\\":
@@ -609,20 +611,30 @@ public class Hotkey {
                 return "backtick";
             case "\u005E":
                 return "circumflex";
+            case ":":
+                return "colon";
             case ",":
                 return "comma";
             case "\u00A8":
                 return "diaeresis";
+            case "$":
+                return "dollar";
             case "=":
                 return "equals";
-            case "\u00A1":
+            case "!":
                 return "exclaim";
             case "\u00BD":
                 return "half";
             case "#":
                 return "hash";
+            case "\u00A1":
+                return "inv exclaim";
             case "[":
                 return "left bracket";
+            case "(":
+                return "left paren";
+            case "\u00B5":
+                return "micro";
             case "-":
                 return "minus";
             case "\u00BA":
@@ -631,14 +643,20 @@ public class Hotkey {
                 return "period";
             case "+":
                 return "plus";
+            case "\"":
+                return "quote";
             case "]":
                 return "right bracket";
+            case ")":
+                return "right paren";
             case "\u00A7":
                 return "section";
             case ";":
                 return "semicolon";
             case "/":
                 return "slash";
+            case "\u00B2":
+                return "super2";
             case "\u0384":
                 return "tonos";
             default:
