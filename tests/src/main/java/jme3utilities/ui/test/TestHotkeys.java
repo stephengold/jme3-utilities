@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020, Stephen Gold
+ Copyright (c) 2020-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -104,14 +104,16 @@ public class TestHotkeys extends ActionApplication {
         List<Hotkey> allKeys = Hotkey.listAll();
         InputMode dim = getDefaultInputMode();
         /*
-         * Bind (or rebind) each hotkey so that its action equals its US name.
+         * Bind (or rebind) each hotkey so that its action indicates
+         * both its US name and its local name.
          *
          * Such actions don't do anything when processed, but
          * DefaultInputMode.onAction() will log each time a hotkey
          * gets activated or deactivated.
          */
         for (Hotkey key : allKeys) {
-            String actionName = key.usName();
+            String actionName = String.format("local=%s US=%s",
+                    key.localName(), key.usName());
             dim.bind(actionName, key);
         }
     }
