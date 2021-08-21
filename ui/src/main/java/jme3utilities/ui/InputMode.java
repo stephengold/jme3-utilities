@@ -134,9 +134,10 @@ abstract public class InputMode
      */
     final private static Map<String, InputMode> modes = new TreeMap<>();
     /**
-     * bindings from hotkeys to action names: needed because the InputManager
-     * doesn't provide access to its mappings and also so that the hotkey
-     * bindings editor can examine hotkey bindings while this mode is disabled
+     * bindings from US hotkey names to action names: needed because
+     * InputManager doesn't provide access to its mappings and also so that the
+     * hotkey bindings editor can examine hotkey bindings while this mode is
+     * disabled
      */
     private Properties hotkeyBindings = new Properties();
     /**
@@ -170,8 +171,8 @@ abstract public class InputMode
         Validate.nonNull(shortName, "name");
         this.shortName = shortName;
 
-        for (int code = 0; code < numCodes; ++code) {
-            comboBindings[code] = new HashMap<>(8);
+        for (int universalCode = 0; universalCode < numCodes; ++universalCode) {
+            comboBindings[universalCode] = new HashMap<>(8);
         }
     }
     // *************************************************************************
@@ -196,7 +197,7 @@ abstract public class InputMode
      */
     public void bind(String actionName, Combo combo) {
         Validate.nonNull(actionName, "action name");
-        Validate.nonNull(combo, "hotkey");
+        Validate.nonNull(combo, "combo");
 
         int triggerCode = combo.triggerCode();
         comboBindings[triggerCode].put(combo, actionName);
@@ -215,8 +216,8 @@ abstract public class InputMode
         Validate.nonNull(actionName, "action name");
         Validate.nonNull(hotkey, "hotkey");
 
-        String description = hotkey.name();
-        hotkeyBindings.put(description, actionName);
+        String usHotkeyName = hotkey.usName();
+        hotkeyBindings.put(usHotkeyName, actionName);
         addActionName(actionName);
     }
 
@@ -241,15 +242,15 @@ abstract public class InputMode
      * existing binding for the hotkey is removed.
      *
      * @param actionName the name of the action (not null)
-     * @param hotkeyName the hotkey's name (not null)
+     * @param usHotkeyName the hotkey's US name (not null)
      */
-    public void bind(String actionName, String hotkeyName) {
+    public void bind(String actionName, String usHotkeyName) {
         Validate.nonNull(actionName, "action name");
-        Validate.nonNull(hotkeyName, "hotkey name");
-        boolean hotkeyExists = (Hotkey.find(hotkeyName) != null);
-        Validate.require(hotkeyExists, "the name of a hotkey");
+        Validate.nonNull(usHotkeyName, "US hotkey name");
+        boolean hotkeyExists = (Hotkey.findUs(usHotkeyName) != null);
+        Validate.require(hotkeyExists, "the US name of a hotkey");
 
-        hotkeyBindings.put(hotkeyName, actionName);
+        hotkeyBindings.put(usHotkeyName, actionName);
         addActionName(actionName);
     }
 
@@ -283,25 +284,24 @@ abstract public class InputMode
     /**
      * Determine the path to the configuration asset.
      *
-     * @return current asset path (or null if the bindings are not
+     * @return the current asset path (or null if the bindings are not
      * loadable/savable)
      */
     public String configPath() {
-        String path = configAssetPath;
-        return path;
+        return configAssetPath;
     }
 
     /**
      * Look up the action bound to a hotkey.
      *
      * @param hotkey (not null)
-     * @return hotkey's action name, or null if the hotkey isn't bound
+     * @return the hotkey's action name, or null if the hotkey isn't bound
      */
     public String findActionName(Hotkey hotkey) {
-        String keyName = hotkey.name();
-        String actionName = hotkeyBindings.getProperty(keyName);
+        String usHotkeyName = hotkey.usName();
+        String result = hotkeyBindings.getProperty(usHotkeyName);
 
-        return actionName;
+        return result;
     }
 
     /**
@@ -311,7 +311,7 @@ abstract public class InputMode
      * @return pre-existing instance (or null if none)
      */
     public static InputMode findMode(String shortName) {
-        Validate.nonNull(shortName, "name");
+        Validate.nonNull(shortName, "short name");
         InputMode result = modes.get(shortName);
         return result;
     }
@@ -523,8 +523,8 @@ abstract public class InputMode
     public void unbind(Hotkey hotkey) {
         assert isInitialized();
 
-        String hotkeyName = hotkey.name();
-        hotkeyBindings.remove(hotkeyName);
+        String usHotkeyName = hotkey.usName();
+        hotkeyBindings.remove(usHotkeyName);
     }
 
     /**
@@ -556,9 +556,9 @@ abstract public class InputMode
         /*
          * Map all bound hotkeys to their actions.
          */
-        for (String keyName : hotkeyBindings.stringPropertyNames()) {
-            String actionName = hotkeyBindings.getProperty(keyName);
-            Hotkey hotkey = Hotkey.find(keyName);
+        for (String usHotkeyName : hotkeyBindings.stringPropertyNames()) {
+            String actionName = hotkeyBindings.getProperty(usHotkeyName);
+            Hotkey hotkey = Hotkey.findUs(usHotkeyName);
             mapActionName(actionName, hotkey);
         }
         /*
@@ -583,9 +583,9 @@ abstract public class InputMode
         /*
          * Unmap all Hotkey actions.
          */
-        for (String keyName : hotkeyBindings.stringPropertyNames()) {
-            String actionName = hotkeyBindings.getProperty(keyName);
-            Hotkey hotkey = Hotkey.find(keyName);
+        for (String usHotkeyName : hotkeyBindings.stringPropertyNames()) {
+            String actionName = hotkeyBindings.getProperty(usHotkeyName);
+            Hotkey hotkey = Hotkey.findUs(usHotkeyName);
             unmapHotkey(actionName, hotkey);
         }
         /*
@@ -766,16 +766,16 @@ abstract public class InputMode
         UncachedKey key = new UncachedKey(assetPath);
         hotkeyBindings = (Properties) assetManager.loadAsset(key);
 
-        for (String keyString : hotkeyBindings.stringPropertyNames()) {
-            String actionName = hotkeyBindings.getProperty(keyString);
-            Hotkey hotkey = Hotkey.find(keyString);
+        for (String usHotkeyName : hotkeyBindings.stringPropertyNames()) {
+            String actionName = hotkeyBindings.getProperty(usHotkeyName);
+            Hotkey hotkey = Hotkey.findUs(usHotkeyName);
             if (hotkey == null) {
                 logger.log(Level.WARNING, "Skipped unknown hotkey {0} in {1}",
                         new Object[]{
-                            MyString.quote(keyString),
+                            MyString.quote(usHotkeyName),
                             MyString.quote(assetPath)
                         });
-                hotkeyBindings.remove(keyString);
+                hotkeyBindings.remove(usHotkeyName);
             } else {
                 bind(actionName, hotkey);
             }

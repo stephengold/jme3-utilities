@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019-2020, Stephen Gold
+ Copyright (c) 2019-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -250,7 +250,7 @@ public class HelpUtils {
 
         int code = combo.triggerCode();
         Hotkey hotkey = Hotkey.find(code);
-        String hotkeyName = hotkey.name();
+        String hotkeyName = hotkey.localName();
         hotkeyName = compress(hotkeyName);
         result.append(hotkeyName);
 

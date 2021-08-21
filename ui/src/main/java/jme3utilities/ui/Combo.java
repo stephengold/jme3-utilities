@@ -291,7 +291,7 @@ public class Combo {
                 result.append('-');
             }
         }
-        result.append(hotkey.name());
+        result.append(hotkey.usName());
 
         return result.toString();
     }

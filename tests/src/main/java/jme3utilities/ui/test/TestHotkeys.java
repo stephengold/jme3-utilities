@@ -104,10 +104,14 @@ public class TestHotkeys extends ActionApplication {
         List<Hotkey> allKeys = Hotkey.listAll();
         InputMode dim = getDefaultInputMode();
         /*
-         * Rebind all hotkeys.
+         * Bind (or rebind) each hotkey so that its action equals its US name.
+         *
+         * Such actions don't do anything when processed, but
+         * DefaultInputMode.onAction() will log each time a hotkey
+         * gets activated or deactivated.
          */
         for (Hotkey key : allKeys) {
-            String actionName = key.name();
+            String actionName = key.usName();
             dim.bind(actionName, key);
         }
     }
@@ -122,6 +126,6 @@ public class TestHotkeys extends ActionApplication {
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         // do nothing
-        // This avoids warnings about ongoing actions not handled.
+        // This avoids warnings about ongoing actions that aren't handled.
     }
 }

@@ -70,49 +70,65 @@ public class Hotkey {
     // fields
 
     /**
-     * universal code for this hotkey: either a key code (from
-     * {@link com.jme3.input.KeyInput}) or buttonFirst + a button code (from
-     * {@link com.jme3.input.MouseInput})
+     * universal code of this hotkey: either a JME key code (from
+     * {@link com.jme3.input.KeyInput}) or buttonFirst + a JME button code (from
+     * {@link com.jme3.input.MouseInput}) TODO support joystick buttons
      */
-    final private int code;
-    /**
-     * map descriptions to hotkeys
-     */
-    final private static Map<String, Hotkey> byName = new TreeMap<>();
+    final private int universalCode;
     /**
      * map universal codes to hotkeys
      */
     final private static Map<Integer, Hotkey> byUniversalCode = new TreeMap<>();
     /**
-     * descriptive name for this hotkey (not null, not empty)
+     * map local names to hotkeys
      */
-    final private String name;
+    final private static Map<String, Hotkey> byLocalName = new TreeMap<>();
     /**
-     * trigger for this hotkey (not null)
+     * map US names to hotkeys
+     */
+    final private static Map<String, Hotkey> byUsName = new TreeMap<>();
+    /**
+     * brief, descriptive name of this hotkey (not null, not empty) for use by
+     * BindScreen and HelpUtils. On systems with Dvorak or non-US keyboards,
+     * this might differ from its US name.
+     */
+    final private String localName;
+    /**
+     * brief, descriptive name of this hotkey on systems with United States
+     * QWERTY keyboards (not null, not empty). This is the name InputMode uses.
+     */
+    final private String usName;
+    /**
+     * JME input trigger of this hotkey (not null)
      */
     final private Trigger trigger;
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a Hotkey with the specified universal code, name, and
-     * trigger.
+     * Instantiate a Hotkey with the specified universal code, local name, US
+     * name, and trigger.
      *
-     * @param code a universal code: either a key code (from
+     * @param universalCode the desired universal code: either a key code (from
      * {@link com.jme3.input.KeyInput}) or buttonFirst + a button code (from
      * {@link com.jme3.input.MouseInput})
-     * @param name descriptive name (not null, not empty)
-     * @param trigger (not null)
+     * @param localName the desired local name (not null, not empty)
+     * @param usName the desired US name (not null, not empty)
+     * @param trigger the desired trigger (not null)
      */
-    private Hotkey(int code, String name, Trigger trigger) {
-        assert code >= 0 : code;
-        assert code <= lastButton : code;
-        assert name != null;
-        assert !name.isEmpty();
+    private Hotkey(int universalCode, String localName, String usName,
+            Trigger trigger) {
+        assert universalCode >= 0 : universalCode;
+        assert universalCode <= lastButton : universalCode;
+        assert localName != null;
+        assert !localName.isEmpty();
+        assert usName != null;
+        assert !usName.isEmpty();
         assert trigger != null;
 
-        this.code = code;
-        this.name = name;
+        this.universalCode = universalCode;
+        this.localName = localName;
+        this.usName = usName;
         this.trigger = trigger;
     }
     // *************************************************************************
@@ -121,15 +137,15 @@ public class Hotkey {
     /**
      * Determine the button code of this hotkey.
      *
-     * @return a button code (from {@link com.jme3.input.MouseInput}) or -1 if
-     * none
+     * @return a JME button code (from {@link com.jme3.input.MouseInput}) or -1
+     * if none
      */
     public int buttonCode() {
         int buttonCode;
-        if (code < firstButton) {
+        if (universalCode < firstButton) {
             buttonCode = -1;
         } else {
-            buttonCode = code - firstButton;
+            buttonCode = universalCode - firstButton;
         }
 
         assert buttonCode >= -1 : buttonCode;
@@ -140,12 +156,12 @@ public class Hotkey {
     /**
      * Determine the universal code of this hotkey.
      *
-     * @return a universal code
+     * @return a universal code (&ge;0, &le;lastButton)
      */
     public int code() {
-        assert code >= 0 : code;
-        assert code <= lastButton : code;
-        return code;
+        assert universalCode >= 0 : universalCode;
+        assert universalCode <= lastButton : universalCode;
+        return universalCode;
     }
 
     /**
@@ -163,25 +179,15 @@ public class Hotkey {
     }
 
     /**
-     * Find a hotkey by its name.
-     *
-     * @param name the descriptive name (not null, not empty)
-     * @return the pre-existing instance (or null if none)
-     */
-    public static Hotkey find(String name) {
-        Validate.nonEmpty(name, "name");
-        Hotkey result = byName.get(name);
-        return result;
-    }
-
-    /**
      * Find a hotkey by its button code.
      *
-     * @param buttonCode a button code from {@link com.jme3.input.MouseInput}
+     * @param buttonCode a JME button code from
+     * {@link com.jme3.input.MouseInput}
      * @return the pre-existing instance (or null if none)
      */
     public static Hotkey findButton(int buttonCode) {
-        Validate.inRange(buttonCode, "button code", 0, lastButton - firstButton);
+        Validate.inRange(buttonCode, "button code",
+                0, lastButton - firstButton);
         Hotkey result = find(firstButton + buttonCode);
         return result;
     }
@@ -199,7 +205,31 @@ public class Hotkey {
     }
 
     /**
-     * Instantiate known hotkeys.
+     * Find a hotkey by its local name.
+     *
+     * @param localName a local name (not null, not empty)
+     * @return the pre-existing instance (or null if none)
+     */
+    public static Hotkey findLocal(String localName) {
+        Validate.nonEmpty(localName, "local name");
+        Hotkey result = byLocalName.get(localName);
+        return result;
+    }
+
+    /**
+     * Find a hotkey by its US name.
+     *
+     * @param usName a US name (not null, not empty)
+     * @return the pre-existing instance (or null if none)
+     */
+    public static Hotkey findUs(String usName) {
+        Validate.nonEmpty(usName, "US name");
+        Hotkey result = byUsName.get(usName);
+        return result;
+    }
+
+    /**
+     * Instantiate all known hotkeys.
      */
     public static void initialize() {
         /*
@@ -367,14 +397,15 @@ public class Hotkey {
     }
 
     /**
-     * Determine the key code of this hotkey.
+     * Determine the JME key code of this hotkey.
      *
-     * @return a key code (from {@link com.jme3.input.KeyInput}) or -1 if none
+     * @return a JME key code (from {@link com.jme3.input.KeyInput}) or -1 if
+     * none
      */
     public int keyCode() {
         int keyCode;
-        if (code < firstButton) {
-            keyCode = code;
+        if (universalCode < firstButton) {
+            keyCode = universalCode;
         } else {
             keyCode = -1;
         }
@@ -390,12 +421,24 @@ public class Hotkey {
      * @return a new list
      */
     public static List<Hotkey> listAll() {
-        Collection<Hotkey> all = byName.values();
+        Collection<Hotkey> all = byLocalName.values();
         int numInstances = all.size();
         List<Hotkey> list = new ArrayList<>(numInstances);
         list.addAll(all);
 
         return list;
+    }
+
+    /**
+     * Determine the local name of this hotkey, which is the name used by
+     * BindScreen and HelpUtils.
+     *
+     * @return the local name (not null, not empty)
+     */
+    public String localName() {
+        assert localName != null;
+        assert !localName.isEmpty();
+        return localName;
     }
 
     /**
@@ -413,17 +456,6 @@ public class Hotkey {
     }
 
     /**
-     * Determine the name of this hotkey.
-     *
-     * @return descriptive name (not null, not empty)
-     */
-    public String name() {
-        assert name != null;
-        assert !name.isEmpty();
-        return name;
-    }
-
-    /**
      * Unmap this hotkey in the specified input manager.
      *
      * @param actionString action string (not null)
@@ -437,65 +469,78 @@ public class Hotkey {
             inputManager.deleteTrigger(actionString, trigger);
         }
     }
+
+    /**
+     * Determine the US name of this hotkey, which is the name InputMode uses.
+     *
+     * @return the brief, descriptive name for this hotkey on systems with
+     * United States QWERTY keyboards (not null, not empty)
+     */
+    public String usName() {
+        assert usName != null;
+        assert !usName.isEmpty();
+        return usName;
+    }
     // *************************************************************************
     // private methods
 
     /**
      * Add a new hotkey for a mouse button.
      *
-     * @param buttonCode an button code not already in use (from
-     * {@link com.jme3.input.MouseInput})
-     * @param name a descriptive name not already in use (not null, not empty)
+     * @param buttonCode the JME button code (from
+     * {@link com.jme3.input.MouseInput}) that isn't already assigned to a
+     * hotkey
+     * @param name a name not already assigned (not null, not empty)
      */
     private static void addButton(int buttonCode, String name) {
         assert buttonCode >= 0 : buttonCode;
         assert buttonCode <= lastButton - firstButton : buttonCode;
         assert name != null;
         assert !name.isEmpty();
-        assert findButton(buttonCode) == null;
-        assert find(name) == null;
+        assert findButton(buttonCode) == null :
+                "button" + buttonCode + " is already assigned to a hotkey";
+        assert findLocal(name) == null;
+        assert findUs(name) == null;
 
         int universalCode = buttonCode + firstButton;
         Trigger trigger = new MouseButtonTrigger(buttonCode);
-        Hotkey instance = new Hotkey(universalCode, name, trigger);
+        Hotkey instance = new Hotkey(universalCode, name, name, trigger);
 
         byUniversalCode.put(universalCode, instance);
-        byName.put(name, instance);
+        byLocalName.put(name, instance);
+        byUsName.put(name, instance);
     }
 
     /**
-     * Add a hotkey for a keyboard key. For systems with non-US keyboards, the
-     * name of the key may be localized.
+     * Add a hotkey for a keyboard key.
      *
-     * @param keyCode a key code from {@link com.jme3.input.KeyInput} that
-     * doesn't yet have a hotkey
-     * @param usName the key's descriptive name on US keyboards (not null, not
-     * empty)
+     * @param keyCode the JME key code from {@link com.jme3.input.KeyInput} that
+     * isn't already assigned to a hotkey
+     * @param usName the name of the key on United States QWERTY keyboards (not
+     * null, not empty)
      */
     private static void addKey(int keyCode, String usName) {
         assert keyCode >= 0 : keyCode;
         assert keyCode <= KeyInput.KEY_LAST : keyCode;
         assert findKey(keyCode) == null :
-                "key" + keyCode + " already has a hotkey";
+                "key" + keyCode + " is already assigned to a hotkey";
         assert usName != null;
         assert !usName.isEmpty();
         /*
-         * Attempt to localize the descriptive name.
+         * Attempt to localize the name.
          */
-        String name = usName;
-        boolean isNameLocalized = false;
+        String localName = usName;
         if (!usName.startsWith("numpad ")) { // not a numpad key
             String glfwName = glfwName(keyCode);
 
             if (glfwName != null) { // key is printable
-                name = englishName(glfwName);
-                isNameLocalized = true;
+                localName = englishName(glfwName);
 
-                if (!name.equals(usName)) {
+                if (!localName.equals(usName)) {
                     String usQ = MyString.quote(usName);
-                    String localQ = MyString.quote(name);
-                    if (name.length() == 1) {
-                        int ch = name.charAt(0);
+                    String localQ = MyString.quote(localName);
+                    if (localName.length() == 1) {
+                        int ch = localName.charAt(0);
                         String unicodeName = Character.getName(ch);
                         localQ += String.format("    (\"\\u%04x\": %s)",
                                 ch, unicodeName);
@@ -507,46 +552,48 @@ public class Hotkey {
             }
         }
         /*
-         * In case of a duplicate name (such as "circumflex"), the hotkey with
+         * In case of a duplicate local name (such as "circumflex"), the hotkey with
          * the localized name is preferred.  If both hotkeys have localized
-         * names, the new one overrides the pre-existing one.
+         * names, the new hotkey overrides the pre-existing one.
          */
-        Hotkey preexistingHotkey = find(name);
+        Hotkey preexistingHotkey = findLocal(localName);
         if (preexistingHotkey != null) {
             int preexistingCode = preexistingHotkey.keyCode();
             String nameQ = MyString.quote(usName);
-            if (isNameLocalized) {
+            Object[] args = new Object[]{keyCode, preexistingCode, nameQ};
+            if (!localName.equals(usName)) {
                 logger.log(Level.INFO,
                         "Key{0} overrides pre-existing key{1} that was "
-                        + "also named {2}.", new Object[]{
-                            keyCode, preexistingCode, nameQ});
+                        + "also named {2}.", args);
 
-                byName.remove(name);
+                byLocalName.remove(localName);
                 byUniversalCode.remove(preexistingCode);
             } else {
                 logger.log(Level.INFO,
                         "Ignore key{0} because pre-existing key{1} is "
-                        + "also named {2}.", new Object[]{
-                            keyCode, preexistingCode, nameQ});
+                        + "also named {2}.", args);
                 return;
             }
         }
 
         int universalCode = keyCode;
         Trigger trigger = new KeyTrigger(keyCode);
-        Hotkey instance = new Hotkey(universalCode, name, trigger);
+        Hotkey instance = new Hotkey(universalCode, localName, usName, trigger);
 
         byUniversalCode.put(universalCode, instance);
-        byName.put(name, instance);
+        byLocalName.put(localName, instance);
+        byUsName.put(usName, instance);
     }
 
     /**
-     * Transform the GLFW name of a printable keyboard key into a descriptive
-     * name. Only a few common cases are handled. TODO handle additional cases
+     * Transform the GLFW name of a printable keyboard key into a brief,
+     * descriptive name in English. Only a few common names are handled. When a
+     * name isn't handled, the GLFW name is returned. TODO handle additional
+     * cases
      *
      * @param glfwKeyName a key name obtained from GLFW (not null, typically a
      * single Unicode character)
-     * @return a descriptive name for the hotkey (in English, not null)
+     * @return a brief, descriptive name for the hotkey (not null)
      */
     private static String englishName(String glfwKeyName) {
         assert glfwKeyName != null;
@@ -602,11 +649,13 @@ public class Hotkey {
     /**
      * Determine GLFW's layout-specific name for the specified keyboard key.
      *
-     * @param jmeKeyCode the JMonkeyEngine key code
-     * @return a descriptive name, or null if GLFW is unavailable OR the key is
-     * unknown to GLFW OR the key isn't printable
+     * @param jmeKeyCode a JMonkeyEngine key code
+     * @return the name, or null if GLFW is unavailable OR the key is unknown to
+     * GLFW OR the key isn't printable
      */
     private static String glfwName(int jmeKeyCode) {
+        assert jmeKeyCode >= 0 : jmeKeyCode;
+        assert jmeKeyCode <= KeyInput.KEY_LAST : jmeKeyCode;
         String result = null;
 
         try {
@@ -632,11 +681,13 @@ public class Hotkey {
                 result = (String) method.invoke(null, glfwKeyCode, 0);
             }
 
-        } catch (ClassNotFoundException
-                | IllegalAccessException
+        } catch (ClassNotFoundException exception) {
+            // GLFW is unavailable, so ignore the exception and return null.
+
+        } catch (IllegalAccessException
                 | InvocationTargetException
                 | NoSuchMethodException exception) {
-            // GLFW is unavailable, so return null.
+            throw new RuntimeException(exception);
         }
 
         return result;
