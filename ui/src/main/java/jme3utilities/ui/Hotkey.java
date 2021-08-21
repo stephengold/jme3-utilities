@@ -221,32 +221,32 @@ public class Hotkey {
         /*
          * main keyboard letters
          */
-        addKey(KeyInput.KEY_A, "A");
-        addKey(KeyInput.KEY_B, "B");
-        addKey(KeyInput.KEY_C, "C");
-        addKey(KeyInput.KEY_D, "D");
-        addKey(KeyInput.KEY_E, "E");
-        addKey(KeyInput.KEY_F, "F");
-        addKey(KeyInput.KEY_G, "G");
-        addKey(KeyInput.KEY_H, "H");
-        addKey(KeyInput.KEY_I, "I");
-        addKey(KeyInput.KEY_J, "J");
-        addKey(KeyInput.KEY_K, "K");
-        addKey(KeyInput.KEY_L, "L");
-        addKey(KeyInput.KEY_M, "M");
-        addKey(KeyInput.KEY_N, "N");
-        addKey(KeyInput.KEY_O, "O");
-        addKey(KeyInput.KEY_P, "P");
-        addKey(KeyInput.KEY_Q, "Q");
-        addKey(KeyInput.KEY_R, "R");
-        addKey(KeyInput.KEY_S, "S");
-        addKey(KeyInput.KEY_T, "T");
-        addKey(KeyInput.KEY_U, "U");
-        addKey(KeyInput.KEY_V, "V");
-        addKey(KeyInput.KEY_W, "W");
-        addKey(KeyInput.KEY_X, "X");
-        addKey(KeyInput.KEY_Y, "Y");
-        addKey(KeyInput.KEY_Z, "Z");
+        addKey(KeyInput.KEY_A, "a");
+        addKey(KeyInput.KEY_B, "b");
+        addKey(KeyInput.KEY_C, "c");
+        addKey(KeyInput.KEY_D, "d");
+        addKey(KeyInput.KEY_E, "e");
+        addKey(KeyInput.KEY_F, "f");
+        addKey(KeyInput.KEY_G, "g");
+        addKey(KeyInput.KEY_H, "h");
+        addKey(KeyInput.KEY_I, "i");
+        addKey(KeyInput.KEY_J, "j");
+        addKey(KeyInput.KEY_K, "k");
+        addKey(KeyInput.KEY_L, "l");
+        addKey(KeyInput.KEY_M, "m");
+        addKey(KeyInput.KEY_N, "n");
+        addKey(KeyInput.KEY_O, "o");
+        addKey(KeyInput.KEY_P, "p");
+        addKey(KeyInput.KEY_Q, "q");
+        addKey(KeyInput.KEY_R, "r");
+        addKey(KeyInput.KEY_S, "s");
+        addKey(KeyInput.KEY_T, "t");
+        addKey(KeyInput.KEY_U, "u");
+        addKey(KeyInput.KEY_V, "v");
+        addKey(KeyInput.KEY_W, "w");
+        addKey(KeyInput.KEY_X, "x");
+        addKey(KeyInput.KEY_Y, "y");
+        addKey(KeyInput.KEY_Z, "z");
         /*
          * main keyboard digits
          */
