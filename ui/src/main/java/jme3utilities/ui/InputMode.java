@@ -255,6 +255,25 @@ abstract public class InputMode
     }
 
     /**
+     * Bind the named action to the named hotkey, but don't map it yet. Any
+     * existing binding for the hotkey is removed.
+     *
+     * @param actionName the name of the action (not null)
+     * @param localHotkeyName the hotkey's local name (not null)
+     */
+    public void bindLocal(String actionName, String localHotkeyName) {
+        Validate.nonNull(actionName, "action name");
+        Validate.nonNull(localHotkeyName, "local hotkey name");
+        boolean hotkeyExists = (Hotkey.findLocal(localHotkeyName) != null);
+        Validate.require(hotkeyExists, "the local name of a hotkey");
+
+        Hotkey hotkey = Hotkey.findLocal(localHotkeyName);
+        String usHotkeyName = hotkey.usName();
+        hotkeyBindings.put(usHotkeyName, actionName);
+        addActionName(actionName);
+    }
+
+    /**
      * Test whether this input mode binds the specified hotkey.
      *
      * @param hotkey hotkey to test (not null)
