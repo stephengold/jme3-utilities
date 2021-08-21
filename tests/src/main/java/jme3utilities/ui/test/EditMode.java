@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020, Stephen Gold
+ Copyright (c) 2020-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -107,7 +107,7 @@ class EditMode extends InputMode {
     @Override
     protected void defaultBindings() {
         char[] tmpArray = new char[1];
-        for (char c = 'A'; c <= 'Z'; ++c) {
+        for (char c = 'a'; c <= 'z'; ++c) {
             tmpArray[0] = c;
             String letter = new String(tmpArray);
             bind("appendLetter " + letter, letter);
