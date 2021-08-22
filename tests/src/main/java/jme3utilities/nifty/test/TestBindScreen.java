@@ -155,6 +155,7 @@ public class TestBindScreen extends GuiApplication {
                 settings.setVSync(true);
             }
         };
+        displaySettings.setForceDialog(true);
         AppSettings appSettings = displaySettings.initialize();
         if (appSettings != null) {
             application.setSettings(appSettings);
