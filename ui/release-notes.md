@@ -1,17 +1,17 @@
 # release log for the jme3-utilities-ui library and related tests
 
-## Version 0.9.5 released on TBD
+## Version 0.9.5 released on 21 August 2021
 
  + Renamed the alphabet hotkeys from uppercase to lowercase.
  + To better support non-US keyboards, added localization of hotkey names when
     the jme3-lwjgl3 library is accessible at runtime:
     + Added the `toStringLocal()` method to the `Combo` class.
-    + Added the `findLocal()`, `findUs()`, `localName()`, and `usName()`
+    + Added the `findLocal()`, `findUs()`, `localName()`, and `usName()` methods
       to the Hotkey class.
     + Added the `bindLocal()` method to the `InputMode` class.
-    + Renamed `listHotkeys()` in the `InputMode` class.
+    + Renamed the `listHotkeys()` method in the `InputMode` class.
     + Removed the `find()` and `name()` methods from the `Hotkey` class.
-    + Enhanced test coverage for non-US keyboard issues.
+    + Enhanced test coverage for issues related to non-US keyboards.
  + Renamed the `intialize()` method in the `Hotkey` class.
  + Based on version 7.0.0 of the Heart Library.
 

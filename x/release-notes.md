@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-x library and related tests
 
-## Version 0.2.22 released on TBD
+## Version 0.2.22 released on 21 August 2021
 
  + Based on version 7.0.0 of the Heart Library.
 
