@@ -2,6 +2,7 @@
 
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
+
 It contains 5 sub-projects:
 
  1. ui: the `jme3-utilities-ui` library for building user interfaces
@@ -12,35 +13,35 @@ It contains 5 sub-projects:
  5. tests: demos, examples, and test software
 
 The `SkyControl` library, formerly a sub-project, is now a separate project
-at [GitHub](https://github.com/stephengold/SkyControl).
+at [GitHub][skycontrol].
 
 The textures sub-project is now part of
-[the SkyControl Project](https://github.com/stephengold/SkyControl).
+[the SkyControl Project][skycontrol].
 
 The `jme3-utilities-heart` library, formerly a sub-project, is now a separate project
-at [GitHub](https://github.com/stephengold/Heart).
+at [GitHub][heart].
 
 The `jme3-utilities-debug` library, formerly a sub-project, is now part of
-[the Heart Library](https://github.com/stephengold/Heart).
+[the Heart Library][heart].
 
 The `Minie` library, formerly a sub-project, is now a separate project
-at [GitHub](https://github.com/stephengold/Minie).
+at [GitHub][minie].
 
 The `Wes` library, formerly a sub-project, is now a separate project
-at [GitHub](https://github.com/stephengold/Wes).
+at [GitHub][wes].
 
 Complete source code (in Java) is provided under
-[a 3-clause BSD license](https://github.com/stephengold/jme3-utilities/blob/master/license.txt).
+[a 3-clause BSD license][license].
 
 <a name="toc"/>
 
 ## Contents of this document
 
- + [Downloads](#downloads)
- + [Conventions](#conventions)
- + [History](#history)
- + [How to build Jme3-utilities from source](#build)
- + [Acknowledgments](#acks)
++ [Downloads](#downloads)
++ [Conventions](#conventions)
++ [History](#history)
++ [How to build Jme3-utilities from source](#build)
++ [Acknowledgments](#acks)
 
 <a name="downloads"/>
 
@@ -198,26 +199,26 @@ software developers:
 + Paul Speed, for helpful insights which got me unstuck during debugging
 + Rémy Bouquet (aka "nehon") for many helpful insights
 + the creators of (and contributors to) the following software:
-    + Adobe Photoshop Elements
-    + the Ant and Gradle build tools
-    + the FindBugs source-code analyzer
-    + the Git and Subversion revision-control systems
-    + the Google Chrome web browser
+    + [Adobe Photoshop Elements][elements]
+    + the [Ant] and [Gradle] build tools
+    + the [FindBugs] source-code analyzer
+    + the [Git] and Subversion revision-control systems
+    + the [Google Chrome][chrome] web browser
     + Guava core libraries for Java
     + the Java compiler, standard doclet, and runtime environment
     + the JCommander Java framework
-    + jMonkeyEngine and the jME3 Software Development Kit
-    + the Linux Mint operating system
+    + [jMonkeyEngine][jme] and the jME3 Software Development Kit
+    + the [Linux Mint][mint] operating system
     + LWJGL, the Lightweight Java Game Library
-    + the Markdown document-conversion tool
+    + the [Markdown] document-conversion tool
     + Microsoft Windows
-    + the NetBeans integrated development environment
+    + the [NetBeans] integrated development environment
     + the Nifty graphical user-interface library
     + the PMD source-code analyzer
     + the RealWorld Cursor Editor
-    + the WinMerge differencing and merging tool
+    + the [WinMerge] differencing and merging tool
 
-I am grateful to GitHub, [Sonatype], JFrog, and Imgur
+I am grateful to [GitHub], [Sonatype], [JFrog], and [Imgur]
 for providing free hosting for this project
 and many other open-source projects.
 
@@ -229,4 +230,25 @@ correct the situation: sgold@sonic.net
 [Jump to table of contents](#toc)
 
 
+[ant]: https://ant.apache.org "Apache Ant Project"
+[chrome]: https://www.google.com/chrome "Chrome"
+[elements]: http://www.adobe.com/products/photoshop-elements.html "Photoshop Elements"
+[findbugs]: http://findbugs.sourceforge.net "FindBugs Project"
+[firefox]: https://www.mozilla.org/en-US/firefox "Firefox"
+[git]: https://git-scm.com "Git"
+[github]: https://github.com "GitHub"
+[gradle]: https://gradle.org "Gradle Project"
+[heart]: https://github.com/stephengold/Heart "Heart Project"
+[imgur]: https://imgur.com/ "Imgur"
+[jfrog]: https://www.jfrog.com "JFrog"
+[jme]: https://jmonkeyengine.org  "jMonkeyEngine Project"
+[license]: https://github.com/stephengold/jme3-utilities/blob/master/license.txt "jme3-utilities license"
+[markdown]: https://daringfireball.net/projects/markdown "Markdown Project"
+[minie]: https://github.com/stephengold/Minie "Minie Project"
+[mint]: https://linuxmint.com "Linux Mint Project"
+[netbeans]: https://netbeans.org "NetBeans Project"
+[skycontrol]: https://github.com/stephengold/SkyControl "SkyControl Project"
 [sonatype]: https://www.sonatype.com "Sonatype"
+[utilities]: https://github.com/stephengold/jme3-utilities "Jme3-utilities Project"
+[wes]: https://github.com/stephengold/Wes "Wes Project"
+[winmerge]: http://winmerge.org "WinMerge Project"
