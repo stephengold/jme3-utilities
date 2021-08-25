@@ -37,11 +37,31 @@ Complete source code (in Java) is provided under
 
 ## Contents of this document
 
++ [How to build Jme3-utilities from source](#build)
 + [Downloads](#downloads)
 + [Conventions](#conventions)
 + [History](#history)
-+ [How to build Jme3-utilities from source](#build)
 + [Acknowledgments](#acks)
+
+<a name="build"/>
+
+## How to build Jme3-utilities from source
+
+ 1. Install Git and a Java Development Kit (JDK), if you don't already have one.
+ 2. Download and extract the source code from GitHub:
+     + `git clone https://github.com/stephengold/jme3-utilities.git`
+     + `cd jme3-utilities`
+     + `git checkout -b latest ui-0.9.5`
+ 3. Set the `JAVA_HOME` environment variable:
+   + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
+   + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`
+ 4. Run the Gradle wrapper:
+   + using Bash:  `./gradlew build`
+   + using Windows Command Prompt:  `.\gradlew build`
+
+After a successful build, new jars will be found in `*/build/libs`.
+
+[Jump to table of contents](#toc)
 
 <a name="downloads"/>
 
@@ -85,108 +105,6 @@ The evolution of each sub-project is chronicled in its release notes:
  + [ui](https://github.com/stephengold/jme3-utilities/blob/master/ui/release-notes.md)
  + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
  + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
-
-[Jump to table of contents](#toc)
-
-<a name="build"/>
-
-## How to build Jme3-utilities from source
-
-### IDE setup
-
- + The setup instructions in this section are for jMonkeyEngine 3.2 SDKs
-   (which are based on the NetBeans 8 IDE) and aren't expected to work with
-   jMonkeyEngine 3.3 SDKs (which are based on the NetBeans 11 IDE).
- + It's easy to develop jMonkeyEngine 3.3 applications on a
-   jMonkeyEngine 3.2 SDK, provided you use Gradle instead of Ant.
- + If you already have a jMonkeyEngine 3.2 SDK installed, skip to step 6.
-
-The hardware and software requirements of the IDE are documented at
-[the JME wiki](https://wiki.jmonkeyengine.org/docs/3.3/getting-started/requirements.html).
-
- 1. Download a jMonkeyEngine 3.2 Software Development Kit (SDK) from
-    [GitHub](https://github.com/jMonkeyEngine/sdk/releases).
- 2. Install the SDK, which includes:
-    + the engine itself,
-    + an IDE based on NetBeans,
-    + various IDE plugins, and
-    + the Blender 3D application.
- 3. Open the IDE.
- 4. The first time you open the IDE, it prompts you to
-    specify a folder for storing projects:
-    + Fill in the "Folder name" text box.
-    + Click on the "Set Project Folder" button.
- 5. The first time you open the IDE, you should update
-    all the pre-installed plugins:
-    + Menu bar -> "Tools" -> "Plugins" to open the "Plugins" dialog.
-    + Click on the "Update" button to open the "Plugin Installer" wizard.
-    + Click on the "Next >" button.
-    + After the plugins have downloaded, click "Finish".
-    + The IDE will restart.
- 6. In order to open the Jme3-utilities Project in the IDE (or NetBeans),
-    you will need to install the `Gradle Support` plugin:
-    + Menu bar -> "Tools" -> "Plugins" to open the "Plugins" dialog.
-    + Click on the "Available Plugins" tab.
-    + Check the box next to "Gradle Support" in the "Gradle" category.
-     If this plugin isn't shown in the IDE's "Plugins" tool,
-     you can download it from
-     [GitHub](https://github.com/kelemen/netbeans-gradle-project/releases).
-    + Click on the "Install" button to open the "Plugin Installer" wizard.
-    + Click on the "Next >" button.
-    + Check the box next to
-     "I accept the terms in all the license agreements."
-    + Click on the "Install" button.
-    + When the "Verify Certificate" dialog appears,
-     click on the "Continue" button.
-    + Click on the "Finish" button.
-    + The IDE will restart.
-
-### Source files
-
-Clone the Jme3-utilities repository using Git:
-
- 1. Open the "Clone Repository" wizard in the IDE:
-     + Menu bar -> "Team" -> "Git" -> "Clone..." or
-     + Menu bar -> "Team" -> "Remote" -> "Clone..."
- 2. For "Repository URL:" specify
-    `https://github.com/stephengold/jme3-utilities.git`
- 3. Clear the "User:" and "Password:" text boxes.
- 4. For "Clone into:" specify a writable folder (on a local filesystem)
-    that doesn't already contain "jme3-utilities".
- 5. Click on the "Next >" button.
- 6. Make sure the "master" remote branch is checked.
- 7. Click on the "Next >" button again.
- 8. Make sure the Checkout Branch is set to "master".
- 9. Make sure the "Scan for NetBeans Projects after Clone" box is checked.
-10. Click on the "Finish" button.
-11. When the "Clone Completed" dialog appears, click on the "Open Project..."
-    button.
-12. Expand the root project node to reveal the 5 sub-projects.
-13. To start with, I recommend opening 3 sub-projects:  "nifty",
-    "tests", and "ui".  Select them using control-click, then click on the
-    "Open" button.
-
-### Build the project
-
- 1. In the "Projects" window of the IDE,
-    right-click on the "tests" sub-project to select it.
- 2. Select "Build".
-
-### How to build Jme3-utilities without an IDE
-
- 1. Install Git and a Java Development Kit (JDK), if you don't already have one.
- 2. Download and extract the source code from GitHub:
-     + `git clone https://github.com/stephengold/jme3-utilities.git`
-     + `cd jme3-utilities`
-     + `git checkout -b latest ui-0.9.5`
- 3. Set the `JAVA_HOME` environment variable:
-   + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
-   + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`
- 4. Run the Gradle wrapper:
-   + using Bash:  `./gradlew build`
-   + using Windows Command Prompt:  `.\gradlew build`
-
-After a successful build, new jars will be found in `*/build/libs`.
 
 [Jump to table of contents](#toc)
 
