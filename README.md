@@ -47,19 +47,25 @@ Complete source code (in Java) is provided under
 
 ## How to build Jme3-utilities from source
 
- 1. Install Git and a Java Development Kit (JDK), if you don't already have one.
- 2. Download and extract the source code from GitHub:
+ 1. Install a [Java Development Kit (JDK)][openJDK],
+    if you don't already have one.
+ 2. Download and extract the Jme3-utilities source code from GitHub:
      + `git clone https://github.com/stephengold/jme3-utilities.git`
      + `cd jme3-utilities`
      + `git checkout -b latest ui-0.9.5`
  3. Set the `JAVA_HOME` environment variable:
    + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
    + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`
- 4. Run the Gradle wrapper:
-   + using Bash:  `./gradlew build`
+   + using PowerShell: `$env:JAVA_HOME = '` *path to your JDK* `'`
+ 4. Run the [Gradle] wrapper:
+   + using Bash or PowerShell:  `./gradlew build`
    + using Windows Command Prompt:  `.\gradlew build`
 
 After a successful build, new jars will be found in `*/build/libs`.
+
+You can restore the project to a pristine state:
+ + using Bash or PowerShell: `./gradlew clean`
+ + using Windows Command Prompt: `.\gradlew clean`
 
 [Jump to table of contents](#toc)
 
@@ -122,8 +128,8 @@ software developers:
     + [Adobe Photoshop Elements][elements]
     + the [Ant] and [Gradle] build tools
     + the [FindBugs] source-code analyzer
+    + the [Firefox] and [Google Chrome][chrome] web browsers
     + the [Git] and Subversion revision-control systems
-    + the [Google Chrome][chrome] web browser
     + Guava core libraries for Java
     + the Java compiler, standard doclet, and virtual machine
     + the JCommander Java framework
@@ -167,6 +173,7 @@ correct the situation: sgold@sonic.net
 [minie]: https://github.com/stephengold/Minie "Minie Project"
 [mint]: https://linuxmint.com "Linux Mint Project"
 [netbeans]: https://netbeans.org "NetBeans Project"
+[openJDK]: https://openjdk.java.net "OpenJDK Project"
 [skycontrol]: https://github.com/stephengold/SkyControl "SkyControl Project"
 [sonatype]: https://www.sonatype.com "Sonatype"
 [utilities]: https://github.com/stephengold/jme3-utilities "Jme3-utilities Project"
