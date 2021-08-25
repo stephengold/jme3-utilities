@@ -29,22 +29,29 @@ dependencies {
 
 // publishing tasks
 
+task('install') {
+    dependsOn 'publishMavenPublicationToMavenLocal'
+    description 'Installs Maven artifacts to the local Maven repository.'
+}
+task('release') {
+    dependsOn 'publishMavenPublicationToOSSRHRepository'
+    description 'Stages Maven artifacts to Sonatype OSSRH.'
+}
+
 build.dependsOn('pom', 'pomAsc')
 task('pom', type: Copy) {
     dependsOn 'generatePomFileForMavenPublication'
+    description 'Copies the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml"
     into "${buildDir}/libs"
     rename 'pom-default.xml', baseName + '.pom'
 }
 task('pomAsc', type: Copy) {
     dependsOn 'signMavenPublication'
+    description 'Copies the signature of the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml.asc"
     into "${buildDir}/libs"
     rename 'pom-default.xml.asc', baseName + '.pom.asc'
-}
-
-publishToMavenLocal.doLast {
-    println 'published to ' + baseName
 }
 
 publishing {
@@ -92,6 +99,9 @@ publishing {
     }
 }
 generateMetadataFileForMavenPublication.dependsOn('pom')
+publishMavenPublicationToMavenLocal.doLast {
+    println 'installed locally as ' + baseName
+}
 
 // signing tasks
 
@@ -99,5 +109,5 @@ signing {
     sign publishing.publications.maven
 }
 tasks.withType(Sign) {
-    onlyIf { gradle.rootProject.hasProperty('signing.keyId') }
+    onlyIf { rootProject.hasProperty('signing.keyId') }
 }

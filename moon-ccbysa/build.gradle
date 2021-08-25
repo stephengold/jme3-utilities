@@ -20,9 +20,10 @@ sourcesJar { archiveBaseName = project.ext.baseName }
 build.dependsOn('pom')
 task('pom', type: Copy) {
     dependsOn 'generatePomFileForMavenPublication'
+    description 'Copies the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml"
     into "${buildDir}/libs"
-    rename '.*', baseName + '.pom'
+    rename 'pom-default.xml', baseName + '.pom'
 }
 
 publishing {
