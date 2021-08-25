@@ -188,6 +188,8 @@ Clone the Jme3-utilities repository using Git:
 
 After a successful build, new jars will be found in `*/build/libs`.
 
+[Jump to table of contents](#toc)
+
 <a name="acks"/>
 
 ## Acknowledgments
@@ -205,7 +207,7 @@ software developers:
     + the [Git] and Subversion revision-control systems
     + the [Google Chrome][chrome] web browser
     + Guava core libraries for Java
-    + the Java compiler, standard doclet, and runtime environment
+    + the Java compiler, standard doclet, and virtual machine
     + the JCommander Java framework
     + [jMonkeyEngine][jme] and the jME3 Software Development Kit
     + the [Linux Mint][mint] operating system
@@ -224,7 +226,7 @@ and many other open-source projects.
 
 I'm also grateful to my dear Holly, for keeping me sane.
 
-If I've misattributed anything or left anyone out, please let me know so I can
+If I've misattributed anything or left anyone out, please let me know, so I can
 correct the situation: sgold@sonic.net
 
 [Jump to table of contents](#toc)
