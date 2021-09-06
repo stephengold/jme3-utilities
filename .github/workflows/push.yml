@@ -13,7 +13,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 8
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
 
   Java8-MacOS:
@@ -24,7 +23,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 8
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
 
   Java8-Windows:
@@ -35,7 +33,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 8
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
         shell: bash
 
@@ -58,7 +55,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
 
   Java11-Windows:
@@ -69,7 +65,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
         shell: bash
 
@@ -81,7 +76,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 16
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
 
   Java16-MacOS:
@@ -92,7 +86,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 16
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
 
   Java16-Windows:
@@ -103,6 +96,5 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 16
-      - uses: gradle/wrapper-validation-action@v1
       - run: ./gradlew build --console=plain --no-daemon --stacktrace
         shell: bash
