@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -79,8 +79,6 @@ class DialogInputMode extends InputMode {
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
-        boolean handled = false;
-
         if (ongoing) {
             logger.log(Level.INFO, "Got action {0}",
                     MyString.quote(actionString));
@@ -88,6 +86,8 @@ class DialogInputMode extends InputMode {
 
         GuiApplication guiApplication = (GuiApplication) actionApplication;
         BasicScreenController controller = guiApplication.getEnabledScreen();
+        boolean handled = true;
+
         if (isEnabled() && ongoing && controller != null) {
             PopScreenController psc = (PopScreenController) controller;
             assert psc.getActiveDialog() != null;
@@ -100,7 +100,6 @@ class DialogInputMode extends InputMode {
                      * Close the dialog without performing any other action.
                      */
                     psc.closeActiveDialog();
-                    handled = true;
                     break;
 
                 case "commit":
@@ -108,8 +107,28 @@ class DialogInputMode extends InputMode {
                      * Perform the "commit" action and then close the dialog.
                      */
                     psc.dialogCommit();
-                    handled = true;
+                    break;
+
+                case "invert":
+                    /*
+                     * For a multi-select, invert the current selection.
+                     */
+                    psc.invertDialogSelection();
+                    break;
+
+                case "selectAll":
+                    /*
+                     * For a multi-select, select all items.
+                     */
+                    psc.selectAllDialogItems();
+                    break;
+
+                default:
+                    handled = false;
             }
+
+        } else {
+            handled = false;
         }
 
         if (!handled) {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -230,6 +230,58 @@ public class PopScreenController extends BasicScreenController {
      */
     boolean hasActivePopupMenu() {
         return activePopupMenu != null;
+    }
+
+    /**
+     * Invert the selection in the active multi-select dialog.
+     */
+    void invertDialogSelection() {
+        if (dialogController == null) {
+            throw new IllegalStateException("no active dialog");
+        }
+
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        @SuppressWarnings("unchecked")
+        ListBox<String> listBox
+                = dialogElement.findNiftyControl("#box", ListBox.class);
+
+        List selectedIndices = listBox.getSelectedIndices();
+        int itemCount = listBox.itemCount();
+        for (int itemIndex = 0; itemIndex < itemCount; ++itemIndex) {
+            boolean isSelected = selectedIndices.contains(itemIndex);
+            if (isSelected) {
+                listBox.deselectItemByIndex(itemIndex);
+            } else {
+                listBox.selectItemByIndex(itemIndex);
+            }
+        }
+    }
+
+    /**
+     * Select all items in the active multi-select dialog.
+     */
+    void selectAllDialogItems() {
+        if (dialogController == null) {
+            throw new IllegalStateException("no active dialog");
+        }
+
+        String popupId = dialogElement.getId();
+        assert popupId != null;
+
+        @SuppressWarnings("unchecked")
+        ListBox<String> listBox
+                = dialogElement.findNiftyControl("#box", ListBox.class);
+
+        List selectedIndices = listBox.getSelectedIndices();
+        int itemCount = listBox.itemCount();
+        for (int itemIndex = 0; itemIndex < itemCount; ++itemIndex) {
+            boolean isSelected = selectedIndices.contains(itemIndex);
+            if (!isSelected) {
+                listBox.selectItemByIndex(itemIndex);
+            }
+        }
     }
 
     /**
