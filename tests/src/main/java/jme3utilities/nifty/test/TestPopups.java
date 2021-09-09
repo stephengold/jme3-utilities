@@ -31,6 +31,9 @@ import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
@@ -61,6 +64,10 @@ public class TestPopups extends GuiApplication {
      */
     final private static String applicationName = "TestPopups";
     /**
+     * action prefix for the multi-select dialog
+     */
+    final private static String checkTwicePrefix = "check list twice ";
+    /**
      * action prefix for the "open" popup menu
      */
     final private static String openMenuPrefix = "open ";
@@ -88,6 +95,14 @@ public class TestPopups extends GuiApplication {
      * controller for the screen: set in guiInitializeApplication()
      */
     private GuiScreenController screen = null;
+    /**
+     * complete list of letter items
+     */
+    final private List<LetterItem> allLetterItems = new ArrayList<>(26);
+    /**
+     * complete list of letter descriptions
+     */
+    final private List<String> allLetterDescriptions = new ArrayList<>(26);
     /**
      * most recent setting for search string (not null)
      */
@@ -143,6 +158,13 @@ public class TestPopups extends GuiApplication {
         logger.log(Level.INFO, "Heart version is {0}",
                 MyString.quote(Heart.versionShort()));
 
+        for (char c = 'A'; c <= 'Z'; ++c) {
+            LetterItem item = new LetterItem(c);
+            allLetterItems.add(item);
+            String description = item.toString();
+            allLetterDescriptions.add(description);
+        }
+
         InputMode inputMode = getDefaultInputMode();
         /*
          * Create and attach a screen controller.
@@ -174,6 +196,12 @@ public class TestPopups extends GuiApplication {
                 screen.showInfoDialog("About the TestPopups application", msg);
                 return;
 
+            } else if (actionString.equals("make list")) {
+                screen.showMultiSelectDialog("Select 2 or more letters:",
+                        allLetterDescriptions, "Check twice", checkTwicePrefix,
+                        new MultiLetterDialogController(allLetterItems));
+                return;
+
             } else if (actionString.equals("search")) {
                 screen.showTextEntryDialog("Enter new search string:",
                         searchString, searchDialogPrefix,
@@ -192,6 +220,39 @@ public class TestPopups extends GuiApplication {
                 screen.showTextAndSliderDialog("Enter new temperature:",
                         temperatureString, setTemperaturePrefix,
                         new FloatSliderDialog("Set", -273f, 100f));
+                return;
+
+            } else if (actionString.startsWith(checkTwicePrefix)) {
+                String argList = MyString.remainder(actionString,
+                        checkTwicePrefix);
+                String[] selectedDigits = argList.split(",");
+                int numSelected = selectedDigits.length;
+                int last = numSelected - 1;
+                int[] selectedIndices = new int[numSelected];
+                for (int i = 0; i < numSelected; ++i) {
+                    String digits = selectedDigits[i];
+                    selectedIndices[i] = Integer.parseInt(digits);
+                }
+                Arrays.sort(selectedIndices);
+
+                StringBuilder line = new StringBuilder();
+                line.append("The letters ");
+                for (int i = 0; i < numSelected; ++i) {
+                    int itemIndex = selectedIndices[i];
+                    LetterItem item = allLetterItems.get(itemIndex);
+                    if (i == last) {
+                        if (numSelected > 2) {
+                            line.append(","); // Oxford comma
+                        }
+                        line.append(" and ");
+                    } else if (i > 0) {
+                        line.append(", ");
+                    }
+
+                    String description = item.toString();
+                    line.append(description);
+                }
+                updateStatusLine(line.toString());
                 return;
 
             } else if (actionString.startsWith(searchDialogPrefix)) {
