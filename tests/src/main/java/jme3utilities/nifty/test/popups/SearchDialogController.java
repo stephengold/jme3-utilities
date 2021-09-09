@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2021, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -24,16 +24,18 @@
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package jme3utilities.nifty.test;
+package jme3utilities.nifty.test.popups;
 
+import java.util.Locale;
 import java.util.logging.Logger;
+import jme3utilities.nifty.dialog.TextEntryDialog;
 
 /**
- * Information about a particular letter, for use in a DialogController.
+ * A dialog controller used by TestPopups.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-class LetterItem {
+class SearchDialogController extends TextEntryDialog {
     // *************************************************************************
     // constants and loggers
 
@@ -41,45 +43,36 @@ class LetterItem {
      * message logger for this class
      */
     final private static Logger logger
-            = Logger.getLogger(LetterItem.class.getName());
-    // *************************************************************************
-    // fields
-
-    /**
-     * letter represented by this item
-     */
-    final private char letter;
+            = Logger.getLogger(SearchDialogController.class.getName());
     // *************************************************************************
     // constructors
 
     /**
-     * Instantiate a new item.
+     * Instantiate a controller.
      */
-    LetterItem(char letter) {
-        this.letter = letter;
+    SearchDialogController() {
+        super("Set");
     }
     // *************************************************************************
-    // new methods exposed
+    // TextEntryDialog methods
 
     /**
-     * Determine the letter value.
+     * Determine the feedback message for the specified input text.
      *
-     * @return the letter value
-     */
-    char getLetter() {
-        return letter;
-    }
-    // *************************************************************************
-    // Object methods
-
-    /**
-     * Represent the item as a text string.
-     *
-     * @return a descriptive string of text (not null, not empty)
+     * @param inputText (not null)
+     * @return the message (not null)
      */
     @Override
-    public String toString() {
-        String result = String.valueOf(letter);
-        return result;
+    protected String feedback(String inputText) {
+        String lc = inputText.toLowerCase(Locale.ROOT);
+        String msg;
+        if (lc.contains("a") || lc.contains("e") || lc.contains("i")
+                || lc.contains("o") || lc.contains("u")) {
+            msg = "";
+        } else {
+            msg = "must contain a vowel";
+        }
+
+        return msg;
     }
 }
