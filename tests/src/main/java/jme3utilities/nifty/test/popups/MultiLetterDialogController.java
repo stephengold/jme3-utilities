@@ -26,15 +26,9 @@
  */
 package jme3utilities.nifty.test.popups;
 
-import de.lessvoid.nifty.controls.Button;
-import de.lessvoid.nifty.controls.ListBox;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import java.util.List;
 import java.util.logging.Logger;
-import jme3utilities.MyString;
-import jme3utilities.Validate;
-import jme3utilities.nifty.dialog.DialogController;
+import jme3utilities.nifty.dialog.MultiSelectDialog;
 
 /**
  * Controller for a multi-select dialog box used in TestPopups to select 2 or
@@ -42,7 +36,7 @@ import jme3utilities.nifty.dialog.DialogController;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-class MultiLetterDialogController implements DialogController {
+class MultiLetterDialogController extends MultiSelectDialog<LetterItem> {
     // *************************************************************************
     // constants and loggers
 
@@ -52,109 +46,39 @@ class MultiLetterDialogController implements DialogController {
     final private static Logger logger
             = Logger.getLogger(MultiLetterDialogController.class.getName());
     // *************************************************************************
-    // fields
-
-    /**
-     * geometry items to select from
-     */
-    final private List<LetterItem> allItems;
-    // *************************************************************************
     // constructors
 
     /**
      * Instantiate a controller with the specified list of items.
      *
-     * @param itemList (not null, not empty, alias created)
+     * @param description the commit-button text (not null, not empty)
+     * @param itemList the items to select from, in the displayed order (not
+     * null, alias created)
      */
-    MultiLetterDialogController(List<LetterItem> itemList) {
-        assert itemList != null;
-        assert !itemList.isEmpty();
-
-        this.allItems = itemList;
+    MultiLetterDialogController(String commitDescription,
+            List<LetterItem> itemList) {
+        super(commitDescription, itemList);
     }
     // *************************************************************************
-    // DialogController methods
+    // MultiSelectDialog methods
 
     /**
-     * Test whether "commit" actions are allowed.
+     * Determine the feedback message for the specified list of indices.
      *
-     * @param dialogElement (not null)
-     * @return true if allowed, otherwise false
+     * @param indexList the indices of all selected items (in arbitrary order,
+     * not null, unaffected)
+     * @return the message (not null)
      */
     @Override
-    public boolean allowCommit(Element dialogElement) {
-        Validate.nonNull(dialogElement, "dialog element");
-
-        List<Integer> indices = getSelectedIndices(dialogElement);
-        if (indices.size() < 2) {
-            return false;
+    protected String feedback(List<Integer> indexList) {
+        String result;
+        if (indexList.isEmpty()) {
+            result = "no items selected";
+        } else if (indexList.size() < 2) {
+            result = "not enough items selected";
         } else {
-            return true;
+            result = "";
         }
-    }
-
-    /**
-     * Construct the action-string suffix for a commit.
-     *
-     * @param dialogElement (not null)
-     * @return the suffix (not null)
-     */
-    @Override
-    public String commitSuffix(Element dialogElement) {
-        ListBox listBox = dialogElement.findNiftyControl("#box", ListBox.class);
-        List indices = listBox.getSelectedIndices();
-        String suffix = MyString.join(",", indices);
-
-        return suffix;
-    }
-
-    /**
-     * Update this dialog box prior to rendering. (Invoked once per frame.)
-     *
-     * @param dialogElement (not null)
-     * @param ignored time interval between frames (in seconds, &ge;0)
-     */
-    @Override
-    public void update(Element dialogElement, float ignored) {
-        String commitLabel, feedbackMessage;
-
-        List<Integer> indices = getSelectedIndices(dialogElement);
-        if (indices.isEmpty()) {
-            commitLabel = "";
-            feedbackMessage = "no items selected";
-        } else if (indices.size() < 2) {
-            commitLabel = "";
-            feedbackMessage = "not enough items selected";
-        } else {
-            commitLabel = "Check twice";
-            feedbackMessage = "";
-        }
-
-        Button commitButton
-                = dialogElement.findNiftyControl("#commit", Button.class);
-        commitButton.setText(commitLabel);
-        boolean visible = !commitLabel.isEmpty();
-        commitButton.getElement().setVisible(visible);
-
-        Element feedbackElement = dialogElement.findElementById("#feedback");
-        TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
-        renderer.setText(feedbackMessage);
-    }
-    // *************************************************************************
-    // private methods
-
-    /**
-     * Read the selected indices.
-     *
-     * @param dialogElement (not null)
-     * @return a new list of indices
-     */
-    private static List<Integer> getSelectedIndices(Element dialogElement) {
-        assert dialogElement != null;
-
-        ListBox listBox = dialogElement.findNiftyControl("#box", ListBox.class);
-        @SuppressWarnings("unchecked")
-        List<Integer> result = listBox.getSelectedIndices();
 
         return result;
     }

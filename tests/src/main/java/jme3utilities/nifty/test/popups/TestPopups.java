@@ -32,7 +32,6 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +41,7 @@ import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.dialog.FloatSliderDialog;
 import jme3utilities.nifty.dialog.MinimalDialog;
+import jme3utilities.nifty.dialog.MultiSelectDialog;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -96,13 +96,9 @@ public class TestPopups extends GuiApplication {
      */
     private GuiScreenController screen = null;
     /**
-     * complete list of letter items
+     * controller for the multi-letter selection dialog
      */
-    final private List<LetterItem> allLetterItems = new ArrayList<>(26);
-    /**
-     * complete list of letter descriptions
-     */
-    final private List<String> allLetterDescriptions = new ArrayList<>(26);
+    private MultiSelectDialog mldc;
     /**
      * most recent setting for search string (not null)
      */
@@ -158,12 +154,12 @@ public class TestPopups extends GuiApplication {
         logger.log(Level.INFO, "Heart version is {0}",
                 MyString.quote(Heart.versionShort()));
 
+        List<LetterItem> allLetterItems = new ArrayList<>(26);
         for (char c = 'A'; c <= 'Z'; ++c) {
             LetterItem item = new LetterItem(c);
             allLetterItems.add(item);
-            String description = item.toString();
-            allLetterDescriptions.add(description);
         }
+        mldc = new MultiLetterDialogController("Check twice", allLetterItems);
 
         InputMode inputMode = getDefaultInputMode();
         /*
@@ -198,8 +194,7 @@ public class TestPopups extends GuiApplication {
 
             } else if (actionString.equals("make list")) {
                 screen.showMultiSelectDialog("Select 2 or more letters:",
-                        allLetterDescriptions, "Check twice", checkTwicePrefix,
-                        new MultiLetterDialogController(allLetterItems));
+                        checkTwicePrefix, mldc);
                 return;
 
             } else if (actionString.equals("search")) {
@@ -223,23 +218,17 @@ public class TestPopups extends GuiApplication {
                 return;
 
             } else if (actionString.startsWith(checkTwicePrefix)) {
-                String argList = MyString.remainder(actionString,
+                String commitSuffix = MyString.remainder(actionString,
                         checkTwicePrefix);
-                String[] selectedDigits = argList.split(",");
-                int numSelected = selectedDigits.length;
+                String[] descriptions
+                        = mldc.parseDescriptionArray(commitSuffix);
+                int numSelected = descriptions.length;
+                assert numSelected >= 2 : numSelected;
                 int last = numSelected - 1;
-                int[] selectedIndices = new int[numSelected];
-                for (int i = 0; i < numSelected; ++i) {
-                    String digits = selectedDigits[i];
-                    selectedIndices[i] = Integer.parseInt(digits);
-                }
-                Arrays.sort(selectedIndices);
 
                 StringBuilder line = new StringBuilder();
                 line.append("The letters ");
                 for (int i = 0; i < numSelected; ++i) {
-                    int itemIndex = selectedIndices[i];
-                    LetterItem item = allLetterItems.get(itemIndex);
                     if (i == last) {
                         if (numSelected > 2) {
                             line.append(","); // Oxford comma
@@ -248,10 +237,9 @@ public class TestPopups extends GuiApplication {
                     } else if (i > 0) {
                         line.append(", ");
                     }
-
-                    String description = item.toString();
-                    line.append(description);
+                    line.append(descriptions[i]);
                 }
+                line.append(".");
                 updateStatusLine(line.toString());
                 return;
 

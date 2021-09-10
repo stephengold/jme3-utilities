@@ -51,6 +51,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.dialog.DialogController;
 import jme3utilities.nifty.dialog.MinimalDialog;
+import jme3utilities.nifty.dialog.MultiSelectDialog;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -397,18 +398,13 @@ public class PopScreenController extends BasicScreenController {
      * Create, customize, and activate a modal multi-selection dialog box.
      *
      * @param promptMessage text to display above the listbox (not null)
-     * @param itemList list of items (not null, unaffected)
-     * @param commitLabel text for the commit-button label (not null)
      * @param actionPrefix prefix for the commit action (not null, usually the
      * final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
     public void showMultiSelectDialog(String promptMessage,
-            List<String> itemList, String commitLabel, String actionPrefix,
-            DialogController controller) {
+            String actionPrefix, MultiSelectDialog<?> controller) {
         Validate.nonNull(promptMessage, "prompt message");
-        Validate.nonNull(itemList, "item list");
-        Validate.nonNull(commitLabel, "commit label");
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(controller, "controller");
         /*
@@ -426,11 +422,13 @@ public class PopScreenController extends BasicScreenController {
         @SuppressWarnings("unchecked")
         ListBox<String> listBox
                 = dialogElement.findNiftyControl("#box", ListBox.class);
-        listBox.addAllItems(itemList);
+        List<String> allDescriptions = controller.listItemDescriptions();
+        listBox.addAllItems(allDescriptions);
 
         Button commitButton
                 = dialogElement.findNiftyControl("#commit", Button.class);
-        commitButton.setText(commitLabel);
+        String commitButtonText = controller.commitDescription();
+        commitButton.setText(commitButtonText);
 
         activateDialog(popupId, actionPrefix, "#commit", controller);
     }
