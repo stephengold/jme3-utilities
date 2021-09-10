@@ -128,6 +128,7 @@ public class RenderDeviceJme implements RenderDevice {
 
         // Load the 3 material types separately to avoid
         // reloading the shader when the defines change.
+
         // Material with a single color (no texture or vertex color)
         colorMaterial = new Material(display.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 
@@ -374,10 +375,10 @@ public class RenderDeviceJme implements RenderDevice {
     @Override
     public void renderQuad(int x, int y, int width, int height, Color color) {
         //We test for alpha >0 as an optimization to prevent the render of completely transparent quads.
-        //Nifty use layers that are often used for logical positioning and not rendering.
+        //Nifty layers are often used for logical positioning and not rendering.
         //each layer is rendered as a quad, but that can bump up the number of geometry rendered by a lot.
         //Since we disable depth write, there is absolutely no point in rendering those quads
-        //This optimization can result in a huge increase in performance on complex Nifty UIs.
+        //This optimization can result in a huge performance increase on complex Nifty UIs.
         if (color.getAlpha() > 0) {
             colorMaterial.setColor("Color", convertColor(color, tempColor));
 

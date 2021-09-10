@@ -45,7 +45,7 @@ public class RenderFontJme implements RenderFont {
      * Initialize the font.
      *
      * @param name font filename
-     * @param display unused
+     * @param display (not null)
      */
     public RenderFontJme(String name, NiftyJmeDisplay display) {
         font = display.getAssetManager().loadFont(name);
