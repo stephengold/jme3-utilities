@@ -193,7 +193,7 @@ public class MultiSelectDialog<ItemType> implements DialogController {
     /**
      * Parse the specified commit suffix to obtain a list of items.
      *
-     * @param text the input text (not null, not empty)
+     * @param commitSuffix the input text (not null, not empty)
      * @return a new list in arbitrary order, or null for a syntax error
      */
     public List<ItemType> parseItemList(String commitSuffix) {
@@ -306,6 +306,7 @@ public class MultiSelectDialog<ItemType> implements DialogController {
         assert dialogElement != null;
 
         ListBox listBox = dialogElement.findNiftyControl("#box", ListBox.class);
+        @SuppressWarnings("unchecked")
         List<Integer> result = listBox.getSelectedIndices();
 
         return result;
