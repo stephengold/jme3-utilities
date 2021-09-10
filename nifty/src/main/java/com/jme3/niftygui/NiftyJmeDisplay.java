@@ -194,6 +194,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * }
      * instead of this constructor.
      */
+    @Deprecated
     public NiftyJmeDisplay(
             final AssetManager assetManager,
             final InputManager inputManager,
