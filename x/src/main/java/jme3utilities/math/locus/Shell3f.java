@@ -64,7 +64,7 @@ public class Shell3f implements Locus3f {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            SimplePolygon3f.class.getName());
+            Shell3f.class.getName());
     /**
      * weights for an infinite cylinder
      */

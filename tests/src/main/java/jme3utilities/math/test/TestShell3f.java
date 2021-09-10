@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ public class TestShell3f {
      * message logger for this class
      */
     final private static Logger logger = Logger.getLogger(
-            SimplePolygon3f.class.getName());
+            TestShell3f.class.getName());
     // *************************************************************************
     // new methods exposed
 
