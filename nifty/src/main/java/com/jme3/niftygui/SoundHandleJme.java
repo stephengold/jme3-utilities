@@ -47,8 +47,11 @@ public class SoundHandleJme implements SoundHandle {
     private float volume = 1;
 
     public SoundHandleJme(AudioRenderer ar, AudioNode node) {
-        if (ar == null || node == null) {
-            throw new NullPointerException();
+        if (ar == null) {
+            throw new IllegalArgumentException("AudioRenderer cannot be null");
+        }
+        if (node == null) {
+            throw new IllegalArgumentException("AudioNode cannot be null");
         }
 
         this.node = node;
@@ -57,9 +60,9 @@ public class SoundHandleJme implements SoundHandle {
     /**
      * For streaming music only. (May need to loop.)
      *
-     * @param ar which audio renderer to use
-     * @param am which asset manager to use
-     * @param fileName filename for sound
+     * @param ar for rendering audio (not null)
+     * @param am the AssetManager for loading assets (not null)
+     * @param fileName the path to the audio asset (not null)
      */
     public SoundHandleJme(AudioRenderer ar, AssetManager am, String fileName) {
         Validate.nonNull(ar, "audio renderer");
