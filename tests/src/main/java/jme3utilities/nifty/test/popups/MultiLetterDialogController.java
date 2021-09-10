@@ -51,7 +51,7 @@ class MultiLetterDialogController extends MultiSelectDialog<LetterItem> {
     /**
      * Instantiate a controller with the specified list of items.
      *
-     * @param description the commit-button text (not null, not empty)
+     * @param commitDescription the commit-button text (not null, not empty)
      * @param itemList the items to select from, in the displayed order (not
      * null, alias created)
      */

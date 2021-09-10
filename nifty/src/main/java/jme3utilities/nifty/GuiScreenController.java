@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ public class GuiScreenController extends PopScreenController {
      */
     private boolean ignoreGuiChanges = false;
     /**
-     * map a check-box name to the tool that manages the check box
+     * map a checkbox name to the tool that manages the checkbox
      */
     final private Map<String, Tool> checkBoxMap = new TreeMap<>();
     /**
@@ -105,10 +105,10 @@ public class GuiScreenController extends PopScreenController {
     // new methods exposed
 
     /**
-     * Disable the named check box. This assumes a naming convention where the
+     * Disable the named checkbox. This assumes a naming convention where the
      * Nifty id of every check box ends with "CheckBox".
      *
-     * @param name the name (unique id prefix) of the check box (not null)
+     * @param name the name (unique id prefix) of the checkbox (not null)
      */
     public void disableCheckBox(String name) {
         Validate.nonNull(name, "check-box name");
@@ -157,7 +157,7 @@ public class GuiScreenController extends PopScreenController {
      * Access the named Nifty check box. This assumes a naming convention where
      * the Nifty id of every check box ends with "CheckBox".
      *
-     * @param name the name (unique id prefix) of the check box (not null)
+     * @param name the name (unique id prefix) of the checkbox (not null)
      * @return the pre-existing instance (not null)
      */
     public CheckBox getCheckBox(String name) {
@@ -201,10 +201,10 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Test whether the named check box is ticked. This assumes a naming
+     * Test whether the named checkbox is ticked. This assumes a naming
      * convention where the Nifty id of every check box ends with "CheckBox".
      *
-     * @param name the name (unique id prefix) of the check box (not null)
+     * @param name the name (unique id prefix) of the checkbox (not null)
      * @return true if ticked, otherwise false
      */
     public boolean isChecked(String name) {
@@ -226,9 +226,9 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Associate the named check box with the tool that manages it.
+     * Associate the named checkbox with the tool that manages it.
      *
-     * @param checkBoxName the name (unique id prefix) of the check box (not
+     * @param checkBoxName the name (unique id prefix) of the checkbox (not
      * null)
      * @param managingTool (not null, alias created)
      */
@@ -271,9 +271,9 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Callback handler that Nifty invokes after a check box changes.
+     * Callback handler that Nifty invokes after a checkbox changes.
      *
-     * @param checkBoxId Nifty element ID of the check box (not null)
+     * @param checkBoxId Nifty element ID of the checkbox (not null)
      * @param event details of the event (not null)
      */
     @NiftyEventSubscriber(pattern = ".*CheckBox")
@@ -425,12 +425,12 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Alter the ticked status of the named check box and enable it. This
+     * Alter the ticked status of the named checkbox and enable it. This
      * assumes a naming convention where the Nifty id of every check box ends
      * with "CheckBox".
      *
-     * @param name the name (unique id prefix) of the check box (not null)
-     * @param newStatus true to tick the check box, false to un-tick it
+     * @param name the name (unique id prefix) of the checkbox (not null)
+     * @param newStatus true to tick the checkbox, false to un-tick it
      */
     public void setChecked(String name, boolean newStatus) {
         Validate.nonNull(name, "check-box name");
@@ -619,9 +619,9 @@ public class GuiScreenController extends PopScreenController {
     // protected methods
 
     /**
-     * Find the tool that manages the named check box.
+     * Find the Tool that manages the named checkbox.
      *
-     * @param checkBoxName the name (unique id prefix) of the check box (not
+     * @param checkBoxName the name (unique id prefix) of the checkbox (not
      * null)
      * @return the pre-existing instance, or null if none
      */

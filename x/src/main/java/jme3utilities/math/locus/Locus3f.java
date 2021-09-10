@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ public interface Locus3f {
      * Test whether this region can be merged with another.
      *
      * @param otherLocus (not null, unaffected)
-     * @return true if can merge, otherwise false
+     * @return true if they can merge, otherwise false
      */
     boolean canMerge(Locus3f otherLocus);
 
@@ -75,7 +75,7 @@ public interface Locus3f {
      * Find the location in this region nearest to the specified location.
      *
      * @param location coordinates of the input (not null, unaffected)
-     * @return a new vector, or null it none found
+     * @return a new vector, or null if none found
      */
     Vector3f findLocation(Vector3f location);
 

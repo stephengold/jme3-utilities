@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -78,7 +78,7 @@ public class SimplePolygon3f
      */
     private Float signedArea = null;
     /**
-     * cached planar offset of the centroid of a this polygon (initialized by
+     * cached planar offset of the centroid of this polygon (initialized by
      * #setCentroid()).
      */
     private VectorXZ centroid = null;
@@ -300,7 +300,7 @@ public class SimplePolygon3f
      * Test whether this region can be merged with another.
      *
      * @param otherLocus (not null, unaffected)
-     * @return true if can merge, otherwise false
+     * @return true if they can merge, otherwise false
      */
     @Override
     public boolean canMerge(Locus3f otherLocus) {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ import jme3utilities.Validate;
 import jme3utilities.math.MyVector3f;
 
 /**
- * Controller for a text-entry dialog box used to input an boolean value.
+ * Controller for a text-entry dialog box used to input a boolean value.
  *
  * @author Stephen Gold sgold@sonic.net
  */

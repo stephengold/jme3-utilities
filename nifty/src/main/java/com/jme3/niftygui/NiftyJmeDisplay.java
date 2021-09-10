@@ -170,7 +170,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * all Nifty components in a single (or at least very few) draw calls. This
      * should speed up rendering quite a bit.
      *
-     * Currently you have to make sure to not use more image space than this
+     * Currently, you have to make sure to not use more image space than this
      * single texture provides. However, Nifty tries to be smart about this and
      * internally will make sure that only the images are uploaded that your GUI
      * really needs. So in general this shouldn't be an issue.
@@ -254,7 +254,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
 
     /**
      * Create a standard NiftyJmeDisplay. This uses the old Nifty renderer. It's
-     * probably slower then the batched renderer and is mainly here for
+     * probably slower than the batched renderer and is mainly here for
      * backwards compatibility.
      *
      * @param assetManager jME AssetManager

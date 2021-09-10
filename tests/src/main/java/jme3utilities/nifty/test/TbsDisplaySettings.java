@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020, Stephen Gold
+ Copyright (c) 2020-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -66,7 +66,7 @@ public class TbsDisplaySettings extends DisplaySettings {
     /**
      * Test whether the cached settings can be applied immediately.
      *
-     * @return true if can be applied, otherwise false
+     * @return true if they can be applied, otherwise false
      */
     @Override
     public boolean canApply() {

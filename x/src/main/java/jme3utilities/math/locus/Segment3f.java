@@ -405,7 +405,7 @@ public class Segment3f implements Locus3f {
      * Find the location in this region nearest to the specified location.
      *
      * @param location coordinates of the input (not null, unaffected)
-     * @return a new vector, or null it none found
+     * @return a new vector, or null if none found
      */
     @Override
     public Vector3f findLocation(Vector3f location) {

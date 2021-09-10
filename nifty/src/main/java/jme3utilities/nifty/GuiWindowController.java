@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018, Stephen Gold
+ Copyright (c) 2018-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -71,10 +71,10 @@ public class GuiWindowController extends WindowController {
     // new methods exposed
 
     /**
-     * Disable the named check box. This assumes a naming convention where the
+     * Disable the named checkbox. This assumes a naming convention where the
      * Nifty id of every check box ends with "CheckBox".
      *
-     * @param name the name (unique id prefix) of the check box (not null)
+     * @param name the name (unique id prefix) of the checkbox (not null)
      */
     public void disableCheckBox(String name) {
         Validate.nonNull(name, "check-box name");
@@ -155,12 +155,12 @@ public class GuiWindowController extends WindowController {
     }
 
     /**
-     * Alter the ticked status of the named check box and enable it. This
+     * Alter the ticked status of the named checkbox and enable it. This
      * assumes a naming convention where the Nifty id of every check box ends
      * with "CheckBox".
      *
-     * @param name the name (unique id prefix) of the check box (not null)
-     * @param newStatus true to tick the check box, false to un-tick it
+     * @param name the name (unique id prefix) of the checkbox (not null)
+     * @param newStatus true to tick the checkbox, false to un-tick it
      */
     public void setChecked(String name, boolean newStatus) {
         Validate.nonNull(name, "check-box name");

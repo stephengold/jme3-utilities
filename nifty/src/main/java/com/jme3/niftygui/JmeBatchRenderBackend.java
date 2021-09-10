@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2019 jMonkeyEngine
+ * Copyright (c) 2009-2021 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,7 +80,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     private final ObjectPool<Batch> batchPool;
     private final List<Batch> batches = new ArrayList<>();
 
-    // a modify texture call needs a jme Renderer to execute. if we're called to modify a texture but don't
+    // A modify texture call needs a jme Renderer to execute. if we're called to modify a texture but don't
     // have a Renderer yet - since it was not initialized on the jme side - we'll cache the modify texture calls
     // in here and execute them later (at the next beginFrame() call).
     private final List<ModifyTexture> modifyTextureCalls = new ArrayList<>();
@@ -336,7 +336,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     }
 
     /**
-     * Whether or not to render textures with high quality settings. Usually,
+     * Whether to render textures with high quality settings. Usually,
      * setting to true will result in slower performance, but nicer looking
      * textures, and vice versa. How high quality textures are rendered versus
      * low quality textures will vary depending on the
@@ -353,7 +353,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     }
 
     /**
-     * Whether or not to overwrite previously used atlas space with blank data.
+     * Whether to overwrite previously used atlas space with blank data.
      * Setting to true will result in slower performance, but may be useful in
      * debugging when visually inspecting the atlas, since there will not be
      * portions of old images visible in currently unused atlas space.
@@ -467,7 +467,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     /**
      * This class helps us to manage the batch data. We'll keep a bunch of
      * instances of this class around that will be reused when needed. Each
-     * Batch instance provides room for a certain amount of vertices and we'll
+     * Batch instance provides room for a certain amount of vertices, and we'll
      * use a new Batch when we exceed this amount of data.
      *
      * @author void

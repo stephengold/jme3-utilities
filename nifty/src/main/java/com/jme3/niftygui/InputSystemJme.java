@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2020 jMonkeyEngine
+ * Copyright (c) 2009-2021 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -150,10 +150,10 @@ public class InputSystemJme implements InputSystem, RawInputListener {
             // special case:
             // 1) You click on the jme scene (not Nifty) and Nifty will correctly return false (event not consumed) but
             //    internally it remembers: "mouse button is now down". Note that the jme mouse cursor is now hidden.
-            // 2) You release the mouse button but the mouse down event will not be forwarded to Nifty because it did
+            // 2) You release the mouse button but the mouse down event will not be forwarded to Nifty because it
             //    owned the mouse and the jme mouse cursor is not visible.
             //
-            // Nifty now still thinks that the mouse button is down although it's not. The result is that the next click
+            // Nifty now still thinks that the mouse button is down, though it's not. The result is that the next click
             // on any Nifty element will not be recognized as an initial click by Nifty. So you need an additional click
             // on the Nifty element to activate it correctly. In case of drag and drop this additional click was quite
             // irritating.
@@ -190,7 +190,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
         y = (int) (height - evt.getY());
 
         // Input manager will not convert touch events to mouse events,
-        // thus we must do it ourselves..
+        // so we must do it ourselves.
         switch (evt.getType()) {
             case DOWN:
                 if (inputPointerId != -1) {

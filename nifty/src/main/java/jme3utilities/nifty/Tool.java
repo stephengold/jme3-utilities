@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2019, Stephen Gold
+ Copyright (c) 2018-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -75,8 +75,8 @@ abstract public class Tool extends GuiWindowController {
     /**
      * Update the MVC model based on a check-box event.
      *
-     * @param name the name (unique id prefix) of the check box
-     * @param isChecked the new state of the check box (true&rarr;checked,
+     * @param name the name (unique id prefix) of the checkbox
+     * @param isChecked the new state of the checkbox (true&rarr;checked,
      * false&rarr;unchecked)
      */
     public void onCheckBoxChanged(String name, boolean isChecked) {

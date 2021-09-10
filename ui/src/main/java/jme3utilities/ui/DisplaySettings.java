@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -196,7 +196,7 @@ public class DisplaySettings {
     /**
      * Test whether the cached settings can be applied immediately.
      *
-     * @return true if can be applied, otherwise false
+     * @return true if they can be applied, otherwise false
      */
     public boolean canApply() {
         boolean result = areValid();
@@ -385,7 +385,7 @@ public class DisplaySettings {
     }
 
     /**
-     * Write the cached settings to persistent storage so they will take effect
+     * Write the cached settings to persistent storage, so they will take effect
      * the next time the application is launched.
      */
     public void save() {

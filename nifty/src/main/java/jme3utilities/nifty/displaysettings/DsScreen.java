@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019-2020, Stephen Gold
+ Copyright (c) 2019-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -160,9 +160,9 @@ public class DsScreen
     }
 
     /**
-     * Callback handler that Nifty invokes after a check box changes.
+     * Callback handler that Nifty invokes after a checkbox changes.
      *
-     * @param checkBoxId Nifty element id of the check box (not null)
+     * @param checkBoxId Nifty element id of the checkbox (not null)
      * @param event details of the event (not null)
      */
     @NiftyEventSubscriber(pattern = ".*CheckBox")

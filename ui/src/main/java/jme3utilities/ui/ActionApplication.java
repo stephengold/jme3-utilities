@@ -108,7 +108,7 @@ abstract public class ActionApplication
     }
 
     /**
-     * Convert an asset path to an canonical file-system path for writing the
+     * Convert an asset path to a canonical file-system path for writing the
      * asset.
      *
      * @param assetPath (not null)
