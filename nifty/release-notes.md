@@ -1,5 +1,14 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.23 released on TBD
+
+ + Add a `MultiSelectDialog` class. (API change!)
+ + Add "Select all" and "Invert selection" buttons to multi-select dialogs.
+ + Add count of selected items to multi-select dialogs.
+ + Include a multi-select dialog in `TestPopups`.
+ + Move `TestPopups` and related classes to a new package.
+ + Base on version 7.1.0 of the Heart Library.
+
 ## Version 0.9.22 released on 22 August 2021
 
 Base on version 7.0.0 of the Heart Library and version 0.9.5 of
