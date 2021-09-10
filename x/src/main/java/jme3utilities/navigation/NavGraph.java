@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -303,11 +303,7 @@ public class NavGraph {
         /*
          * Test the next closest, and so on.  TODO sort
          */
-        Collection<NavVertex> remainingVertices;
-        remainingVertices = new HashSet<>(vertices.size());
-        for (NavVertex v : vertices.values()) {
-            remainingVertices.add(v);
-        }
+        Collection<NavVertex> remainingVertices = new HashSet<>(vertices.values());
         boolean success = remainingVertices.remove(result);
         assert success;
 
@@ -499,10 +495,7 @@ public class NavGraph {
      */
     public List<NavArc> listArcs() {
         Set<NavArc> arcs = arcCosts.keySet();
-        List<NavArc> result = new ArrayList<>(numArcs());
-        for (NavArc arc : arcs) {
-            result.add(arc);
-        }
+        List<NavArc> result = new ArrayList<>(arcs);
 
         return result;
     }
@@ -513,11 +506,7 @@ public class NavGraph {
      * @return new list of pre-existing member vertices
      */
     public List<NavVertex> listVertices() {
-        List<NavVertex> result = new ArrayList<>(numVertices());
-        for (NavVertex vertex : vertices.values()) {
-            result.add(vertex);
-        }
-
+        List<NavVertex> result = new ArrayList<>(vertices.values());
         return result;
     }
 

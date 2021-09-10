@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2018, Stephen Gold
+ Copyright (c) 2014-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -302,11 +302,7 @@ public class NavVertex implements Comparable<NavVertex> {
      * @return a new list of pre-existing instances
      */
     public List<NavArc> listIncoming() {
-        List<NavArc> result = new ArrayList<>(incoming.size());
-        for (NavArc arc : incoming) {
-            result.add(arc);
-        }
-
+        List<NavArc> result = new ArrayList<>(incoming);
         return result;
     }
 
@@ -316,11 +312,7 @@ public class NavVertex implements Comparable<NavVertex> {
      * @return a new list of pre-existing instances
      */
     public List<NavArc> listOutgoing() {
-        List<NavArc> result = new ArrayList<>(outgoing.size());
-        for (NavArc arc : outgoing) {
-            result.add(arc);
-        }
-
+        List<NavArc> result = new ArrayList<>(outgoing);
         return result;
     }
 
