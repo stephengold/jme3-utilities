@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ public class TextEntryDialog implements DialogController {
     /**
      * Instantiate a controller.
      *
-     * @param description commit-button text (not null, not empty)
+     * @param description the commit-button text (not null, not empty)
      */
     public TextEntryDialog(String description) {
         Validate.nonEmpty(description, "description");
@@ -78,7 +78,8 @@ public class TextEntryDialog implements DialogController {
     // new protected methods
 
     /**
-     * Determine the feedback message for the specified input text.
+     * Determine the feedback message for the specified input text. Meant to be
+     * overridden.
      *
      * @param inputText (not null)
      * @return the message (not null)
@@ -120,7 +121,7 @@ public class TextEntryDialog implements DialogController {
     // DialogController methods
 
     /**
-     * Test whether "commit" actions are allowed.
+     * Test whether "commit" actions are allowed for the current selection.
      *
      * @param dialogElement (not null)
      * @return true if allowed, otherwise false
@@ -140,7 +141,7 @@ public class TextEntryDialog implements DialogController {
      * Construct the action-string suffix for a commit.
      *
      * @param dialogElement (not null)
-     * @return the suffix (not null)
+     * @return the commit suffix (not null)
      */
     @Override
     public String commitSuffix(Element dialogElement) {
@@ -153,27 +154,31 @@ public class TextEntryDialog implements DialogController {
      * Update this dialog box prior to rendering. (Invoked once per frame.)
      *
      * @param dialogElement (not null)
-     * @param unused time interval between frames (in seconds, &ge;0)
+     * @param ignored time interval between frames (in seconds, &ge;0)
      */
     @Override
-    public void update(Element dialogElement, float unused) {
+    public void update(Element dialogElement, float ignored) {
         Validate.nonNull(dialogElement, "dialog element");
 
         String text = text(dialogElement);
-        String feedback = feedback(text);
+        String feedbackMessage = feedback(text);
+
+        String commitLabel;
+        if (feedbackMessage.isEmpty()) {
+            commitLabel = commitDescription;
+        } else {
+            commitLabel = "";
+        }
+
         Button commitButton
                 = dialogElement.findNiftyControl("#commit", Button.class);
+        commitButton.setText(commitLabel);
+
+        boolean makeButtonVisible = !commitLabel.isEmpty();
+        commitButton.getElement().setVisible(makeButtonVisible);
 
         Element feedbackElement = dialogElement.findElementById("#feedback");
         TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
-        renderer.setText(feedback);
-
-        if (feedback.isEmpty()) {
-            commitButton.setText(commitDescription);
-            commitButton.getElement().show();
-        } else {
-            commitButton.setText("");
-            commitButton.getElement().hide();
-        }
+        renderer.setText(feedbackMessage);
     }
 }
