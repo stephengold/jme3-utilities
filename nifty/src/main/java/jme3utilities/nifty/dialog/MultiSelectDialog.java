@@ -292,6 +292,15 @@ public class MultiSelectDialog<ItemType> implements DialogController {
         Element feedbackElement = dialogElement.findElementById("#feedback");
         TextRenderer renderer = feedbackElement.getRenderer(TextRenderer.class);
         renderer.setText(feedbackMessage);
+
+        int numSelected = indices.size();
+        int numItems = countItems();
+        String numSelectedMessage
+                = String.format("Selected %d of %d.", numSelected, numItems);
+        Element numSelectedElement
+                = dialogElement.findElementById("#numSelected");
+        renderer = numSelectedElement.getRenderer(TextRenderer.class);
+        renderer.setText(numSelectedMessage);
     }
     // *************************************************************************
     // private methods

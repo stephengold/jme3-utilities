@@ -46,6 +46,10 @@
                          color="#000f"
                          textHAlign="left"
                          width="*"/>
+                <control name="label" id="#numSelected"
+                         color="#000f"
+                         textHAlign="right"
+                         width="*"/>
             </panel>
             <panel height="8px"/>
             <control name="listBox" id="#box"
