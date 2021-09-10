@@ -337,7 +337,7 @@ public class Segment3f implements Locus3f {
      * Test whether this region can be merged with another.
      *
      * @param otherLocus (not null, unaffected)
-     * @return true if can merge, otherwise false
+     * @return true if they can merge, otherwise false
      */
     @Override
     public boolean canMerge(Locus3f otherLocus) {
