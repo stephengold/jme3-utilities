@@ -87,7 +87,7 @@ class TAndCDialogController implements DialogController {
      * @param inputText (not null)
      * @return the message (not null)
      */
-    protected String feedback(String inputText) {
+    protected static String feedback(String inputText) {
         String message;
         if (inputText.isEmpty()) {
             message = "must not be empty";

@@ -94,7 +94,7 @@ public class TextEntryDialog implements DialogController {
      * @param lcText text string (not null, assumed to be in lower case)
      * @return true for match, otherwise false
      */
-    protected boolean matchesNull(String lcText) {
+    protected static boolean matchesNull(String lcText) {
         assert lcText != null;
 
         Matcher matcher = nullPattern.matcher(lcText);

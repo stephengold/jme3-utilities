@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -153,7 +153,7 @@ class DefaultInputMode extends InputMode {
      * @param inputManager which input manager (not null)
      * @param actionString which action string to unmap (not null)
      */
-    private void deleteAnyMapping(InputManager inputManager,
+    private static void deleteAnyMapping(InputManager inputManager,
             String actionString) {
         assert inputManager != null;
         assert actionString != null;

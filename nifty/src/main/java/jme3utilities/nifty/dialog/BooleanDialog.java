@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2021, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -109,7 +109,7 @@ public class BooleanDialog extends TextEntryDialog {
      * @param lcText text string (not null, assumed to be in lower case)
      * @return true for match, otherwise false
      */
-    private boolean matchesFalse(String lcText) {
+    private static boolean matchesFalse(String lcText) {
         assert lcText != null;
 
         Matcher matcher = falsePattern.matcher(lcText);
@@ -124,7 +124,7 @@ public class BooleanDialog extends TextEntryDialog {
      * @param lcText text string (not null, assumed to be in lower case)
      * @return true for match, otherwise false
      */
-    private boolean matchesTrue(String lcText) {
+    private static boolean matchesTrue(String lcText) {
         assert lcText != null;
 
         Matcher matcher = truePattern.matcher(lcText);

@@ -953,7 +953,7 @@ abstract public class InputMode
      * @param actionName name of the action (not null)
      * @param hotkey triggering hotkey (not null)
      */
-    private String signalActionString(String actionName, Hotkey hotkey) {
+    private static String signalActionString(String actionName, Hotkey hotkey) {
         assert actionName != null;
 
         int keyCode = hotkey.keyCode();

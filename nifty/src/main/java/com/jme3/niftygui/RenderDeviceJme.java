@@ -221,7 +221,7 @@ public class RenderDeviceJme implements RenderDevice {
         renderState.setBlendMode(convertBlend(blendMode));
     }
 
-    private RenderState.BlendMode convertBlend(BlendMode blendMode) {
+    private static RenderState.BlendMode convertBlend(BlendMode blendMode) {
         if (blendMode == null) {
             return RenderState.BlendMode.Off;
         } else {
@@ -236,7 +236,7 @@ public class RenderDeviceJme implements RenderDevice {
         }
     }
 
-    private int convertColor(Color color) {
+    private static int convertColor(Color color) {
         int color2 = 0;
         color2 |= ((int) (255.0 * color.getAlpha())) << 24;
         color2 |= ((int) (255.0 * color.getBlue())) << 16;

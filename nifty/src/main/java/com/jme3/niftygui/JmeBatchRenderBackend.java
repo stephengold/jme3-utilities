@@ -366,7 +366,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     }
 
     // internal implementations
-    private Texture2D createAtlasTextureInternal(final int width, final int height) throws Exception {
+    private static Texture2D createAtlasTextureInternal(final int width, final int height) throws Exception {
         ByteBuffer initialData = BufferUtils.createByteBuffer(width * height * 4);
         for (int i = 0; i < width * height * 4; i++) {
             initialData.put((byte) 0x00);
