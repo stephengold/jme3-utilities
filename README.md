@@ -52,7 +52,7 @@ Complete source code (in Java) is provided under
  2. Download and extract the Jme3-utilities source code from GitHub:
      + `git clone https://github.com/stephengold/jme3-utilities.git`
      + `cd jme3-utilities`
-     + `git checkout -b latest ui-0.9.5`
+     + `git checkout -b latest nifty-0.9.23`
  3. Set the `JAVA_HOME` environment variable:
    + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
    + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`

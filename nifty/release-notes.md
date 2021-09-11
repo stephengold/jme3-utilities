@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.23 released on TBD
+## Version 0.9.23 released on 10 September 2021
 
  + Add a `MultiSelectDialog` class. (API change!)
  + Add "Select all" and "Invert selection" buttons to multi-select dialogs.
