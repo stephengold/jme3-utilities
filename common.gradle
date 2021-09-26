@@ -45,7 +45,6 @@ repositories {
 // custom tasks for creating source/javadoc JARs
 task sourcesJar(type: Jar) {
     archiveClassifier = 'sources'
-    dependsOn 'classes'
     description 'Create a JAR of source files.'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from sourceSets.main.allJava
