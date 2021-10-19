@@ -49,14 +49,14 @@ Complete source code (in Java) is provided under
 
 1. Install a [Java Development Kit (JDK)][openJDK],
    if you don't already have one.
-2. Download and extract the Jme3-utilities source code from GitHub:
-  + `git clone https://github.com/stephengold/jme3-utilities.git`
-  + `cd jme3-utilities`
-  + `git checkout -b latest nifty-0.9.23`
-3. Point the `JAVA_HOME` environment variable to your JDK installation:
+2. Point the `JAVA_HOME` environment variable to your JDK installation:
   + using Bash:  `export JAVA_HOME="` *path to installation* `"`
   + using Windows Command Prompt:  `set JAVA_HOME="` *path to installation* `"`
   + using PowerShell: `$env:JAVA_HOME = '` *path to installation* `'`
+3. Download and extract the Jme3-utilities source code from GitHub:
+  + `git clone https://github.com/stephengold/jme3-utilities.git`
+  + `cd jme3-utilities`
+  + `git checkout -b latest nifty-0.9.23`
 4. Run the [Gradle] wrapper:
   + using Bash or PowerShell: `./gradlew build`
   + using Windows Command Prompt: `.\gradlew build`
