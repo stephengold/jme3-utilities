@@ -53,15 +53,20 @@ Complete source code (in Java) is provided under
      + `git clone https://github.com/stephengold/jme3-utilities.git`
      + `cd jme3-utilities`
      + `git checkout -b latest nifty-0.9.23`
- 3. Set the `JAVA_HOME` environment variable:
-   + using Bash:  `export JAVA_HOME="` *path to your JDK* `"`
-   + using Windows Command Prompt:  `set JAVA_HOME="` *path to your JDK* `"`
-   + using PowerShell: `$env:JAVA_HOME = '` *path to your JDK* `'`
+ 3. Point the `JAVA_HOME` environment variable to your JDK installation:
+   + using Bash:  `export JAVA_HOME="` *path to installation* `"`
+   + using Windows Command Prompt:  `set JAVA_HOME="` *path to installation* `"`
+   + using PowerShell: `$env:JAVA_HOME = '` *path to installation* `'`
  4. Run the [Gradle] wrapper:
    + using Bash or PowerShell:  `./gradlew build`
    + using Windows Command Prompt:  `.\gradlew build`
 
-After a successful build, new jars will be found in `*/build/libs`.
+After a successful build,
+Maven artifacts will be found in `*/build/libs`.
+
+You can install the Maven artifacts to your local Maven repository:
+ + using Bash or PowerShell:  `./gradlew install`
+ + using Windows Command Prompt:  `.\gradlew install`
 
 You can restore the project to a pristine state:
  + using Bash or PowerShell: `./gradlew clean`
