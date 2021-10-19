@@ -114,6 +114,7 @@ The evolution of each sub-project is chronicled in its release notes:
 
 [Jump to table of contents](#toc)
 
+
 <a name="acks"/>
 
 ## Acknowledgments
@@ -131,15 +132,15 @@ software developers:
     + the [Firefox] and [Google Chrome][chrome] web browsers
     + the [Git] and Subversion revision-control systems
     + Guava core libraries for Java
-    + the Java compiler, standard doclet, and virtual machine
+    + the [IntelliJ IDEA][idea] and [NetBeans] integrated development environments
+    + the [Java] compiler, standard doclet, and virtual machine
     + the JCommander Java framework
     + [jMonkeyEngine][jme] and the jME3 Software Development Kit
     + the [Linux Mint][mint] operating system
     + LWJGL, the Lightweight Java Game Library
     + the [Markdown] document-conversion tool
     + Microsoft Windows
-    + the [NetBeans] integrated development environment
-    + the Nifty graphical user-interface library
+    + the [Nifty] graphical user-interface library
     + the PMD source-code analyzer
     + the RealWorld Cursor Editor
     + the [WinMerge] differencing and merging tool
@@ -158,24 +159,27 @@ correct the situation: sgold@sonic.net
 
 [ant]: https://ant.apache.org "Apache Ant Project"
 [chrome]: https://www.google.com/chrome "Chrome"
-[elements]: http://www.adobe.com/products/photoshop-elements.html "Photoshop Elements"
+[elements]: https://www.adobe.com/products/photoshop-elements.html "Photoshop Elements"
 [findbugs]: http://findbugs.sourceforge.net "FindBugs Project"
 [firefox]: https://www.mozilla.org/en-US/firefox "Firefox"
 [git]: https://git-scm.com "Git"
 [github]: https://github.com "GitHub"
 [gradle]: https://gradle.org "Gradle Project"
 [heart]: https://github.com/stephengold/Heart "Heart Project"
+[idea]: https://www.jetbrains.com/idea/ "IntelliJ IDEA"
 [imgur]: https://imgur.com/ "Imgur"
+[java]: https://java.com "Java"
 [jfrog]: https://www.jfrog.com "JFrog"
 [jme]: https://jmonkeyengine.org  "jMonkeyEngine Project"
 [license]: https://github.com/stephengold/jme3-utilities/blob/master/license.txt "jme3-utilities license"
 [markdown]: https://daringfireball.net/projects/markdown "Markdown Project"
-[minie]: https://github.com/stephengold/Minie "Minie Project"
+[minie]: https://stephengold.github.io/Minie/minie/overview.html "Minie Project"
 [mint]: https://linuxmint.com "Linux Mint Project"
 [netbeans]: https://netbeans.org "NetBeans Project"
+[nifty]: https://nifty-gui.github.io/nifty-gui "Nifty GUI Project"
 [openJDK]: https://openjdk.java.net "OpenJDK Project"
 [skycontrol]: https://github.com/stephengold/SkyControl "SkyControl Project"
 [sonatype]: https://www.sonatype.com "Sonatype"
 [utilities]: https://github.com/stephengold/jme3-utilities "Jme3-utilities Project"
 [wes]: https://github.com/stephengold/Wes "Wes Project"
-[winmerge]: http://winmerge.org "WinMerge Project"
+[winmerge]: https://winmerge.org "WinMerge Project"
