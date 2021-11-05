@@ -1,9 +1,8 @@
-// Gradle settings and tasks common to all subprojects
+// Gradle settings and tasks common to all jme3-utilities subprojects
 
 apply plugin: 'java'
 
-ext {
-    // current versions of various libraries
+ext { // current versions of various libraries:
     heartVersion = '7.1.0'
     jme3utilitiesniftyVersion = '0.9.24-SNAPSHOT'
     jme3utilitiesuiVersion = '0.9.6-SNAPSHOT'
@@ -42,16 +41,17 @@ repositories {
 }
 
 // custom tasks for creating source/javadoc JARs
+
 task javadocJar(type: Jar) {
     archiveClassifier = 'javadoc'
     dependsOn 'javadoc'
-    description 'Create a JAR of javadoc.'
+    description 'Creates a JAR of javadoc.'
     from javadoc.destinationDir
 }
 
 task sourcesJar(type: Jar) {
     archiveClassifier = 'sources'
-    description 'Create a JAR of source files.'
+    description 'Creates a JAR of sourcecode.'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from sourceSets.main.allJava
 }
