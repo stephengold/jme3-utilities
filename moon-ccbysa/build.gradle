@@ -31,6 +31,7 @@ publishing {
         maven(MavenPublication) {
             artifactId artifact
             from components.java
+            groupId project.ext.group
             pom {
                 licenses {
                     license {

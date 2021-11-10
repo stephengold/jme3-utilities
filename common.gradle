@@ -2,14 +2,16 @@
 
 apply plugin: 'java'
 
-ext { // current versions of various libraries:
+ext {
+    group = 'com.github.stephengold'
+
+    // current versions of various libraries:
     heartVersion = '7.1.0'
     jme3utilitiesniftyVersion = '0.9.24-SNAPSHOT'
     jme3utilitiesuiVersion = '0.9.6-SNAPSHOT'
     jme3utilitiesxVersion = '0.2.23-SNAPSHOT'
     jmonkeyengineVersion = '3.4.0-stable'
 }
-group = 'com.github.stephengold'
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
@@ -24,7 +26,6 @@ gradle.projectsEvaluated {
     tasks.withType(JavaExec) { // Java runtime options:
         classpath sourceSets.main.runtimeClasspath
         //debug true
-        //doFirst { println commandLine }
         enableAssertions true
         //jvmArgs '-verbose:gc'
         //jvmArgs '-Xbatch'
