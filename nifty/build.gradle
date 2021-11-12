@@ -15,10 +15,6 @@ ext {
     baseName = "${artifact}-${version}" // for POM and class JAR
 }
 
-jar { archiveBaseName = project.ext.baseName }
-javadocJar { archiveBaseName = project.ext.baseName }
-sourcesJar { archiveBaseName = project.ext.baseName }
-
 dependencies {
     api 'com.github.nifty-gui:nifty:1.4.3'
     api 'com.github.nifty-gui:nifty-default-controls:1.4.3'
@@ -45,6 +41,10 @@ task('release') {
     dependsOn 'publishMavenPublicationToOSSRHRepository'
     description 'Stages Maven artifacts to Sonatype OSSRH.'
 }
+
+jar { archiveBaseName = project.ext.baseName }
+javadocJar { archiveBaseName = project.ext.baseName }
+sourcesJar { archiveBaseName = project.ext.baseName }
 
 build.dependsOn('pom', 'pomAsc')
 task('pom', type: Copy) {
