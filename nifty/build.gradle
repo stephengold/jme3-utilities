@@ -28,6 +28,13 @@ dependencies {
     api project(':ui')
 }
 
+javadoc {
+    // Disable doclint for JDK15+ to avoid "no comment" warnings.
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_15)) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
 // publishing tasks
 
 task('install') {
