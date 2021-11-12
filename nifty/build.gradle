@@ -89,9 +89,9 @@ publishing {
                 scm {
                     connection = 'scm:git:git://github.com/stephengold/jme3-utilities.git'
                     developerConnection = 'scm:git:ssh://github.com:stephengold/jme3-utilities.git'
-                    url = 'https://github.com/stephengold/jme3-utilities/tree/master'
+                    url = project.ext.websiteUrl + '/tree/master'
                 }
-                url = 'https://github.com/stephengold/jme3-utilities'
+                url = project.ext.websiteUrl
             }
             version project.ext.version
         }
