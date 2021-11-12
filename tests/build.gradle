@@ -6,13 +6,13 @@ description = 'demos, examples, and tests that do not generate reports'
 
 dependencies {
     runtimeOnly 'com.github.nifty-gui:nifty-style-black:1.4.3'
-    runtimeOnly 'org.jmonkeyengine:jme3-desktop:' + jmonkeyengineVersion
-    runtimeOnly 'org.jmonkeyengine:jme3-lwjgl3:' + jmonkeyengineVersion
+    runtimeOnly 'org.jmonkeyengine:jme3-desktop:' + jme3Version
+    runtimeOnly 'org.jmonkeyengine:jme3-lwjgl3:' + jme3Version
     
     // "tests" doesn't use jme3-jogg or jme3-plugins
     //  -- they are included solely to avoid warnings from AssetConfig
-    runtimeOnly 'org.jmonkeyengine:jme3-jogg:' + jmonkeyengineVersion
-    runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jmonkeyengineVersion
+    runtimeOnly 'org.jmonkeyengine:jme3-jogg:' + jme3Version
+    runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jme3Version
 
     implementation 'com.github.stephengold:Heart:' + heartVersion
 

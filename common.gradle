@@ -10,7 +10,7 @@ ext {
     jme3utilitiesniftyVersion = '0.9.24-SNAPSHOT'
     jme3utilitiesuiVersion = '0.9.6-SNAPSHOT'
     jme3utilitiesxVersion = '0.2.23-SNAPSHOT'
-    jmonkeyengineVersion = '3.4.0-stable'
+    jme3Version = '3.4.0-stable'
 }
 
 sourceCompatibility = '1.7'
