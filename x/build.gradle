@@ -27,7 +27,7 @@ dependencies {
 
 task('install') {
     dependsOn 'publishMavenPublicationToMavenLocal'
-    description 'Installs Maven artifacts to the local Maven repository.'
+    description 'Installs Maven artifacts to the local repository.'
 }
 task('release') {
     dependsOn 'publishMavenPublicationToOSSRHRepository'
@@ -84,6 +84,9 @@ publishing {
             version project.ext.version
         }
     }
+    // Staging to OSSRH relies on the existence of 2 properties
+    // (ossrhUsername and ossrhPassword)
+    // which should be stored in ~/.gradle/gradle.properties
     repositories {
         maven {
             credentials {
@@ -101,6 +104,10 @@ publishMavenPublicationToMavenLocal.doLast {
 }
 
 // signing tasks
+
+// Signing relies on the existence of 3 properties
+// (signing.keyId, signing.password, and signing.secretKeyRingFile)
+// which should be stored in ~/.gradle/gradle.properties
 
 signing {
     sign publishing.publications.maven
