@@ -1,6 +1,7 @@
 /.gradle/
 /.idea/
 /.nb-gradle/
+/.nb-gradle-properties
 /moon-ccbysa/build/
 /nifty/build/
 /nifty/private/
