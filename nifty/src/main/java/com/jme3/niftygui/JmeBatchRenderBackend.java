@@ -336,10 +336,10 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     }
 
     /**
-     * Whether to render textures with high quality settings. Usually,
-     * setting to true will result in slower performance, but nicer looking
-     * textures, and vice versa. How high quality textures are rendered versus
-     * low quality textures will vary depending on the
+     * Whether to render textures with high quality settings. Usually, setting
+     * to true will result in slower performance, but nicer looking textures,
+     * and vice versa. How high quality textures are rendered versus low quality
+     * textures will vary depending on the
      * {@link de.lessvoid.nifty.render.batch.spi.BatchRenderBackend}
      * implementation
      *
@@ -353,10 +353,10 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     }
 
     /**
-     * Whether to overwrite previously used atlas space with blank data.
-     * Setting to true will result in slower performance, but may be useful in
-     * debugging when visually inspecting the atlas, since there will not be
-     * portions of old images visible in currently unused atlas space.
+     * Whether to overwrite previously used atlas space with blank data. Setting
+     * to true will result in slower performance, but may be useful in debugging
+     * when visually inspecting the atlas, since there will not be portions of
+     * old images visible in currently unused atlas space.
      *
      * @param shouldFill true&rarr;overwrite, false&rarr;don't overwrite
      */

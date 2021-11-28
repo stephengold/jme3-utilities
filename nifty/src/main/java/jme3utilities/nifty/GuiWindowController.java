@@ -155,9 +155,9 @@ public class GuiWindowController extends WindowController {
     }
 
     /**
-     * Alter the ticked status of the named checkbox and enable it. This
-     * assumes a naming convention where the Nifty id of every check box ends
-     * with "CheckBox".
+     * Alter the ticked status of the named checkbox and enable it. This assumes
+     * a naming convention where the Nifty id of every check box ends with
+     * "CheckBox".
      *
      * @param name the name (unique id prefix) of the checkbox (not null)
      * @param newStatus true to tick the checkbox, false to un-tick it
