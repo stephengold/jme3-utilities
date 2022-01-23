@@ -1,5 +1,13 @@
 # release log for the jme3-utilities-x library and related tests
 
+## Version 0.3.0 released on TBD
+
+ + Moved the `Population` class to the Heart Library.
+ + Created a distinct logger for the `Shell3f` class.
+ + Targeted Java v8.
+ + Targeted version 3.5.0-stable of jMonkeyEngine.
+ + Based on version 7.2.0 of the Heart Library.
+
 ## Version 0.2.22 released on 21 August 2021
 
  + Based on version 7.0.0 of the Heart Library.

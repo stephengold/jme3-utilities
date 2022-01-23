@@ -1,5 +1,11 @@
 # release log for the jme3-utilities-ui library and related tests
 
+## Version 0.9.6 released on TBD
+
+ + Added the `AbstractDemo` class, a subclass of `ActionApplication`.
+ + Targeted Java v8.
+ + Based on jMonkeyEngine v3.5.0-stable and version 7.2.0 of the Heart Library.
+
 ## Version 0.9.5 released on 21 August 2021
 
  + Renamed the alphabet hotkeys from uppercase to lowercase.

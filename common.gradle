@@ -9,8 +9,8 @@ ext {
     // current versions of various libraries:
     heartVersion = '7.2.0'
     jme3utilitiesniftyVersion = '0.9.24-SNAPSHOT'
-    jme3utilitiesuiVersion = '0.9.6-SNAPSHOT'
-    jme3utilitiesxVersion = '0.2.23-SNAPSHOT'
+    jme3utilitiesuiVersion = '0.9.6'
+    jme3utilitiesxVersion = '0.3.0'
     jme3Version = '3.5.0-stable'
 }
 
