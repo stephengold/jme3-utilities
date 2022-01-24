@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.24 released on TBD
+## Version 0.9.24 released on 23 January 2022
 
 Base on version 7.2.0 of the Heart Library and version 0.9.6 of
 the jme3-utilities-ui library.
