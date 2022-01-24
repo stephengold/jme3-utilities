@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-ui library and related tests
 
-## Version 0.9.6 released on TBD
+## Version 0.9.6 released on 23 January 2022
 
  + Added the `AbstractDemo` class, a subclass of `ActionApplication`.
  + Targeted Java v8.

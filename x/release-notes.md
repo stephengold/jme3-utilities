@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-x library and related tests
 
-## Version 0.3.0 released on TBD
+## Version 0.3.0 released on 23 January 2022
 
  + Moved the `Population` class to the Heart Library.
  + Created a distinct logger for the `Shell3f` class.
