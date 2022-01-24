@@ -1,5 +1,10 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.24 released on TBD
+
+Base on version 7.2.0 of the Heart Library and version 0.9.6 of
+the jme3-utilities-ui library.
+
 ## Version 0.9.23 released on 10 September 2021
 
  + Add a `MultiSelectDialog` class. (API change!)
