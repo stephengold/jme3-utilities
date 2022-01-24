@@ -16,7 +16,7 @@ ext {
 }
 
 dependencies {
-    api 'com.github.stephengold:Heart:' + heartVersion
+    api heartCoordinates
 }
 
 // publishing tasks

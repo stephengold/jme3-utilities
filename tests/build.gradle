@@ -14,7 +14,7 @@ dependencies {
     runtimeOnly 'org.jmonkeyengine:jme3-jogg:' + jme3Version
     runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jme3Version
 
-    implementation 'com.github.stephengold:Heart:' + heartVersion
+    implementation heartCoordinates
 
     //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
     implementation project(':nifty')

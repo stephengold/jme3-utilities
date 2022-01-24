@@ -4,10 +4,10 @@ apply plugin: 'java'
 
 ext {
     group = 'com.github.stephengold'
+    heartCoordinates = 'com.github.stephengold:Heart:7.2.0'
     websiteUrl = 'https://github.com/stephengold/jme3-utilities'
 
     // current versions of various libraries:
-    heartVersion = '7.2.0'
     jme3utilitiesniftyVersion = '0.9.25-SNAPSHOT'
     jme3utilitiesuiVersion = '0.9.7-SNAPSHOT'
     jme3utilitiesxVersion = '0.3.1-SNAPSHOT'
