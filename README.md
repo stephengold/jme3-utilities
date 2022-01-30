@@ -3,14 +3,13 @@
 The Jme3-utilities Project contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
 
-It contains 5 sub-projects:
+It contains 4 sub-projects:
 
- 1. ui: the `jme3-utilities-ui` library for building user interfaces
- 2. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
+ 1. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
     interfaces with jMonkeyEngine
- 3. x: the `jme3-utilities-x` library of experimental software
- 4. moon-ccbysa: assets for a realistic Moon in `SkyControl`
- 5. tests: demos, examples, and test software
+ 2. x: the `jme3-utilities-x` library of experimental software
+ 3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
+ 4. tests: demos, examples, and test software
 
 The `SkyControl` library, formerly a sub-project, is now a separate project
 at [GitHub][skycontrol].
@@ -20,6 +19,9 @@ The textures sub-project is now part of
 
 The `jme3-utilities-heart` library, formerly a sub-project, is now a separate project
 at [GitHub][heart].
+
+The `jme3-utilities-ui` library, formerly a sub-project, is now a separate project
+at [GitHub][acorus].
 
 The `jme3-utilities-debug` library, formerly a sub-project, is now part of
 [the Heart Library][heart].
@@ -84,10 +86,9 @@ You can restore the project to a pristine state:
 Recent releases can be downloaded from
 [GitHub](https://github.com/stephengold/jme3-utilities/releases).
 
-Recent Maven artifacts (since nifty v0.9.18, ui v0.9.2, and x v0.2.20)
+Recent Maven artifacts (since nifty v0.9.18 and x v0.2.20)
 are available from MavenCentral:
-[nifty](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-nifty),
-[ui](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-ui/),
+[nifty](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-nifty)
 and [x](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-x/).
 
 [Jump to table of contents](#toc)
@@ -118,7 +119,6 @@ From November 2013 to September 2015, it was hosted at
 The evolution of each sub-project is chronicled in its release notes:
 
  + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
- + [ui](https://github.com/stephengold/jme3-utilities/blob/master/ui/release-notes.md)
  + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
  + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
 
@@ -153,7 +153,6 @@ software developers:
     + Microsoft Windows
     + the [Nifty] graphical user-interface library
     + the PMD source-code analyzer
-    + the RealWorld Cursor Editor
     + the [WinMerge] differencing and merging tool
 
 I am grateful to [GitHub], [Sonatype], [JFrog], and [Imgur]
@@ -168,6 +167,7 @@ correct the situation: sgold@sonic.net
 [Jump to table of contents](#toc)
 
 
+[acorus]: https://github.com/stephengold/Acorus "Acorus Project"
 [ant]: https://ant.apache.org "Apache Ant Project"
 [chrome]: https://www.google.com/chrome "Chrome"
 [elements]: https://www.adobe.com/products/photoshop-elements.html "Photoshop Elements"

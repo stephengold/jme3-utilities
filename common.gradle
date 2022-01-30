@@ -4,6 +4,7 @@ apply plugin: 'java'
 
 ext {
     group = 'com.github.stephengold'
+    acorusCoordinates = 'com.github.stephengold:Acorus:0.9.7'
     heartCoordinates = 'com.github.stephengold:Heart:7.2.0'
     websiteUrl = 'https://github.com/stephengold/jme3-utilities'
 

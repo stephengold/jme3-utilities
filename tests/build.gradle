@@ -15,12 +15,10 @@ dependencies {
     runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jme3Version
 
     implementation heartCoordinates
+    implementation acorusCoordinates
 
     //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
     implementation project(':nifty')
-
-    //implementation "com.github.stephengold:jme3-utilities-ui:$jme3utilitiesuiVersion"
-    implementation project(':ui')
 
     //implementation "com.github.stephengold:jme3-utilities-x:$jme3utilitiesxVersion"
     implementation project(':x')

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019-2021, Stephen Gold
+ Copyright (c) 2019-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,7 @@ import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.PopupMenuBuilder;
 import jme3utilities.nifty.dialog.DialogController;
 import jme3utilities.nifty.dialog.DisplaySizeDialog;
+import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.DisplaySettings;
 import jme3utilities.ui.DisplaySizeLimits;
 import jme3utilities.ui.InputMode;
@@ -350,8 +351,9 @@ public class DsScreen
          * Parse the action string and attempt to handle the action.
          */
         boolean handled = false;
+        ActionApplication app = getActionApplication();
         if (ongoing) {
-            InputMode defaultMode = actionApplication.getDefaultInputMode();
+            InputMode defaultMode = app.getDefaultInputMode();
             switch (actionString) {
                 case "apply displaySettings":
                     displaySettings.applyToDisplay();
@@ -388,7 +390,7 @@ public class DsScreen
             /*
              * Forward the unhandled action to the application.
              */
-            actionApplication.onAction(actionString, ongoing, tpf);
+            app.onAction(actionString, ongoing, tpf);
         }
     }
     // *************************************************************************
@@ -602,7 +604,7 @@ public class DsScreen
         }
         setButtonText("saveDisplaySettings", saveButton);
 
-        InputMode defaultMode = actionApplication.getDefaultInputMode();
+        InputMode defaultMode = getActionApplication().getDefaultInputMode();
         String returnLabel = String.format("Return to %s mode",
                 MyString.quote(defaultMode.shortName()));
         setButtonText("return", returnLabel);
