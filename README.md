@@ -33,7 +33,8 @@ at [GitHub][wes].
 Complete source code (in Java) is provided under
 [a 3-clause BSD license][license].
 
-<a name="toc"/>
+
+<a name="toc"></a>
 
 ## Contents of this document
 
@@ -43,7 +44,8 @@ Complete source code (in Java) is provided under
 + [History](#history)
 + [Acknowledgments](#acks)
 
-<a name="build"/>
+
+<a name="build"></a>
 
 ## How to build Jme3-utilities from source
 
@@ -74,7 +76,8 @@ You can restore the project to a pristine state:
 
 [Jump to table of contents](#toc)
 
-<a name="downloads"/>
+
+<a name="downloads"></a>
 
 ## Downloads
 
@@ -89,7 +92,8 @@ and [x](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-x/)
 
 [Jump to table of contents](#toc)
 
-<a name="conventions"/>
+
+<a name="conventions"></a>
 
 ## Conventions
 
@@ -100,7 +104,8 @@ Both the source code and the pre-built libraries are compatible with JDK 7.
 
 [Jump to table of contents](#toc)
 
-<a name="history"/>
+
+<a name="history"></a>
 
 ## History
 
@@ -120,7 +125,7 @@ The evolution of each sub-project is chronicled in its release notes:
 [Jump to table of contents](#toc)
 
 
-<a name="acks"/>
+<a name="acks"></a>
 
 ## Acknowledgments
 
