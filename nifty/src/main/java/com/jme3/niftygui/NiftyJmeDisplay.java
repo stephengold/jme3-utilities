@@ -69,8 +69,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
 
     protected ResourceLocationJme resourceLocation;
 
-    protected int w, h;
-    private AppProfiler prof;
+    protected int width, height;
 
     protected class ResourceLocationJme implements ResourceLocation {
 
@@ -295,8 +294,8 @@ public class NiftyJmeDisplay implements SceneProcessor {
             final ViewPort viewport) {
         this.assetManager = assetManager;
         this.inputManager = inputManager;
-        this.w = viewport.getCamera().getWidth();
-        this.h = viewport.getCamera().getHeight();
+        this.width = viewport.getCamera().getWidth();
+        this.height = viewport.getCamera().getHeight();
         this.soundDev = new SoundDeviceJme(assetManager, audioRenderer);
         this.inputSys = new InputSystemJme(inputManager);
     }
@@ -339,11 +338,11 @@ public class NiftyJmeDisplay implements SceneProcessor {
     }
 
     int getHeight() {
-        return h;
+        return height;
     }
 
     int getWidth() {
-        return w;
+        return width;
     }
 
     Renderer getRenderer() {
@@ -352,8 +351,8 @@ public class NiftyJmeDisplay implements SceneProcessor {
 
     @Override
     public void reshape(ViewPort vp, int w, int h) {
-        this.w = w;
-        this.h = h;
+        this.width = w;
+        this.height = h;
         inputSys.setHeight(h);
         nifty.resolutionChanged();
     }
