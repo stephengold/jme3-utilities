@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -98,7 +98,7 @@ public class TestPopups extends GuiApplication {
     /**
      * controller for the multi-letter selection dialog
      */
-    private MultiSelectDialog mldc;
+    private MultiSelectDialog multiSelectDialog;
     /**
      * most recent setting for search string (not null)
      */
@@ -159,7 +159,7 @@ public class TestPopups extends GuiApplication {
             LetterItem item = new LetterItem(c);
             allLetterItems.add(item);
         }
-        mldc = new MultiLetterDialogController("Check twice", allLetterItems);
+        multiSelectDialog = new MultiLetterDialogController("Check twice", allLetterItems);
 
         InputMode inputMode = getDefaultInputMode();
         /*
@@ -194,7 +194,7 @@ public class TestPopups extends GuiApplication {
 
             } else if (actionString.equals("make list")) {
                 screen.showMultiSelectDialog("Select 2 or more letters:",
-                        checkTwicePrefix, mldc);
+                        checkTwicePrefix, multiSelectDialog);
                 return;
 
             } else if (actionString.equals("search")) {
@@ -221,7 +221,7 @@ public class TestPopups extends GuiApplication {
                 String commitSuffix = MyString.remainder(actionString,
                         checkTwicePrefix);
                 String[] descriptions
-                        = mldc.parseDescriptionArray(commitSuffix);
+                        = multiSelectDialog.parseDescriptionArray(commitSuffix);
                 int numSelected = descriptions.length;
                 assert numSelected >= 2 : numSelected;
                 int last = numSelected - 1;
