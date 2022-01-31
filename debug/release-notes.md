@@ -202,7 +202,7 @@ When dumping cameras, split description across two lines
 ## Version 0.6.0 released on 24 June 2017
 
  + Added a BoundsVisualizer
- + Bug fix for AxesControl.getAxisLength(): return correct value
+ + Bugfix for AxesControl.getAxisLength(): return correct value
  + Added AxesControl.tipLocation() method
 
 ## Version 0.5.6 released on 30 May 2017
@@ -216,7 +216,7 @@ Handle null spatials in SkeletonDebugControl
 
 ## Version 0.5.4 released on 22 May 2017
 
-+ Bug fix for SkeletonDebugControl: copy the transform of animated
++ Bugfix for SkeletonDebugControl: copy the transform of animated
   geometry on every update, in case it changes
 + Added custom bone colors to SkeletonDebugControl
 
