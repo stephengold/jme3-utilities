@@ -5,11 +5,11 @@ sgold's jMonkeyEngine projects, which might prove useful in similar projects.
 
 It contains 4 sub-projects:
 
- 1. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
-    interfaces with jMonkeyEngine
- 2. x: the `jme3-utilities-x` library of experimental software
- 3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
- 4. tests: demos, examples, and test software
+1. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
+   interfaces with jMonkeyEngine
+2. x: the `jme3-utilities-x` library of experimental software
+3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
+4. tests: demos, examples, and test software
 
 The `SkyControl` library, formerly a sub-project, is now a separate project
 at [GitHub][skycontrol].
@@ -54,8 +54,8 @@ Complete source code (in Java) is provided under
 1. Install a [Java Development Kit (JDK)][openJDK],
    if you don't already have one.
 2. Point the `JAVA_HOME` environment variable to your JDK installation:
-  + using Bash:  `export JAVA_HOME="` *path to installation* `"`
-  + using Windows Command Prompt:  `set JAVA_HOME="` *path to installation* `"`
+  + using Bash: `export JAVA_HOME="` *path to installation* `"`
+  + using Windows Command Prompt: `set JAVA_HOME="` *path to installation* `"`
   + using PowerShell: `$env:JAVA_HOME = '` *path to installation* `'`
 3. Download and extract the Jme3-utilities source code from GitHub:
   + `git clone https://github.com/stephengold/jme3-utilities.git`
@@ -69,12 +69,12 @@ After a successful build,
 Maven artifacts will be found in `*/build/libs`.
 
 You can install the Maven artifacts to your local Maven repository:
- + using Bash or PowerShell:  `./gradlew install`
- + using Windows Command Prompt:  `.\gradlew install`
++ using Bash or PowerShell: `./gradlew install`
++ using Windows Command Prompt: `.\gradlew install`
 
 You can restore the project to a pristine state:
- + using Bash or PowerShell: `./gradlew clean`
- + using Windows Command Prompt: `.\gradlew clean`
++ using Bash or PowerShell: `./gradlew clean`
++ using Windows Command Prompt: `.\gradlew clean`
 
 [Jump to table of contents](#toc)
 
@@ -119,9 +119,9 @@ From November 2013 to September 2015, it was hosted at
 
 The evolution of each sub-project is chronicled in its release notes:
 
- + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
- + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
- + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
++ [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
++ [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
++ [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
 
 [Jump to table of contents](#toc)
 
