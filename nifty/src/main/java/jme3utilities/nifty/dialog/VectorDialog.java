@@ -76,7 +76,7 @@ public class VectorDialog extends TextEntryDialog {
      *
      * @param description commit-button text (not null, not empty)
      * @param numElements number of elements in the vector (&ge;2, &le;4)
-     * @param allowNull if true, "null" will be an allowed value
+     * @param allowNull if true, "null" will be an allowed value TODO enum
      */
     public VectorDialog(String description, int numElements,
             boolean allowNull) {

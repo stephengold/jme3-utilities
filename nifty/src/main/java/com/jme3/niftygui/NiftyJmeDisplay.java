@@ -274,7 +274,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
             InputManager inputManager,
             AudioRenderer audioRenderer,
             ViewPort vp,
-            boolean colorsAsSrgb) {
+            boolean colorsAsSrgb) { // TODO enum
         initialize(assetManager, inputManager, audioRenderer, vp);
 
         this.renderDev = new RenderDeviceJme(this, colorsAsSrgb);

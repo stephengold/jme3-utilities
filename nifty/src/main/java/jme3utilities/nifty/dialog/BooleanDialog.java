@@ -70,7 +70,7 @@ public class BooleanDialog extends TextEntryDialog {
      * Instantiate a controller.
      *
      * @param description commit-button text (not null, not empty)
-     * @param allowNull if true, "null" will be an allowed value
+     * @param allowNull if true, "null" will be an allowed value TODO enum
      */
     public BooleanDialog(String description, boolean allowNull) {
         super(description);

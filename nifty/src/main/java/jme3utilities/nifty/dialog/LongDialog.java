@@ -69,7 +69,7 @@ public class LongDialog extends TextEntryDialog {
      * @param description commit-button text (not null, not empty)
      * @param min minimum value (&lt;max)
      * @param max minimum value (&gt;min)
-     * @param allowNull if true, "null" will be an allowed value
+     * @param allowNull if true, "null" will be an allowed value TODO enum
      */
     public LongDialog(String description, long min, long max,
             boolean allowNull) {

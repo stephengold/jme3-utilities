@@ -82,7 +82,7 @@ public class DsInputMode extends InputMode {
      */
     @Override
     protected void defaultBindings() {
-        String os = System.getProperty("os.name").toLowerCase();
+        String os = System.getProperty("os.name").toLowerCase(); // TODO use Platform
         if (os.contains("linux")) {
             bind("ScreenShot", KeyInput.KEY_SCROLL); // window mgr blocks SYSRQ
         } else {

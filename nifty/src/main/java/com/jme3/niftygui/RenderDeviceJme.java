@@ -93,7 +93,7 @@ public class RenderDeviceJme implements RenderDevice {
         }
 
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(Object other) { // TODO class check
             CachedTextKey otherKey = (CachedTextKey) other;
             return font.equals(otherKey.font)
                     && text.equals(otherKey.text)/* &&
@@ -114,7 +114,7 @@ public class RenderDeviceJme implements RenderDevice {
         this(display, false);
     }
 
-    public RenderDeviceJme(NiftyJmeDisplay display, boolean colorsAsSrgb) {
+    public RenderDeviceJme(NiftyJmeDisplay display, boolean colorsAsSrgb) { // TODO enum
         this.display = display;
         this.colorsAsSrgb = colorsAsSrgb;
 

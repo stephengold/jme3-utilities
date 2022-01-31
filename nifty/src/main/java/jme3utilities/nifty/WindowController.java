@@ -79,7 +79,7 @@ public class WindowController extends GuiAppState {
      * window (not null, alias created)
      * @param controlId the Nifty id of the window control
      * @param startEnabled if false, disable this controller during
-     * initialization; if true, leave it enabled
+     * initialization; if true, leave it enabled TODO enum
      */
     public WindowController(BasicScreenController screenController,
             String controlId, boolean startEnabled) {
