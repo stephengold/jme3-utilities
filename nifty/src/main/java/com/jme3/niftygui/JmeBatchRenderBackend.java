@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2021 jMonkeyEngine
+ * Copyright (c) 2009-2022 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -132,16 +132,16 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     public void beginFrame() {
         log.fine("beginFrame()");
 
-        for (int i = 0; i < batches.size(); i++) {
-            batchPool.free(batches.get(i));
+        for (Batch batch : batches) {
+            batchPool.free(batch);
         }
         batches.clear();
 
         // in case we have pending modifyTexture calls we'll need to execute them now
         if (!modifyTextureCalls.isEmpty()) {
             Renderer renderer = display.getRenderer();
-            for (int i = 0; i < modifyTextureCalls.size(); i++) {
-                modifyTextureCalls.get(i).execute(renderer);
+            for (ModifyTexture modifyTextureCall : modifyTextureCalls) {
+                modifyTextureCall.execute(renderer);
             }
             modifyTextureCalls.clear();
         }
@@ -305,8 +305,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
     @Override
     public int render() {
-        for (int i = 0; i < batches.size(); i++) {
-            Batch batch = batches.get(i);
+        for (Batch batch : batches) {
             batch.render();
         }
         return batches.size();

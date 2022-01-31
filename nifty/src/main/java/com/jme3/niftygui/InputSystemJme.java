@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2021 jMonkeyEngine
+ * Copyright (c) 2009-2022 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -297,8 +297,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
     public void forwardEvents(NiftyInputConsumer nic) {
         int queueSize = inputQueue.size();
 
-        for (int i = 0; i < queueSize; i++) {
-            InputEvent evt = inputQueue.get(i);
+        for (InputEvent evt : inputQueue) {
             if (evt instanceof MouseMotionEvent) {
                 onMouseMotionEventQueued((MouseMotionEvent) evt, nic);
             } else if (evt instanceof MouseButtonEvent) {

@@ -157,8 +157,7 @@ public class MultiSelectDialog<ItemType> implements DialogController {
 
         String[] selectedDigits = commitSuffix.split(",");
         int numSelected = selectedDigits.length;
-        for (int i = 0; i < numSelected; ++i) {
-            String digits = selectedDigits[i];
+        for (String digits : selectedDigits) {
             int index = Integer.parseInt(digits);
             result.set(index);
         }
@@ -203,8 +202,7 @@ public class MultiSelectDialog<ItemType> implements DialogController {
         int numSelected = selectedDigits.length;
         List<ItemType> result = new ArrayList<>(numSelected);
 
-        for (int i = 0; i < numSelected; ++i) {
-            String digits = selectedDigits[i];
+        for (String digits : selectedDigits) {
             int index = Integer.parseInt(digits);
             ItemType item = getItem(index);
             result.add(item);
