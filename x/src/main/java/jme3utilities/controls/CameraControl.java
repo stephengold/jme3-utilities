@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import jme3utilities.Validate;
 
 /**
  * Simple control which manages the position and orientation of a camera in the
- * local coordinate space of a spatial.
+ * local coordinate space of a Spatial.
  * <p>
  * Each instance is enabled at creation.
  *

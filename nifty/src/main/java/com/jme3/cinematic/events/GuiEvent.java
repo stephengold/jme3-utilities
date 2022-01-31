@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2019 jMonkeyEngine
+ * Copyright (c) 2009-2022 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@ public class GuiEvent extends AbstractCinematicEvent {
     // fields
 
     /**
-     * name of the associated Nifty screen(not null)
+     * name of the associated Nifty screen (not null)
      */
     protected String screen;
     /**

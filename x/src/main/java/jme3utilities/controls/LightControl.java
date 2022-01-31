@@ -37,7 +37,7 @@ import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
 
 /**
- * Simple control which manages a light source attached to a spatial.
+ * Simple control which manages a light source attached to a Spatial.
  * <p>
  * The key differences between this class and
  * com.jme3.scene.control.LightControl are:<ol>

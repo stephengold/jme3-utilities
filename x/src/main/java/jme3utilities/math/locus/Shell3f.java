@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -248,7 +248,7 @@ public class Shell3f implements Locus3f {
      *
      * @param center coordinates of the shell's center (not null, unaffected)
      * @param innerRadius radius of the negative space (in world units, &ge;0,
-     * finite, &le;outerRadius, may be {@link Float#POSITIVE_INFINITY}))
+     * finite, &le;outerRadius, may be {@link Float#POSITIVE_INFINITY})
      * @param outerRadius radius of the positive space (in world units,
      * &ge;innerRadius, may be {@link Float#POSITIVE_INFINITY})
      */
