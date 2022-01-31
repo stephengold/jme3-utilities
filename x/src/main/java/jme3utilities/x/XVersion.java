@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class XVersion {
+final public class XVersion {
     // *************************************************************************
     // constants and loggers
 
