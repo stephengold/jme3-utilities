@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019-2020, Stephen Gold
+ Copyright (c) 2019-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,8 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.cursors.plugins.JmeCursor;
 import com.jme3.input.KeyInput;
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Platform;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.ui.InputMode;
@@ -82,8 +84,8 @@ public class DsInputMode extends InputMode {
      */
     @Override
     protected void defaultBindings() {
-        String os = System.getProperty("os.name").toLowerCase(); // TODO use Platform
-        if (os.contains("linux")) {
+        Platform platform = JmeSystem.getPlatform();
+        if (platform.getOs() == Platform.Os.Linux) {
             bind("ScreenShot", KeyInput.KEY_SCROLL); // window mgr blocks SYSRQ
         } else {
             bind("ScreenShot", KeyInput.KEY_SYSRQ);
