@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ import jme3utilities.Validate;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * DOM input utility methods. Aside from test cases, all methods here should be
@@ -68,7 +69,7 @@ final public class DomInput {
      * @param element element to use (not null)
      * @return new instance
      */
-    public static Quaternion createQuaternion(Element element) {
+    public static Quaternion createQuaternion(Node element) {
         NamedNodeMap map = element.getAttributes();
         float x = getFloat(map, "x", 0f);
         float y = getFloat(map, "y", 0f);
