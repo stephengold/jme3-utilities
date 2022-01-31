@@ -586,7 +586,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
                     case MULIPLY:
                         return RenderState.BlendMode.Alpha;
                     default:
-                        throw new UnsupportedOperationException();
+                        throw new UnsupportedOperationException(blendMode.toString());
                 }
             }
         }

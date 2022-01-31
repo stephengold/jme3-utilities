@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2021, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -147,7 +147,7 @@ public class GuiScreenController extends PopScreenController {
                     new Object[]{
                         MyString.quote(niftyId), MyString.quote(getScreenId())
                     });
-            throw new RuntimeException();
+            throw new IllegalArgumentException("missing button" + niftyId);
         }
 
         return button;
@@ -171,7 +171,7 @@ public class GuiScreenController extends PopScreenController {
                     new Object[]{
                         MyString.quote(niftyId), MyString.quote(getScreenId())
                     });
-            throw new RuntimeException();
+            throw new IllegalArgumentException("missing check box " + niftyId);
         }
 
         return box;
@@ -194,7 +194,7 @@ public class GuiScreenController extends PopScreenController {
             logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[]{
                 MyString.quote(niftyId), MyString.quote(getScreenId())
             });
-            throw new RuntimeException();
+            throw new IllegalArgumentException("missing slider " + niftyId);
         }
 
         return slider;
@@ -266,7 +266,7 @@ public class GuiScreenController extends PopScreenController {
 
         Tool oldMapping = toolMap.put(toolName, controller);
         if (oldMapping != null) {
-            throw new RuntimeException("Two tools with the same name.");
+            throw new IllegalArgumentException("Two tools with the same name.");
         }
     }
 
@@ -681,7 +681,7 @@ public class GuiScreenController extends PopScreenController {
                 transformed = FastMath.pow(2f, reversed);
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("transform = " + transform);
         }
 
         return transformed;
@@ -722,7 +722,7 @@ public class GuiScreenController extends PopScreenController {
                 raw = min + max - FastMath.log(inputValue, 2f);
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("transform = " + transform);
         }
 
         slider.setValue(raw);
