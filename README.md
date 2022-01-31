@@ -101,7 +101,8 @@ and [x](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-x/)
 Most package names begin with `jme3utilities`.  Packages copied from
 jMonkeyEngine, however, retain their original names, which began with `com.jme3`.
 
-Both the source code and the pre-built libraries are compatible with JDK 7.
+The source code is compatible with JDK 7.
+The pre-built libraries are compatible with JDK 8.
 
 [Jump to table of contents](#toc)
 
