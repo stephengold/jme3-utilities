@@ -82,11 +82,11 @@ public class RenderDeviceJme implements RenderDevice {
 
     private static class CachedTextKey {
 
-        BitmapFont font;
-        String text;
+        private BitmapFont font;
+        private String text;
 //        ColorRGBA color;
 
-        public CachedTextKey(BitmapFont font, String text/*, ColorRGBA color*/) {
+        private CachedTextKey(BitmapFont font, String text/*, ColorRGBA color*/) {
             this.font = font;
             this.text = text;
 //            this.color = color;

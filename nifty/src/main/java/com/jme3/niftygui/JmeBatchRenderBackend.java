@@ -416,7 +416,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
 
         private final com.jme3.texture.Image image;
 
-        public ImageImpl(final com.jme3.texture.Image image) {
+        private ImageImpl(final com.jme3.texture.Image image) {
             this.image = image;
         }
 
@@ -510,8 +510,8 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
         private Texture2D texture;
         final private Material material;
 
-        public Batch() {
-            // setup mesh
+        private Batch() {
+            // set up mesh
             vertexPos.setupData(Usage.Stream, 2, VertexBuffer.Format.Float, BufferUtils.createFloatBuffer(BATCH_MAX_VERTICES * 2));
             vertexPosBuffer = (FloatBuffer) vertexPos.getData();
             mesh.setBuffer(vertexPos);
