@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,8 @@ package jme3utilities.nifty;
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.controls.ListBox;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
@@ -54,7 +55,7 @@ public class MessageDisplay extends GuiScreenController {
     /**
      * FIFO queue of lines added prior to initialization
      */
-    final private List<String> backlog = new ArrayList<>(4);
+    final private Deque<String> backlog = new ArrayDeque<>(4);
     // *************************************************************************
     // constructors
 
