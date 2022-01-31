@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2021, Stephen Gold
+ Copyright (c) 2014-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -90,8 +90,8 @@ public class NavGraph {
         if (arcCosts.containsKey(newArc)) {
             throw new IllegalStateException("arc already exists");
         }
-        Float oldcost = arcCosts.put(newArc, initialCost);
-        assert oldcost == null;
+        Float oldCost = arcCosts.put(newArc, initialCost);
+        assert oldCost == null;
 
         origin.addOutgoing(newArc);
         terminus.addIncoming(newArc);

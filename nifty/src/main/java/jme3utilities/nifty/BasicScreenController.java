@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2021, Stephen Gold
+ Copyright (c) 2014-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -434,10 +434,10 @@ public class BasicScreenController
         niftyLogger.setLevel(Level.SEVERE);
         try {
             getNifty().addXml(xmlAssetPath);
-        } catch (Throwable e) {
+        } catch (Throwable exception) {
             String message = "while loading ScreenController layout from asset "
                     + MyString.quote(xmlAssetPath);
-            throw new RuntimeException(message, e);
+            throw new RuntimeException(message, exception);
         }
         niftyLogger.setLevel(save);
     }
