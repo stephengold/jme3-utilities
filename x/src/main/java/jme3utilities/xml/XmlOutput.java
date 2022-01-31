@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -130,7 +130,7 @@ final public class XmlOutput {
      * @param stringValue value of the attribute (not null)
      */
     public static void putAttribute(PrintStream stream, String name,
-            String stringValue) {
+            CharSequence stringValue) {
         Validate.nonEmpty(name, "name");
         Validate.nonNull(stringValue, "value");
 

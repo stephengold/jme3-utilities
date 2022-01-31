@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -94,7 +94,7 @@ public class TextEntryDialog implements DialogController {
      * @param lcText text string (not null, assumed to be in lower case)
      * @return true for match, otherwise false
      */
-    protected static boolean matchesNull(String lcText) {
+    protected static boolean matchesNull(CharSequence lcText) {
         assert lcText != null;
 
         Matcher matcher = nullPattern.matcher(lcText);

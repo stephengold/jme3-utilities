@@ -402,7 +402,7 @@ public class NavGraph {
      * @param point coordinate vector (not null, unaffected)
      * @return pre-existing member vertex, or null if none were specified
      */
-    public NavVertex findNearest(Collection<NavVertex> subset, Vector3f point) {
+    public NavVertex findNearest(Iterable<NavVertex> subset, Vector3f point) {
         Validate.nonNull(point, "point");
         Validate.nonNull(subset, "subset");
 

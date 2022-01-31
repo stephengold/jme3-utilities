@@ -585,7 +585,7 @@ public class PopScreenController extends BasicScreenController {
      * @param controller controller for the dialog box (not null)
      */
     public void showTextAndCheckDialog(String promptMessage,
-            String defaultValue, String commitLabel, String actionPrefix,
+            CharSequence defaultValue, String commitLabel, String actionPrefix,
             DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
@@ -648,7 +648,7 @@ public class PopScreenController extends BasicScreenController {
      * @param controller controller for the dialog box (not null)
      */
     public void showTextAndSliderDialog(String promptMessage,
-            String defaultValue, String commitLabel, String actionPrefix,
+            CharSequence defaultValue, String commitLabel, String actionPrefix,
             DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
@@ -709,7 +709,7 @@ public class PopScreenController extends BasicScreenController {
      * final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
-    public void showTextEntryDialog(String promptMessage, String defaultValue,
+    public void showTextEntryDialog(String promptMessage, CharSequence defaultValue,
             String commitLabel, String actionPrefix,
             DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
