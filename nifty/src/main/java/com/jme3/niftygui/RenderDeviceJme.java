@@ -94,11 +94,20 @@ public class RenderDeviceJme implements RenderDevice {
         }
 
         @Override
-        public boolean equals(Object other) { // TODO class check
-            CachedTextKey otherKey = (CachedTextKey) other;
-            return font.equals(otherKey.font)
-                    && text.equals(otherKey.text)/* &&
-                   color.equals(otherKey.color)*/;
+        public boolean equals(Object otherObject) {
+            boolean result;
+            if (otherObject == this) {
+                result = true;
+            } else if (otherObject != null
+                    && otherObject.getClass() == getClass()) {
+                CachedTextKey otherKey = (CachedTextKey) otherObject;
+                result = font.equals(otherKey.font)
+                        && text.equals(otherKey.text);
+            } else {
+                result = false;
+            }
+
+            return result;
         }
 
         @Override
@@ -129,7 +138,6 @@ public class RenderDeviceJme implements RenderDevice {
 
         // Load the 3 material types separately to avoid
         // reloading the shader when the defines change.
-
         // Material with a single color (no texture or vertex color)
         colorMaterial = new Material(display.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 
