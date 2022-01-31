@@ -141,7 +141,7 @@ public class PopScreenController extends BasicScreenController {
      * without making a selection. Invoked from NiftyMethodInvoker using
      * reflection, so the class and method must both be public.
      */
-    public synchronized void closeActivePopupMenu() {
+    public void closeActivePopupMenu() {
         if (activePopupMenu == null) {
             throw new IllegalStateException("no active popup menu");
         }
@@ -159,9 +159,9 @@ public class PopScreenController extends BasicScreenController {
     }
 
     /**
-     * Close one active popup, targeting menus first. TODO needs synchronized?
+     * Close one active popup, targeting menus first.
      */
-    public synchronized void closeAllPopups() {
+    public void closeAllPopups() {
         if (hasActivePopupMenu()) {
             closePopupMenu(activePopupMenu);
         } else if (dialogController != null) {
@@ -175,7 +175,7 @@ public class PopScreenController extends BasicScreenController {
      *
      * @param popupMenu which menu to close (not null)
      */
-    synchronized void closePopupMenu(PopupMenu popupMenu) {
+    void closePopupMenu(PopupMenu popupMenu) {
         Validate.nonNull(popupMenu, "popup menu");
 
         if (popupMenu != activePopupMenu) {
@@ -493,7 +493,7 @@ public class PopScreenController extends BasicScreenController {
      * @param itemArray array of menu items (not null, unaffected)
      * @param iconArray array of icon asset paths (not null, unaffected)
      */
-    public synchronized void showPopupMenu(String actionPrefix,
+    public void showPopupMenu(String actionPrefix,
             String[] itemArray, String[] iconArray) {
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(itemArray, "item array");
