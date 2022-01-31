@@ -39,7 +39,6 @@ public class RenderFontJme implements RenderFont {
 
     final private BitmapFont font;
     final private BitmapText text;
-    final private float actualSize;
 
     /**
      * Initialize the font.
@@ -50,7 +49,7 @@ public class RenderFontJme implements RenderFont {
     public RenderFontJme(String name, NiftyJmeDisplay display) {
         font = display.getAssetManager().loadFont(name);
         text = new BitmapText(font);
-        actualSize = font.getPreferredSize();
+        float actualSize = font.getPreferredSize();
         text.setSize(actualSize);
     }
 
