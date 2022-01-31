@@ -226,7 +226,7 @@ public class TestPopups extends GuiApplication {
                 assert numSelected >= 2 : numSelected;
                 int last = numSelected - 1;
 
-                StringBuilder line = new StringBuilder();
+                StringBuilder line = new StringBuilder(60);
                 line.append("The letters ");
                 for (int i = 0; i < numSelected; ++i) {
                     if (i == last) {
