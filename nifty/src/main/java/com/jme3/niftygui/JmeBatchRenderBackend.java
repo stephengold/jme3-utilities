@@ -366,7 +366,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     }
 
     // internal implementations
-    private static Texture2D createAtlasTextureInternal(final int width, final int height) throws Exception {
+    private static Texture2D createAtlasTextureInternal(final int width, final int height) {
         ByteBuffer initialData = BufferUtils.createByteBuffer(width * height * 4);
         for (int i = 0; i < width * height * 4; i++) {
             initialData.put((byte) 0x00);
@@ -582,7 +582,6 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
             } else {
                 switch (blendMode) {
                     case BLEND:
-                        return RenderState.BlendMode.Alpha;
                     case MULIPLY:
                         return RenderState.BlendMode.Alpha;
                     default:
@@ -608,11 +607,11 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
                 final float textureY,
                 final float textureWidth,
                 final float textureHeight) {
-            indexBufferBuffer.put((short) (globalVertexIndex + 0));
+            indexBufferBuffer.put((short) globalVertexIndex);
             indexBufferBuffer.put((short) (globalVertexIndex + 3));
             indexBufferBuffer.put((short) (globalVertexIndex + 2));
 
-            indexBufferBuffer.put((short) (globalVertexIndex + 0));
+            indexBufferBuffer.put((short) globalVertexIndex);
             indexBufferBuffer.put((short) (globalVertexIndex + 2));
             indexBufferBuffer.put((short) (globalVertexIndex + 1));
 

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -326,7 +326,7 @@ public class TestPolygon3f {
         assert name != null;
         assert poly != null;
 
-        System.out.printf(" For %s at %s:%n", name, point.toString());
+        System.out.printf(" For %s at %s:%n", name, point);
         if (poly instanceof SimplePolygon3f) {
             SimplePolygon3f simple = (SimplePolygon3f) poly;
             System.out.printf("  %s in the plane,",
@@ -354,7 +354,7 @@ public class TestPolygon3f {
             System.out.printf("S%d at ", sideIndex);
             int corner = poly.onCorner(storage);
             if (corner == -1) {
-                System.out.print(storage.toString());
+                System.out.print(storage);
             } else {
                 System.out.printf("C%d", corner);
             }

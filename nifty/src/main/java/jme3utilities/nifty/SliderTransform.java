@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -58,5 +58,5 @@ public enum SliderTransform {
     /**
      * base-2 logarithmic slider reversed so that min is at the right/bottom
      */
-    ReversedLog2;
+    ReversedLog2
 }

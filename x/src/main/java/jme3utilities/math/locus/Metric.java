@@ -79,7 +79,7 @@ public enum Metric {
      * @return enum value, or for an invalid input
      */
     public static Metric fromDescription(String description) {
-        for (Metric mode : Metric.values()) {
+        for (Metric mode : values()) {
             if (mode.describe().equals(description)) {
                 return mode;
             }

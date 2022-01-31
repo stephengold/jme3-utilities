@@ -228,7 +228,6 @@ public class RenderDeviceJme implements RenderDevice {
         } else {
             switch (blendMode) {
                 case BLEND:
-                    return RenderState.BlendMode.Alpha;
                 case MULIPLY:
                     return RenderState.BlendMode.Alpha;
                 default:

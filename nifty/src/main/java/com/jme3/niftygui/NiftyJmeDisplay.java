@@ -391,6 +391,5 @@ public class NiftyJmeDisplay implements SceneProcessor {
 
     @Override
     public void setProfiler(AppProfiler profiler) {
-        this.prof = profiler;
     }
 }

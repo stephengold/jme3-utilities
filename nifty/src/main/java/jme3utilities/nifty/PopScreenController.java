@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2021, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -874,10 +874,10 @@ public class PopScreenController extends BasicScreenController {
         Validate.positive(capacity, "number of lines");
 
         int pixelHeight = 16 * capacity; // TODO use font information
-        final String heightText = Integer.toString(pixelHeight) + "px";
+        final String heightText = pixelHeight + "px";
 
         final ElementBuilder.VAlign top = ElementBuilder.VAlign.Top;
-        String masterId = "dialogs/infoScroll" + Integer.toString(capacity);
+        String masterId = "dialogs/infoScroll" + capacity;
         new PopupBuilder(masterId) {
             {
                 backgroundColor("#000a");
