@@ -260,7 +260,7 @@ public class RenderDeviceJme implements RenderDevice {
 
     @Override
     public void renderFont(RenderFont font, String str, int x, int y, Color color, float sizeX, float sizeY) {
-        if (str.length() == 0) {
+        if (str.isEmpty()) {
             return;
         }
 

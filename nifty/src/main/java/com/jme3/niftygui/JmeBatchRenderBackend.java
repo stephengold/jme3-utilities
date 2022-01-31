@@ -399,7 +399,8 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     }
 
     private int addTexture(final Texture2D texture) {
-        final int atlasId = textureAtlasId++;
+        final int atlasId = textureAtlasId;
+        textureAtlasId++;
         textures.put(atlasId, texture);
         return atlasId;
     }

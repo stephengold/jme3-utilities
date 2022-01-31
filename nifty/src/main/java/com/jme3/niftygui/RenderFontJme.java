@@ -84,7 +84,7 @@ public class RenderFontJme implements RenderFont {
      */
     @Override
     public int getWidth(final String str) {
-        if (str.length() == 0) {
+        if (str.isEmpty()) {
             return 0;
         }
 

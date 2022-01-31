@@ -461,7 +461,7 @@ public class TestPolygon3f {
          * Find the largest triangle.
          */
         System.out.print(" The largest triangle is: ");
-        int tri[] = poly.largestTriangle();
+        int[] tri = poly.largestTriangle();
         if (tri == null) {
             System.out.printf("n/a.%n");
         } else {
