@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@ package jme3utilities.nifty;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.texture.image.ColorSpace;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,9 +61,9 @@ abstract public class GuiApplication extends ActionApplication {
      */
     private BasicScreenController enabledScreen = null;
     /**
-     * true &rarr; sRGB colors, false &rarr; linear colors
+     * specify colors in sRGB or linear space
      */
-    private boolean colorsAsSrgbFlag = false;
+    private ColorSpace colorSpace = ColorSpace.Linear;
     /**
      * Determine whether NiftyGUI is rendered after/over guiNode. No effect
      * after initialization. (true &rarr; NiftyGUI over guiNode, false &rarr;
@@ -129,7 +130,7 @@ abstract public class GuiApplication extends ActionApplication {
         if (niftyDisplay != null) {
             throw new IllegalStateException("too late - already initialized");
         }
-        colorsAsSrgbFlag = true;
+        colorSpace = ColorSpace.sRGB;
     }
 
     /**
@@ -167,7 +168,7 @@ abstract public class GuiApplication extends ActionApplication {
          * Start NiftyGUI -- without the batched renderer!
          */
         niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
-                audioRenderer, guiViewPort, colorsAsSrgbFlag);
+                audioRenderer, guiViewPort, colorSpace);
         if (niftyPostViewFlag) {
             /*
              * Render the NiftyGUI after/over the guiNode.

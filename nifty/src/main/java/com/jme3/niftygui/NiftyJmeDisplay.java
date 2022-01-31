@@ -45,6 +45,7 @@ import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.texture.FrameBuffer;
+import com.jme3.texture.image.ColorSpace;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.render.batch.BatchRenderConfiguration;
 import de.lessvoid.nifty.render.batch.BatchRenderDevice;
@@ -266,17 +267,17 @@ public class NiftyJmeDisplay implements SceneProcessor {
             InputManager inputManager,
             AudioRenderer audioRenderer,
             ViewPort vp) {
-        this(assetManager, inputManager, audioRenderer, vp, false);
+        this(assetManager, inputManager, audioRenderer, vp, ColorSpace.Linear);
     }
 
     public NiftyJmeDisplay(AssetManager assetManager,
             InputManager inputManager,
             AudioRenderer audioRenderer,
             ViewPort vp,
-            boolean colorsAsSrgb) { // TODO enum
+            ColorSpace colorSpace) {
         initialize(assetManager, inputManager, audioRenderer, vp);
 
-        this.renderDev = new RenderDeviceJme(this, colorsAsSrgb);
+        this.renderDev = new RenderDeviceJme(this, colorSpace);
         this.batchRendererBackend = null;
 
         nifty = new Nifty(renderDev, soundDev, inputSys, new AccurateTimeProvider());

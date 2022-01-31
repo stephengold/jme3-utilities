@@ -46,6 +46,7 @@ import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture2D;
+import com.jme3.texture.image.ColorSpace;
 import com.jme3.util.BufferUtils;
 import de.lessvoid.nifty.render.BlendMode;
 import de.lessvoid.nifty.spi.render.MouseCursor;
@@ -60,7 +61,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RenderDeviceJme implements RenderDevice {
-    final private boolean colorsAsSrgb;
+    final private ColorSpace colorSpace;
     final private NiftyJmeDisplay display;
     private RenderManager rm;
     private Renderer r;
@@ -111,12 +112,12 @@ public class RenderDeviceJme implements RenderDevice {
     }
 
     public RenderDeviceJme(NiftyJmeDisplay display) {
-        this(display, false);
+        this(display, ColorSpace.Linear);
     }
 
-    public RenderDeviceJme(NiftyJmeDisplay display, boolean colorsAsSrgb) { // TODO enum
+    public RenderDeviceJme(NiftyJmeDisplay display, ColorSpace colorSpace) {
         this.display = display;
-        this.colorsAsSrgb = colorsAsSrgb;
+        this.colorSpace = colorSpace;
 
         quadColor = new VertexBuffer(Type.Color);
         quadColor.setNormalized(true);
@@ -251,7 +252,7 @@ public class RenderDeviceJme implements RenderDevice {
         float blue = inColor.getBlue();
         float alpha = inColor.getAlpha();
 
-        if (colorsAsSrgb) {
+        if (colorSpace == ColorSpace.sRGB) {
             return outColor.setAsSrgb(red, green, blue, alpha);
         } else {
             return outColor.set(red, green, blue, alpha);
