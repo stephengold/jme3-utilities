@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019-2020, Stephen Gold
+ Copyright (c) 2019-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -53,13 +53,6 @@ public class TestMultipleWindows extends GuiApplication {
     final private static Logger logger
             = Logger.getLogger(TestMultipleWindows.class.getName());
     // *************************************************************************
-    // fields
-
-    /**
-     * controller for the screen: set in guiInitializeApplication()
-     */
-    private GuiScreenController screen = null;
-    // *************************************************************************
     // new methods exposed
 
     /**
@@ -111,7 +104,7 @@ public class TestMultipleWindows extends GuiApplication {
         /*
          * Create and attach a screen controller.
          */
-        screen = new GuiScreenController("main",
+        GuiScreenController screen = new GuiScreenController("main",
                 "Interface/Nifty/huds/test-multiple-windows.xml", true);
         screen.setListener(inputMode);
         boolean success = stateManager.attach(screen);
