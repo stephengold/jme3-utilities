@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 import jme3utilities.math.locus.Metric;
 import jme3utilities.math.locus.Shell3f;
 import jme3utilities.math.noise.Generator;
-import jme3utilities.math.polygon.SimplePolygon3f;
 
 /**
  * Test cases for the Shell3f class.

@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
 import jme3utilities.math.MyVector3f;
-import jme3utilities.math.polygon.SimplePolygon3f;
 import jme3utilities.math.spline.LinearSpline3f;
 import jme3utilities.math.spline.Spline3f;
 

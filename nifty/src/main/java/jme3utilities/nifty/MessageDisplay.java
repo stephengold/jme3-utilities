@@ -31,7 +31,6 @@ import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.controls.ListBox;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
