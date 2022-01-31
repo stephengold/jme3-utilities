@@ -124,7 +124,7 @@ public class InputSystemJme implements InputSystem, RawInputListener {
             // processMouseEvent doesn't return true even if cursor is above
             // a nifty element (bug).
             boolean consumed = nic.processMouseEvent(x, y, 0, button, true)
-                    | nifty.getCurrentScreen().isMouseOverElement();
+                    || nifty.getCurrentScreen().isMouseOverElement();
             niftyOwnsDragging[button] = consumed;
             if (consumed) {
                 evt.setConsumed();
