@@ -1,9 +1,33 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.25 released on TBD
+
+ + Add the `AllowNull` enum and change `boolean` method arguments
+   to `AllowNull` in 6 dialog constructors. (API changes)
+ + Change `boolean` method arguments to `ColorSpace`
+   in the `NiftyJmeDisplay` and `RenderDeviceJme` constructors. (API changes)
+ + Rename 2 protected fields in the `NiftyJmeDisplay` class. (API changes)
+ + De-synchronize 4 methods in the `PopScreenController` class (API changes):
+   + `closeActivePopupMenu()`
+   + `closeAllPopups()`
+   + `closePopupMenu()`
+   + `showPopupMenu()`
+ + Use weaker classes for method arguments (API changes):
+   + `DialogControl.matchesNull()`
+   + `GuiWindowController.onCheckBoxChanged()`
+   + `PopScreenController.showTextAndCheckDialog()`
+   + `PopScreenController.showTextAndSliderDialog()`
+   + `PopScreenController.showTextEntryDialog()`
+ + Protect the constructor of the `Tool` class.
+ + Finalize the `LibraryVersion` class.
+ + Enhance exceptions.
+ + Replace private `List` with a `Deque` in `MessageDisplay`.
+ + Base on version 0.9.7 of Acorus.
+
 ## Version 0.9.24 released on 23 January 2022
 
-Base on version 7.2.0 of the Heart Library and version 0.9.6 of
-the jme3-utilities-ui library.
+Base on version 3.5.0-stable of JMonkeyEngine, version 7.2.0 of the Heart
+Library and version 0.9.6 of the jme3-utilities-ui library.
 
 ## Version 0.9.23 released on 10 September 2021
 
