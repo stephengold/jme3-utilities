@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -60,9 +60,9 @@ public class BooleanDialog extends TextEntryDialog {
     // fields
 
     /**
-     * if true, "null" is an allowed value, otherwise it is disallowed
+     * is "null" a valid input?
      */
-    final private boolean allowNull;
+    final private AllowNull allowNull;
     // *************************************************************************
     // constructors
 
@@ -70,10 +70,11 @@ public class BooleanDialog extends TextEntryDialog {
      * Instantiate a controller.
      *
      * @param description commit-button text (not null, not empty)
-     * @param allowNull if true, "null" will be an allowed value TODO enum
+     * @param allowNull should "null" be a valid input? (not null)
      */
-    public BooleanDialog(String description, boolean allowNull) {
+    public BooleanDialog(String description, AllowNull allowNull) {
         super(description);
+        Validate.nonNull(allowNull, "allow null");
         this.allowNull = allowNull;
     }
     // *************************************************************************
@@ -94,7 +95,7 @@ public class BooleanDialog extends TextEntryDialog {
 
         if (matchesTrue(lcText) || matchesFalse(lcText)) {
             msg = "";
-        } else if (allowNull && matchesNull(lcText)) {
+        } else if (allowNull.equals(AllowNull.Yes) && matchesNull(lcText)) {
             msg = "";
         }
 
@@ -139,7 +140,7 @@ public class BooleanDialog extends TextEntryDialog {
      * @return message text (not null, not empty)
      */
     private String notABoolean() {
-        if (allowNull) {
+        if (allowNull.equals(AllowNull.Yes)) {
             return "must be true, false, or null";
         } else {
             return "must be true or false";

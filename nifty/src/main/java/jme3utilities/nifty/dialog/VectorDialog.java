@@ -61,9 +61,9 @@ public class VectorDialog extends TextEntryDialog {
     // fields
 
     /**
-     * if true, "null" is an allowed value, otherwise it is disallowed
+     * is "null" a valid input?
      */
-    final private boolean allowNull;
+    final private AllowNull allowNull;
     /**
      * number of elements in the vector (&ge;2, &le;4)
      */
@@ -76,12 +76,13 @@ public class VectorDialog extends TextEntryDialog {
      *
      * @param description commit-button text (not null, not empty)
      * @param numElements number of elements in the vector (&ge;2, &le;4)
-     * @param allowNull if true, "null" will be an allowed value TODO enum
+     * @param allowNull allowNull should "null" be a valid input? (not null)
      */
     public VectorDialog(String description, int numElements,
-            boolean allowNull) {
+            AllowNull allowNull) {
         super(description);
         Validate.inRange(numElements, "number of elements", 2, 4);
+        Validate.nonNull(allowNull, "allow null");
 
         this.numElements = numElements;
         this.allowNull = allowNull;
@@ -167,7 +168,7 @@ public class VectorDialog extends TextEntryDialog {
             msg = notAVector();
         }
 
-        if (!msg.isEmpty() && allowNull && matchesNull(lcText)) {
+        if (allowNull.equals(AllowNull.Yes) && matchesNull(lcText)) {
             msg = "";
         }
 
@@ -183,7 +184,7 @@ public class VectorDialog extends TextEntryDialog {
      */
     private String notAVector() {
         String msg = String.format("must be a %d-element vector", numElements);
-        if (allowNull) {
+        if (allowNull.equals(AllowNull.Yes)) {
             msg += " or null";
         }
 

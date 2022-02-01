@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -49,9 +49,9 @@ public class DoubleDialog extends TextEntryDialog {
     // fields
 
     /**
-     * if true, "null" is an allowed value, otherwise it is disallowed
+     * is "null" a valid input?
      */
-    final private boolean allowNull;
+    final private AllowNull allowNull;
     /**
      * maximum value to commit
      */
@@ -69,12 +69,13 @@ public class DoubleDialog extends TextEntryDialog {
      * @param description commit-button text (not null, not empty)
      * @param min minimum value (&lt;max)
      * @param max minimum value (&gt;min)
-     * @param allowNull if true, "null" will be an allowed value TODO enum
+     * @param allowNull should "null" be a valid input? (not null)
      */
     public DoubleDialog(String description, double min, double max,
-            boolean allowNull) {
+            AllowNull allowNull) {
         super(description);
-        assert min < max : max;
+        assert min < max : max; // TODO Validate
+        Validate.nonNull(allowNull, "allow null");
 
         minValue = min;
         maxValue = max;
@@ -110,7 +111,7 @@ public class DoubleDialog extends TextEntryDialog {
         }
 
         String lcText = input.toLowerCase(Locale.ROOT);
-        if (allowNull && matchesNull(lcText)) {
+        if (allowNull.equals(AllowNull.Yes) && matchesNull(lcText)) {
             msg = "";
         }
 
@@ -125,7 +126,7 @@ public class DoubleDialog extends TextEntryDialog {
      * @return message text (not null, not empty)
      */
     private String notANumber() {
-        if (allowNull) {
+        if (allowNull.equals(AllowNull.Yes)) {
             return "must be a number or null";
         } else {
             return "must be a number";
