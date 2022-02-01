@@ -1,5 +1,9 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.26 released on TBD
+
+Revert the API change to `GuiWindowController.onCheckBoxChanged()`.
+
 ## Version 0.9.25 released on 1 February 2022
 
  + Add the `AllowNull` enum and change `boolean` method arguments
