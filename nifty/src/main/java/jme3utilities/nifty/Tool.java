@@ -79,7 +79,7 @@ abstract public class Tool extends GuiWindowController {
      * @param isChecked the new state of the checkbox (true&rarr;checked,
      * false&rarr;unchecked)
      */
-    public void onCheckBoxChanged(CharSequence name, boolean isChecked) {
+    public void onCheckBoxChanged(String name, boolean isChecked) {
         logger.log(Level.WARNING,
                 "unexpected check-box change ignored, name={0}",
                 MyString.quote(name));
