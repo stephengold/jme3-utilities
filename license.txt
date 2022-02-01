@@ -1,4 +1,4 @@
-com.jme3 software packages Copyright (c) 2009-2019 jMonkeyEngine
+com.jme3 software packages Copyright (c) 2009-2021 jMonkeyEngine
 jme3utilities software packages Copyright (c) 2013-2022 Stephen Gold
 
 All rights reserved.
