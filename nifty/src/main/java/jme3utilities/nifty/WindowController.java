@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -79,7 +79,7 @@ public class WindowController extends GuiAppState {
      * window (not null, alias created)
      * @param controlId the Nifty id of the window control
      * @param startEnabled if false, disable this controller during
-     * initialization; if true, leave it enabled TODO enum
+     * initialization; if true, leave it enabled TODO use InitialState enum
      */
     public WindowController(BasicScreenController screenController,
             String controlId, boolean startEnabled) {

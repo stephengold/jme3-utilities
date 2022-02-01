@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2021, Stephen Gold
+ Copyright (c) 2021-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ import jme3utilities.Validate;
 /**
  * Controller for a multi-select dialog box.
  *
+ * @param ItemType the type of items to be selected
  * @author Stephen Gold sgold@sonic.net
  */
 public class MultiSelectDialog<ItemType> implements DialogController {
