@@ -9,12 +9,12 @@ ext {
     websiteUrl = 'https://github.com/stephengold/jme3-utilities'
 
     // current versions of various libraries:
-    jme3utilitiesniftyVersion = '0.9.25'
+    jme3utilitiesniftyVersion = '0.9.26-SNAPSHOT'
     jme3utilitiesxVersion = '0.3.1-SNAPSHOT'
     jme3Version = '3.5.0-stable'
 }
 
-sourceCompatibility = '1.7'
+sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_8
 
 tasks.withType(JavaCompile) { // Java compile-time options:

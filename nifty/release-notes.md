@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.25 released on TBD
+## Version 0.9.25 released on 1 February 2022
 
  + Add the `AllowNull` enum and change `boolean` method arguments
    to `AllowNull` in 6 dialog constructors. (API changes)
