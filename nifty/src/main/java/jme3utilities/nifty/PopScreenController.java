@@ -108,7 +108,8 @@ public class PopScreenController extends BasicScreenController {
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
      * @param enableDuringInitialization if true, enable this screen controller
-     * during initialization; if false, leave it disabled TODO enum
+     * during initialization; if false, leave it disabled TODO use InitialState
+     * enum
      */
     public PopScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {
@@ -498,7 +499,8 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(itemArray, "item array");
         Validate.nonNull(itemArray, "icon array");
-        assert itemArray.length == iconArray.length;
+        Validate.require(itemArray.length == iconArray.length,
+                "equal-length arrays");
         /*
          * Create a popup using "popup-menu" as a base.
          * Nifty assigns the popup a new id.

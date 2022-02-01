@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -99,15 +99,15 @@ public class BindScreen
     /**
      * Activate this screen to edit the specified input mode.
      *
-     * @param mode which input mode (not null, alias created)
+     * @param mode which input mode (not null, enabled, alias created)
      */
     public void activate(InputMode mode) {
-        Validate.nonNull(mode, "mode");
+        Validate.nonNull(mode, "input mode");
+        Validate.require(mode.isEnabled(), "an enabled input mode");
 
         assert !isEnabled();
         assert isInitialized();
         assert subjectMode == null : subjectMode;
-        assert mode.isEnabled();
 
         closeAllPopups();
         subjectMode = mode;
@@ -252,8 +252,8 @@ public class BindScreen
      */
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        assert nifty != null;
-        assert screen != null;
+        Validate.nonNull(nifty, "nifty");
+        Validate.nonNull(screen, "screen");
         super.bind(nifty, screen);
         /*
          * Populate the action list box.

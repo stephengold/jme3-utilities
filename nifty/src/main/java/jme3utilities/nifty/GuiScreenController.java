@@ -93,7 +93,8 @@ public class GuiScreenController extends PopScreenController {
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
      * @param enableDuringInitialization if true, enable this screen controller
-     * during initialization; if false, leave it disabled TODO enum
+     * during initialization; if false, leave it disabled TODO use InitialState
+     * enum
      */
     public GuiScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {
@@ -273,7 +274,8 @@ public class GuiScreenController extends PopScreenController {
     /**
      * Callback handler that Nifty invokes after a checkbox changes.
      *
-     * @param checkBoxId Nifty element ID of the checkbox (not null)
+     * @param checkBoxId Nifty element ID of the checkbox (not null, ends with
+     * "CheckBox")
      * @param event details of the event (not null)
      */
     @NiftyEventSubscriber(pattern = ".*CheckBox")
@@ -281,7 +283,8 @@ public class GuiScreenController extends PopScreenController {
             final CheckBoxStateChangedEvent event) {
         Validate.nonNull(checkBoxId, "check box ID");
         Validate.nonNull(event, "event");
-        assert checkBoxId.endsWith("CheckBox");
+        Validate.require(checkBoxId.endsWith("CheckBox"),
+                "ID ends with CheckBox");
 
         if (!isIgnoreGuiChanges() && hasStarted()) {
             String checkBoxName = MyString.removeSuffix(checkBoxId, "CheckBox");
@@ -425,9 +428,9 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Alter the ticked status of the named checkbox and enable it. This
-     * assumes a naming convention where the Nifty id of every check box ends
-     * with "CheckBox".
+     * Alter the ticked status of the named checkbox and enable it. This assumes
+     * a naming convention where the Nifty id of every check box ends with
+     * "CheckBox".
      *
      * @param name the name (unique id prefix) of the checkbox (not null)
      * @param newStatus true to tick the checkbox, false to un-tick it

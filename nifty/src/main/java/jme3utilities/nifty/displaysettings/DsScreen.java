@@ -172,7 +172,8 @@ public class DsScreen
             final CheckBoxStateChangedEvent event) {
         Validate.nonNull(checkBoxId, "check box id");
         Validate.nonNull(event, "event");
-        assert checkBoxId.endsWith("CheckBox");
+        Validate.require(checkBoxId.endsWith("CheckBox"),
+                "ID ends with CheckBox");
 
         if (!isIgnoreGuiChanges() && hasStarted()) {
             String checkBoxName = MyString.removeSuffix(checkBoxId, "CheckBox");

@@ -74,7 +74,7 @@ public class DoubleDialog extends TextEntryDialog {
     public DoubleDialog(String description, double min, double max,
             AllowNull allowNull) {
         super(description);
-        assert min < max : max; // TODO Validate
+        Validate.require(min < max, "min < max");
         Validate.nonNull(allowNull, "allow null");
 
         minValue = min;

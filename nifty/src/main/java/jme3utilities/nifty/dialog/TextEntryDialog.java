@@ -95,7 +95,7 @@ public class TextEntryDialog implements DialogController {
      * @return true for match, otherwise false
      */
     protected static boolean matchesNull(CharSequence lcText) {
-        assert lcText != null;
+        Validate.nonNull(lcText, "lc text");
 
         Matcher matcher = nullPattern.matcher(lcText);
         boolean result = matcher.matches();

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -472,8 +472,8 @@ public class Segment3f implements Locus3f {
         Validate.nonNull(startLocation, "start location");
         Validate.nonNull(goalLocation, "goal location");
         Validate.inRange(maxPoints, "max control points", 2, Integer.MAX_VALUE);
-        assert contains(startLocation) : startLocation;
-        assert contains(goalLocation) : goalLocation;
+        Validate.require(contains(startLocation), "start location in region");
+        Validate.require(contains(goalLocation), "goal location in region");
 
         Vector3f[] joints = {startLocation, goalLocation};
         Spline3f result = new LinearSpline3f(joints);

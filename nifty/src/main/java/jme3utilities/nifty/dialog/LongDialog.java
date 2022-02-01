@@ -74,7 +74,7 @@ public class LongDialog extends TextEntryDialog {
     public LongDialog(String description, long min, long max,
             AllowNull allowNull) {
         super(description);
-        assert min < max : max; // TODO Validate
+        Validate.require(min < max, "min < max");
         Validate.nonNull(allowNull, "allow null");
 
         minValue = min;
