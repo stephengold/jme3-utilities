@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2019 jMonkeyEngine
+ * Copyright (c) 2009-2021 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -138,6 +138,7 @@ public class RenderDeviceJme implements RenderDevice {
 
         // Load the 3 material types separately to avoid
         // reloading the shader when the defines change.
+
         // Material with a single color (no texture or vertex color)
         colorMaterial = new Material(display.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 
@@ -240,7 +241,7 @@ public class RenderDeviceJme implements RenderDevice {
                 case MULIPLY:
                     return RenderState.BlendMode.Alpha;
                 default:
-                    throw new UnsupportedOperationException();
+                    throw new IllegalArgumentException(blendMode.toString());
             }
         }
     }
