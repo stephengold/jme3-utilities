@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2018 jMonkeyEngine
+ * Copyright (c) 2009-2021 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -113,7 +113,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * @param inputManager jME InputManager
      * @param audioRenderer jME AudioRenderer
      * @param viewport Viewport to use
-     * @return a new display
+     * @return a new NiftyJmeDisplay instance
      */
     public static NiftyJmeDisplay newNiftyJmeDisplay(
             final AssetManager assetManager,
@@ -391,5 +391,6 @@ public class NiftyJmeDisplay implements SceneProcessor {
 
     @Override
     public void setProfiler(AppProfiler profiler) {
+        // not implemented
     }
 }
