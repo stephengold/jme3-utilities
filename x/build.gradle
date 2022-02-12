@@ -8,7 +8,6 @@ plugins {
     id 'signing'
 }
 
-description = 'An experimental library for jMonkeyEngine.'
 ext {
     artifact = 'jme3-utilities-x'
     version = jme3utilitiesxVersion

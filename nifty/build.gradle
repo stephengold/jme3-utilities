@@ -8,7 +8,6 @@ plugins {
     id 'signing'
 }
 
-description = 'A NiftyGUI library for jMonkeyEngine.'
 ext {
     artifact = 'jme3-utilities-nifty'
     version = jme3utilitiesniftyVersion
