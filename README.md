@@ -68,7 +68,7 @@ Complete source code (in Java) is provided under
 After a successful build,
 Maven artifacts will be found in `*/build/libs`.
 
-You can install the Maven artifacts to your local Maven repository:
+You can install the artifacts to your local Maven repository:
 + using Bash or PowerShell: `./gradlew install`
 + using Windows Command Prompt: `.\gradlew install`
 
