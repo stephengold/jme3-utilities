@@ -34,6 +34,7 @@ import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.CheckBoxStateChangedEvent;
 import de.lessvoid.nifty.controls.RadioButton;
+import de.lessvoid.nifty.controls.RadioButtonStateChangedEvent;
 import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.elements.Element;
@@ -75,6 +76,10 @@ public class GuiScreenController extends PopScreenController {
      * map a checkbox name to the tool that manages the checkbox
      */
     final private Map<String, Tool> checkBoxMap = new TreeMap<>();
+    /**
+     * map a radio-button name to the tool that manages the radio button
+     */
+    final private Map<String, Tool> radioButtonMap = new TreeMap<>();
     /**
      * map a slider name to the tool that manages the slider
      */
@@ -242,6 +247,21 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
+     * Associate the named radio button with the tool that manages it.
+     *
+     * @param radioButtonName the name (unique id prefix) of the radio button
+     * (not null)
+     * @param managingTool (not null, alias created)
+     */
+    public void mapRadioButton(String radioButtonName, Tool managingTool) {
+        Validate.nonNull(radioButtonName, "radio-button name");
+        Validate.nonNull(managingTool, "managing tool");
+
+        Tool oldMapping = radioButtonMap.put(radioButtonName, managingTool);
+        assert oldMapping == null;
+    }
+
+    /**
      * Associate the named slider with the Tool that manages it.
      *
      * @param sliderName the name (unique id prefix) of the slider (not null)
@@ -272,7 +292,7 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Callback handler that Nifty invokes after a checkbox changes.
+     * Callback that Nifty invokes after a checkbox changes.
      *
      * @param checkBoxId Nifty element ID of the checkbox (not null, ends with
      * "CheckBox")
@@ -297,7 +317,30 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Callback handler that Nifty invokes after a screen/tool slider changes.
+     * Callback that Nifty invokes after a radio button changes.
+     *
+     * @param buttonId Nifty element id of the radio button (not null,
+     * "RadioButton" suffix)
+     * @param event details of the event (not null)
+     */
+    @NiftyEventSubscriber(pattern = ".*RadioButton")
+    public void onRadioButtonChanged(final String buttonId,
+            final RadioButtonStateChangedEvent event) {
+        Validate.nonNull(buttonId, "button ID");
+        Validate.require(buttonId.endsWith("RadioButton"), "expected suffix");
+        Validate.nonNull(event, "event");
+
+        if (!isIgnoreGuiChanges() && hasStarted()) {
+            String buttonName = MyString.removeSuffix(buttonId, "RadioButton");
+            Tool manager = findRadioButtonTool(buttonName);
+            if (manager != null) {
+                manager.onRadioButtonChanged(buttonName);
+            }
+        }
+    }
+
+    /**
+     * Callback that Nifty invokes after a screen/tool slider changes.
      *
      * @param sliderId Nifty element ID of the slider (not null, "Slider"
      * suffix)
@@ -320,7 +363,7 @@ public class GuiScreenController extends PopScreenController {
     }
 
     /**
-     * Callback handler that Nifty invokes after a dialog slider changes.
+     * Callback that Nifty invokes after a dialog slider changes.
      *
      * @param sliderId Nifty element ID of the slider (not null, "#dialogslider"
      * suffix)
@@ -632,6 +675,19 @@ public class GuiScreenController extends PopScreenController {
         Validate.nonNull(checkBoxName, "check-box name");
         Tool managingTool = checkBoxMap.get(checkBoxName);
         return managingTool;
+    }
+
+    /**
+     * Find the Tool that manages the named radio button.
+     *
+     * @param buttonName the name (unique id prefix) of the radio button (not
+     * null)
+     * @return the pre-existing instance, or null if none
+     */
+    protected Tool findRadioButtonTool(String buttonName) {
+        Validate.nonNull(buttonName, "radio-button name");
+        Tool result = radioButtonMap.get(buttonName);
+        return result;
     }
 
     /**

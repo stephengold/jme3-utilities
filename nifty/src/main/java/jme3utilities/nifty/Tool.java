@@ -86,6 +86,15 @@ abstract public class Tool extends GuiWindowController {
     }
 
     /**
+     * Update the MVC model based on this tool's radio buttons, if any.
+     *
+     * @param buttonName the name (unique id prefix) of the button (not null)
+     */
+    public void onRadioButtonChanged(String buttonName) {
+        logger.warning("unexpected radio-button change ignored");
+    }
+
+    /**
      * Update the MVC model based on this tool's sliders, if any.
      *
      * @param sliderName the name (unique id prefix) of the slider (not null)
@@ -102,6 +111,16 @@ abstract public class Tool extends GuiWindowController {
      * @return a new list of names (unique id prefixes)
      */
     protected List<String> listCheckBoxes() {
+        List<String> result = new ArrayList<>(5);
+        return result;
+    }
+
+    /**
+     * Enumerate this tool's radio buttons.
+     *
+     * @return a new list of names (unique id prefixes)
+     */
+    protected List<String> listRadioButtons() {
         List<String> result = new ArrayList<>(5);
         return result;
     }
@@ -153,6 +172,11 @@ abstract public class Tool extends GuiWindowController {
         List<String> checkBoxNames = listCheckBoxes();
         for (String name : checkBoxNames) {
             screen.mapCheckBox(name, this);
+        }
+
+        List<String> radioButtonNames = listRadioButtons();
+        for (String name : radioButtonNames) {
+            screen.mapRadioButton(name, this);
         }
 
         List<String> sliderNames = listSliders();
