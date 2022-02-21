@@ -41,7 +41,6 @@ import jme3utilities.Validate;
 /**
  * Controller for a multi-select dialog box.
  *
- * @param ItemType the type of items to be selected
  * @author Stephen Gold sgold@sonic.net
  */
 public class MultiSelectDialog<ItemType> implements DialogController {
