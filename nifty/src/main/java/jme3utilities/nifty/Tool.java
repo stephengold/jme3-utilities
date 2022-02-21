@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 
 /**
@@ -66,7 +67,7 @@ abstract public class Tool extends GuiWindowController {
      * @param name the name (unique id prefix) of this tool (not null)
      */
     protected Tool(GuiScreenController screenController, String name) {
-        super(screenController, name + "Tool", false);
+        super(screenController, name + "Tool", InitialState.Disabled);
         toolName = name;
     }
     // *************************************************************************
