@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.ui.InputMode;
@@ -106,18 +107,41 @@ public class BasicScreenController
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
      * @param enableDuringInitialization if true, enable this screen controller
-     * during initialization; if false, leave it disabled TODO use InitialState
-     * enum
+     * during initialization; if false, leave it disabled
      */
     public BasicScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {
-        super(false);
+        super(InitialState.Disabled);
         Validate.nonNull(screenId, "screen id");
         Validate.nonNull(xmlAssetPath, "asset path");
 
         this.screenId = screenId;
         this.xmlAssetPath = xmlAssetPath;
         this.enableDuringInitialization = enableDuringInitialization;
+
+        assert !isInitialized();
+        assert !isEnabled();
+    }
+
+    /**
+     * Instantiate an uninitialized, disabled screen for the specified screen id
+     * and layout.
+     *
+     * @param screenId Nifty id (not null)
+     * @param xmlAssetPath path to the Nifty XML layout asset (not null)
+     * @param initialState if Enabled, enable this controller during
+     * initialization; if Disabled or null, leave it disabled
+     */
+    public BasicScreenController(String screenId, String xmlAssetPath,
+            InitialState initialState) {
+        super(InitialState.Disabled);
+        Validate.nonNull(screenId, "screen id");
+        Validate.nonNull(xmlAssetPath, "asset path");
+
+        this.screenId = screenId;
+        this.xmlAssetPath = xmlAssetPath;
+        this.enableDuringInitialization
+                = (initialState == initialState.Enabled);
 
         assert !isInitialized();
         assert !isEnabled();

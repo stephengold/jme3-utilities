@@ -29,6 +29,7 @@ package jme3utilities.nifty;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.Validate;
 
 /**
@@ -59,11 +60,27 @@ public class GuiWindowController extends WindowController {
      * window (not null, alias created)
      * @param controlId the Nifty id of the window control
      * @param startEnabled if false, disable this controller during
-     * initialization; if true, leave it enabled TODO use InitialState enum
+     * initialization; if true, leave it enabled
      */
     public GuiWindowController(GuiScreenController screenController,
             String controlId, boolean startEnabled) {
         super(screenController, controlId, startEnabled);
+        assert !isInitialized();
+        assert isEnabled();
+    }
+
+    /**
+     * Instantiate an uninitialized controller.
+     *
+     * @param screenController the controller of the screen containing the
+     * window (not null, alias created)
+     * @param controlId the Nifty id of the window control
+     * @param initialState if Disabled or null, disable this controller during
+     * initialization; if Enabled, leave it enabled
+     */
+    public GuiWindowController(GuiScreenController screenController,
+            String controlId, InitialState initialState) {
+        super(screenController, controlId, initialState);
         assert !isInitialized();
         assert isEnabled();
     }

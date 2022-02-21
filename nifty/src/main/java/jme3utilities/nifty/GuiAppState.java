@@ -30,6 +30,7 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.ui.ActionAppState;
 
 /**
@@ -61,8 +62,17 @@ public class GuiAppState extends ActionAppState {
      *
      * @param enabled true &rarr; enabled, false &rarr; disabled
      */
-    public GuiAppState(boolean enabled) { // TODO use InitialState enum
+    public GuiAppState(boolean enabled) {
         super(enabled);
+    }
+
+    /**
+     * Instantiate an uninitialized state.
+     *
+     * @param initialState Enabled or Disabled (null means disabled)
+     */
+    public GuiAppState(InitialState initialState) {
+        super(initialState);
     }
     // *************************************************************************
     // new methods exposed

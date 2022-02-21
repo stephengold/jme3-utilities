@@ -32,6 +32,7 @@ import de.lessvoid.nifty.controls.Window;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.Validate;
 
 /**
@@ -79,17 +80,40 @@ public class WindowController extends GuiAppState {
      * window (not null, alias created)
      * @param controlId the Nifty id of the window control
      * @param startEnabled if false, disable this controller during
-     * initialization; if true, leave it enabled TODO use InitialState enum
+     * initialization; if true, leave it enabled
      */
     public WindowController(BasicScreenController screenController,
             String controlId, boolean startEnabled) {
-        super(true);
+        super(InitialState.Enabled);
         Validate.nonNull(screenController, "screen controller");
         Validate.nonNull(controlId, "control id");
 
         this.screenController = screenController;
         this.controlId = controlId;
         this.startEnabled = startEnabled;
+
+        assert !isInitialized();
+        assert isEnabled();
+    }
+
+    /**
+     * Instantiate an uninitialized controller.
+     *
+     * @param screenController the controller of the screen containing the
+     * window (not null, alias created)
+     * @param controlId the Nifty id of the window control
+     * @param initialState if Disabled or null, disable this controller during
+     * initialization; if Enabled, leave it enabled
+     */
+    public WindowController(BasicScreenController screenController,
+            String controlId, InitialState initialState) {
+        super(InitialState.Enabled);
+        Validate.nonNull(screenController, "screen controller");
+        Validate.nonNull(controlId, "control id");
+
+        this.screenController = screenController;
+        this.controlId = controlId;
+        this.startEnabled = (initialState == initialState.Enabled);
 
         assert !isInitialized();
         assert isEnabled();

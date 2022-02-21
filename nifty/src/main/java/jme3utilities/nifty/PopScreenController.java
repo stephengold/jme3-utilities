@@ -46,6 +46,7 @@ import de.lessvoid.nifty.tools.SizeValueType;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
@@ -108,12 +109,27 @@ public class PopScreenController extends BasicScreenController {
      * @param screenId Nifty id (not null)
      * @param xmlAssetPath path to the Nifty XML layout asset (not null)
      * @param enableDuringInitialization if true, enable this screen controller
-     * during initialization; if false, leave it disabled TODO use InitialState
-     * enum
+     * during initialization; if false, leave it disabled
      */
     public PopScreenController(String screenId, String xmlAssetPath,
             boolean enableDuringInitialization) {
         super(screenId, xmlAssetPath, enableDuringInitialization);
+        assert !isInitialized();
+        assert !isEnabled();
+    }
+
+    /**
+     * Instantiate a disabled controller for the specified screen id and layout
+     * asset path.
+     *
+     * @param screenId Nifty id (not null)
+     * @param xmlAssetPath path to the Nifty XML layout asset (not null)
+     * @param initialState if Enabled, enable this controller during
+     * initialization; if Disabled or null, leave it disabled
+     */
+    public PopScreenController(String screenId, String xmlAssetPath,
+            InitialState initialState) {
+        super(screenId, xmlAssetPath, initialState);
         assert !isInitialized();
         assert !isEnabled();
     }
