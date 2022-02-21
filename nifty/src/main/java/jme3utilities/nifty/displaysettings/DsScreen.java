@@ -41,6 +41,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.nifty.GuiScreenController;
@@ -114,7 +115,7 @@ public class DsScreen
      * @param ds the application's display settings (not null, alias created)
      */
     public DsScreen(DisplaySettings ds) {
-        super(name, "Interface/Nifty/screens/ds.xml", false);
+        super(name, "Interface/Nifty/screens/ds.xml", InitialState.Disabled);
 
         displaySettings = ds;
         inputMode = new DsInputMode(this);

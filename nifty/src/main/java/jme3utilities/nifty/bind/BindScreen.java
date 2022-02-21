@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
 import jme3utilities.nifty.GuiScreenController;
@@ -83,7 +84,7 @@ public class BindScreen
      * Instantiate a disabled screen controller.
      */
     public BindScreen() {
-        super(name, "Interface/Nifty/screens/bind.xml", false);
+        super(name, "Interface/Nifty/screens/bind.xml", InitialState.Disabled);
 
         inputMode = new BindInputMode(this);
         setListener(inputMode);

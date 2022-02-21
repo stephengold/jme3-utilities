@@ -32,6 +32,7 @@ import de.lessvoid.nifty.controls.ListBox;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.Validate;
 
 /**
@@ -63,7 +64,7 @@ public class MessageDisplay extends GuiScreenController {
      */
     public MessageDisplay() {
         super("message-display", "Interface/Nifty/huds/message-display.xml",
-                false);
+                InitialState.Disabled);
 
     }
     // *************************************************************************
