@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.27 released on TBD
+## Version 0.9.27 released on 21 February 2022
 
  + Manage radio buttons within tools.
  + Add constructors for the `BasicScreenController`, `GuiAppState`,

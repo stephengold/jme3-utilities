@@ -60,7 +60,7 @@ Complete source code (in Java) is provided under
 3. Download and extract the Jme3-utilities source code from GitHub:
   + `git clone https://github.com/stephengold/jme3-utilities.git`
   + `cd jme3-utilities`
-  + `git checkout -b latest nifty-0.9.26`
+  + `git checkout -b latest nifty-0.9.27`
 4. Run the [Gradle] wrapper:
   + using Bash or PowerShell: `./gradlew build`
   + using Windows Command Prompt: `.\gradlew build`
