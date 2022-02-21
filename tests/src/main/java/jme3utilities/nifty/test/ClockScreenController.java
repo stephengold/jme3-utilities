@@ -28,6 +28,7 @@ package jme3utilities.nifty.test;
 
 import java.util.Calendar;
 import java.util.logging.Logger;
+import jme3utilities.InitialState;
 import jme3utilities.math.MyMath;
 import jme3utilities.nifty.GuiScreenController;
 
@@ -55,7 +56,7 @@ public class ClockScreenController extends GuiScreenController {
     public ClockScreenController() {
         super("ClockDemo/clockScreen",
                 "Interface/Nifty/screens/ClockDemo/clockScreen.xml",
-                true);
+                InitialState.Enabled);
     }
     // *************************************************************************
     // SimpleAppState methods

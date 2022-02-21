@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
@@ -159,14 +160,16 @@ public class TestPopups extends GuiApplication {
             LetterItem item = new LetterItem(c);
             allLetterItems.add(item);
         }
-        multiSelectDialog = new MultiLetterDialogController("Check twice", allLetterItems);
+        multiSelectDialog = new MultiLetterDialogController(
+                "Check twice", allLetterItems);
 
         InputMode inputMode = getDefaultInputMode();
         /*
          * Create and attach a screen controller.
          */
         screen = new GuiScreenController("TestPopups/mainScreen",
-                "Interface/Nifty/screens/TestPopups/mainScreen.xml", true);
+                "Interface/Nifty/screens/TestPopups/mainScreen.xml",
+                InitialState.Enabled);
         screen.setListener(inputMode);
         boolean success = stateManager.attach(screen);
         assert success;

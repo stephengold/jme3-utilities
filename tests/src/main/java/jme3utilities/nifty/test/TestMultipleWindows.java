@@ -32,6 +32,7 @@ import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
@@ -105,7 +106,8 @@ public class TestMultipleWindows extends GuiApplication {
          * Create and attach a screen controller.
          */
         GuiScreenController screen = new GuiScreenController("main",
-                "Interface/Nifty/huds/test-multiple-windows.xml", true);
+                "Interface/Nifty/huds/test-multiple-windows.xml",
+                InitialState.Enabled);
         screen.setListener(inputMode);
         boolean success = stateManager.attach(screen);
         assert success;

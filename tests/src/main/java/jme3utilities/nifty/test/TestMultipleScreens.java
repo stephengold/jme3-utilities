@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2020, Stephen Gold
+ Copyright (c) 2014-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
+import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.nifty.BasicScreenController;
 import jme3utilities.nifty.GuiApplication;
@@ -115,19 +116,22 @@ public class TestMultipleScreens extends GuiApplication {
          * Create and attach a screen controller for each screen.
          */
         s1 = new PopScreenController("TestMultipleScreens/s1",
-                "Interface/Nifty/screens/TestMultipleScreens/s1.xml", true);
+                "Interface/Nifty/screens/TestMultipleScreens/s1.xml",
+                InitialState.Enabled);
         s1.setListener(inputMode);
         boolean success = stateManager.attach(s1);
         assert success;
 
         s2 = new BasicScreenController("TestMultipleScreens/s2",
-                "Interface/Nifty/screens/TestMultipleScreens/s2.xml", false);
+                "Interface/Nifty/screens/TestMultipleScreens/s2.xml",
+                InitialState.Disabled);
         s2.setListener(inputMode);
         success = stateManager.attach(s2);
         assert success;
 
         s3 = new BasicScreenController("TestMultipleScreens/s3",
-                "Interface/Nifty/screens/TestMultipleScreens/s3.xml", false);
+                "Interface/Nifty/screens/TestMultipleScreens/s3.xml",
+                InitialState.Disabled);
         s3.setListener(inputMode);
         success = stateManager.attach(s3);
         assert success;
