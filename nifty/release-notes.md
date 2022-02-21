@@ -1,5 +1,13 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.27 released on TBD
+
+ + Manage radio buttons within tools.
+ + Add constructors for the `BasicScreenController`, `GuiAppState`,
+   `GuiScreenController`, `GuiWindowController`, `PopScreenController`,
+   and `WindowController` classes.
+ + Base on version 7.3.0 of the Heart library and version 0.9.9 of Acorus.
+
 ## Version 0.9.26 released on 1 February 2022
 
 Revert the API change to `GuiWindowController.onCheckBoxChanged()`.
