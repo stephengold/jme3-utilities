@@ -165,11 +165,12 @@ public class GuiScreenController extends PopScreenController {
         String niftyId = name + "Button";
         Button button = screen.findNiftyControl(niftyId, Button.class);
         if (button == null) {
+            String qnid = MyString.quote(niftyId);
             logger.log(Level.SEVERE, "missing button {0} in {1}",
                     new Object[]{
-                        MyString.quote(niftyId), MyString.quote(getScreenId())
+                        qnid, MyString.quote(getScreenId())
                     });
-            throw new IllegalArgumentException("missing button" + niftyId);
+            throw new IllegalArgumentException("missing button: " + qnid);
         }
 
         return button;
@@ -189,11 +190,12 @@ public class GuiScreenController extends PopScreenController {
         String niftyId = name + "CheckBox";
         CheckBox box = screen.findNiftyControl(niftyId, CheckBox.class);
         if (box == null) {
+            String qnid = MyString.quote(niftyId);
             logger.log(Level.SEVERE, "missing check box {0} in {1}",
                     new Object[]{
-                        MyString.quote(niftyId), MyString.quote(getScreenId())
+                        qnid, MyString.quote(getScreenId())
                     });
-            throw new IllegalArgumentException("missing check box " + niftyId);
+            throw new IllegalArgumentException("missing check box: " + qnid);
         }
 
         return box;
@@ -213,10 +215,11 @@ public class GuiScreenController extends PopScreenController {
         String niftyId = name + "Slider";
         Slider slider = screen.findNiftyControl(niftyId, Slider.class);
         if (slider == null) {
+            String qnid = MyString.quote(niftyId);
             logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[]{
-                MyString.quote(niftyId), MyString.quote(getScreenId())
+                qnid, MyString.quote(getScreenId())
             });
-            throw new IllegalArgumentException("missing slider " + niftyId);
+            throw new IllegalArgumentException("missing slider: " + qnid);
         }
 
         return slider;
@@ -303,7 +306,9 @@ public class GuiScreenController extends PopScreenController {
 
         Tool oldMapping = toolMap.put(toolName, controller);
         if (oldMapping != null) {
-            throw new IllegalArgumentException("Two tools with the same name.");
+            String message = "Two tools with the same name: "
+                    + MyString.quote(toolName);
+            throw new IllegalArgumentException(message);
         }
     }
 
