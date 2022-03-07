@@ -8,7 +8,7 @@ ext {
 
     // module coordinates of dependencies:
     acorusCoordinates = 'com.github.stephengold:Acorus:0.9.9'
-    heartCoordinates = 'com.github.stephengold:Heart:7.3.0'
+    heartCoordinates = 'com.github.stephengold:Heart:7.4.1'
 
     // current versions of libraries:
     jme3utilitiesniftyVersion = '0.9.28-SNAPSHOT'
@@ -28,18 +28,16 @@ tasks.withType(JavaCompile) { // Java compile-time options:
 
 tasks.withType(JavaExec) { // Java runtime options:
     classpath sourceSets.main.runtimeClasspath
-    //debug true
     enableAssertions true
     //jvmArgs '-verbose:gc'
     //jvmArgs '-Xbatch'
     //jvmArgs '-Xms512m', '-Xmx512m'
     //jvmArgs '-XX:+PrintCompilation'
-    //jvmArgs '-XX:+UseConcMarkSweepGC'
     jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
 }
 
 repositories {
-    //mavenLocal()
+    //mavenLocal() // to find local SNAPSHOTs of libraries
     mavenCentral()
 }
 
