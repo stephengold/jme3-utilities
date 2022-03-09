@@ -134,12 +134,7 @@ public class TestBindScreen extends GuiApplication {
      */
     public static void main(String[] arguments) {
         TestBindScreen application = new TestBindScreen();
-        /*
-         * Mute the chatty loggers found in some imported packages.
-         */
-        Heart.setLoggingLevels(Level.WARNING);
-        Logger.getLogger(ALAudioRenderer.class.getName())
-                .setLevel(Level.SEVERE);
+        Heart.parseAppArgs(application, arguments);
 
         DisplaySizeLimits dsl = new DisplaySizeLimits(
                 600, 480, // min width, height
@@ -155,7 +150,7 @@ public class TestBindScreen extends GuiApplication {
                 settings.setVSync(true);
             }
         };
-        displaySettings.setForceDialog(true);
+        displaySettings.setForceDialog(application.showSettings);
         AppSettings appSettings = displaySettings.initialize();
         if (appSettings == null) {
             return;

@@ -65,12 +65,7 @@ public class ClockDemo extends GuiApplication {
      */
     public static void main(String[] arguments) {
         ClockDemo application = new ClockDemo();
-        /*
-         * Mute the chatty loggers found in some imported packages.
-         */
-        Heart.setLoggingLevels(Level.WARNING);
-        Logger.getLogger(ALAudioRenderer.class.getName())
-                .setLevel(Level.SEVERE);
+        Heart.parseAppArgs(application, arguments);
 
         boolean loadDefaults = true;
         AppSettings appSettings = new AppSettings(loadDefaults);

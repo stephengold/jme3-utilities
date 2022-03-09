@@ -114,12 +114,7 @@ public class TestPopups extends GuiApplication {
      */
     public static void main(String[] arguments) {
         TestPopups application = new TestPopups();
-        /*
-         * Mute the chatty loggers found in some imported packages.
-         */
-        Heart.setLoggingLevels(Level.WARNING);
-        Logger.getLogger(ALAudioRenderer.class.getName())
-                .setLevel(Level.SEVERE);
+        Heart.parseAppArgs(application, arguments);
         /*
          * Set the logging level for this class.
          */
