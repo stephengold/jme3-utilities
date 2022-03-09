@@ -27,7 +27,6 @@
 package jme3utilities.nifty.test;
 
 import com.jme3.app.StatsAppState;
-import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
@@ -146,6 +145,7 @@ public class TestBindScreen extends GuiApplication {
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);
                 settings.setGammaCorrection(true);
+                settings.setRenderer(AppSettings.LWJGL_OPENGL32);
                 settings.setSamples(8);
                 settings.setVSync(true);
             }

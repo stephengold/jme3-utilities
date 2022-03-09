@@ -27,7 +27,6 @@
 package jme3utilities.nifty.test.popups;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.audio.openal.ALAudioRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.io.File;
@@ -123,6 +122,7 @@ public class TestPopups extends GuiApplication {
         boolean loadDefaults = true;
         AppSettings appSettings = new AppSettings(loadDefaults);
         appSettings.setAudioRenderer(null);
+        appSettings.setRenderer(AppSettings.LWJGL_OPENGL32);
         /*
          * Customize the window's title bar.
          */
