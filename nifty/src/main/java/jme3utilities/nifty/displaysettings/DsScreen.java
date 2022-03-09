@@ -255,7 +255,7 @@ public class DsScreen
         for (DisplayMode mode : modes) {
             int modeHeight = mode.getHeight();
             int modeWidth = mode.getWidth();
-            DisplaySizeLimits limits = displaySettings.sizeLimits;
+            DisplaySizeLimits limits = displaySettings.getSizeLimits();
             if (limits.isValidDisplaySize(modeWidth, modeHeight)
                     && (modeHeight != height || modeWidth != width)) {
                 String modeItem = DisplaySizeDialog.describeDisplaySize(
@@ -326,7 +326,7 @@ public class DsScreen
         String defaultText
                 = DisplaySizeDialog.describeDisplaySize(width, height);
 
-        DisplaySizeLimits dsl = displaySettings.sizeLimits;
+        DisplaySizeLimits dsl = displaySettings.getSizeLimits();
         DialogController controller = new DisplaySizeDialog("Set", dsl);
 
         closeAllPopups();

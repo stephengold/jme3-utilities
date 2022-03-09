@@ -43,6 +43,7 @@ import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.nifty.displaysettings.DsScreen;
 import jme3utilities.ui.DisplaySizeLimits;
 import jme3utilities.ui.InputMode;
+import jme3utilities.ui.ShowDialog;
 import jme3utilities.ui.UiVersion;
 
 /**
@@ -135,13 +136,13 @@ public class TestBindScreen extends GuiApplication {
     public static void main(String[] arguments) {
         TestBindScreen application = new TestBindScreen();
 
-        boolean forceDialog = false;
+        ShowDialog showSettingsDialog = ShowDialog.Never;
         Level loggingLevel = Level.WARNING;
         for (String arg : arguments) {
             switch (arg) {
                 case "-s":
                 case "--showSettingsDialog":
-                    forceDialog = true;
+                    showSettingsDialog = ShowDialog.Always;
                     break;
 
                 case "-v":
@@ -167,7 +168,7 @@ public class TestBindScreen extends GuiApplication {
                 settings.setVSync(true);
             }
         };
-        displaySettings.setForceDialog(forceDialog);
+        displaySettings.setShowDialog(showSettingsDialog);
         AppSettings appSettings = displaySettings.initialize();
         if (appSettings == null) {
             return;
