@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,8 @@ import jme3utilities.ui.InputMode;
 import jme3utilities.ui.UiVersion;
 
 /**
- * GUI application for testing/demonstrating the hotkey-bindings editor
- * (BindScreen) and the display-settings editor (DsScreen).
+ * Test/demonstrate the hotkey-bindings editor (BindScreen) and the
+ * display-settings editor (DsScreen).
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -62,8 +62,8 @@ public class TestBindScreen extends GuiApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            TestBindScreen.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(TestBindScreen.class.getName());
     /**
      * action strings
      */
@@ -86,7 +86,7 @@ public class TestBindScreen extends GuiApplication {
     final private static String asYawLeft = "yaw left";
     final private static String asYawRight = "yaw right";
     /**
-     * application name for the window's title bar
+     * application name (for the title bar of the app's window)
      */
     final private static String applicationName
             = TestBindScreen.class.getSimpleName();
@@ -128,11 +128,12 @@ public class TestBindScreen extends GuiApplication {
     // new methods exposed
 
     /**
-     * Main entry point for the test harness.
+     * Main entry point for the TestBindScreen application.
      *
-     * @param unused array of command-line arguments (not null)
+     * @param arguments array of command-line arguments (not null)
      */
-    public static void main(String[] unused) {
+    public static void main(String[] arguments) {
+        TestBindScreen application = new TestBindScreen();
         /*
          * Mute the chatty loggers found in some imported packages.
          */
@@ -140,7 +141,6 @@ public class TestBindScreen extends GuiApplication {
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
-        TestBindScreen application = new TestBindScreen();
         DisplaySizeLimits dsl = new DisplaySizeLimits(
                 600, 480, // min width, height
                 2_048, 1_080 // max width, height
@@ -157,22 +157,16 @@ public class TestBindScreen extends GuiApplication {
         };
         displaySettings.setForceDialog(true);
         AppSettings appSettings = displaySettings.initialize();
-        if (appSettings != null) {
-            application.setSettings(appSettings);
-            /*
-             * If the settings dialog should be shown, it was already shown
-             * by DisplaySettings.initialize().
-             */
-            application.setShowSettings(false);
-
-            if (displaySettings.isGammaCorrection()) {
-                application.setNiftyColorsAsSrgb();
-            }
-            application.start();
-            /*
-             * ... and onward to TestBindScreen.guiInitializeApplication()!
-             */
+        if (appSettings == null) {
+            return;
         }
+        application.setSettings(appSettings);
+        /*
+         * If the settings dialog should be shown, it was already shown
+         * by DisplaySettings.initialize().
+         */
+        application.setShowSettings(false);
+        application.start();
     }
     // *************************************************************************
     // GuiApplication methods

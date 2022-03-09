@@ -46,8 +46,7 @@ import jme3utilities.nifty.dialog.MultiSelectDialog;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating popups, including modal dialogs and
- * multi-level popup menus. The application's main entry point is here.
+ * Test/demonstrate popups, including modal dialogs and multi-level popup menus.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -61,9 +60,10 @@ public class TestPopups extends GuiApplication {
     final private static Logger logger
             = Logger.getLogger(TestPopups.class.getName());
     /**
-     * application name for its window's title bar
+     * application name (for the title bar of the app's window)
      */
-    final private static String applicationName = "TestPopups";
+    final private static String applicationName
+            = TestPopups.class.getSimpleName();
     /**
      * action prefix for the multi-select dialog
      */
@@ -108,11 +108,12 @@ public class TestPopups extends GuiApplication {
     // new methods exposed
 
     /**
-     * Main entry point for the test harness.
+     * Main entry point for the TestPopups application.
      *
-     * @param unused array of command-line arguments (not null)
+     * @param arguments array of command-line arguments (not null)
      */
-    public static void main(String[] unused) {
+    public static void main(String[] arguments) {
+        TestPopups application = new TestPopups();
         /*
          * Mute the chatty loggers found in some imported packages.
          */
@@ -124,20 +125,16 @@ public class TestPopups extends GuiApplication {
          */
         logger.setLevel(Level.INFO);
 
-        TestPopups application = new TestPopups();
+        boolean loadDefaults = true;
+        AppSettings appSettings = new AppSettings(loadDefaults);
+        appSettings.setAudioRenderer(null);
         /*
          * Customize the window's title bar.
          */
-        AppSettings settings = new AppSettings(true);
-        settings.setTitle(applicationName);
-
-        settings.setAudioRenderer(null);
-        application.setSettings(settings);
-        //application.setNiftyColorsAsSrgb();
+        String title = applicationName + " " + MyString.join(arguments);
+        appSettings.setTitle(title);
+        application.setSettings(appSettings);
         application.start();
-        /*
-         * ... and onward to TestPopups.guiInitializeApplication()!
-         */
     }
     // *************************************************************************
     // GuiApplication methods
@@ -165,7 +162,7 @@ public class TestPopups extends GuiApplication {
 
         InputMode inputMode = getDefaultInputMode();
         /*
-         * Create and attach a screen controller.
+         * Create and attach a controller for the main (and only) screen.
          */
         screen = new GuiScreenController("TestPopups/mainScreen",
                 "Interface/Nifty/screens/TestPopups/mainScreen.xml",

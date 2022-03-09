@@ -27,6 +27,7 @@
 package jme3utilities.nifty.test;
 
 import com.jme3.audio.openal.ALAudioRenderer;
+import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,8 +40,7 @@ import jme3utilities.nifty.PopScreenController;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating multiple instances of the
- * BasicScreenController class. The application's main entry point is here.
+ * Test/demonstrate multiple instances of the BasicScreenController class.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -53,6 +53,11 @@ public class TestMultipleScreens extends GuiApplication {
      */
     final private static Logger logger
             = Logger.getLogger(TestMultipleScreens.class.getName());
+    /**
+     * application name (for the title bar of the app's window)
+     */
+    final private static String applicationName
+            = TestMultipleScreens.class.getSimpleName();
     // *************************************************************************
     // fields
 
@@ -72,11 +77,12 @@ public class TestMultipleScreens extends GuiApplication {
     // new methods exposed
 
     /**
-     * Main entry point for the test harness.
+     * Main entry point for the TestMultipleScreens application.
      *
-     * @param unused array of command-line arguments (not null)
+     * @param arguments array of command-line arguments (not null)
      */
-    public static void main(String[] unused) {
+    public static void main(String[] arguments) {
+        TestMultipleScreens application = new TestMultipleScreens();
         /*
          * Mute the chatty loggers found in some imported packages.
          */
@@ -88,12 +94,16 @@ public class TestMultipleScreens extends GuiApplication {
          */
         logger.setLevel(Level.INFO);
 
-        TestMultipleScreens application = new TestMultipleScreens();
-        //application.setNiftyColorsAsSrgb();
-        application.start();
+        boolean loadDefaults = true;
+        AppSettings appSettings = new AppSettings(loadDefaults);
+        appSettings.setAudioRenderer(null);
         /*
-         * ... and onward to TestMultipleScreens.guiInitializeApplication()!
+         * Customize the window's title bar.
          */
+        String title = applicationName + " " + MyString.join(arguments);
+        appSettings.setTitle(title);
+        application.setSettings(appSettings);
+        application.start();
     }
     // *************************************************************************
     // GuiApplication methods
@@ -113,7 +123,7 @@ public class TestMultipleScreens extends GuiApplication {
 
         InputMode inputMode = getDefaultInputMode();
         /*
-         * Create and attach a screen controller for each screen.
+         * Create and attach a controller for each screen.
          */
         s1 = new PopScreenController("TestMultipleScreens/s1",
                 "Interface/Nifty/screens/TestMultipleScreens/s1.xml",

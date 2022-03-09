@@ -39,8 +39,7 @@ import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating multiple instances of the
- * WindowController class. The application's main entry point is here.
+ * Test/demonstrate multiple instances of the WindowController class.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -53,15 +52,21 @@ public class TestMultipleWindows extends GuiApplication {
      */
     final private static Logger logger
             = Logger.getLogger(TestMultipleWindows.class.getName());
+    /**
+     * application name (for the title bar of the app's window)
+     */
+    final private static String applicationName
+            = TestMultipleWindows.class.getSimpleName();
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Main entry point for the test harness.
+     * Main entry point for the TestMultipleWindows application.
      *
-     * @param unused array of command-line arguments (not null)
+     * @param arguments array of command-line arguments (not null)
      */
-    public static void main(String[] unused) {
+    public static void main(String[] arguments) {
+        TestMultipleWindows application = new TestMultipleWindows();
         /*
          * Mute the chatty loggers found in some imported packages.
          */
@@ -73,17 +78,16 @@ public class TestMultipleWindows extends GuiApplication {
          */
         logger.setLevel(Level.INFO);
 
-        TestMultipleWindows application = new TestMultipleWindows();
-
-        AppSettings settings = new AppSettings(true);
-        settings.setAudioRenderer(null);
-        application.setSettings(settings);
-
-        //application.setNiftyColorsAsSrgb();
-        application.start();
+        boolean loadDefaults = true;
+        AppSettings appSettings = new AppSettings(loadDefaults);
+        appSettings.setAudioRenderer(null);
         /*
-         * ... and onward to TestMultipleWindows.guiInitializeApplication()!
+         * Customize the window's title bar.
          */
+        String title = applicationName + " " + MyString.join(arguments);
+        appSettings.setTitle(title);
+        application.setSettings(appSettings);
+        application.start();
     }
     // *************************************************************************
     // GuiApplication methods
@@ -103,7 +107,7 @@ public class TestMultipleWindows extends GuiApplication {
 
         InputMode inputMode = getDefaultInputMode();
         /*
-         * Create and attach a screen controller.
+         * Create and attach a controller for the main (and only) screen.
          */
         GuiScreenController screen = new GuiScreenController("main",
                 "Interface/Nifty/huds/test-multiple-windows.xml",

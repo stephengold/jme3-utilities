@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2020, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@
 package jme3utilities.nifty.test;
 
 import com.jme3.audio.openal.ALAudioRenderer;
+import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,8 +37,7 @@ import jme3utilities.nifty.GuiApplication;
 import jme3utilities.ui.InputMode;
 
 /**
- * GUI application for testing/demonstrating dynamic Nifty labels. The
- * application's main entry point is here.
+ * Test/demonstrate dynamic Nifty labels.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -48,17 +48,23 @@ public class ClockDemo extends GuiApplication {
     /**
      * message logger for this class
      */
-    final private static Logger logger = Logger.getLogger(
-            ClockDemo.class.getName());
+    final private static Logger logger
+            = Logger.getLogger(ClockDemo.class.getName());
+    /**
+     * application name (for the title bar of the app's window)
+     */
+    final private static String applicationName
+            = ClockDemo.class.getSimpleName();
     // *************************************************************************
     // new methods exposed
 
     /**
-     * Main entry point for the test harness.
+     * Main entry point for the ClockDemo application.
      *
-     * @param unused array of command-line arguments (not null)
+     * @param arguments array of command-line arguments (not null)
      */
-    public static void main(String[] unused) {
+    public static void main(String[] arguments) {
+        ClockDemo application = new ClockDemo();
         /*
          * Mute the chatty loggers found in some imported packages.
          */
@@ -66,18 +72,22 @@ public class ClockDemo extends GuiApplication {
         Logger.getLogger(ALAudioRenderer.class.getName())
                 .setLevel(Level.SEVERE);
 
-        ClockDemo application = new ClockDemo();
-        //application.setNiftyColorsAsSrgb();
-        application.start();
+        boolean loadDefaults = true;
+        AppSettings appSettings = new AppSettings(loadDefaults);
+        appSettings.setAudioRenderer(null);
         /*
-         * ... and onward to ClockDemo.guiInitializeApplication()!
+         * Customize the window's title bar.
          */
+        String title = applicationName + " " + MyString.join(arguments);
+        appSettings.setTitle(title);
+        application.setSettings(appSettings);
+        application.start();
     }
     // *************************************************************************
     // GuiApplication methods
 
     /**
-     * Initialize this GUI application.
+     * Initialize this application.
      */
     @Override
     public void guiInitializeApplication() {
@@ -91,7 +101,7 @@ public class ClockDemo extends GuiApplication {
 
         InputMode inputMode = getDefaultInputMode();
         /*
-         * Create and attach the screen controller.
+         * Create and attach a controller for the main (and only) screen.
          */
         ClockScreenController clockScreen = new ClockScreenController();
         clockScreen.setListener(inputMode);
