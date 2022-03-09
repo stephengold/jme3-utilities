@@ -33,6 +33,7 @@ import com.jme3.system.JmeVersion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
+import static jme3utilities.Heart.setLoggingLevels;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
@@ -133,7 +134,23 @@ public class TestBindScreen extends GuiApplication {
      */
     public static void main(String[] arguments) {
         TestBindScreen application = new TestBindScreen();
-        Heart.parseAppArgs(application, arguments);
+
+        boolean forceDialog = false;
+        Level loggingLevel = Level.WARNING;
+        for (String arg : arguments) {
+            switch (arg) {
+                case "-s":
+                case "--showSettingsDialog":
+                    forceDialog = true;
+                    break;
+
+                case "-v":
+                case "--verbose":
+                    loggingLevel = Level.INFO;
+                    break;
+            }
+        }
+        setLoggingLevels(loggingLevel);
 
         DisplaySizeLimits dsl = new DisplaySizeLimits(
                 600, 480, // min width, height
@@ -150,7 +167,7 @@ public class TestBindScreen extends GuiApplication {
                 settings.setVSync(true);
             }
         };
-        displaySettings.setForceDialog(application.showSettings);
+        displaySettings.setForceDialog(forceDialog);
         AppSettings appSettings = displaySettings.initialize();
         if (appSettings == null) {
             return;
