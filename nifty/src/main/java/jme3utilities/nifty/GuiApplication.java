@@ -61,10 +61,6 @@ abstract public class GuiApplication extends ActionApplication {
      */
     private BasicScreenController enabledScreen = null;
     /**
-     * specify colors in sRGB or linear space
-     */
-    private ColorSpace colorSpace = ColorSpace.Linear;
-    /**
      * Determine whether NiftyGUI is rendered after/over guiNode. No effect
      * after initialization. (true &rarr; NiftyGUI over guiNode, false &rarr;
      * guiNode over NiftyGUI)
@@ -124,16 +120,6 @@ abstract public class GuiApplication extends ActionApplication {
     }
 
     /**
-     * Assume that Nifty colors are specified in sRGB space.
-     */
-    public void setNiftyColorsAsSrgb() {
-        if (niftyDisplay != null) {
-            throw new IllegalStateException("too late - already initialized");
-        }
-        colorSpace = ColorSpace.sRGB;
-    }
-
-    /**
      * Specify that the NiftyGUI should be rendered after/over the guiNode.
      * Invoke this prior to initialization.
      */
@@ -167,6 +153,8 @@ abstract public class GuiApplication extends ActionApplication {
         /*
          * Start NiftyGUI -- without the batched renderer!
          */
+        ColorSpace colorSpace = renderer.isMainFrameBufferSrgb()
+                ? ColorSpace.sRGB : ColorSpace.Linear;
         niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
                 audioRenderer, guiViewPort, colorSpace);
         if (niftyPostViewFlag) {
