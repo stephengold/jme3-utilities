@@ -48,8 +48,8 @@ import java.io.IOException;
 @Deprecated
 public class GuiTrack extends AbstractCinematicEvent {
 
-    protected String screen;
-    protected Nifty nifty;
+    private String screen;
+    private Nifty nifty;
 
     public GuiTrack() {
     }
