@@ -162,10 +162,8 @@ public class TestBindScreen extends GuiApplication {
             @Override
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);
-                settings.setGammaCorrection(true);
                 settings.setRenderer(AppSettings.LWJGL_OPENGL32);
                 settings.setSamples(8);
-                settings.setVSync(true);
             }
         };
         displaySettings.setShowDialog(showSettingsDialog);
