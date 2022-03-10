@@ -56,21 +56,21 @@ import java.net.URL;
 
 public class NiftyJmeDisplay implements SceneProcessor {
 
-    protected boolean inited = false;
-    protected Nifty nifty;
-    protected AssetManager assetManager;
-    protected RenderManager renderManager;
-    protected InputManager inputManager;
-    protected RenderDeviceJme renderDev;
-    protected JmeBatchRenderBackend batchRendererBackend;
-    protected InputSystemJme inputSys;
-    protected SoundDeviceJme soundDev;
-    protected Renderer renderer;
-    protected ViewPort vp;
+    private boolean inited = false;
+    private Nifty nifty;
+    private AssetManager assetManager;
+    private RenderManager renderManager;
+    private InputManager inputManager;
+    private RenderDeviceJme renderDev;
+    private JmeBatchRenderBackend batchRendererBackend;
+    private InputSystemJme inputSys;
+    private SoundDeviceJme soundDev;
+    private Renderer renderer;
+    private ViewPort vp;
 
-    protected ResourceLocationJme resourceLocation;
+    private ResourceLocationJme resourceLocation;
 
-    protected int width, height;
+    private int width, height;
 
     protected class ResourceLocationJme implements ResourceLocation {
 
@@ -254,9 +254,10 @@ public class NiftyJmeDisplay implements SceneProcessor {
     }
 
     /**
-     * Create a standard NiftyJmeDisplay. This uses the old Nifty renderer. It's
-     * probably slower than the batched renderer and is mainly here for
-     * backwards compatibility.
+     * Create a standard NiftyJmeDisplay. This uses the old Nifty renderer.
+     * It's probably slower than the batched
+     * renderer and is mainly here for backwards compatibility.
+     * Nifty colors are assumed to be in Linear colorspace (no gamma correction).
      *
      * @param assetManager jME AssetManager
      * @param inputManager jME InputManager
@@ -270,6 +271,17 @@ public class NiftyJmeDisplay implements SceneProcessor {
         this(assetManager, inputManager, audioRenderer, vp, ColorSpace.Linear);
     }
 
+    /**
+     * Create a standard NiftyJmeDisplay. This uses the old Nifty renderer.
+     * It's probably slower than the batched
+     * renderer and is mainly here for backwards compatibility.
+     *
+     * @param assetManager jME AssetManager
+     * @param inputManager jME InputManager
+     * @param audioRenderer jME AudioRenderer
+     * @param vp Viewport to use
+     * @param colorSpace the ColorSpace to use for Nifty colors (sRGB or Linear)
+     */
     public NiftyJmeDisplay(AssetManager assetManager,
             InputManager inputManager,
             AudioRenderer audioRenderer,
