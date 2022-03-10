@@ -72,7 +72,7 @@ publishing {
             from components.java
             groupId project.ext.group
             pom {
-                description = project.description
+                description = 'An experimental library for jMonkeyEngine.'
                 developers {
                     developer {
                         email = 'sgold@sonic.net'
