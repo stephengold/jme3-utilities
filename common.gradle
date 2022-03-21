@@ -59,14 +59,14 @@ repositories {
 
 // custom tasks for creating source/javadoc JARs
 
-task javadocJar(type: Jar) {
+tasks.register('javadocJar', Jar) {
     archiveClassifier = 'javadoc'
     dependsOn 'javadoc'
     description 'Creates a JAR of javadoc.'
     from javadoc.destinationDir
 }
 
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     archiveClassifier = 'sources'
     description 'Creates a JAR of sourcecode.'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

@@ -17,7 +17,7 @@ javadocJar { archiveBaseName = project.ext.baseName }
 sourcesJar { archiveBaseName = project.ext.baseName }
 
 build.dependsOn('pom')
-task('pom', type: Copy) {
+tasks.register('pom', Copy) {
     dependsOn 'generatePomFileForMavenPublication'
     description 'Copies the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml"

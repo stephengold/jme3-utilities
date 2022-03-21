@@ -25,43 +25,43 @@ dependencies {
 
 clean.dependsOn('cleanDLLs', 'cleanDyLibs', 'cleanLogs', 'cleanSOs', 'cleanWrittenAssets')
 
-task cleanDLLs(type: Delete) { // extracted Windows native libraries
+tasks.register('cleanDLLs', Delete) { // extracted Windows native libraries
     delete fileTree(dir: '.', include: '*.dll')
 }
-task cleanDyLibs(type: Delete) { // extracted macOSX native libraries
+tasks.register('cleanDyLibs', Delete) { // extracted macOS native libraries
     delete fileTree(dir: '.', include: '*.dylib')
 }
-task cleanLogs(type: Delete) { // JVM crash logs
+tasks.register('cleanLogs', Delete) { // JVM crash logs
     delete fileTree(dir: '.', include: 'hs_err_pid*.log')
 }
-task cleanSOs(type: Delete) { // extracted Linux and Android native libraries
+tasks.register('cleanSOs', Delete) { // extracted Linux and Android native libraries
     delete fileTree(dir: '.', include: '*.so')
 }
-task cleanWrittenAssets(type: Delete) { // Acorus output directory
+tasks.register('cleanWrittenAssets', Delete) { // Acorus output directory
     delete 'Written Assets'
 }
 
 // tasks to run the test apps:
 
-task TestPolygon3f(type: JavaExec) {
+tasks.register('TestPolygon3f', JavaExec) {
     mainClass = 'jme3utilities.math.test.TestPolygon3f'
 }
-task TestMyShell3f(type: JavaExec) {
+tasks.register('TestMyShell3f', JavaExec) {
     mainClass = 'jme3utilities.math.test.TestShell3f'
 }
 
-task ClockDemo(type: JavaExec) {
+tasks.register('ClockDemo', JavaExec) {
     mainClass = 'jme3utilities.nifty.test.ClockDemo'
 }
-task TestBindScreen(type: JavaExec) {
+tasks.register('TestBindScreen', JavaExec) {
     mainClass = 'jme3utilities.nifty.test.TestBindScreen'
 }
-task TestMultipleScreens(type: JavaExec) {
+tasks.register('TestMultipleScreens', JavaExec) {
     mainClass = 'jme3utilities.nifty.test.TestMultipleScreens'
 }
-task TestMultipleWindows(type: JavaExec) {
+tasks.register('TestMultipleWindows', JavaExec) {
     mainClass = 'jme3utilities.nifty.test.TestMultipleWindows'
 }
-task TestPopups(type: JavaExec) {
+tasks.register('TestPopups', JavaExec) {
     mainClass = 'jme3utilities.nifty.test.popups.TestPopups'
 }

@@ -1,16 +1,19 @@
+// Gradle build script for the jme3-utilities project
+
 import org.gradle.api.artifacts.*
 
 plugins {
-    id 'base' // To add "clean" task to the root project.
+    id 'base' // to add a "clean" task to the root project
 }
 
 subprojects {
     apply from: rootProject.file('common.gradle')
 }
 
-task mergedJavadoc(type: Javadoc, description: 'Creates Javadoc from all the projects.') {
-    title = 'All modules'
+tasks.register('mergedJavadoc', Javadoc) {
+    description = 'Creates Javadoc from all the projects.'
     destinationDir = new File(project.buildDir, 'merged-javadoc')
+    title = 'All modules'
 
     // Note: The closures below are executed lazily.
     source {

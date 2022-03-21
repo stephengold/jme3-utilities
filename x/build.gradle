@@ -20,11 +20,11 @@ dependencies {
 
 // publishing tasks
 
-task('install') {
+tasks.register('install') {
     dependsOn 'publishMavenPublicationToMavenLocal'
     description 'Installs Maven artifacts to the local repository.'
 }
-task('release') {
+tasks.register('release') {
     dependsOn 'publishMavenPublicationToOSSRHRepository'
     description 'Stages Maven artifacts to Sonatype OSSRH.'
 }
@@ -34,28 +34,28 @@ javadocJar { archiveBaseName = project.ext.baseName }
 sourcesJar { archiveBaseName = project.ext.baseName }
 
 build.dependsOn('module', 'moduleAsc', 'pom', 'pomAsc')
-task('module', type: Copy) {
+tasks.register('module', Copy) {
     dependsOn 'generateMetadataFileForMavenPublication'
     description 'Copies the module metadata to build/libs.'
     from "${buildDir}/publications/maven/module.json"
     into "${buildDir}/libs"
     rename 'module.json', project.ext.baseName + '.module'
 }
-task('moduleAsc', type: Copy) {
+tasks.register('moduleAsc', Copy) {
     dependsOn 'signMavenPublication'
     description 'Copies the signature of the module metadata to build/libs.'
     from "${buildDir}/publications/maven/module.json.asc"
     into "${buildDir}/libs"
     rename 'module.json.asc', project.ext.baseName + '.module.asc'
 }
-task('pom', type: Copy) {
+tasks.register('pom', Copy) {
     dependsOn 'generatePomFileForMavenPublication'
     description 'Copies the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml"
     into "${buildDir}/libs"
     rename 'pom-default.xml', project.ext.baseName + '.pom'
 }
-task('pomAsc', type: Copy) {
+tasks.register('pomAsc', Copy) {
     dependsOn 'signMavenPublication'
     description 'Copies the signature of the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml.asc"
