@@ -1,5 +1,15 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.28 released on TBD
+
+ + Determine the color space automatically
+   in `actionInitializeApplication()`. (API changes)
+ + Privatize fields in the `GuiTrack`, `NiftyJmeDisplay`,
+   and `SoundDeviceJme` classes. (API changes)
+ + Bypass the Settings Dialog when running tests on macOS.
+ + Base on version 3.5.1-stable of JMonkeyEngine, version 7.4.1 of the Heart
+   library, and version 0.9.10 of Acorus.
+
 ## Version 0.9.27 released on 21 February 2022
 
  + Manage radio buttons within tools.
