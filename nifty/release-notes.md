@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.28 released on TBD
+## Version 0.9.28 released on 21 March 2022
 
  + Determine the color space automatically
    in `actionInitializeApplication()`. (API changes)

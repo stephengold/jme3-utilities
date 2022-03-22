@@ -60,6 +60,6 @@ public final class LibraryVersion {
      * @return branch and revision (not null, not empty)
      */
     public static String versionShort() {
-        return "master 0.9.28";
+        return "master 0.9.29-SNAPSHOT";
     }
 }
