@@ -11,26 +11,26 @@ It contains 4 sub-projects:
 3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
 4. tests: demos, examples, and test software
 
-The `SkyControl` library, formerly a sub-project, is now a separate project
-at [GitHub][skycontrol].
+The `SkyControl` library, formerly a sub-project, is now [a separate project
+at GitHub][skycontrol].
 
 The textures sub-project is now part of
 [the SkyControl Project][skycontrol].
 
-The `jme3-utilities-heart` library, formerly a sub-project, is now a separate project
-at [GitHub][heart].
+The `jme3-utilities-heart` library, formerly a sub-project, is now [a separate project
+at GitHub][heart].
 
-The `jme3-utilities-ui` library, formerly a sub-project, is now a separate project
-at [GitHub][acorus].
+The `jme3-utilities-ui` library, formerly a sub-project, is now [a separate project
+at GitHub][acorus].
 
 The `jme3-utilities-debug` library, formerly a sub-project, is now part of
 [the Heart Library][heart].
 
-The `Minie` library, formerly a sub-project, is now a separate project
-at [GitHub][minie].
+The `Minie` library, formerly a sub-project, is now [a separate project
+at GitHub][minie].
 
-The `Wes` library, formerly a sub-project, is now a separate project
-at [GitHub][wes].
+The `Wes` library, formerly a sub-project, is now [a separate project
+at GitHub][wes].
 
 Complete source code (in Java) is provided under
 [a 3-clause BSD license][license].
@@ -51,10 +51,13 @@ Complete source code (in Java) is provided under
 
 ## How to build Jme3-utilities from source
 
-1. Install a [Java Development Kit (JDK)][openJDK],
+1. Install a [Java Development Kit (JDK)][adoptium],
    if you don't already have one.
 2. Point the `JAVA_HOME` environment variable to your JDK installation:
-  + using Bash: `export JAVA_HOME="` *path to installation* `"`
+   (The path might be something like "C:\Program Files\Java\jre1.8.0_301"
+   or "/usr/lib/jvm/java-8-openjdk-amd64/" or
+   "/Library/Java/JavaVirtualMachines/liberica-jdk-17-full.jdk/Contents/Home" .)
+  + using Bash or Zsh: `export JAVA_HOME="` *path to installation* `"`
   + using Windows Command Prompt: `set JAVA_HOME="` *path to installation* `"`
   + using PowerShell: `$env:JAVA_HOME = '` *path to installation* `'`
 3. Download and extract the Jme3-utilities source code from GitHub:
@@ -62,18 +65,18 @@ Complete source code (in Java) is provided under
   + `cd jme3-utilities`
   + `git checkout -b latest nifty-0.9.28`
 4. Run the [Gradle] wrapper:
-  + using Bash or PowerShell: `./gradlew build`
+  + using Bash or PowerShell or Zsh: `./gradlew build`
   + using Windows Command Prompt: `.\gradlew build`
 
 After a successful build,
 Maven artifacts will be found in `*/build/libs`.
 
 You can install the artifacts to your local Maven repository:
-+ using Bash or PowerShell: `./gradlew install`
++ using Bash or PowerShell or Zsh: `./gradlew install`
 + using Windows Command Prompt: `.\gradlew install`
 
 You can restore the project to a pristine state:
-+ using Bash or PowerShell: `./gradlew clean`
++ using Bash or PowerShell or Zsh: `./gradlew clean`
 + using Windows Command Prompt: `.\gradlew clean`
 
 [Jump to table of contents](#toc)
@@ -169,6 +172,7 @@ correct the situation: sgold@sonic.net
 
 
 [acorus]: https://github.com/stephengold/Acorus "Acorus Project"
+[adoptium]: https://adoptium.net/releases.html "Adoptium Project"
 [ant]: https://ant.apache.org "Apache Ant Project"
 [chrome]: https://www.google.com/chrome "Chrome"
 [elements]: https://www.adobe.com/products/photoshop-elements.html "Photoshop Elements"
@@ -190,7 +194,6 @@ correct the situation: sgold@sonic.net
 [mint]: https://linuxmint.com "Linux Mint Project"
 [netbeans]: https://netbeans.org "NetBeans Project"
 [nifty]: https://nifty-gui.github.io/nifty-gui "Nifty GUI Project"
-[openJDK]: https://openjdk.java.net "OpenJDK Project"
 [skycontrol]: https://github.com/stephengold/SkyControl "SkyControl Project"
 [sonatype]: https://www.sonatype.com "Sonatype"
 [utilities]: https://github.com/stephengold/jme3-utilities "Jme3-utilities Project"
