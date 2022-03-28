@@ -153,7 +153,7 @@ public class TestBindScreen extends GuiApplication {
         }
         setLoggingLevels(loggingLevel);
 
-        String title = applicationName + " " + MyString.join(arguments);
+        final String title = applicationName + " " + MyString.join(arguments);
         DisplaySizeLimits dsl = new DisplaySizeLimits(
                 600, 480, // min width, height
                 2_048, 1_080 // max width, height
