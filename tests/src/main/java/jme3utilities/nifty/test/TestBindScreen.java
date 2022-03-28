@@ -153,6 +153,7 @@ public class TestBindScreen extends GuiApplication {
         }
         setLoggingLevels(loggingLevel);
 
+        String title = applicationName + " " + MyString.join(arguments);
         DisplaySizeLimits dsl = new DisplaySizeLimits(
                 600, 480, // min width, height
                 2_048, 1_080 // max width, height
@@ -162,10 +163,13 @@ public class TestBindScreen extends GuiApplication {
             @Override
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);
+                settings.setAudioRenderer(null);
                 settings.setRenderer(AppSettings.LWJGL_OPENGL32);
                 settings.setSamples(8);
+                settings.setTitle(title); // Customize the window's title bar.
             }
         };
+
         displaySettings.setShowDialog(showSettingsDialog);
         AppSettings appSettings = displaySettings.initialize();
         if (appSettings == null) {
@@ -177,6 +181,7 @@ public class TestBindScreen extends GuiApplication {
          * by DisplaySettings.initialize().
          */
         application.setShowSettings(false);
+
         application.start();
     }
     // *************************************************************************
@@ -194,7 +199,7 @@ public class TestBindScreen extends GuiApplication {
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "Heart version is {0}",
                 MyString.quote(Heart.versionShort()));
-        logger.log(Level.INFO, "jme3-utilities-ui version is {0}",
+        logger.log(Level.INFO, "Acorus version is {0}",
                 MyString.quote(UiVersion.versionShort()));
         logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",
                 MyString.quote(LibraryVersion.versionShort()));
@@ -204,9 +209,8 @@ public class TestBindScreen extends GuiApplication {
          * Disable flyCam and stats display.
          */
         flyCam.setEnabled(false);
-        StatsAppState sas = stateManager.getState(StatsAppState.class);
-        sas.setDisplayFps(false);
-        sas.setDisplayStatView(false);
+        setDisplayFps(false);
+        setDisplayStatView(false);
         /*
          * Create and attach the starfield animation.
          */
