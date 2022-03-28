@@ -51,6 +51,7 @@ import jme3utilities.nifty.dialog.DisplaySizeDialog;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.DisplaySettings;
 import jme3utilities.ui.DisplaySizeLimits;
+import jme3utilities.ui.DsUtils;
 import jme3utilities.ui.InputMode;
 
 /**
@@ -252,8 +253,8 @@ public class DsScreen
             DisplaySizeLimits limits = displaySettings.getSizeLimits();
             if (limits.isValidDisplaySize(modeWidth, modeHeight)
                     && (modeHeight != height || modeWidth != width)) {
-                String modeItem = DisplaySizeDialog.describeDisplaySize(
-                        modeWidth, modeHeight);
+                String modeItem
+                        = DsUtils.describeDimensions(modeWidth, modeHeight);
                 if (!builder.hasItem(modeItem)) {
                     builder.add(modeItem);
                 }
@@ -314,8 +315,7 @@ public class DsScreen
     public void setDimensions() {
         int height = displaySettings.height();
         int width = displaySettings.width();
-        String defaultText
-                = DisplaySizeDialog.describeDisplaySize(width, height);
+        String defaultText = DsUtils.describeDimensions(width, height);
 
         DisplaySizeLimits dsl = displaySettings.getSizeLimits();
         DialogController controller = new DisplaySizeDialog("Set", dsl);
@@ -546,7 +546,7 @@ public class DsScreen
             } else if ("max".equals(lcArg)) {
                 displaySettings.setMaxDimensions();
             } else {
-                int[] wh = DisplaySizeDialog.parseDisplaySize(lcArg);
+                int[] wh = DsUtils.parseDisplaySize(lcArg);
                 if (wh == null) {
                     handled = false;
                 } else {
@@ -575,8 +575,7 @@ public class DsScreen
     private void updateButtonTexts() {
         int width = displaySettings.width();
         int height = displaySettings.height();
-        String dimensionsButton
-                = DisplaySizeDialog.describeDisplaySize(width, height);
+        String dimensionsButton = DsUtils.describeDimensions(width, height);
         setButtonText("displayDimensions", dimensionsButton);
 
         int msaaFactor = displaySettings.msaaFactor();

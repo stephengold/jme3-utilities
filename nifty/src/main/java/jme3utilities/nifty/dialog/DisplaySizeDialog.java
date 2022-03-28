@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2019, Stephen Gold
+ Copyright (c) 2018-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -72,47 +72,6 @@ public class DisplaySizeDialog extends TextEntryDialog {
         super(description);
         Validate.nonNull(dsl, "limits");
         limits = dsl;
-    }
-    // *************************************************************************
-    // new methods exposed
-
-    /**
-     * Describe the specified display dimensions.
-     *
-     * @param width width in pixels (&gt;0)
-     * @param height height in pixels (&gt;0)
-     * @return a textual description (not null, not empty)
-     */
-    public static String describeDisplaySize(int width, int height) {
-        Validate.positive(width, "width");
-        Validate.positive(height, "height");
-
-        String description = String.format("%d x %d", width, height);
-        return description;
-    }
-
-    /**
-     * Parse the specified text to obtain display dimensions.
-     *
-     * @param text the input text (not null, not empty)
-     * @return a new array containing the width and height, or null for a syntax
-     * error
-     */
-    public static int[] parseDisplaySize(String text) {
-        Validate.nonEmpty(text, "text");
-
-        String lcText = text.toLowerCase(Locale.ROOT);
-        Matcher matcher = dimensionsPattern.matcher(lcText);
-        int[] result = null;
-        if (matcher.find()) {
-            result = new int[2];
-            String widthText = matcher.group(1);
-            result[0] = Integer.parseInt(widthText);
-            String heightText = matcher.group(2);
-            result[1] = Integer.parseInt(heightText);
-        }
-
-        return result;
     }
     // *************************************************************************
     // TextEntryDialog methods
