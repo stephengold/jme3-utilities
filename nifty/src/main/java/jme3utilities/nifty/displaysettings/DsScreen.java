@@ -54,7 +54,7 @@ import jme3utilities.ui.DisplaySizeLimits;
 import jme3utilities.ui.InputMode;
 
 /**
- * Screen controller for the display settings editor.
+ * Screen controller for the display-settings editor.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -67,7 +67,7 @@ public class DsScreen
     /**
      * message logger for this class
      */
-    final private static Logger logger
+    final static Logger logger
             = Logger.getLogger(DsScreen.class.getName());
     /**
      * action prefix: argument is a decimal number of bits
@@ -95,15 +95,15 @@ public class DsScreen
     // fields
 
     /**
-     * display settings: set by constructor
+     * proposed display settings: set by constructor
      */
     final private DisplaySettings displaySettings;
     /**
-     * input mode for this screen controller: set by constructor
+     * InputMode for this ScreenController: set by constructor
      */
     final private DsInputMode inputMode;
     /**
-     * input mode to return to
+     * InputMode to return to
      */
     private InputMode returnMode = null;
     // *************************************************************************
@@ -117,8 +117,8 @@ public class DsScreen
     public DsScreen(DisplaySettings ds) {
         super(name, "Interface/Nifty/screens/ds.xml", InitialState.Disabled);
 
-        displaySettings = ds;
-        inputMode = new DsInputMode(this);
+        this.displaySettings = ds;
+        this.inputMode = new DsInputMode(this);
         setListener(inputMode);
         influence(inputMode);
         inputMode.influence(this);
@@ -209,10 +209,7 @@ public class DsScreen
         if (displaySettings.isFullscreen()) {
             int height = displaySettings.height();
             int width = displaySettings.width();
-            GraphicsEnvironment environment
-                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice device = environment.getDefaultScreenDevice();
-            DisplayMode[] modes = device.getDisplayModes();
+            DisplayMode[] modes = getDisplayModes();
             for (DisplayMode mode : modes) {
                 int modeDepth = mode.getBitDepth();
                 int modeHeight = mode.getHeight();
@@ -248,10 +245,7 @@ public class DsScreen
         int height = displaySettings.height();
         int width = displaySettings.width();
 
-        GraphicsEnvironment environment
-                = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = environment.getDefaultScreenDevice();
-        DisplayMode[] modes = device.getDisplayModes();
+        DisplayMode[] modes = getDisplayModes();
         for (DisplayMode mode : modes) {
             int modeHeight = mode.getHeight();
             int modeWidth = mode.getWidth();
@@ -277,7 +271,7 @@ public class DsScreen
         PopupMenuBuilder builder = new PopupMenuBuilder();
 
         int selectedFactor = displaySettings.msaaFactor();
-        for (int factor : new int[]{1, 2, 4, 6, 8, 16}) {
+        for (int factor : new int[]{1, 2, 4, 6, 8, 16}) { // TODO use DsUtils
             if (factor != selectedFactor) {
                 String description = describeMsaaFactor(factor);
                 builder.add(description);
@@ -297,10 +291,7 @@ public class DsScreen
             int refreshRate = displaySettings.refreshRate();
             int height = displaySettings.height();
             int width = displaySettings.width();
-            GraphicsEnvironment env
-                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice device = env.getDefaultScreenDevice();
-            DisplayMode[] modes = device.getDisplayModes();
+            DisplayMode[] modes = getDisplayModes();
             for (DisplayMode mode : modes) {
                 int modeHeight = mode.getHeight();
                 int modeRate = mode.getRefreshRate();
@@ -477,6 +468,20 @@ public class DsScreen
     }
 
     /**
+     * Enumerate the available display modes for the default screen.
+     *
+     * @return an array of modes
+     */
+    private static DisplayMode[] getDisplayModes() {
+        GraphicsEnvironment graphicsEnvironment
+                = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = graphicsEnvironment.getDefaultScreenDevice();
+        DisplayMode[] result = device.getDisplayModes();
+
+        return result;
+    }
+
+    /**
      * Process an ongoing action that starts with the word "select".
      *
      * @param actionString textual description of the action (not null)
@@ -500,7 +505,7 @@ public class DsScreen
         } else if (actionString.startsWith(apSelectMsaaFactor)) {
             arg = MyString.remainder(actionString, apSelectMsaaFactor);
             int factor = 16;
-            for (int f : new int[]{1, 2, 4, 6, 8}) {
+            for (int f : new int[]{1, 2, 4, 6, 8}) { // TODO use DsUtils
                 String aaDescription = describeMsaaFactor(f);
                 if (arg.equals(aaDescription)) {
                     factor = f;
