@@ -163,7 +163,7 @@ public class DsScreen
             boolean isChecked = event.isChecked();
             switch (checkBoxName) {
                 case "fullscreen":
-                    displaySettings.setFullscreen(isChecked);
+                    toggleFullscreen();
                     break;
 
                 case "gammaCorrection":
@@ -194,24 +194,38 @@ public class DsScreen
             Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
             for (DisplayMode mode : modes) {
                 int modeDepth = mode.getBitDepth();
+                if (mode.getHeight() == height
+                        && mode.getWidth() == width) {
+                    String desc = Integer.toString(modeDepth);
+                    if (!builder.hasItem(desc)) {
+                        builder.add(desc);
+                    }
+                }
+            }
+            if (builder.isEmpty()) {
+                for (DisplayMode mode : modes) {
+                    int modeDepth = mode.getBitDepth();
+                    String desc = Integer.toString(modeDepth);
+                    if (!builder.hasItem(desc)) {
+                        builder.add(desc);
+                    }
+                }
+            }
+            for (DisplayMode mode : modes) {
+                int modeDepth = mode.getBitDepth();
                 int modeHeight = mode.getHeight();
                 int modeWidth = mode.getWidth();
                 if (modeDepth >= 16 && modeDepth != depth
                         && modeHeight == height && modeWidth == width) {
-                    String modeItem = Integer.toString(modeDepth);
-                    if (!builder.hasItem(modeItem)) {
-                        builder.add(modeItem);
+                    String desc = Integer.toString(modeDepth);
+                    if (!builder.hasItem(desc)) {
+                        builder.add(desc);
                     }
                 }
             }
-
-        } else {
-            if (depth != 24) {
-                builder.add("24");
-            }
-            if (depth != 32) {
-                builder.add("32");
-            }
+        }
+        if (builder.isEmpty()) {
+            builder.add("24");
         }
 
         showPopupMenu(apSelectColorDepth, builder);
@@ -224,20 +238,39 @@ public class DsScreen
     public void selectDimensions() {
         PopupMenuBuilder builder = new PopupMenuBuilder();
 
-        int height = displaySettings.height();
-        int width = displaySettings.width();
-
+        int depth = displaySettings.colorDepth();
+        int rate = displaySettings.refreshRate();
+        RectSizeLimits sizeLimits = displaySettings.getSizeLimits();
+        /*
+         * Enumerate the most relevant display sizes.
+         */
         Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
         for (DisplayMode mode : modes) {
-            int modeHeight = mode.getHeight();
-            int modeWidth = mode.getWidth();
-            RectSizeLimits limits = displaySettings.getSizeLimits();
-            if (limits.isInRange(modeWidth, modeHeight)
-                    && (modeHeight != height || modeWidth != width)) {
-                String modeItem
-                        = DsUtils.describeDimensions(modeWidth, modeHeight);
-                if (!builder.hasItem(modeItem)) {
-                    builder.add(modeItem);
+            int modeDepth = mode.getBitDepth();
+            if (modeDepth <= 0 || depth <= 0 || modeDepth == depth) {
+
+                int modeRate = mode.getRefreshRate();
+                if (modeRate <= 0 || rate <= 0 || modeRate == rate) {
+                    int height = mode.getHeight();
+                    int width = mode.getWidth();
+                    if (sizeLimits.isInRange(width, height)) {
+                        String desc = DsUtils.describeDimensions(width, height);
+                        if (!builder.hasItem(desc)) {
+                            builder.add(desc);
+                        }
+                    }
+                }
+            }
+        }
+        if (builder.isEmpty()) {
+            for (DisplayMode mode : modes) {
+                int height = mode.getHeight();
+                int width = mode.getWidth();
+                if (sizeLimits.isInRange(width, height)) {
+                    String desc = DsUtils.describeDimensions(width, height);
+                    if (!builder.hasItem(desc)) {
+                        builder.add(desc);
+                    }
                 }
             }
         }
@@ -268,26 +301,37 @@ public class DsScreen
      * refreshRate " action prefix.
      */
     public void selectRefreshRate() {
-        if (displaySettings.isFullscreen()) {
-            PopupMenuBuilder builder = new PopupMenuBuilder();
-            int refreshRate = displaySettings.refreshRate();
-            int height = displaySettings.height();
-            int width = displaySettings.width();
-            Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
-            for (DisplayMode mode : modes) {
-                int modeHeight = mode.getHeight();
+        if (!displaySettings.isFullscreen()) {
+            return;
+        }
+
+        PopupMenuBuilder builder = new PopupMenuBuilder();
+        int height = displaySettings.height();
+        int width = displaySettings.width();
+        Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
+        /*
+         * Enumerate the most relevant refresh rates.
+         */
+        for (DisplayMode mode : modes) {
+            if (mode.getHeight() == height && mode.getWidth() == width) {
                 int modeRate = mode.getRefreshRate();
-                int modeWidth = mode.getWidth();
-                if (modeRate != refreshRate
-                        && modeHeight == height && modeWidth == width) {
-                    String modeItem = Integer.toString(modeRate);
-                    if (!builder.hasItem(modeItem)) {
-                        builder.add(modeItem);
-                    }
+                String desc = Integer.toString(modeRate);
+                if (!builder.hasItem(desc)) {
+                    builder.add(desc);
                 }
             }
-            showPopupMenu(apSetRefreshRate, builder);
         }
+        if (builder.isEmpty()) {
+            for (DisplayMode mode : modes) {
+                int modeRate = mode.getRefreshRate();
+                String desc = Integer.toString(modeRate);
+                if (!builder.hasItem(desc)) {
+                    builder.add(desc);
+                }
+            }
+        }
+
+        showPopupMenu(apSetRefreshRate, builder);
     }
 
     /**
@@ -534,6 +578,42 @@ public class DsScreen
         }
 
         return handled;
+    }
+
+    /**
+     * Toggle fullscreen between enabled and disabled.
+     */
+    private void toggleFullscreen() {
+        int rate;
+        int depth;
+
+        boolean isFullScreen = displaySettings.isFullscreen();
+        if (isFullScreen) { // switch to windowed mode
+            rate = DisplayMode.REFRESH_RATE_UNKNOWN;
+            depth = DisplayMode.BIT_DEPTH_MULTI;
+            displaySettings.scaleSize(0.8f, 0.8f);
+
+        } else { // switch to full-screen mode
+            DisplayMode mode = DsUtils.displayMode();
+            rate = mode.getRefreshRate();
+            if (rate <= 0) {
+                rate = 60;
+            }
+            depth = mode.getBitDepth();
+            if (depth <= 0) {
+                depth = 24;
+            }
+            RectSizeLimits limits = displaySettings.getSizeLimits();
+            int width = mode.getWidth();
+            int height = mode.getHeight();
+            if (limits.isInRange(width, height)) {
+                displaySettings.setDimensions(width, height);
+            }
+        }
+
+        displaySettings.setRefreshRate(rate);
+        displaySettings.setColorDepth(depth);
+        displaySettings.setFullscreen(!isFullScreen);
     }
 
     /**
