@@ -28,10 +28,9 @@ package jme3utilities.nifty.dialog;
 
 import java.util.Locale;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import jme3utilities.Validate;
 import jme3utilities.math.RectSizeLimits;
+import jme3utilities.ui.DsUtils;
 
 /**
  * Controller for a text-entry dialog box used to input display dimensions.
@@ -47,11 +46,6 @@ public class DisplaySizeDialog extends TextEntryDialog {
      */
     final private static Logger logger
             = Logger.getLogger(DisplaySizeDialog.class.getName());
-    /**
-     * pattern for matching a display dimensions
-     */
-    final private static Pattern dimensionsPattern
-            = Pattern.compile("^\\s*(\\d+)\\s*[x,]\\s*(\\d+)\\s*");
     // *************************************************************************
     // fields
 
@@ -92,15 +86,13 @@ public class DisplaySizeDialog extends TextEntryDialog {
         if ("min".equals(lcInput) || "max".equals(lcInput)) {
             msg = "";
         } else {
-            Matcher matcher = dimensionsPattern.matcher(lcInput);
-            if (matcher.find()) {
-                String widthText = matcher.group(1);
-                int width = Integer.parseInt(widthText);
-                String heightText = matcher.group(2);
-                int height = Integer.parseInt(heightText);
-                msg = sizeLimits.feedbackInRange(width, height);
-            } else {
+            int size[] = DsUtils.parseDisplaySize(lcInput);
+            if (size == null) {
                 msg = "improperly formatted display dimensions";
+            } else {
+                int width = size[0];
+                int height = size[1];
+                msg = sizeLimits.feedbackInRange(width, height);
             }
         }
 

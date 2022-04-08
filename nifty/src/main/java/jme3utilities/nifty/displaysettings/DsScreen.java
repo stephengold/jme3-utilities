@@ -36,8 +36,6 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import java.awt.DisplayMode;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,7 +74,7 @@ public class DsScreen
     final public static String apSelectColorDepth = "select colorDepth ";
     /**
      * action prefix: argument is a number of samples per pixel, formatted using
-     * {@link #describeMsaaFactor(int)}
+     * DsUtils.describeMsaaFactor()
      */
     final public static String apSelectMsaaFactor = "select msaaFactor ";
     /**
@@ -146,23 +144,6 @@ public class DsScreen
     }
 
     /**
-     * Describe an MSAA sampling factor.
-     *
-     * @param factor samples per pixel (&ge;0, &le;16)
-     * @return a textual description (not null, not empty)
-     */
-    public static String describeMsaaFactor(int factor) {
-        String description;
-        if (factor <= 1) {
-            description = "disabled";
-        } else {
-            description = String.format("%dx", factor);
-        }
-
-        return description;
-    }
-
-    /**
      * Callback handler that Nifty invokes after a checkbox changes.
      *
      * @param checkBoxId Nifty element id of the checkbox (not null)
@@ -210,7 +191,7 @@ public class DsScreen
         if (displaySettings.isFullscreen()) {
             int height = displaySettings.height();
             int width = displaySettings.width();
-            DisplayMode[] modes = getDisplayModes();
+            Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
             for (DisplayMode mode : modes) {
                 int modeDepth = mode.getBitDepth();
                 int modeHeight = mode.getHeight();
@@ -246,7 +227,7 @@ public class DsScreen
         int height = displaySettings.height();
         int width = displaySettings.width();
 
-        DisplayMode[] modes = getDisplayModes();
+        Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
         for (DisplayMode mode : modes) {
             int modeHeight = mode.getHeight();
             int modeWidth = mode.getWidth();
@@ -272,9 +253,9 @@ public class DsScreen
         PopupMenuBuilder builder = new PopupMenuBuilder();
 
         int selectedFactor = displaySettings.msaaFactor();
-        for (int factor : new int[]{1, 2, 4, 6, 8, 16}) { // TODO use DsUtils
+        for (int factor = 1; factor <= 16; ++factor) {
             if (factor != selectedFactor) {
-                String description = describeMsaaFactor(factor);
+                String description = DsUtils.describeMsaaFactor(factor);
                 builder.add(description);
             }
         }
@@ -292,7 +273,7 @@ public class DsScreen
             int refreshRate = displaySettings.refreshRate();
             int height = displaySettings.height();
             int width = displaySettings.width();
-            DisplayMode[] modes = getDisplayModes();
+            Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
             for (DisplayMode mode : modes) {
                 int modeHeight = mode.getHeight();
                 int modeRate = mode.getRefreshRate();
@@ -468,20 +449,6 @@ public class DsScreen
     }
 
     /**
-     * Enumerate the available display modes for the default screen.
-     *
-     * @return an array of modes
-     */
-    private static DisplayMode[] getDisplayModes() {
-        GraphicsEnvironment graphicsEnvironment
-                = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = graphicsEnvironment.getDefaultScreenDevice();
-        DisplayMode[] result = device.getDisplayModes();
-
-        return result;
-    }
-
-    /**
      * Process an ongoing action that starts with the word "select".
      *
      * @param actionString textual description of the action (not null)
@@ -505,8 +472,8 @@ public class DsScreen
         } else if (actionString.startsWith(apSelectMsaaFactor)) {
             arg = MyString.remainder(actionString, apSelectMsaaFactor);
             int factor = 16;
-            for (int f : new int[]{1, 2, 4, 6, 8}) { // TODO use DsUtils
-                String aaDescription = describeMsaaFactor(f);
+            for (int f = 1; f <= 16; ++f) {
+                String aaDescription = DsUtils.describeMsaaFactor(f);
                 if (arg.equals(aaDescription)) {
                     factor = f;
                     break;
@@ -579,7 +546,7 @@ public class DsScreen
         setButtonText("displayDimensions", dimensionsButton);
 
         int msaaFactor = displaySettings.msaaFactor();
-        String msaaButton = describeMsaaFactor(msaaFactor);
+        String msaaButton = DsUtils.describeMsaaFactor(msaaFactor);
         setButtonText("displayMsaa", msaaButton);
 
         String refreshRateButton = "";
