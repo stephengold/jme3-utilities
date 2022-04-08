@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020-2021, Stephen Gold
+ Copyright (c) 2020-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,9 @@ package jme3utilities.nifty.test;
 
 import com.jme3.system.AppSettings;
 import java.util.logging.Logger;
+import jme3utilities.math.RectSizeLimits;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.DisplaySettings;
-import jme3utilities.ui.DisplaySizeLimits;
 
 /**
  * A simplified interface to a Nifty application's display settings.
@@ -54,11 +54,11 @@ public class TbsDisplaySettings extends DisplaySettings {
      *
      * @param app the current application instance (not null, alias created)
      * @param windowTitle (not null)
-     * @param dsl display-size limits (not null)
+     * @param sizeLimits display-size limits (not null)
      */
     public TbsDisplaySettings(ActionApplication app, String windowTitle,
-            DisplaySizeLimits dsl) {
-        super(app, windowTitle, dsl);
+            RectSizeLimits sizeLimits) {
+        super(app, windowTitle, sizeLimits);
     }
     // *************************************************************************
     // new methods exposed

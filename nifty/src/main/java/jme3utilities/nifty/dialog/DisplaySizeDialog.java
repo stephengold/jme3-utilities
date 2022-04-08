@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jme3utilities.Validate;
-import jme3utilities.ui.DisplaySizeLimits;
+import jme3utilities.math.RectSizeLimits;
 
 /**
  * Controller for a text-entry dialog box used to input display dimensions.
@@ -58,7 +58,7 @@ public class DisplaySizeDialog extends TextEntryDialog {
     /**
      * range of valid display sizes (not null)
      */
-    final public DisplaySizeLimits limits;
+    final public RectSizeLimits sizeLimits;
     // *************************************************************************
     // constructors
 
@@ -66,12 +66,12 @@ public class DisplaySizeDialog extends TextEntryDialog {
      * Instantiate a controller.
      *
      * @param description the commit-button text (not null, not empty)
-     * @param dsl the range of valid display sizes (not null)
+     * @param limits the range of valid display sizes (not null)
      */
-    public DisplaySizeDialog(String description, DisplaySizeLimits dsl) {
+    public DisplaySizeDialog(String description, RectSizeLimits limits) {
         super(description);
-        Validate.nonNull(dsl, "limits");
-        limits = dsl;
+        Validate.nonNull(limits, "limits");
+        this.sizeLimits = limits;
     }
     // *************************************************************************
     // TextEntryDialog methods
@@ -98,7 +98,7 @@ public class DisplaySizeDialog extends TextEntryDialog {
                 int width = Integer.parseInt(widthText);
                 String heightText = matcher.group(2);
                 int height = Integer.parseInt(heightText);
-                msg = limits.feedbackValid(width, height);
+                msg = sizeLimits.feedbackInRange(width, height);
             } else {
                 msg = "improperly formatted display dimensions";
             }

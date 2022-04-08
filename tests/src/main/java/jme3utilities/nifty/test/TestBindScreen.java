@@ -26,7 +26,6 @@
  */
 package jme3utilities.nifty.test;
 
-import com.jme3.app.StatsAppState;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
@@ -35,13 +34,13 @@ import java.util.logging.Logger;
 import jme3utilities.Heart;
 import static jme3utilities.Heart.setLoggingLevels;
 import jme3utilities.MyString;
+import jme3utilities.math.RectSizeLimits;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.MessageDisplay;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.nifty.displaysettings.DsScreen;
-import jme3utilities.ui.DisplaySizeLimits;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.ShowDialog;
 import jme3utilities.ui.UiVersion;
@@ -154,12 +153,12 @@ public class TestBindScreen extends GuiApplication {
         setLoggingLevels(loggingLevel);
 
         final String title = applicationName + " " + MyString.join(arguments);
-        DisplaySizeLimits dsl = new DisplaySizeLimits(
+        RectSizeLimits sizeLimits = new RectSizeLimits(
                 600, 480, // min width, height
                 2_048, 1_080 // max width, height
         );
-        displaySettings
-                = new TbsDisplaySettings(application, applicationName, dsl) {
+        displaySettings = new TbsDisplaySettings(application, applicationName,
+                sizeLimits) {
             @Override
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);

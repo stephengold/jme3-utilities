@@ -44,13 +44,13 @@ import java.util.logging.Logger;
 import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
+import jme3utilities.math.RectSizeLimits;
 import jme3utilities.nifty.GuiScreenController;
 import jme3utilities.nifty.PopupMenuBuilder;
 import jme3utilities.nifty.dialog.DialogController;
 import jme3utilities.nifty.dialog.DisplaySizeDialog;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.DisplaySettings;
-import jme3utilities.ui.DisplaySizeLimits;
 import jme3utilities.ui.DsUtils;
 import jme3utilities.ui.InputMode;
 
@@ -250,8 +250,8 @@ public class DsScreen
         for (DisplayMode mode : modes) {
             int modeHeight = mode.getHeight();
             int modeWidth = mode.getWidth();
-            DisplaySizeLimits limits = displaySettings.getSizeLimits();
-            if (limits.isValidDisplaySize(modeWidth, modeHeight)
+            RectSizeLimits limits = displaySettings.getSizeLimits();
+            if (limits.isInRange(modeWidth, modeHeight)
                     && (modeHeight != height || modeWidth != width)) {
                 String modeItem
                         = DsUtils.describeDimensions(modeWidth, modeHeight);
@@ -317,8 +317,8 @@ public class DsScreen
         int width = displaySettings.width();
         String defaultText = DsUtils.describeDimensions(width, height);
 
-        DisplaySizeLimits dsl = displaySettings.getSizeLimits();
-        DialogController controller = new DisplaySizeDialog("Set", dsl);
+        RectSizeLimits sizeLimits = displaySettings.getSizeLimits();
+        DialogController controller = new DisplaySizeDialog("Set", sizeLimits);
 
         closeAllPopups();
         showTextEntryDialog("Enter display dimensions in pixels:",
@@ -349,7 +349,7 @@ public class DsScreen
             InputMode defaultMode = app.getDefaultInputMode();
             switch (actionString) {
                 case "apply displaySettings":
-                    displaySettings.applyToDisplay();
+                    displaySettings.applyToContext();
                     return;
 
                 case "Screenshot":
@@ -542,9 +542,9 @@ public class DsScreen
             arg = MyString.remainder(actionString, apSetDimensions);
             String lcArg = arg.toLowerCase(Locale.ROOT);
             if ("min".equals(lcArg)) {
-                displaySettings.setMinDimensions();
+                displaySettings.setMinSize();
             } else if ("max".equals(lcArg)) {
-                displaySettings.setMaxDimensions();
+                displaySettings.setMaxSize();
             } else {
                 int[] wh = DsUtils.parseDisplaySize(lcArg);
                 if (wh == null) {
