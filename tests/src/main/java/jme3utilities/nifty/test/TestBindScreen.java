@@ -29,6 +29,7 @@ package jme3utilities.nifty.test;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeVersion;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
@@ -41,6 +42,7 @@ import jme3utilities.nifty.LibraryVersion;
 import jme3utilities.nifty.MessageDisplay;
 import jme3utilities.nifty.bind.BindScreen;
 import jme3utilities.nifty.displaysettings.DsScreen;
+import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.ShowDialog;
 import jme3utilities.ui.UiVersion;
@@ -180,6 +182,13 @@ public class TestBindScreen extends GuiApplication {
          * by DisplaySettings.initialize().
          */
         application.setShowSettings(false);
+        /*
+         * Designate a sandbox directory.
+         */
+        try {
+            ActionApplication.designateSandbox("./Written Assets");
+        } catch (IOException e) {
+        }
 
         application.start();
     }
