@@ -7,7 +7,7 @@ ext {
     websiteUrl = 'https://github.com/stephengold/jme3-utilities'
 
     // module coordinates of dependencies:
-    acorusCoordinates = 'com.github.stephengold:Acorus:0.9.12'
+    acorusCoordinates = 'com.github.stephengold:Acorus:0.9.13'
     heartCoordinates = 'com.github.stephengold:Heart:7.5.0'
 
     // current versions of libraries:
