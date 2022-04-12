@@ -17,14 +17,14 @@ at GitHub][skycontrol].
 The textures sub-project is now part of
 [the SkyControl Project][skycontrol].
 
-The `jme3-utilities-heart` library, formerly a sub-project, is now [a separate project
-at GitHub][heart].
-
-The `jme3-utilities-ui` library, formerly a sub-project, is now [a separate project
-at GitHub][acorus].
+The `jme3-utilities-heart` library, formerly a sub-project, is now [Heart], a separate project
+at GitHub.
 
 The `jme3-utilities-debug` library, formerly a sub-project, is now part of
 [the Heart Library][heart].
+
+The `jme3-utilities-ui` library, formerly a sub-project, is now [Acorus], a separate project
+at GitHub.
 
 The `Minie` library, formerly a sub-project, is now [a separate project
 at GitHub][minie].
