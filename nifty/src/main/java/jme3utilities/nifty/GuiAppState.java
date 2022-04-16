@@ -31,14 +31,14 @@ import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.Nifty;
 import java.util.logging.Logger;
 import jme3utilities.InitialState;
-import jme3utilities.ui.ActionAppState;
+import jme3utilities.ui.AcorusAppState;
 
 /**
  * An ActionAppState in a GuiApplication.
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class GuiAppState extends ActionAppState {
+public class GuiAppState extends AcorusAppState {
     // *************************************************************************
     // constants and loggers
 

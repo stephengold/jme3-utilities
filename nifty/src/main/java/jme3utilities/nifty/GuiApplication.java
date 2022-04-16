@@ -136,7 +136,7 @@ abstract public class GuiApplication extends ActionApplication {
      * Startup code for this class.
      */
     @Override
-    public void actionInitializeApplication() {
+    public void acorusInit() {
         if (niftyDisplay != null) {
             throw new IllegalStateException(
                     "app should only be initialized once");
