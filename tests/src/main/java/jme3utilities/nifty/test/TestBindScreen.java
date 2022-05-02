@@ -164,7 +164,6 @@ public class TestBindScreen extends GuiApplication {
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);
                 settings.setAudioRenderer(null);
-                settings.setRenderer(AppSettings.LWJGL_OPENGL32);
                 settings.setSamples(8);
                 settings.setTitle(title); // Customize the window's title bar.
             }

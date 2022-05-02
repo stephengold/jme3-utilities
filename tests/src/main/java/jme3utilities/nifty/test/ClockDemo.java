@@ -69,7 +69,6 @@ public class ClockDemo extends GuiApplication {
         boolean loadDefaults = true;
         AppSettings appSettings = new AppSettings(loadDefaults);
         appSettings.setAudioRenderer(null);
-        appSettings.setRenderer(AppSettings.LWJGL_OPENGL32);
         /*
          * Customize the window's title bar.
          */
