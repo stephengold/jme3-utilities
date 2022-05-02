@@ -141,7 +141,7 @@ public class BasicScreenController
         this.screenId = screenId;
         this.xmlAssetPath = xmlAssetPath;
         this.enableDuringInitialization
-                = (initialState == initialState.Enabled);
+                = (initialState == InitialState.Enabled);
 
         assert !isInitialized();
         assert !isEnabled();

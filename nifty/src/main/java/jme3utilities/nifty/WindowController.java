@@ -113,7 +113,7 @@ public class WindowController extends GuiAppState {
 
         this.screenController = screenController;
         this.controlId = controlId;
-        this.startEnabled = (initialState == initialState.Enabled);
+        this.startEnabled = (initialState == InitialState.Enabled);
 
         assert !isInitialized();
         assert isEnabled();
