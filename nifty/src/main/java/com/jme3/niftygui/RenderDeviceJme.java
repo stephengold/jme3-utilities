@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2021 jMonkeyEngine
+ * Copyright (c) 2009-2022 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,8 +83,8 @@ public class RenderDeviceJme implements RenderDevice {
 
     private static class CachedTextKey {
 
-        private BitmapFont font;
-        private String text;
+        final private BitmapFont font;
+        final private String text;
 //        ColorRGBA color;
 
         private CachedTextKey(BitmapFont font, String text/*, ColorRGBA color*/) {
