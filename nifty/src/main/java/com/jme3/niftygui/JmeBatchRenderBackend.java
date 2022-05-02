@@ -196,7 +196,7 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
                 initialData.put((byte) 0xff);
             }
             return atlasId;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return 0; // TODO Nifty always expects this call to be successful
             // there currently is no way to return failure or something :/
