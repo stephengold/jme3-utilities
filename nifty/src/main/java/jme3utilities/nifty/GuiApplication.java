@@ -26,6 +26,7 @@
  */
 package jme3utilities.nifty;
 
+import com.jme3.app.state.AppState;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -70,6 +71,31 @@ abstract public class GuiApplication extends ActionApplication {
      * Nifty display: set in {@link #acorusInit()}
      */
     private NiftyJmeDisplay niftyDisplay = null;
+    // *************************************************************************
+    // constructors
+
+    /**
+     * Instantiate a demo with the appstates favored by SimpleApplication
+     * (AudioListenerState, ConstantVerifierState, DebugKeysAppState,
+     * FlyCamAppState, and StatsAppState) pre-attached.
+     *
+     * A DefaultInputMode and a ScreenshotAppState will be attached during
+     * initialization.
+     */
+    protected GuiApplication() {
+    }
+
+    /**
+     * Instantiate a demo with the specified appstates pre-attached. A
+     * DefaultInputMode and a ScreenshotAppState will be attached during
+     * initialization.
+     *
+     * @param initialAppStates the appstates to be pre-attached (may be null,
+     * unaffected)
+     */
+    protected GuiApplication(AppState... initialAppStates) {
+        super(initialAppStates);
+    }
     // *************************************************************************
     // new public methods
 
