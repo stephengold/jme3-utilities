@@ -99,6 +99,7 @@ public class TestMultipleScreens extends GuiApplication {
         boolean loadDefaults = true;
         AppSettings appSettings = new AppSettings(loadDefaults);
         appSettings.setAudioRenderer(null);
+        appSettings.setResizable(true);
         /*
          * Customize the window's title bar.
          */
