@@ -67,7 +67,7 @@ abstract public class GuiApplication extends ActionApplication {
      */
     private boolean niftyPostViewFlag = false;
     /**
-     * Nifty display: set in {@link #actionInitializeApplication()}
+     * Nifty display: set in {@link #acorusInit()}
      */
     private NiftyJmeDisplay niftyDisplay = null;
     // *************************************************************************
