@@ -136,6 +136,11 @@ public class TestPopups extends GuiApplication {
         String title = applicationName + " " + MyString.join(arguments);
         appSettings.setTitle(title);
         application.setSettings(appSettings);
+        /*
+         * The AWT settings dialog interferes with LWJGL v3
+         * on macOS and Raspbian, so don't show it!
+         */
+        application.setShowSettings(false);
         application.start();
     }
     // *************************************************************************

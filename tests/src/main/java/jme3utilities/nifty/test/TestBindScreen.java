@@ -144,15 +144,9 @@ public class TestBindScreen extends GuiApplication {
 
         TestBindScreen application = new TestBindScreen();
 
-        ShowDialog showSettingsDialog = ShowDialog.Never;
         Level loggingLevel = Level.WARNING;
         for (String arg : arguments) {
             switch (arg) {
-                case "-s":
-                case "--showSettingsDialog":
-                    showSettingsDialog = ShowDialog.Always;
-                    break;
-
                 case "-v":
                 case "--verbose":
                     loggingLevel = Level.INFO;
@@ -177,7 +171,7 @@ public class TestBindScreen extends GuiApplication {
             }
         };
 
-        displaySettings.setShowDialog(showSettingsDialog);
+        displaySettings.setShowDialog(ShowDialog.Never);
         AppSettings appSettings = displaySettings.initialize();
         if (appSettings == null) {
             return;
