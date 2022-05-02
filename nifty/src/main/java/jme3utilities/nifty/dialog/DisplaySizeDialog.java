@@ -86,7 +86,7 @@ public class DisplaySizeDialog extends TextEntryDialog {
         if ("min".equals(lcInput) || "max".equals(lcInput)) {
             msg = "";
         } else {
-            int size[] = DsUtils.parseDisplaySize(lcInput);
+            int[] size = DsUtils.parseDisplaySize(lcInput);
             if (size == null) {
                 msg = "improperly formatted display dimensions";
             } else {
