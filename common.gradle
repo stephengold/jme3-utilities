@@ -36,6 +36,7 @@ tasks.withType(JavaCompile) { // Java compile-time options:
 tasks.withType(JavaExec) { // Java runtime options:
     //args '--verbose' // to enable additional log output
     classpath sourceSets.main.runtimeClasspath
+    dependsOn 'installDist'
     enableAssertions true
     //jvmArgs '-verbose:gc'
     //jvmArgs '-Xbatch'

@@ -2,7 +2,13 @@
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
+plugins {
+    id 'application'
+}
+
 dependencies {
+    implementation 'org.apache.commons:commons-exec:1.3'
+
     implementation heartCoordinates
     implementation acorusCoordinates
     runtimeOnly 'com.github.nifty-gui:nifty-style-black:1.4.3'
@@ -48,6 +54,10 @@ tasks.register('TestPolygon3f', JavaExec) {
 }
 tasks.register('TestMyShell3f', JavaExec) {
     mainClass = 'jme3utilities.math.test.TestShell3f'
+}
+
+tasks.register('AppChooser', JavaExec) {
+    mainClass = 'jme3utilities.nifty.test.AppChooser'
 }
 
 tasks.register('ClockDemo', JavaExec) {
