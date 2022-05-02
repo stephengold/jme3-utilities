@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
-import static jme3utilities.Heart.setLoggingLevels;
 import jme3utilities.MyString;
 import jme3utilities.math.RectSizeLimits;
 import jme3utilities.nifty.GuiApplication;
@@ -152,7 +151,7 @@ public class TestBindScreen extends GuiApplication {
                     break;
             }
         }
-        setLoggingLevels(loggingLevel);
+        Heart.setLoggingLevels(loggingLevel);
 
         final String title = applicationName + " " + MyString.join(arguments);
         RectSizeLimits sizeLimits = new RectSizeLimits(
