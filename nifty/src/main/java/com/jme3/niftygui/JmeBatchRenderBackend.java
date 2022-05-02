@@ -607,11 +607,11 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
                 final float textureY,
                 final float textureWidth,
                 final float textureHeight) {
-            indexBufferBuffer.put((short) globalVertexIndex);
+            indexBufferBuffer.put(globalVertexIndex);
             indexBufferBuffer.put((short) (globalVertexIndex + 3));
             indexBufferBuffer.put((short) (globalVertexIndex + 2));
 
-            indexBufferBuffer.put((short) globalVertexIndex);
+            indexBufferBuffer.put(globalVertexIndex);
             indexBufferBuffer.put((short) (globalVertexIndex + 2));
             indexBufferBuffer.put((short) (globalVertexIndex + 1));
 
