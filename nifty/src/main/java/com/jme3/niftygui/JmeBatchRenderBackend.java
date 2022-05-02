@@ -86,11 +86,11 @@ public class JmeBatchRenderBackend implements BatchRenderBackend {
     private final List<ModifyTexture> modifyTextureCalls = new ArrayList<>();
 
     private RenderManager renderManager;
-    private NiftyJmeDisplay display;
-    private Map<Integer, Texture2D> textures = new HashMap<>();
+    final private NiftyJmeDisplay display;
+    final private Map<Integer, Texture2D> textures = new HashMap<>();
     private int textureAtlasId = 1;
     private Batch currentBatch;
-    private Matrix4f tempMat = new Matrix4f();
+    final private Matrix4f tempMat = new Matrix4f();
     private ByteBuffer initialData;
 
     // This is only used for debugging purposes and will fill the removed textures with a color.

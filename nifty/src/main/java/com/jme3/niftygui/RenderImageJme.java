@@ -40,10 +40,10 @@ import de.lessvoid.nifty.spi.render.RenderImage;
 
 public class RenderImageJme implements RenderImage {
 
-    private Texture2D texture;
-    private Image image;
-    private int width;
-    private int height;
+    final private Texture2D texture;
+    final private Image image;
+    final private int width;
+    final private int height;
 
     public RenderImageJme(String filename, boolean linear, NiftyJmeDisplay display) {
         TextureKey key = new TextureKey(filename, true);

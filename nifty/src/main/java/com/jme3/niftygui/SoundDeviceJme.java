@@ -42,8 +42,8 @@ import de.lessvoid.nifty.tools.resourceloader.NiftyResourceLoader;
 
 public class SoundDeviceJme implements SoundDevice {
 
-    private AssetManager assetManager;
-    private AudioRenderer ar;
+    final private AssetManager assetManager;
+    final private AudioRenderer ar;
 
     public SoundDeviceJme(AssetManager assetManager, AudioRenderer ar) {
         this.assetManager = assetManager;

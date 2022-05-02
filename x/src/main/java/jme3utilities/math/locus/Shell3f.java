@@ -78,32 +78,32 @@ public class Shell3f implements Locus3f {
     /**
      * metric employed by this shell (not null)
      */
-    private Metric metric;
+    final private Metric metric;
     /**
      * minimum metric value for points in the shell (&ge;0, &le;outerRadius, may
      * be {@link Float#POSITIVE_INFINITY})
      */
-    private float innerRadius;
+    final private float innerRadius;
     /**
      * the square of innerRadius (&ge;0, &le;outerRSquared, may be
      * {@link Double#POSITIVE_INFINITY})
      */
-    private double innerRSquared;
+    final private double innerRSquared;
     /**
      * optimal squared metric value for points in the shell (&ge;0, may be
      * {@link Double#POSITIVE_INFINITY})
      */
-    private double optimalRSquared;
+    final private double optimalRSquared;
     /**
      * maximum metric value for points in the shell (&ge;innerRadius, may be
      * {@link Float#POSITIVE_INFINITY})
      */
-    private float outerRadius;
+    final private float outerRadius;
     /**
      * the square of outerRadius (&ge;innerRSquared, may be
      * {@link Double#POSITIVE_INFINITY})
      */
-    private double outerRSquared;
+    final private double outerRSquared;
     /**
      * left-multiply to convert XYZ (world) coordinates to UVW (local)
      * coordinates or null to skip rotation
@@ -117,12 +117,12 @@ public class Shell3f implements Locus3f {
     /**
      * coordinates of the shell's center (not null)
      */
-    private Vector3f center;
+    final private Vector3f center;
     /**
      * axis weights (scale factor) applied to coordinates (all components &ge;0)
      * or null to skip weighting
      */
-    private Vector3f weights;
+    final private Vector3f weights;
     // *************************************************************************
     // constructors
 
