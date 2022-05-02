@@ -44,7 +44,7 @@ public class SoundHandleJme implements SoundHandle {
     private AudioNode node;
     private AssetManager am;
     private String fileName;
-    private float volume = 1;
+    private float volume = 1f;
 
     public SoundHandleJme(AudioRenderer ar, AudioNode node) {
         if (ar == null) {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -241,7 +241,7 @@ public class GenericPolygon3f extends Polygon3f {
             return false;
         }
         double fuzz2 = tolerance2 / squaredDistance(corner2, partner2);
-        if (t2 < 0 && t2 * t2 > fuzz2) {
+        if (t2 < 0f && t2 * t2 > fuzz2) {
             return false;
         }
         float ct2 = 1f - t2;

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -229,10 +229,10 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
      */
     @Override
     public int hashCode() {
-        long longCode = 13;
+        long longCode = 13L;
         for (double sub : subscores) {
             long bits = Double.doubleToLongBits(sub);
-            longCode = 17 * longCode + bits;
+            longCode = 17L * longCode + bits;
         }
         int result = (int) (longCode ^ (longCode >> 32));
 

@@ -63,7 +63,7 @@ public class TestShell3f {
         Shell3f solid;
         Vector3f center, location;
 
-        Generator random = new Generator(395_782);
+        Generator random = new Generator(395_782L);
 
         float[] scales = {0.1f, 1f, 10f, 10000f, 1e10f, 0.0001f, 1e-10f};
 

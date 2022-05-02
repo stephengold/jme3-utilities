@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -569,7 +569,7 @@ public class CornerSet3f {
         Vector3f ac = c.subtract(a);
 
         Vector3f cross = ab.cross(ac);
-        double areaSquared = MyVector3f.lengthSquared(cross) / 4f;
+        double areaSquared = MyVector3f.lengthSquared(cross) / 4.0;
 
         assert areaSquared >= 0.0 : areaSquared;
         return areaSquared;
@@ -711,7 +711,7 @@ public class CornerSet3f {
      * it unchanged.
      */
     private void setLargestTriangle() {
-        double largestSA = -1f;
+        double largestSA = -1.0;
         int[] largest = null;
         for (int i = 0; i < numCorners - 2; i++) {
             for (int j = i + 1; j < numCorners - 1; j++) {

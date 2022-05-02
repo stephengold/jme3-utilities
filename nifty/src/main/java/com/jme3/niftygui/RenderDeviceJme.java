@@ -67,7 +67,7 @@ public class RenderDeviceJme implements RenderDevice {
     private Renderer r;
     private Map<CachedTextKey, BitmapText> textCacheLastFrame = new HashMap<>();
     private Map<CachedTextKey, BitmapText> textCacheCurrentFrame = new HashMap<>();
-    private final Quad quad = new Quad(1, -1, true);
+    private final Quad quad = new Quad(1f, -1f, true);
     private final Geometry quadGeom = new Geometry("nifty-quad", quad);
     private boolean clipWasSet = false;
     final private VertexBuffer quadDefaultTC = quad.getBuffer(Type.TexCoord);
@@ -282,7 +282,7 @@ public class RenderDeviceJme implements RenderDevice {
         if (text == null) {
             text = jmeFont.createText();
             text.setText(str);
-            text.updateLogicalState(0);
+            text.updateLogicalState(0f);
         }
         textCacheCurrentFrame.put(key, text);
 
@@ -292,13 +292,13 @@ public class RenderDeviceJme implements RenderDevice {
         float y0 = y; // + 0.5f * height * (1f - sizeY);
 
         tempMat.loadIdentity();
-        tempMat.setTranslation(x0, getHeight() - y0, 0);
-        tempMat.setScale(sizeX, sizeY, 0);
+        tempMat.setTranslation(x0, getHeight() - y0, 0f);
+        tempMat.setScale(sizeX, sizeY, 0f);
 
         rm.setWorldMatrix(tempMat);
         rm.setForcedRenderState(renderState);
         text.setColor(colorRgba);
-        text.updateLogicalState(0);
+        text.updateLogicalState(0f);
         text.render(rm, colorRgba);
 
 //        System.out.format("renderFont(%s, %s, %d, %d, %s, %f, %f)\n", jmeFont.getFont(), str, x, y, color.toString(), sizeX, sizeY);
@@ -343,8 +343,8 @@ public class RenderDeviceJme implements RenderDevice {
         float y0 = centerY + (y - centerY) * scale;
 
         tempMat.loadIdentity();
-        tempMat.setTranslation(x0, getHeight() - y0, 0);
-        tempMat.setScale(w * scale, h * scale, 0);
+        tempMat.setTranslation(x0, getHeight() - y0, 0f);
+        tempMat.setScale(w * scale, h * scale, 0f);
 
         rm.setWorldMatrix(tempMat);
         rm.setForcedRenderState(renderState);
@@ -371,8 +371,8 @@ public class RenderDeviceJme implements RenderDevice {
         float y0 = y + 0.5f * height * (1f - imageScale);
 
         tempMat.loadIdentity();
-        tempMat.setTranslation(x0, getHeight() - y0, 0);
-        tempMat.setScale(width * imageScale, height * imageScale, 0);
+        tempMat.setTranslation(x0, getHeight() - y0, 0f);
+        tempMat.setScale(width * imageScale, height * imageScale, 0f);
 
         rm.setWorldMatrix(tempMat);
         rm.setForcedRenderState(renderState);
@@ -388,12 +388,12 @@ public class RenderDeviceJme implements RenderDevice {
         //each layer is rendered as a quad, but that can bump up the number of geometry rendered by a lot.
         //Since we disable depth write, there is absolutely no point in rendering those quads
         //This optimization can result in a huge performance increase on complex Nifty UIs.
-        if (color.getAlpha() > 0) {
+        if (color.getAlpha() > 0f) {
             colorMaterial.setColor("Color", convertColor(color, tempColor));
 
             tempMat.loadIdentity();
-            tempMat.setTranslation(x, getHeight() - y, 0);
-            tempMat.setScale(width, height, 0);
+            tempMat.setTranslation(x, getHeight() - y, 0f);
+            tempMat.setScale(width, height, 0f);
 
             rm.setWorldMatrix(tempMat);
             rm.setForcedRenderState(renderState);
@@ -420,8 +420,8 @@ public class RenderDeviceJme implements RenderDevice {
         quadColor.updateData(buf);
 
         tempMat.loadIdentity();
-        tempMat.setTranslation(x, getHeight() - y, 0);
-        tempMat.setScale(width, height, 0);
+        tempMat.setTranslation(x, getHeight() - y, 0f);
+        tempMat.setScale(width, height, 0f);
 
         rm.setWorldMatrix(tempMat);
         rm.setForcedRenderState(renderState);

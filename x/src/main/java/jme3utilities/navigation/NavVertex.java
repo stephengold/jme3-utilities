@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2021, Stephen Gold
+ Copyright (c) 2014-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -222,7 +222,7 @@ public class NavVertex implements Comparable<NavVertex> {
      */
     public NavArc findOutgoing(Vector3f direction, double cosineTolerance) {
         Validate.nonZero(direction, "direction");
-        Validate.inRange(cosineTolerance, "cosine tolerance", -1f, 1f);
+        Validate.inRange(cosineTolerance, "cosine tolerance", -1.0, 1.0);
 
         double ls = MyVector3f.lengthSquared(direction);
 
@@ -255,7 +255,7 @@ public class NavVertex implements Comparable<NavVertex> {
     public NavArc findOutgoing(ReadXZ horizontalDirection,
             double cosineTolerance) {
         VectorXZ.validateNonZero(horizontalDirection, "horizontal direction");
-        Validate.inRange(cosineTolerance, "cosine tolerance", -1f, 1f);
+        Validate.inRange(cosineTolerance, "cosine tolerance", -1.0, 1.0);
 
         double ls = horizontalDirection.lengthSquared();
 
