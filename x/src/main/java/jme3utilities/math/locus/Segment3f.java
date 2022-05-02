@@ -225,7 +225,7 @@ public class Segment3f implements Locus3f {
      * @return true if one or more shared corners were found, otherwise false
      */
     public boolean sharesCornerWith(Segment3f other,
-            Map<Integer, Integer> storeCornerMap) {
+            Map<? super Integer, ? super Integer> storeCornerMap) {
         Validate.nonNull(other, "other segment");
 
         if (storeCornerMap != null) {

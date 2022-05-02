@@ -346,7 +346,7 @@ public class NavGraph {
      * @return a new list of pre-existing member vertices
      */
     public List<NavVertex> findMostHops(NavVertex startVertex,
-            Collection<NavVertex> subset) {
+            Collection<? extends NavVertex> subset) {
         validateMember(startVertex, "start vertex");
 
         Map<NavVertex, Integer> hopData = new HashMap<>(subset.size());
@@ -402,7 +402,7 @@ public class NavGraph {
      * @param point coordinate vector (not null, unaffected)
      * @return pre-existing member vertex, or null if none were specified
      */
-    public NavVertex findNearest(Iterable<NavVertex> subset, Vector3f point) {
+    public NavVertex findNearest(Iterable<? extends NavVertex> subset, Vector3f point) {
         Validate.nonNull(point, "point");
         Validate.nonNull(subset, "subset");
 
@@ -707,7 +707,7 @@ public class NavGraph {
      * @return true if such a route exists, false if no such route exists
      */
     private boolean existsRouteWithout(NavArc avoid, NavVertex visit,
-            NavVertex ending, Set<NavVertex> visitedSet) {
+            NavVertex ending, Set<? extends NavVertex> visitedSet) {
         assert contains(avoid) : avoid;
         assert contains(visit) : visit;
         assert contains(ending) : ending;
@@ -748,7 +748,7 @@ public class NavGraph {
      * initially empty (not null, updated)
      */
     private void forwardHopCounts(NavVertex visit, int hopCount,
-            Map<NavVertex, Integer> minHopCounts) {
+            Map<? super NavVertex, Integer> minHopCounts) {
         assert contains(visit) : visit;
         assert hopCount >= 0 : hopCount;
         assert minHopCounts != null;
@@ -783,7 +783,7 @@ public class NavGraph {
      * visited, initially empty (not null, updated)
      */
     private void reverseTotalCosts(NavVertex visit, float totalCost,
-            Map<NavVertex, Float> minTotalCosts) {
+            Map<? super NavVertex, Float> minTotalCosts) {
         assert contains(visit) : visit;
         assert totalCost >= 0f : totalCost;
         assert minTotalCosts != null;
@@ -817,7 +817,7 @@ public class NavGraph {
      * empty (not null, updated)
      */
     private void visitReachable(NavVertex visit,
-            Set<NavVertex> visitedVertices) {
+            Set<? super NavVertex> visitedVertices) {
         assert contains(visit) : visit;
         assert visitedVertices != null;
 
