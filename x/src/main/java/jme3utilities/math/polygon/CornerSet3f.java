@@ -429,9 +429,9 @@ public class CornerSet3f {
              * Don't use Vector3f.project() because (as of jME 3.0.10)
              * it contained a logic bug.
              */
-            double fm_dot_fl = MyVector3f.dot(fm, fl);
+            double fmDotFl = MyVector3f.dot(fm, fl);
             double normSquaredFL = squaredDistance(cornerIndex1, cornerIndex2);
-            double fraction = fm_dot_fl / normSquaredFL;
+            double fraction = fmDotFl / normSquaredFL;
             Vector3f projection = fl.mult((float) fraction);
             /*
              * If the projection coincides with FM,
