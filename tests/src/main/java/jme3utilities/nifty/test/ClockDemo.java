@@ -27,13 +27,16 @@
 package jme3utilities.nifty.test;
 
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeSystem;
 import com.jme3.system.JmeVersion;
+import com.jme3.system.Platform;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
 import jme3utilities.MyString;
 import jme3utilities.nifty.GuiApplication;
 import jme3utilities.ui.InputMode;
+import org.lwjgl.system.Configuration;
 
 /**
  * Test/demonstrate dynamic Nifty labels.
@@ -63,6 +66,11 @@ public class ClockDemo extends GuiApplication {
      * @param arguments array of command-line arguments (not null)
      */
     public static void main(String[] arguments) {
+        Platform platform = JmeSystem.getPlatform();
+        if (platform.getOs() == Platform.Os.MacOS) {
+            Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+        }
+
         ClockDemo application = new ClockDemo();
         Heart.parseAppArgs(application, arguments);
 

@@ -28,7 +28,9 @@ package jme3utilities.nifty.test;
 
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeSystem;
 import com.jme3.system.JmeVersion;
+import com.jme3.system.Platform;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,6 +47,7 @@ import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.InputMode;
 import jme3utilities.ui.ShowDialog;
 import jme3utilities.ui.UiVersion;
+import org.lwjgl.system.Configuration;
 
 /**
  * Test/demonstrate the hotkey-bindings editor (BindScreen) and the
@@ -134,6 +137,11 @@ public class TestBindScreen extends GuiApplication {
      * @param arguments array of command-line arguments (not null)
      */
     public static void main(String[] arguments) {
+        Platform platform = JmeSystem.getPlatform();
+        if (platform.getOs() == Platform.Os.MacOS) {
+            Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+        }
+
         TestBindScreen application = new TestBindScreen();
 
         ShowDialog showSettingsDialog = ShowDialog.Never;

@@ -28,7 +28,9 @@ package jme3utilities.nifty.test.popups;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.system.AppSettings;
+import com.jme3.system.JmeSystem;
 import com.jme3.system.JmeVersion;
+import com.jme3.system.Platform;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,7 @@ import jme3utilities.nifty.dialog.FloatSliderDialog;
 import jme3utilities.nifty.dialog.MinimalDialog;
 import jme3utilities.nifty.dialog.MultiSelectDialog;
 import jme3utilities.ui.InputMode;
+import org.lwjgl.system.Configuration;
 
 /**
  * Test/demonstrate popups, including modal dialogs and multi-level popup menus.
@@ -112,6 +115,11 @@ public class TestPopups extends GuiApplication {
      * @param arguments array of command-line arguments (not null)
      */
     public static void main(String[] arguments) {
+        Platform platform = JmeSystem.getPlatform();
+        if (platform.getOs() == Platform.Os.MacOS) {
+            Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+        }
+
         TestPopups application = new TestPopups();
         Heart.parseAppArgs(application, arguments);
         /*
