@@ -27,7 +27,7 @@ dependencies {
     implementation project(':x') // for latest sourcecode
 }
 
-startScripts.dependsOn(':nifty:build')
+startScripts.dependsOn(':nifty:assemble')
 
 // cleanup tasks:
 
