@@ -1,5 +1,14 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.29 released on TBD
+
++ Add 2 protected constructors to the `GuiApplication` class.
++ Improved selection algorithms in `DsScreen`.
++ Add the `TestChooser` application.
++ Execute the test apps in resizable windows.
++ Base on version 3.5.2-stable of JMonkeyEngine, version 7.6.0 of the Heart
+  library, and version 0.9.15 of Acorus.
+
 ## Version 0.9.28 released on 21 March 2022
 
  + Determine the color space automatically
