@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.29 released on TBD
+## Version 0.9.29 released on 3 May 2022
 
 + Add 2 protected constructors to the `GuiApplication` class.
 + Improved selection algorithms in `DsScreen`.
