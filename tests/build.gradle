@@ -20,12 +20,14 @@ dependencies {
     runtimeOnly 'org.jmonkeyengine:jme3-jogg:' + jme3Version
     runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jme3Version
 
-    //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion"
-    implementation project(':nifty')
+    //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion" // for published library
+    implementation project(':nifty') // for latest sourcecode
 
-    //implementation "com.github.stephengold:jme3-utilities-x:$jme3utilitiesxVersion"
-    implementation project(':x')
+    //implementation "com.github.stephengold:jme3-utilities-x:$jme3utilitiesxVersion" // for published library
+    implementation project(':x') // for latest sourcecode
 }
+
+startScripts.dependsOn(':nifty:build')
 
 // cleanup tasks:
 
