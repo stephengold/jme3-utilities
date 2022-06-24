@@ -111,7 +111,8 @@ public class VectorDialog extends TextEntryDialog {
         int numElements = elements.size();
         float x = elements.get(MyVector3f.xAxis);
         float y = elements.get(MyVector3f.yAxis);
-        float z, w;
+        float z;
+        float w;
         switch (numElements) {
             case 2:
                 result = new Vector2f(x, y);

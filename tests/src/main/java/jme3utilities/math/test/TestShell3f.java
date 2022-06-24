@@ -57,11 +57,17 @@ public class TestShell3f {
     public static void main(String[] ignored) {
         System.out.printf("Test results for class Shell3f:%n%n");
 
-        float r1, r2, r3, x, y, z;
+        float r1;
+        float r2;
+        float r3;
+        float x;
+        float y;
+        float z;
         Shell3f hole;
         Shell3f shell;
         Shell3f solid;
-        Vector3f center, location;
+        Vector3f center;
+        Vector3f location;
 
         Generator random = new Generator(395_782L);
 

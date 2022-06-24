@@ -408,7 +408,8 @@ public class GenericPolygon3f extends Polygon3f {
         /*
          * Test the partner of ext against both corners of the other segment.
          */
-        int otherCorner, otherPartner;
+        int otherCorner;
+        int otherPartner;
         if (ext == corner1 || ext == partner1) {
             otherCorner = corner2;
             otherPartner = partner2;
