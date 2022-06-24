@@ -303,7 +303,8 @@ public class NavGraph {
         /*
          * Test the next closest, and so on.  TODO sort
          */
-        Collection<NavVertex> remainingVertices = new HashSet<>(vertices.values());
+        Collection<NavVertex> remainingVertices
+                = new HashSet<>(vertices.values());
         boolean success = remainingVertices.remove(result);
         assert success;
 
@@ -402,7 +403,8 @@ public class NavGraph {
      * @param point coordinate vector (not null, unaffected)
      * @return pre-existing member vertex, or null if none were specified
      */
-    public NavVertex findNearest(Iterable<? extends NavVertex> subset, Vector3f point) {
+    public NavVertex findNearest(
+            Iterable<? extends NavVertex> subset, Vector3f point) {
         Validate.nonNull(point, "point");
         Validate.nonNull(subset, "subset");
 

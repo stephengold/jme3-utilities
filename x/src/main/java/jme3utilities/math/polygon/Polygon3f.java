@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2019, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -363,7 +363,8 @@ public class Polygon3f extends CornerSet3f {
         Validate.nonNull(location, "location");
         validateIndex(sideIndex, "side index");
 
-        double squaredDistance = squaredDistanceToSide(location, sideIndex, null);
+        double squaredDistance
+                = squaredDistanceToSide(location, sideIndex, null);
         if (squaredDistance > tolerance2) {
             return false;
         } else {

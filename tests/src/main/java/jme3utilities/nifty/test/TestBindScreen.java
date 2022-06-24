@@ -236,7 +236,8 @@ public class TestBindScreen extends GuiApplication {
         messageHud.setListener(this);
         success = stateManager.attach(messageHud);
         assert success;
-        messageHud.addLine("Press H key to view/edit hotkey bindings, U key to view/edit display settings.");
+        messageHud.addLine("Press H key to view/edit hotkey bindings, "
+                + "U key to view/edit display settings.");
         /*
          * The (default) input mode should influence the animation and HUD.
          */

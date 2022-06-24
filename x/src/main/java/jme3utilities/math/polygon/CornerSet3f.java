@@ -219,7 +219,8 @@ public class CornerSet3f {
         double bestSD = Double.POSITIVE_INFINITY;
         for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
             Vector3f corner = cornerLocations[cornerIndex];
-            double squaredDistance = MyVector3f.distanceSquared(corner, location);
+            double squaredDistance
+                    = MyVector3f.distanceSquared(corner, location);
             if (squaredDistance < bestSD) {
                 result = cornerIndex;
                 bestSD = squaredDistance;

@@ -130,7 +130,8 @@ public class VectorDialog extends TextEntryDialog {
                 break;
 
             default:
-                throw new IllegalArgumentException("numElements = " + numElements);
+                throw new IllegalArgumentException(
+                        "numElements = " + numElements);
         }
 
         return result;

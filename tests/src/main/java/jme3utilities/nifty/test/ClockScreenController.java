@@ -99,7 +99,8 @@ public class ClockScreenController extends GuiScreenController {
         midnight.set(Calendar.MINUTE, 0);
         midnight.set(Calendar.SECOND, 0);
         midnight.set(Calendar.MILLISECOND, 0);
-        long msSinceMidnight = rightNow.getTimeInMillis() - midnight.getTimeInMillis();
+        long msSinceMidnight
+                = rightNow.getTimeInMillis() - midnight.getTimeInMillis();
         double secondsSinceMidnight = msSinceMidnight / 1000.0;
 
         String text3 = String.format("%.3f", secondsSinceMidnight);

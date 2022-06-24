@@ -727,8 +727,8 @@ public class PopScreenController extends BasicScreenController {
      * final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
-    public void showTextEntryDialog(String promptMessage, CharSequence defaultValue,
-            String commitLabel, String actionPrefix,
+    public void showTextEntryDialog(String promptMessage,
+            CharSequence defaultValue, String commitLabel, String actionPrefix,
             DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");

@@ -215,8 +215,8 @@ public class FloatSliderDialog implements DialogController {
             commitButton.setText(commitDescription);
             commitButton.getElement().show();
 
-            Slider slider
-                    = dialogElement.findNiftyControl("#dialogslider", Slider.class);
+            Slider slider = dialogElement.findNiftyControl(
+                    "#dialogslider", Slider.class);
             float value = Float.parseFloat(text);
             float raw = FastMath.unInterpolateLinear(value, minValue, maxValue);
             slider.setValue(raw);
