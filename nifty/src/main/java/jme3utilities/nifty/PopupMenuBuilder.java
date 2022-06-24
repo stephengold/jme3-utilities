@@ -26,8 +26,8 @@
  */
 package jme3utilities.nifty;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 
@@ -49,13 +49,9 @@ public class PopupMenuBuilder {
     // fields
 
     /**
-     * list of menu icon asset paths TODO implement as a Map instead of a List
+     * map menu items to icon asset paths
      */
-    final protected List<String> iconAssetPaths = new ArrayList<>(40);
-    /**
-     * list of menu items
-     */
-    final protected List<String> items = new ArrayList<>(40);
+    final protected Map<String, String> itemMap = new HashMap<>(40);
     // *************************************************************************
     // new methods exposed
 
@@ -66,9 +62,9 @@ public class PopupMenuBuilder {
      */
     public void add(String item) {
         Validate.nonEmpty(item, "item");
+        assert !itemMap.containsKey(item) : item;
 
-        items.add(item);
-        iconAssetPaths.add(null);
+        itemMap.put(item, null);
     }
 
     /**
@@ -79,9 +75,9 @@ public class PopupMenuBuilder {
      */
     public void add(String item, String iconAssetPath) {
         Validate.nonEmpty(item, "item");
+        assert !itemMap.containsKey(item) : item;
 
-        items.add(item);
-        iconAssetPaths.add(iconAssetPath);
+        itemMap.put(item, iconAssetPath);
     }
 
     /**
@@ -103,10 +99,12 @@ public class PopupMenuBuilder {
      * @return a new array
      */
     public String[] copyIconAssetPaths() {
-        int numIcons = iconAssetPaths.size();
+        int numIcons = itemMap.size();
         String[] result = new String[numIcons];
-        for (int i = 0; i < numIcons; i++) {
-            result[i] = iconAssetPaths.get(i);
+        int i = 0;
+        for (String icontAssetPath : itemMap.values()) {
+            result[i] = icontAssetPath;
+            ++i;
         }
 
         return result;
@@ -118,10 +116,12 @@ public class PopupMenuBuilder {
      * @return a new array
      */
     public String[] copyItems() {
-        int numItems = items.size();
+        int numItems = itemMap.size();
         String[] result = new String[numItems];
-        for (int i = 0; i < numItems; i++) {
-            result[i] = items.get(i);
+        int i = 0;
+        for (String item : itemMap.keySet()) {
+            result[i] = item;
+            ++i;
         }
 
         return result;
@@ -135,7 +135,7 @@ public class PopupMenuBuilder {
      */
     public boolean hasItem(String item) {
         Validate.nonEmpty(item, "item");
-        boolean result = items.contains(item);
+        boolean result = itemMap.containsKey(item);
         return result;
     }
 
@@ -145,7 +145,7 @@ public class PopupMenuBuilder {
      * @return true if empty, otherwise false
      */
     public boolean isEmpty() {
-        boolean result = items.isEmpty();
+        boolean result = itemMap.isEmpty();
         return result;
     }
 
@@ -153,7 +153,6 @@ public class PopupMenuBuilder {
      * Remove everything from the menu and start over.
      */
     public void reset() {
-        items.clear();
-        iconAssetPaths.clear();
+        itemMap.clear();
     }
 }
