@@ -1,17 +1,18 @@
 # release log for the jme3-utilities-x library and related tests
 
-## Version 0.3.1 released on TBD
+## Version 0.3.1 released on 24 June 2022
 
 + Targeted version 3.5.2-stable of jMonkeyEngine.
 + Based on version 8.0.0 of the Heart Library.
++ Add the "checkstyle" plugin to the build.
 
 ## Version 0.3.0 released on 23 January 2022
 
- + Moved the `Population` class to the Heart Library.
- + Created a distinct logger for the `Shell3f` class.
- + Targeted Java v8.
- + Targeted version 3.5.0-stable of jMonkeyEngine.
- + Based on version 7.2.0 of the Heart Library.
++ Moved the `Population` class to the Heart Library.
++ Created a distinct logger for the `Shell3f` class.
++ Targeted Java v8.
++ Targeted version 3.5.0-stable of jMonkeyEngine.
++ Based on version 7.2.0 of the Heart Library.
 
 ## Version 0.2.22 released on 21 August 2021
 
@@ -19,14 +20,14 @@ Based on version 7.0.0 of the Heart Library.
 
 ## Version 0.2.21 released on 31 May 2021
 
- + Targeted version 3.4.0-stable of jMonkeyEngine.
- + Based on version 6.4.4 of the Heart Library.
++ Targeted version 3.4.0-stable of jMonkeyEngine.
++ Based on version 6.4.4 of the Heart Library.
 
 ## Version 0.2.20 released on 9 February 2021
 
- + Published to MavenCentral instead of JCenter.
- + Targeted version 3.3.2-stable of jMonkeyEngine.
- + Based on version 6.4.2 of the Heart Library.
++ Published to MavenCentral instead of JCenter.
++ Targeted version 3.3.2-stable of jMonkeyEngine.
++ Based on version 6.4.2 of the Heart Library.
 
 ## Version 0.2.19 released on 1 April 2020
 

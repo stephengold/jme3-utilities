@@ -1,8 +1,9 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.30 released on TBD
+## Version 0.9.30 released on 24 June 2022
 
-Base on version 8.0.0 of the Heart library, and version 0.9.16 of Acorus.
++ Base on version 8.0.0 of the Heart library, and version 0.9.16 of Acorus.
++ Add the "checkstyle" plugin to the build.
 
 ## Version 0.9.29 released on 3 May 2022
 
@@ -15,21 +16,21 @@ Base on version 8.0.0 of the Heart library, and version 0.9.16 of Acorus.
 
 ## Version 0.9.28 released on 21 March 2022
 
- + Determine the color space automatically
-   in `actionInitializeApplication()`. (API changes)
- + Privatize fields in the `GuiTrack`, `NiftyJmeDisplay`,
-   and `SoundDeviceJme` classes. (API changes)
- + Bypass the Settings Dialog when running tests on macOS.
- + Base on version 3.5.1-stable of JMonkeyEngine, version 7.4.1 of the Heart
-   library, and version 0.9.10 of Acorus.
++ Determine the color space automatically
+  in `actionInitializeApplication()`. (API changes)
++ Privatize fields in the `GuiTrack`, `NiftyJmeDisplay`,
+  and `SoundDeviceJme` classes. (API changes)
++ Bypass the Settings Dialog when running tests on macOS.
++ Base on version 3.5.1-stable of JMonkeyEngine, version 7.4.1 of the Heart
+  library, and version 0.9.10 of Acorus.
 
 ## Version 0.9.27 released on 21 February 2022
 
- + Manage radio buttons within tools.
- + Add constructors for the `BasicScreenController`, `GuiAppState`,
-   `GuiScreenController`, `GuiWindowController`, `PopScreenController`,
-   and `WindowController` classes.
- + Base on version 7.3.0 of the Heart library and version 0.9.9 of Acorus.
++ Manage radio buttons within tools.
++ Add constructors for the `BasicScreenController`, `GuiAppState`,
+  `GuiScreenController`, `GuiWindowController`, `PopScreenController`,
+  and `WindowController` classes.
++ Base on version 7.3.0 of the Heart library and version 0.9.9 of Acorus.
 
 ## Version 0.9.26 released on 1 February 2022
 
@@ -37,27 +38,27 @@ Revert the API change to `GuiWindowController.onCheckBoxChanged()`.
 
 ## Version 0.9.25 released on 1 February 2022
 
- + Add the `AllowNull` enum and change `boolean` method arguments
-   to `AllowNull` in 6 dialog constructors. (API changes)
- + Change `boolean` method arguments to `ColorSpace`
-   in the `NiftyJmeDisplay` and `RenderDeviceJme` constructors. (API changes)
- + Rename 2 protected fields in the `NiftyJmeDisplay` class. (API changes)
- + De-synchronize 4 methods in the `PopScreenController` class (API changes):
-   + `closeActivePopupMenu()`
-   + `closeAllPopups()`
-   + `closePopupMenu()`
-   + `showPopupMenu()`
- + Use weaker classes for method arguments (API changes):
-   + `DialogControl.matchesNull()`
-   + `GuiWindowController.onCheckBoxChanged()`
-   + `PopScreenController.showTextAndCheckDialog()`
-   + `PopScreenController.showTextAndSliderDialog()`
-   + `PopScreenController.showTextEntryDialog()`
- + Protect the constructor of the `Tool` class.
- + Finalize the `LibraryVersion` class.
- + Enhance exceptions.
- + Replace private `List` with a `Deque` in `MessageDisplay`.
- + Base on version 0.9.7 of Acorus.
++ Add the `AllowNull` enum and change `boolean` method arguments
+  to `AllowNull` in 6 dialog constructors. (API changes)
++ Change `boolean` method arguments to `ColorSpace`
+  in the `NiftyJmeDisplay` and `RenderDeviceJme` constructors. (API changes)
++ Rename 2 protected fields in the `NiftyJmeDisplay` class. (API changes)
++ De-synchronize 4 methods in the `PopScreenController` class (API changes):
+  + `closeActivePopupMenu()`
+  + `closeAllPopups()`
+  + `closePopupMenu()`
+  + `showPopupMenu()`
++ Use weaker classes for method arguments (API changes):
+  + `DialogControl.matchesNull()`
+  + `GuiWindowController.onCheckBoxChanged()`
+  + `PopScreenController.showTextAndCheckDialog()`
+  + `PopScreenController.showTextAndSliderDialog()`
+  + `PopScreenController.showTextEntryDialog()`
++ Protect the constructor of the `Tool` class.
++ Finalize the `LibraryVersion` class.
++ Enhance exceptions.
++ Replace private `List` with a `Deque` in `MessageDisplay`.
++ Base on version 0.9.7 of Acorus.
 
 ## Version 0.9.24 released on 23 January 2022
 
