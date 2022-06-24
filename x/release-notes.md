@@ -1,5 +1,10 @@
 # release log for the jme3-utilities-x library and related tests
 
+## Version 0.3.1 released on TBD
+
++ Targeted version 3.5.2-stable of jMonkeyEngine.
++ Based on version 8.0.0 of the Heart Library.
+
 ## Version 0.3.0 released on 23 January 2022
 
  + Moved the `Population` class to the Heart Library.
@@ -10,7 +15,7 @@
 
 ## Version 0.2.22 released on 21 August 2021
 
- + Based on version 7.0.0 of the Heart Library.
+Based on version 7.0.0 of the Heart Library.
 
 ## Version 0.2.21 released on 31 May 2021
 
