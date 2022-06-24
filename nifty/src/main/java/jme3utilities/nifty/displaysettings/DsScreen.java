@@ -390,6 +390,8 @@ public class DsScreen
                 case "save displaySettings":
                     displaySettings.save();
                     return;
+
+                default:
             }
 
             String[] words = actionString.split(" ");
@@ -401,6 +403,9 @@ public class DsScreen
 
                 case "set":
                     handled = setAction(actionString);
+                    break;
+
+                default:
             }
         }
 

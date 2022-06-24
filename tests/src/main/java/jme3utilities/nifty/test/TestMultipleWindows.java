@@ -142,6 +142,7 @@ public class TestMultipleWindows extends GuiApplication {
                 case "release button 2":
                     System.out.println("released 2");
                     return;
+                default:
             }
         }
         /*

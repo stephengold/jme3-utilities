@@ -151,6 +151,8 @@ public class TestBindScreen extends GuiApplication {
                 case "--verbose":
                     loggingLevel = Level.INFO;
                     break;
+
+                default:
             }
         }
         Heart.setLoggingLevels(loggingLevel);
@@ -358,6 +360,7 @@ public class TestBindScreen extends GuiApplication {
                 case asYawRight:
                     starfield.setRotation(-0.2f, yawAxis);
                     return;
+                default:
             }
         }
         /*

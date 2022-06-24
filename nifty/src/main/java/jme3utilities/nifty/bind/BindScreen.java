@@ -161,6 +161,7 @@ public class BindScreen
             case KeyInput.KEY_SPACE:
             case KeyInput.KEY_SYSRQ:
                 return true;
+            default:
         }
         return false;
     }
@@ -237,6 +238,8 @@ public class BindScreen
                     return;
                 }
                 break;
+
+            default:
         }
 
         logger.log(Level.WARNING, "Action {0} was not handled.",

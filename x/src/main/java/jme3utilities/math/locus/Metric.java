@@ -68,6 +68,7 @@ public enum Metric {
                 return "Chebyshev";
             case MANHATTAN:
                 return "Manhattan";
+            default:
         }
         return "?";
     }

@@ -218,6 +218,8 @@ public class AppChooser extends GuiApplication {
                     };
                     executor.start();
                     return;
+
+                default:
             }
 
             if (actionString.startsWith(apChooseApp)) {
