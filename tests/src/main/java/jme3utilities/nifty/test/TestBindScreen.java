@@ -190,7 +190,8 @@ public class TestBindScreen extends GuiApplication {
          */
         try {
             ActionApplication.designateSandbox("./Written Assets");
-        } catch (IOException e) {
+        } catch (IOException exception) {
+            // do nothing
         }
 
         application.start();

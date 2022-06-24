@@ -160,7 +160,7 @@ public class VectorDialog extends TextEntryDialog {
                     msg = notAVector();
                 }
                 ++elementCount;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException exception) {
                 msg = notAVector();
             }
         }

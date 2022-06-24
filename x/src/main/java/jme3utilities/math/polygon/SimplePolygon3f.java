@@ -656,12 +656,12 @@ public class SimplePolygon3f
      * List the corners that would result from merging this polygon with
      * another.
      *
-     * @param otherPoly (not null)
+     * @param other the other polygon (not null)
      * @return a new list with all elements non-null, or null if the polygons
      * cannot be merged
      */
-    private List<Vector3f> mergeCorners(SimplePolygon3f otherPoly) {
-        Vector3f otherNorm = otherPoly.planeNormal();
+    private List<Vector3f> mergeCorners(SimplePolygon3f other) {
+        Vector3f otherNorm = other.planeNormal();
         if (planeNormal == null) {
             setPlane();
         }
@@ -672,16 +672,16 @@ public class SimplePolygon3f
              */
             return null;
         }
-        int otherNumCorners = otherPoly.numCorners();
+        int otherNumCorners = other.numCorners();
         boolean[][] sideMap = new boolean[numCorners][otherNumCorners];
-        if (!sharesSideWith(otherPoly, sideMap)) {
+        if (!sharesSideWith(other, sideMap)) {
             /*
              * The 2 polygons have no shared sides.
              */
             return null;
         }
         boolean[][] revMap = new boolean[otherNumCorners][numCorners];
-        boolean success = otherPoly.sharesSideWith(this, revMap);
+        boolean success = other.sharesSideWith(this, revMap);
         assert success;
         /*
          * Create a list of corner locations for the result.
@@ -717,11 +717,11 @@ public class SimplePolygon3f
                      * the same (forward) direction through the other polygon's
                      * corners until a shared side is found.
                      */
-                    startJ = otherPoly.nextIndex(startJ);
-                    for (cornerJ = otherPoly.nextIndex(startJ);
+                    startJ = other.nextIndex(startJ);
+                    for (cornerJ = other.nextIndex(startJ);
                             MyArray.first(revMap[cornerJ]) < 0;
-                            cornerJ = otherPoly.nextIndex(cornerJ)) {
-                        location = otherPoly.copyCornerLocation(cornerJ);
+                            cornerJ = other.nextIndex(cornerJ)) {
+                        location = other.copyCornerLocation(cornerJ);
                         result.add(location);
                     }
                     cornerI = MyArray.first(revMap[cornerJ]);
@@ -732,13 +732,13 @@ public class SimplePolygon3f
                      * the opposite (reverse) direction through the other
                      * polygon's corners until a shared side is found.
                      */
-                    for (cornerJ = otherPoly.prevIndex(startJ);
-                            MyArray.first(revMap[otherPoly.prevIndex(cornerJ)]) < 0;
-                            cornerJ = otherPoly.prevIndex(cornerJ)) {
-                        location = otherPoly.copyCornerLocation(cornerJ);
+                    for (cornerJ = other.prevIndex(startJ);
+                            MyArray.first(revMap[other.prevIndex(cornerJ)]) < 0;
+                            cornerJ = other.prevIndex(cornerJ)) {
+                        location = other.copyCornerLocation(cornerJ);
                         result.add(location);
                     }
-                    cornerI = MyArray.first(revMap[otherPoly.prevIndex(cornerJ)]);
+                    cornerI = MyArray.first(revMap[other.prevIndex(cornerJ)]);
                 }
             }
         }

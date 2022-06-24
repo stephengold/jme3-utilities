@@ -106,7 +106,7 @@ public class DoubleDialog extends TextEntryDialog {
             } else if (Double.isNaN(inputValue)) {
                 msg = notANumber();
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             msg = notANumber();
         }
 

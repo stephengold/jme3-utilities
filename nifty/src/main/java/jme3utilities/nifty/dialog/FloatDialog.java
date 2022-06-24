@@ -106,7 +106,7 @@ public class FloatDialog extends TextEntryDialog {
             } else if (Float.isNaN(inputValue)) {
                 msg = notANumber();
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             msg = notANumber();
         }
 

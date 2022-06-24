@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020, Stephen Gold
+ Copyright (c) 2020-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -136,7 +136,7 @@ public class FloatSliderDialog implements DialogController {
             } else if (Float.isNaN(inputValue)) {
                 msg = "must be a number";
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             msg = "must be a number";
         }
 

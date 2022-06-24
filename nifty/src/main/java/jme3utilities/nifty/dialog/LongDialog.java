@@ -102,7 +102,7 @@ public class LongDialog extends TextEntryDialog {
             } else if (inputValue > maxValue) {
                 msg = String.format("must not be > %d", maxValue);
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             msg = notANumber();
         }
 
