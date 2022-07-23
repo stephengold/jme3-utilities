@@ -529,7 +529,7 @@ public class PopScreenController extends BasicScreenController {
         Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
         assert menu != null;
         int maxChars = 0;
-        for (int itemIndex = 0; itemIndex < itemArray.length; itemIndex++) {
+        for (int itemIndex = 0; itemIndex < itemArray.length; ++itemIndex) {
             String item = itemArray[itemIndex];
             String displayText;
             if (itemIndex < 9) {
