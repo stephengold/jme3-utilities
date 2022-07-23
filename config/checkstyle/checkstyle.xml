@@ -10,7 +10,7 @@
 
     <!-- See https://checkstyle.org/config_filefilters.html -->
     <module name="BeforeExecutionExclusionFileFilter">
-        <property name="fileNamePattern" value="java[/]com[/]jme3[/]"/>
+        <property name="fileNamePattern" value="java[/\\]com[/\\]jme3[/\\]"/>
     </module>
 
     <!-- https://checkstyle.org/config_filters.html#SuppressionFilter -->
