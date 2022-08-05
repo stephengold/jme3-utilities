@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2017, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,15 @@ public class XmlLoader implements AssetLoader {
      * DOM parser for XML
      */
     private static DocumentBuilder parser = null;
+    // *************************************************************************
+    // constructors
+
+    /**
+     * A no-arg constructor to avoid javadoc warnings from JDK 18.
+     */
+    public XmlLoader() {
+        // do nothing
+    }
     // *************************************************************************
     // new methods exposed
 

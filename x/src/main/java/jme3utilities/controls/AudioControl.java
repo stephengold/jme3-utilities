@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,15 @@ public class AudioControl extends SimpleControl {
      */
     final private static Logger logger
             = Logger.getLogger(AudioControl.class.getName());
+    // *************************************************************************
+    // constructors
+
+    /**
+     * A no-arg constructor to avoid javadoc warnings from JDK 18.
+     */
+    public AudioControl() {
+        // do nothing
+    }
     // *************************************************************************
     // fields
 

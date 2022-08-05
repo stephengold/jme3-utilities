@@ -67,6 +67,15 @@ public class NavGraph {
      */
     final private Map<String, NavVertex> vertices = new HashMap<>(30);
     // *************************************************************************
+    // constructors
+
+    /**
+     * A no-arg constructor to avoid javadoc warnings from JDK 18.
+     */
+    public NavGraph() {
+        // do nothing
+    }
+    // *************************************************************************
     // new methods exposed
 
     /**
