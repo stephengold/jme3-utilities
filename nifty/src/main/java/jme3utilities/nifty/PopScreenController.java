@@ -147,10 +147,10 @@ public class PopScreenController extends BasicScreenController {
 
         String popupId = dialogElement.getId();
         getNifty().closePopup(popupId);
-        dialogActionPrefix = null;
+        this.dialogActionPrefix = null;
         setDialogElement(null);
         InputMode.resumeLifo();
-        dialogController = null;
+        this.dialogController = null;
     }
 
     /**
@@ -164,7 +164,7 @@ public class PopScreenController extends BasicScreenController {
         }
 
         activePopupMenu.close();
-        activePopupMenu = activePopupMenu.getParent();
+        this.activePopupMenu = activePopupMenu.getParent();
         if (activePopupMenu != null) {
             /*
              * Re-enable the parent menu.
@@ -204,7 +204,7 @@ public class PopScreenController extends BasicScreenController {
             ancestor.close();
             ancestor = ancestor.getParent();
         }
-        activePopupMenu = null;
+        this.activePopupMenu = null;
         InputMode.resumeLifo();
     }
 
@@ -338,8 +338,8 @@ public class PopScreenController extends BasicScreenController {
      * 100% on mouse pointer, 1&rarr;based 100% on parent)
      */
     public void setSubmenuWarp(float newWarpX, float newWarpY) {
-        warpX = newWarpX;
-        warpY = newWarpY;
+        this.warpX = newWarpX;
+        this.warpY = newWarpY;
     }
 
     /**
@@ -360,7 +360,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/confirm" layout as a base.
          * Nifty assigns the popup a new id.
          */
-        dialogElement = getNifty().createPopup("dialogs/confirm");
+        this.dialogElement = getNifty().createPopup("dialogs/confirm");
         String popupId = dialogElement.getId();
         assert popupId != null;
 
@@ -428,7 +428,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/multiSelect" layout as a base.
          * Nifty assigns the popup a new id.
          */
-        dialogElement = getNifty().createPopup("dialogs/multiSelect");
+        this.dialogElement = getNifty().createPopup("dialogs/multiSelect");
         String popupId = dialogElement.getId();
         assert popupId != null;
 
@@ -614,7 +614,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/text-and-check" layout as a base.
          * Nifty assigns the popup a new ID.
          */
-        dialogElement = getNifty().createPopup("dialogs/text-and-check");
+        this.dialogElement = getNifty().createPopup("dialogs/text-and-check");
         String popupId = dialogElement.getId();
         assert popupId != null;
 
@@ -677,7 +677,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/text-and-slider" layout as a base.
          * Nifty assigns the popup a new id.
          */
-        dialogElement = getNifty().createPopup("dialogs/text-and-slider");
+        this.dialogElement = getNifty().createPopup("dialogs/text-and-slider");
         String popupId = dialogElement.getId();
         assert popupId != null;
 
@@ -789,8 +789,8 @@ public class PopScreenController extends BasicScreenController {
         InputMode dialogMode = InputMode.findMode(DialogInputMode.name);
         InputMode.suspendAndActivate(dialogMode);
 
-        dialogActionPrefix = actionPrefix;
-        dialogController = controller;
+        this.dialogActionPrefix = actionPrefix;
+        this.dialogController = controller;
     }
 
     /**
@@ -808,7 +808,7 @@ public class PopScreenController extends BasicScreenController {
      * @param element which element to activate, or null to deactivate
      */
     protected void setDialogElement(Element element) {
-        dialogElement = element;
+        this.dialogElement = element;
     }
     // *************************************************************************
     // BasicScreenController methods
@@ -879,7 +879,7 @@ public class PopScreenController extends BasicScreenController {
             activePopupMenu.setEnabled(false);
         }
 
-        activePopupMenu = popupMenu;
+        this.activePopupMenu = popupMenu;
     }
 
     /**
