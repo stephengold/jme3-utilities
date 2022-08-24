@@ -517,6 +517,7 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(itemArray, "icon array");
         Validate.require(itemArray.length == iconArray.length,
                 "equal-length arrays");
+        assert isEnabled();
         /*
          * Create a popup using "popup-menu" as a base.
          * Nifty assigns the popup a new id.
@@ -610,6 +611,7 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(commitLabel, "commit-button label");
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(controller, "controller");
+        assert isEnabled();
         /*
          * Create a popup using the "dialogs/text-and-check" layout as a base.
          * Nifty assigns the popup a new ID.
@@ -673,6 +675,7 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(commitLabel, "commit-button label");
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(controller, "controller");
+        assert isEnabled();
         /*
          * Create a popup using the "dialogs/text-and-slider" layout as a base.
          * Nifty assigns the popup a new id.
@@ -713,8 +716,8 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(controller, "controller");
 
-        showTextEntryDialog(promptMessage, defaultValue, "", actionPrefix,
-                controller);
+        showTextEntryDialog(
+                promptMessage, defaultValue, "", actionPrefix, controller);
     }
 
     /**
@@ -735,6 +738,7 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(commitLabel, "commit-button label");
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(controller, "controller");
+        assert isEnabled();
         /*
          * Create a popup using the "dialogs/text-entry" layout as a base.
          * Nifty assigns the popup a new id.
