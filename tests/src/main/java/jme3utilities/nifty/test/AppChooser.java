@@ -244,9 +244,8 @@ public class AppChooser extends GuiApplication {
     @Override
     public void simpleUpdate(float tpf) {
         super.simpleUpdate(tpf);
-        /*
-         * Update the status overlay.
-         */
+
+        // Update the status overlay.
         Button appNameButton = mainScreen.getButton("appName");
         Class<?> mainClass = mainClasses[chosenAppIndex];
         String appName = mainClass.getSimpleName();
