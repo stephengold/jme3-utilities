@@ -163,7 +163,7 @@ public class DsScreen
             boolean isChecked = event.isChecked();
             switch (checkBoxName) {
                 case "fullscreen":
-                    toggleFullscreen();
+                    displaySettings.setFullscreen(isChecked);
                     break;
 
                 case "gammaCorrection":
