@@ -743,7 +743,7 @@ public class PopScreenController extends BasicScreenController {
          * Create a popup using the "dialogs/text-entry" layout as a base.
          * Nifty assigns the popup a new id.
          */
-        dialogElement = getNifty().createPopup("dialogs/text-entry");
+        this.dialogElement = getNifty().createPopup("dialogs/text-entry");
         String popupId = dialogElement.getId();
         assert popupId != null;
 

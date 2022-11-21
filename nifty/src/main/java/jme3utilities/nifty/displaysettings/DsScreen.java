@@ -136,7 +136,7 @@ public class DsScreen
         assert isInitialized();
         assert returnMode == null;
 
-        returnMode = InputMode.getActiveMode();
+        this.returnMode = InputMode.getActiveMode();
         assert returnMode != inputMode;
         assert returnMode.isEnabled();
         returnMode.setEnabled(false);
@@ -494,7 +494,7 @@ public class DsScreen
         closeAllPopups();
         setEnabled(false);
         returnMode.setEnabled(true);
-        returnMode = null;
+        this.returnMode = null;
     }
 
     /**

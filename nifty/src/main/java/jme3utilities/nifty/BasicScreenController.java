@@ -392,11 +392,8 @@ public class BasicScreenController
      */
     @Override
     final public void setEnabled(boolean newSetting) {
-        if (!isInitialized()) {
-            /*
-             * Defer until initialization.
-             */
-            enableDuringInitialization = newSetting;
+        if (!isInitialized()) { // Defer until initialization.
+            this.enableDuringInitialization = newSetting;
             return;
         }
         if (listener == null) {

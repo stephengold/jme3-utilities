@@ -181,7 +181,7 @@ abstract public class GuiApplication extends ActionApplication {
          */
         ColorSpace colorSpace = renderer.isMainFrameBufferSrgb()
                 ? ColorSpace.sRGB : ColorSpace.Linear;
-        niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
+        this.niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
                 audioRenderer, guiViewPort, colorSpace);
         if (niftyPostViewFlag) {
             /*
