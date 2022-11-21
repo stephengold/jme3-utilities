@@ -185,9 +185,8 @@ public class TestBindScreen extends GuiApplication {
          * by DisplaySettings.initialize().
          */
         application.setShowSettings(false);
-        /*
-         * Designate a sandbox directory.
-         */
+
+        // Designate a sandbox directory.
         try {
             ActionApplication.designateSandbox("./Written Assets");
         } catch (IOException exception) {
@@ -204,9 +203,7 @@ public class TestBindScreen extends GuiApplication {
      */
     @Override
     public void guiInitializeApplication() {
-        /*
-         * Log library versions.
-         */
+        // Log library versions.
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "Heart version is {0}",
@@ -217,9 +214,8 @@ public class TestBindScreen extends GuiApplication {
                 MyString.quote(LibraryVersion.versionShort()));
 
         Logger.getLogger(InputMode.class.getName()).setLevel(Level.INFO);
-        /*
-         * Disable flyCam and stats display.
-         */
+
+        // Disable flyCam and stats display.
         flyCam.setEnabled(false);
         setDisplayFps(false);
         setDisplayStatView(false);
@@ -238,9 +234,8 @@ public class TestBindScreen extends GuiApplication {
         assert success;
         messageHud.addLine("Press H key to view/edit hotkey bindings, "
                 + "U key to view/edit display settings.");
-        /*
-         * The (default) input mode should influence the animation and HUD.
-         */
+
+        // The (default) input mode should influence the animation and HUD.
         InputMode mode = getDefaultInputMode();
         mode.influence(starfield);
         mode.influence(messageHud);

@@ -213,10 +213,7 @@ public class BasicScreenController
             return false;
         }
         Element element = getScreen().findElementById(elementId);
-        if (element == null) {
-            /*
-             * non-existent element
-             */
+        if (element == null) { // non-existent element
             return false;
         }
 
@@ -317,9 +314,8 @@ public class BasicScreenController
                 = getApplication().getEnabledScreen();
         assert enabledScreen == this : enabledScreen;
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
-        /*
-         * Detach Nifty from the viewport.
-         */
+
+        // Detach Nifty from the viewport.
         NiftyJmeDisplay display = getApplication().getNiftyDisplay();
         guiViewPort.removeProcessor(display);
 
@@ -337,9 +333,8 @@ public class BasicScreenController
         assert isInitialized();
         assert !isEnabled();
         logger.log(Level.INFO, "screenId={0}", MyString.quote(screenId));
-        /*
-         * Attach Nifty to the viewport.
-         */
+
+        // Attach Nifty to the viewport.
         NiftyJmeDisplay display = getApplication().getNiftyDisplay();
         guiViewPort.addProcessor(display);
 

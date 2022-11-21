@@ -167,26 +167,22 @@ abstract public class GuiApplication extends ActionApplication {
             throw new IllegalStateException(
                     "app should only be initialized once");
         }
-        /*
-         * Attach (disabled) input modes for modal dialogs and popup menus.
-         */
+
+        // Attach (disabled) input modes for modal dialogs and popup menus.
         InputMode dialogMode = new DialogInputMode();
         boolean success = stateManager.attach(dialogMode);
         assert success;
         InputMode menuMode = new MenuInputMode();
         success = stateManager.attach(menuMode);
         assert success;
-        /*
-         * Start NiftyGUI -- without the batched renderer!
-         */
+
+        // Start NiftyGUI -- without the batched renderer!
         ColorSpace colorSpace = renderer.isMainFrameBufferSrgb()
                 ? ColorSpace.sRGB : ColorSpace.Linear;
         this.niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager,
                 audioRenderer, guiViewPort, colorSpace);
         if (niftyPostViewFlag) {
-            /*
-             * Render the NiftyGUI after/over the guiNode.
-             */
+            // Render the NiftyGUI after/over the guiNode.
             int height = cam.getHeight();
             int width = cam.getWidth();
             Camera niftyCam = new Camera(width, height);
@@ -218,9 +214,8 @@ abstract public class GuiApplication extends ActionApplication {
                     dialogName);
             nifty.fromXmlWithoutStartScreen(assetPath);
         }
-        /*
-         * Invoke the startup code of the subclass.
-         */
+
+        // Invoke the startup code of the subclass.
         guiInitializeApplication();
     }
 }

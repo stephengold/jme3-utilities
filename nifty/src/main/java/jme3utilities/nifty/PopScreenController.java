@@ -165,10 +165,7 @@ public class PopScreenController extends BasicScreenController {
 
         activePopupMenu.close();
         this.activePopupMenu = activePopupMenu.getParent();
-        if (activePopupMenu != null) {
-            /*
-             * Re-enable the parent menu.
-             */
+        if (activePopupMenu != null) { // Re-enable the parent menu.
             activePopupMenu.setEnabled(true);
         } else {
             InputMode.resumeLifo();
@@ -319,13 +316,11 @@ public class PopScreenController extends BasicScreenController {
             return;
         }
         PopupMenu oldPopupMenu = activePopupMenu;
-        /*
-         * Perform the action described by the action string.
-         */
+
+        // Perform the action described by the action string.
         perform(actionString);
-        /*
-         * If the old menu is still active, close it and all its ancestors.
-         */
+
+        // If the old menu is still active, close it and all its ancestors.
         closePopupMenu(oldPopupMenu);
     }
 
@@ -387,9 +382,8 @@ public class PopScreenController extends BasicScreenController {
         String[] lines = bodyText.split("\n");
         int numLines = lines.length;
         int numChars = bodyText.length();
-        /*
-         * Create a popup element for the dialog box. Nifty assigns it a new id.
-         */
+
+        // Create a popup element for the dialog box. Nifty assigns it a new id.
         if (numLines > 10 || numChars > 200) { // TODO use font information
             String masterId = registerInfoScrollDialog(numLines + 2);
             dialogElement = getNifty().createPopup(masterId);
@@ -523,9 +517,8 @@ public class PopScreenController extends BasicScreenController {
          * Nifty assigns the popup a new id.
          */
         Element element = getNifty().createPopup("popup-menu");
-        /*
-         * Add items to the new popup's menu.
-         */
+
+        // Add items to the new popup's menu.
         @SuppressWarnings("unchecked")
         Menu<String> menu = element.findNiftyControl("#menu", Menu.class);
         assert menu != null;
@@ -548,18 +541,16 @@ public class PopScreenController extends BasicScreenController {
             String displayIcon = iconArray[itemIndex];
             menu.addMenuItem(displayText, displayIcon, item);
         }
-        /*
-         * Size the menu to accommodate the item with the longest display text.
-         */
+
+        // Size the menu to accommodate the item with the longest display text.
         int pixelWidth = 50 + 7 * maxChars; // TODO use font information
         SizeValue width = new SizeValue(pixelWidth, SizeValueType.Pixel);
         menu.setWidth(width);
 
         String elementId = element.getId();
         assert elementId != null;
-        /*
-         * Create a subscriber to handle the new menu's events.
-         */
+
+        // Create a subscriber to handle the new menu's events.
         PopupMenu popupMenu;
         if (activePopupMenu == null) {
             popupMenu = new PopupMenu(elementId, actionPrefix, itemArray, this);
@@ -777,9 +768,8 @@ public class PopScreenController extends BasicScreenController {
             String focusElementId, DialogController controller) {
         Validate.nonNull(popupId, "popup id");
         Validate.nonNull(controller, "controller");
-        /*
-         * Make the popup visible, setting the keyboard focus.
-         */
+
+        // Make the popup visible, setting the keyboard focus.
         Screen screen = getNifty().getCurrentScreen();
         assert screen != null;
         Element focusElement;
@@ -841,9 +831,8 @@ public class PopScreenController extends BasicScreenController {
      */
     private void activatePopupMenu(PopupMenu popupMenu, Menu<String> menu) {
         Validate.nonNull(popupMenu, "popup menu");
-        /*
-         * Subscribe to menu events.
-         */
+
+        // Subscribe to menu events.
         Screen screen = getNifty().getCurrentScreen();
         String controlId = menu.getId();
         getNifty().subscribe(screen, controlId, MenuItemActivatedEvent.class,
@@ -867,19 +856,15 @@ public class PopScreenController extends BasicScreenController {
             int intY = Math.round(floatY);
             mouse.setMousePosition(intX, intY);
         }
-        /*
-         * Make the popup visible without specifying a focus element.
-         */
+
+        // Make the popup visible without specifying a focus element.
         String elementId = popupMenu.getElementId();
         getNifty().showPopup(screen, elementId, null);
 
         if (activePopupMenu == null) {
             InputMode menuMode = InputMode.findMode(MenuInputMode.name);
             InputMode.suspendAndActivate(menuMode);
-        } else {
-            /*
-             * Disable the parent popup menu.
-             */
+        } else { // Disable the parent popup menu.
             activePopupMenu.setEnabled(false);
         }
 

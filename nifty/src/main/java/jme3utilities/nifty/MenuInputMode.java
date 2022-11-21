@@ -82,9 +82,8 @@ class MenuInputMode extends InputMode {
         if (!isEnabled()) {
             return;
         }
-        /*
-         * Ignore actions which are not ongoing.
-         */
+
+        // Ignore actions which are not ongoing.
         if (!ongoing) {
             return;
         }
@@ -97,10 +96,7 @@ class MenuInputMode extends InputMode {
         }
         PopScreenController psc = (PopScreenController) controller;
         assert psc.hasActivePopupMenu();
-        if (actionString.equals("close")) {
-            /*
-             * Close the active popup menu.
-             */
+        if (actionString.equals("close")) { // Close the active popup menu.
             psc.closeActivePopupMenu();
 
         } else if (actionString.startsWith("select ")) {
@@ -114,9 +110,7 @@ class MenuInputMode extends InputMode {
             psc.selectMenuItem(index);
 
         } else {
-            /*
-             * The action is not handled: forward it to the application class.
-             */
+            // The action is not handled: forward it to the application class.
             guiApplication.onAction(actionString, ongoing, tpf);
         }
     }

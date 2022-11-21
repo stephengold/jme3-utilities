@@ -79,9 +79,7 @@ public class MessageDisplay extends GuiScreenController {
         Validate.nonNull(line, "line");
 
         if (!isInitialized()) {
-            /*
-             * Can't access the listbox yet, so add the line to the backlog.
-             */
+            // Can't access the listbox yet, so add the line to the backlog.
             backlog.add(line);
             return;
         }

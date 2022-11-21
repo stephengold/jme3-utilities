@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2019, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -213,9 +213,8 @@ public class PopupMenu
          */
         String itemName = event.getItem();
         String actionString = actionPrefix + itemName;
-        /*
-         * Perform the action described by the action string.
-         */
+
+        // Perform the action described by the action string.
         screenController.perform(actionString);
         /*
          * If this menu is still active, close it and all its ancestors.

@@ -91,35 +91,26 @@ class DialogInputMode extends InputMode {
         if (isEnabled() && ongoing && controller != null) {
             PopScreenController psc = (PopScreenController) controller;
             assert psc.getActiveDialog() != null;
-            /*
-             * Attempt to handle the action.
-             */
+
+            // Attempt to handle the action.
             switch (actionString) {
                 case "cancel":
-                    /*
-                     * Close the dialog without performing any other action.
-                     */
+                    // Close the dialog without performing any other action.
                     psc.closeActiveDialog();
                     break;
 
                 case "commit":
-                    /*
-                     * Perform the "commit" action and then close the dialog.
-                     */
+                    // Perform the "commit" action and then close the dialog.
                     psc.dialogCommit();
                     break;
 
                 case "invert":
-                    /*
-                     * For a multi-select, invert the current selection.
-                     */
+                    // For a multi-select, invert the current selection.
                     psc.invertDialogSelection();
                     break;
 
                 case "selectAll":
-                    /*
-                     * For a multi-select, select all items.
-                     */
+                    // For a multi-select, select all items.
                     psc.selectAllDialogItems();
                     break;
 
@@ -132,9 +123,7 @@ class DialogInputMode extends InputMode {
         }
 
         if (!handled) {
-            /*
-             * The action is not handled: forward it to the application class.
-             */
+            // The action is not handled: forward it to the application class.
             guiApplication.onAction(actionString, ongoing, tpf);
         }
     }

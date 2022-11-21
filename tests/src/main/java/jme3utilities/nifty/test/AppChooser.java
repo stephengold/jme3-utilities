@@ -50,7 +50,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.lwjgl.system.Configuration;
 
 /**
- * Choose an application from a list, then execute it.
+ * Choose a jme3-utilities test application from a list, then execute it.
  *
  * @author Stephen Gold sgold@sonic.net
  */
@@ -87,11 +87,11 @@ public class AppChooser extends GuiApplication {
      */
     final private static String apChooseApp = "choose app ";
     /**
-     * action string to delete any persistent settings of the chosen app
+     * action string to delete any persistent settings of the selected app
      */
     final private static String asDeleteSettings = "delete settings";
     /**
-     * action string to execute the chosen app
+     * action string to execute the selected app
      */
     final private static String asExecute = "execute";
     // *************************************************************************
@@ -158,9 +158,7 @@ public class AppChooser extends GuiApplication {
      */
     @Override
     public void guiInitializeApplication() {
-        /*
-         * Log library versions.
-         */
+        // Log library versions.
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "Heart version is {0}",
@@ -170,9 +168,8 @@ public class AppChooser extends GuiApplication {
         logger.log(Level.INFO, "jme3-utilities-nifty version is {0}",
                 MyString.quote(LibraryVersion.versionShort()));
         InputMode inputMode = getDefaultInputMode();
-        /*
-         * Create and attach a controller for the main (and only) screen.
-         */
+
+        // Create and attach a controller for the main (and only) screen.
         mainScreen = new GuiScreenController(
                 "AppChooser/mainScreen",
                 "Interface/Nifty/screens/AppChooser/mainScreen.xml",
@@ -234,9 +231,8 @@ public class AppChooser extends GuiApplication {
                 return;
             }
         }
-        /*
-         * The action has not been handled: forward it to the superclass.
-         */
+
+        // The action has not been handled: forward it to the superclass.
         super.onAction(actionString, ongoing, tpf);
     }
 
@@ -281,6 +277,8 @@ public class AppChooser extends GuiApplication {
     /**
      * Look for the shell script (or batch file) to execute in
      * "./build/install/tests/bin".
+     *
+     * @return a new instance
      */
     private File findScriptToExecute() {
         File buildDir = new File("build");

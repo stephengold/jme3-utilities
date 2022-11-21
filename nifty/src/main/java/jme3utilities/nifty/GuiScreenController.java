@@ -661,9 +661,8 @@ public class GuiScreenController extends PopScreenController {
             String statusSuffix) {
         Validate.nonNull(name, "name");
         Validate.nonNull(statusSuffix, "status suffix");
-        /*
-         * Select output precision based on the magnitude of the value.
-         */
+
+        // Select output precision based on the magnitude of the value.
         String format;
         if (FastMath.abs(value) >= 5f) {
             format = "%.1f";

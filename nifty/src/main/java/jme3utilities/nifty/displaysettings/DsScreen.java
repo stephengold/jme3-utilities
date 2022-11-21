@@ -309,9 +309,8 @@ public class DsScreen
         int height = displaySettings.height();
         int width = displaySettings.width();
         Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
-        /*
-         * Enumerate the most relevant refresh rates.
-         */
+
+        // Enumerate the most relevant refresh rates.
         for (DisplayMode mode : modes) {
             if (mode.getHeight() == height && mode.getWidth() == width) {
                 int modeRate = mode.getRefreshRate();
@@ -365,9 +364,8 @@ public class DsScreen
             logger.log(Level.INFO, "Got action {0}",
                     MyString.quote(actionString));
         }
-        /*
-         * Parse the action string and attempt to handle the action.
-         */
+
+        // Parse the action string and attempt to handle the action.
         boolean handled = false;
         ActionApplication app = getActionApplication();
         if (ongoing) {
@@ -447,9 +445,7 @@ public class DsScreen
 
         Screen screen = getScreen();
         if (!screen.isBound()) {
-            /*
-             * Avoid Nifty exceptions and warnings regarding unbound controls.
-             */
+            // Avoid Nifty exceptions and warnings regarding unbound controls.
             return;
         }
 
