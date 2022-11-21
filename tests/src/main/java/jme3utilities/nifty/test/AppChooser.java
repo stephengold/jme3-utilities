@@ -194,7 +194,7 @@ public class AppChooser extends GuiApplication {
             switch (actionString) {
                 case asChooseApp:
                     String[] appNames = new String[mainClasses.length];
-                    for (int i = 0; i < mainClasses.length; i++) {
+                    for (int i = 0; i < mainClasses.length; ++i) {
                         appNames[i] = mainClasses[i].getSimpleName();
                     }
                     mainScreen.showPopupMenu(apChooseApp, appNames);
@@ -221,7 +221,7 @@ public class AppChooser extends GuiApplication {
 
             if (actionString.startsWith(apChooseApp)) {
                 String arg = MyString.remainder(actionString, apChooseApp);
-                for (int i = 0; i < mainClasses.length; i++) {
+                for (int i = 0; i < mainClasses.length; ++i) {
                     String appName = mainClasses[i].getSimpleName();
                     if (arg.equals(appName)) {
                         chosenAppIndex = i;

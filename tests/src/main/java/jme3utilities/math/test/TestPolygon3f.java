@@ -284,7 +284,7 @@ public class TestPolygon3f {
     private static void runAll() {
         Polygon3f poly;
 
-        for (int caseI = 0; caseI < degenerateCase.length; caseI++) {
+        for (int caseI = 0; caseI < degenerateCase.length; ++caseI) {
             System.out.printf("degenerate/planar test case #%d:%n", caseI);
             poly = new Polygon3f(degenerateCase[caseI], 0.01f);
             assert poly.isDegenerate() : caseI;
@@ -292,7 +292,7 @@ public class TestPolygon3f {
             testPolygon(poly);
         }
 
-        for (int caseI = 0; caseI < dnpCase.length; caseI++) {
+        for (int caseI = 0; caseI < dnpCase.length; ++caseI) {
             System.out.printf("degenerate/non-planar test case #%d:%n", caseI);
             poly = new Polygon3f(dnpCase[caseI], 0.01f);
             assert poly.isDegenerate();
@@ -300,21 +300,21 @@ public class TestPolygon3f {
             testPolygon(poly);
         }
 
-        for (int caseI = 0; caseI < genericCase.length; caseI++) {
+        for (int caseI = 0; caseI < genericCase.length; ++caseI) {
             System.out.printf("generic/planar test case #%d:%n", caseI);
             poly = new GenericPolygon3f(genericCase[caseI], 0.01f);
             assert poly.isPlanar();
             testPolygon(poly);
         }
 
-        for (int caseI = 0; caseI < gnpCase.length; caseI++) {
+        for (int caseI = 0; caseI < gnpCase.length; ++caseI) {
             System.out.printf("generic/non-planar test case #%d:%n", caseI);
             poly = new GenericPolygon3f(gnpCase[caseI], 0.01f);
             assert !poly.isPlanar();
             testPolygon(poly);
         }
 
-        for (int caseI = 0; caseI < simpleCase.length; caseI++) {
+        for (int caseI = 0; caseI < simpleCase.length; ++caseI) {
             System.out.printf("simple test case #%d:%n", caseI);
             poly = new SimplePolygon3f(simpleCase[caseI], 0.01f);
             testPolygon(poly);
@@ -387,7 +387,7 @@ public class TestPolygon3f {
         Vector3f[] array = poly.copyCornerLocations();
         assert array.length == numCorners : array.length;
         float turnSum = 0f;
-        for (int cornerI = 0; cornerI < numCorners; cornerI++) {
+        for (int cornerI = 0; cornerI < numCorners; ++cornerI) {
             assert poly.onCorner(array[cornerI], cornerI);
             System.out.printf("  C%d at %s",
                     cornerI, array[cornerI].toString());
@@ -415,7 +415,7 @@ public class TestPolygon3f {
                     MyMath.toDegrees(turnSum));
         }
 
-        for (int sideI = 0; sideI < numCorners; sideI++) {
+        for (int sideI = 0; sideI < numCorners; ++sideI) {
             Vector3f midpoint = poly.midpoint(sideI);
             assert poly.onSide(midpoint, sideI);
             System.out.printf("  S%d is %f wu in length, midpoint at %s.%n",

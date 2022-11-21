@@ -76,7 +76,7 @@ public class TestShell3f {
         for (float centerScale : scales) {
             for (float radiusScale : scales) {
                 for (float locScale : scales) {
-                    for (int i = 0; i < 10_000; i++) {
+                    for (int i = 0; i < 10_000; ++i) {
                         center = random.nextUnitVector3f();
                         center.multLocal(centerScale);
 

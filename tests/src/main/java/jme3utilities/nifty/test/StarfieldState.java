@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -275,7 +275,7 @@ public class StarfieldState extends SimpleAppState {
         float objectRadius = 0.01f * zoneRadius / MyMath.cubeRoot(numObjects);
         Mesh objectMesh = new Sphere(3, 10, objectRadius);
 
-        for (int i = 0; i < numObjects; i++) {
+        for (int i = 0; i < numObjects; ++i) {
             String name = names.unique("obj");
             Geometry object = new Geometry(name, objectMesh);
             object.setMaterial(white);

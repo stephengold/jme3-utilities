@@ -194,7 +194,7 @@ public class TestPopups extends GuiApplication {
                 String msg = "TestPopups is a GUI application for testing/demon"
                         + "strating popup elements, including modal dialog boxe"
                         + "s and multi-level popup menus.\nMumble line 2\n";
-                for (int i = 3; i <= 10; i++) {
+                for (int i = 3; i <= 10; ++i) {
                     msg += String.format("line %d\n", i);
                 }
                 screen.showInfoDialog("About the TestPopups application", msg);
@@ -333,7 +333,7 @@ public class TestPopups extends GuiApplication {
              */
             String[] names = new String[files.length];
             String[] icons = new String[files.length];
-            for (int i = 0; i < files.length; i++) {
+            for (int i = 0; i < files.length; ++i) {
                 file = files[i];
                 names[i] = file.getName();
                 if (file.isDirectory()) {
