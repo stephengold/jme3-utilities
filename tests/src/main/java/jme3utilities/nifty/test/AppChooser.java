@@ -280,7 +280,7 @@ public class AppChooser extends GuiApplication {
      *
      * @return a new instance
      */
-    private File findScriptToExecute() {
+    private static File findScriptToExecute() {
         File buildDir = new File("build");
         File installDir = new File(buildDir, "install");
         File examplesDir = new File(installDir, "tests");
