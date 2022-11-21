@@ -170,7 +170,7 @@ public class AppChooser extends GuiApplication {
         InputMode inputMode = getDefaultInputMode();
 
         // Create and attach a controller for the main (and only) screen.
-        mainScreen = new GuiScreenController(
+        this.mainScreen = new GuiScreenController(
                 "AppChooser/mainScreen",
                 "Interface/Nifty/screens/AppChooser/mainScreen.xml",
                 InitialState.Enabled);
@@ -224,7 +224,7 @@ public class AppChooser extends GuiApplication {
                 for (int i = 0; i < mainClasses.length; ++i) {
                     String appName = mainClasses[i].getSimpleName();
                     if (arg.equals(appName)) {
-                        chosenAppIndex = i;
+                        this.chosenAppIndex = i;
                         break;
                     }
                 }
