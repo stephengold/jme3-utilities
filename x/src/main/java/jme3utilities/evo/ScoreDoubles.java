@@ -95,7 +95,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
         Validate.positive(num, "number of sub-scores");
 
         this.subscores = new double[num];
-        for (int index = 0; index < num; index++) {
+        for (int index = 0; index < num; ++index) {
             double sub = subscores[index];
             Validate.number(sub, "sub-score");
             this.subscores[index] = sub;
@@ -135,7 +135,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
         int num1 = score1.numSubscores();
         int num2 = score2.numSubscores();
         int minNum = Math.min(num1, num2);
-        for (int subIndex = 0; subIndex < minNum; subIndex++) {
+        for (int subIndex = 0; subIndex < minNum; ++subIndex) {
             double sub1 = score1.getSubscore(subIndex);
             double sub2 = score2.getSubscore(subIndex);
             if (sub1 > sub2) {
@@ -177,7 +177,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
         int ns = subscores.length;
         int nsOther = otherScore.numSubscores();
         int minNum = Math.min(ns, nsOther);
-        for (int subIndex = 0; subIndex < minNum; subIndex++) {
+        for (int subIndex = 0; subIndex < minNum; ++subIndex) {
             double sub = subscores[subIndex];
             double subOther = otherScore.getSubscore(subIndex);
             if (sub > subOther) {
@@ -210,7 +210,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
             int num = subscores.length;
             int numOther = otherScore.numSubscores();
             int minNum = Math.min(num, numOther);
-            for (int subIndex = 0; subIndex < minNum; subIndex++) {
+            for (int subIndex = 0; subIndex < minNum; ++subIndex) {
                 double sub = subscores[subIndex];
                 double subOther = otherScore.getSubscore(subIndex);
                 if (sub != subOther) {
@@ -248,7 +248,7 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
     public String toString() {
         StringBuilder buffer = new StringBuilder(64);
         buffer.append("[");
-        for (int subIndex = 0; subIndex < subscores.length; subIndex++) {
+        for (int subIndex = 0; subIndex < subscores.length; ++subIndex) {
             if (subIndex != 0) {
                 buffer.append(", ");
             }

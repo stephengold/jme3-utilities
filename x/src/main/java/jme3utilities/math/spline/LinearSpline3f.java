@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -210,7 +210,7 @@ public class LinearSpline3f implements Spline3f {
     public boolean isContainedIn(Locus3f locus) {
         Validate.nonNull(locus, "locus");
 
-        for (int i = 0; i < controlPoints.size() - 1; i++) {
+        for (int i = 0; i < controlPoints.size() - 1; ++i) {
             Vector3f startLocation = controlPoints.get(i);
             Vector3f endLocation = controlPoints.get(i + 1);
             if (!locus.contains(startLocation, endLocation)) {
@@ -300,7 +300,7 @@ public class LinearSpline3f implements Spline3f {
     public String toString() {
         StringBuilder buffer = new StringBuilder(50);
         buffer.append("LinearSpline3f[");
-        for (int i = 0; i < numControlPoints(); i++) {
+        for (int i = 0; i < numControlPoints(); ++i) {
             float t = controlTs.get(i);
             Vector3f p = controlPoints.get(i);
             String desc = String.format("@t=%.1f%s", t, p.toString());
@@ -332,7 +332,7 @@ public class LinearSpline3f implements Spline3f {
          * TODO: implement binary search
          */
         int numPoints = controlTs.size();
-        for (int index = 1; index < numPoints; index++) {
+        for (int index = 1; index < numPoints; ++index) {
             float controlT = controlTs.get(index);
             if (sampleT < controlT) {
                 return index - 1;

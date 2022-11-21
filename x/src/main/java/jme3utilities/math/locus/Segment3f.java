@@ -190,7 +190,7 @@ public class Segment3f implements Locus3f {
     public int onCorner(Vector3f point) {
         Validate.nonNull(point, "point");
 
-        for (int cornerIndex = 0; cornerIndex < 2; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < 2; ++cornerIndex) {
             if (onCorner(point, cornerIndex)) {
                 return cornerIndex;
             }
@@ -236,9 +236,9 @@ public class Segment3f implements Locus3f {
         float tol2 = (tolerance2 + tol * tol) / 2f;
 
         boolean result = false;
-        for (int otherI = 0; otherI < 2; otherI++) {
+        for (int otherI = 0; otherI < 2; ++otherI) {
             Vector3f otherCorner = other.copyCornerLocation(otherI);
-            for (int thisI = 0; thisI < 2; thisI++) {
+            for (int thisI = 0; thisI < 2; ++thisI) {
                 Vector3f thisCorner = cornerLocations[thisI];
                 if (MyVector3f.doCoincide(otherCorner, thisCorner, tol2)) {
                     result = true;

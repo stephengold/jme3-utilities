@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2021, Stephen Gold
+ Copyright (c) 2017-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ public class Solution {
 
         double complement = 1.0 - blendAmount;
         float[] newParameters = new float[otherNum];
-        for (int iParameter = 0; iParameter < otherNum; iParameter++) {
+        for (int iParameter = 0; iParameter < otherNum; ++iParameter) {
             float parm = parameters[iParameter];
             float otherParm = otherSolution.getParameter(iParameter);
             double newParm = parm * complement + otherParm * blendAmount;
@@ -146,7 +146,7 @@ public class Solution {
 
         double complement = 1.0 - blend1 - blend2;
         float[] newParameters = new float[num1];
-        for (int iParameter = 0; iParameter < num1; iParameter++) {
+        for (int iParameter = 0; iParameter < num1; ++iParameter) {
             float parm = parameters[iParameter];
             float parm1 = solution1.getParameter(iParameter);
             float parm2 = solution2.getParameter(iParameter);
@@ -184,7 +184,7 @@ public class Solution {
         Validate.nonNull(generator, "generator");
 
         float[] newParameters = new float[otherNum];
-        for (int iParameter = 0; iParameter < otherNum; iParameter++) {
+        for (int iParameter = 0; iParameter < otherNum; ++iParameter) {
             float newParm;
             double random = generator.nextDouble();
             if (random < blendProbability) {
@@ -272,7 +272,7 @@ public class Solution {
             if (parameters.length != otherNumParameters) {
                 return false;
             }
-            for (int i = 0; i < parameters.length; i++) {
+            for (int i = 0; i < parameters.length; ++i) {
                 float otherParm = otherSolution.getParameter(i);
                 if (parameters[i] != otherParm) {
                     return false;
@@ -309,7 +309,7 @@ public class Solution {
         StringBuilder buffer = new StringBuilder(64);
         buffer.append(species);
         buffer.append("[");
-        for (int i = 0; i < parameters.length; i++) {
+        for (int i = 0; i < parameters.length; ++i) {
             double parm = parameters[i];
             buffer.append(parm);
             if (i + 1 < parameters.length) {

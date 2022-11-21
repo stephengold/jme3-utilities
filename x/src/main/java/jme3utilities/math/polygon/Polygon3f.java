@@ -184,7 +184,7 @@ public class Polygon3f extends CornerSet3f {
     public int findLongest() {
         int result = -1;
         double biggestSD = Double.NEGATIVE_INFINITY;
-        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             int nextI = nextIndex(sideIndex);
             double squaredDistance = squaredDistance(sideIndex, nextI);
             if (squaredDistance > biggestSD) {
@@ -204,7 +204,7 @@ public class Polygon3f extends CornerSet3f {
     public int findShortest() {
         int result = -1;
         double leastSD = Double.POSITIVE_INFINITY;
-        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             int nextI = nextIndex(sideIndex);
             double squaredDistance = squaredDistance(sideIndex, nextI);
             if (squaredDistance < leastSD) {
@@ -230,7 +230,7 @@ public class Polygon3f extends CornerSet3f {
         int result = -1;
         double leastSD = Double.POSITIVE_INFINITY;
         Vector3f closestCurrentSide = new Vector3f();
-        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             double squaredDistance = squaredDistanceToSide(
                     location, sideIndex, closestCurrentSide);
             if (squaredDistance < leastSD) {
@@ -265,7 +265,7 @@ public class Polygon3f extends CornerSet3f {
          */
         int newNumCorners = 1;
         for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
-            newNumCorners++;
+            ++newNumCorners;
         }
         assert newNumCorners >= 2 : newNumCorners;
         assert newNumCorners <= numCorners : newNumCorners;
@@ -276,7 +276,7 @@ public class Polygon3f extends CornerSet3f {
         int newI = 0;
         for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
             newCornerLocations[newI] = cornerLocations[oldI];
-            newI++;
+            ++newI;
         }
         assert newI == newNumCorners - 1;
         newCornerLocations[newI] = cornerLocations[lastIndex];
@@ -344,7 +344,7 @@ public class Polygon3f extends CornerSet3f {
     public int onSide(Vector3f location) {
         Validate.nonNull(location, "location");
 
-        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             if (onSide(location, sideIndex)) {
                 return sideIndex;
             }
@@ -379,7 +379,7 @@ public class Polygon3f extends CornerSet3f {
      */
     public float perimeter() {
         float sum = 0f;
-        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             float length = sideLength(sideIndex);
             sum += length;
         }
@@ -439,9 +439,9 @@ public class Polygon3f extends CornerSet3f {
         }
 
         result = false;
-        for (int otherI = 0; otherI < other.numCorners(); otherI++) {
+        for (int otherI = 0; otherI < other.numCorners(); ++otherI) {
             int otherN = other.nextIndex(otherI);
-            for (int thisI = 0; thisI < numCorners; thisI++) {
+            for (int thisI = 0; thisI < numCorners; ++thisI) {
                 if (cornerMap[thisI][otherI]) {
                     int thisN = nextIndex(thisI);
                     if (cornerMap[thisN][otherN]) {
@@ -604,8 +604,8 @@ public class Polygon3f extends CornerSet3f {
         /*
          * (2) Test for coincident corners.
          */
-        for (int iCorner = 0; iCorner < numCorners; iCorner++) {
-            for (int jCorner = iCorner + 1; jCorner < numCorners; jCorner++) {
+        for (int iCorner = 0; iCorner < numCorners; ++iCorner) {
+            for (int jCorner = iCorner + 1; jCorner < numCorners; ++jCorner) {
                 if (doCoincide(iCorner, jCorner)) {
                     setIsDegenerate(true);
                     return;
@@ -615,7 +615,7 @@ public class Polygon3f extends CornerSet3f {
         /*
          * (3) Test for 180-degree turns.
          */
-        for (int cornerI = 0; cornerI < numCorners; cornerI++) {
+        for (int cornerI = 0; cornerI < numCorners; ++cornerI) {
             double dot = dotProduct(cornerI);
             int nextI = nextIndex(cornerI);
             int prevI = prevIndex(cornerI);

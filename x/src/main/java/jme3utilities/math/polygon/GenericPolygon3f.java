@@ -288,7 +288,7 @@ public class GenericPolygon3f extends Polygon3f {
         /*
          * Check for intersection at a corner.
          */
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             Vector3f result = intersectionWithCorner(cornerIndex, startLocation,
                     endLocation);
             if (result != null) {
@@ -298,7 +298,7 @@ public class GenericPolygon3f extends Polygon3f {
         /*
          * Check for intersection with a side.
          */
-        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             Vector3f result = intersectionWithSide(sideIndex, startLocation,
                     endLocation);
             if (result != null) {
@@ -458,8 +458,8 @@ public class GenericPolygon3f extends Polygon3f {
         /*
          * consider each pair of sides
          */
-        for (int sideI = 0; sideI < numCorners; sideI++) {
-            for (int sideJ = sideI + 1; sideJ < numCorners; sideJ++) {
+        for (int sideI = 0; sideI < numCorners; ++sideI) {
+            for (int sideJ = sideI + 1; sideJ < numCorners; ++sideJ) {
                 if (doSidesIntersect(sideI, sideJ)) {
                     isSelfIntersecting = true;
                     return;

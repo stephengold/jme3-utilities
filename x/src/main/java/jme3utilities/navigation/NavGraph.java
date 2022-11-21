@@ -195,7 +195,7 @@ public class NavGraph {
         int i = 0;
         for (NavArc arc : arcCosts.keySet()) {
             result[i] = arc;
-            i++;
+            ++i;
         }
 
         return result;
@@ -211,7 +211,7 @@ public class NavGraph {
         int i = 0;
         for (NavVertex vertex : vertices.values()) {
             result[i] = vertex;
-            i++;
+            ++i;
         }
 
         return result;

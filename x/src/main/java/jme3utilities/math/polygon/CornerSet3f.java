@@ -97,7 +97,7 @@ public class CornerSet3f {
     public CornerSet3f(Vector3f[] cornerArray, float compareTolerance) {
         Validate.nonNull(cornerArray, "corner array");
         numCorners = cornerArray.length;
-        for (int index = 0; index < numCorners; index++) {
+        for (int index = 0; index < numCorners; ++index) {
             String description = String.format("cornerList[%d]", index);
             Validate.nonNull(cornerArray[index], description);
         }
@@ -111,7 +111,7 @@ public class CornerSet3f {
         /*
          * Copy corner locations.
          */
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             cornerLocations[cornerIndex] = cornerArray[cornerIndex].clone();
         }
         /*
@@ -132,7 +132,7 @@ public class CornerSet3f {
     public CornerSet3f(List<Vector3f> cornerList, float compareTolerance) {
         Validate.nonNull(cornerList, "corner list");
         numCorners = cornerList.size();
-        for (int index = 0; index < numCorners; index++) {
+        for (int index = 0; index < numCorners; ++index) {
             String description = String.format("cornerList[%d]", index);
             Validate.nonNull(cornerList.get(index), description);
         }
@@ -145,7 +145,7 @@ public class CornerSet3f {
         /*
          * Copy corner locations.
          */
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             cornerLocations[cornerIndex] = cornerList.get(cornerIndex).clone();
         }
         /*
@@ -177,7 +177,7 @@ public class CornerSet3f {
     public Vector3f[] copyCornerLocations() {
         Vector3f[] result = new Vector3f[numCorners];
 
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             result[cornerIndex] = cornerLocations[cornerIndex].clone();
         }
 
@@ -193,8 +193,8 @@ public class CornerSet3f {
     public float diameter() {
         double largestSD = 0.0;
 
-        for (int i = 0; i < numCorners; i++) {
-            for (int j = i + 1; j < numCorners; j++) {
+        for (int i = 0; i < numCorners; ++i) {
+            for (int j = i + 1; j < numCorners; ++j) {
                 double squaredDistance = squaredDistance(i, j);
                 if (squaredDistance > largestSD) {
                     largestSD = squaredDistance;
@@ -217,7 +217,7 @@ public class CornerSet3f {
     public int findCorner(Vector3f location) {
         int result = -1;
         double bestSD = Double.POSITIVE_INFINITY;
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             Vector3f corner = cornerLocations[cornerIndex];
             double squaredDistance
                     = MyVector3f.distanceSquared(corner, location);
@@ -294,7 +294,7 @@ public class CornerSet3f {
     public int onCorner(Vector3f location) {
         Validate.nonNull(location, "location");
 
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             if (onCorner(location, cornerIndex)) {
                 return cornerIndex;
             }
@@ -347,9 +347,9 @@ public class CornerSet3f {
         }
 
         boolean result = false;
-        for (int otherI = 0; otherI < other.numCorners(); otherI++) {
+        for (int otherI = 0; otherI < other.numCorners(); ++otherI) {
             Vector3f otherCorner = other.copyCornerLocation(otherI);
-            for (int thisI = 0; thisI < numCorners; thisI++) {
+            for (int thisI = 0; thisI < numCorners; ++thisI) {
                 Vector3f thisCorner = cornerLocations[thisI];
                 if (MyVector3f.doCoincide(otherCorner, thisCorner, tolerance)) {
                     result = true;
@@ -635,7 +635,7 @@ public class CornerSet3f {
          */
         boolean sameY = true;
         float y = cornerLocations[0].y;
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             float dy = cornerLocations[cornerIndex].y - y;
             if (dy * dy > tolerance2) {
                 sameY = false;
@@ -685,7 +685,7 @@ public class CornerSet3f {
          * If all the corners lie in that plane,
          * then the corner set is planar, otherwise it isn't.
          */
-        for (int cornerIndex = 0; cornerIndex < numCorners; cornerIndex++) {
+        for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             Vector3f corner = cornerLocations[cornerIndex];
             float pseudoDistance = planeNormal.dot(corner) + planeConstant;
             float distanceSquared = pseudoDistance * pseudoDistance;
@@ -714,9 +714,9 @@ public class CornerSet3f {
     private void setLargestTriangle() {
         double largestSA = -1.0;
         int[] largest = null;
-        for (int i = 0; i < numCorners - 2; i++) {
-            for (int j = i + 1; j < numCorners - 1; j++) {
-                for (int k = j + 1; k < numCorners; k++) {
+        for (int i = 0; i < numCorners - 2; ++i) {
+            for (int j = i + 1; j < numCorners - 1; ++j) {
+                for (int k = j + 1; k < numCorners; ++k) {
                     double sa = squaredArea(i, j, k);
                     if (sa > largestSA) {
                         largestSA = sa;

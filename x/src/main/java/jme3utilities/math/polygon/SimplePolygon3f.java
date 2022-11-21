@@ -405,7 +405,7 @@ public class SimplePolygon3f
             return true;
         }
 
-        for (int sideIndex = 0; sideIndex < numCorners; sideIndex++) {
+        for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             boolean startOnSide = onSide(startLocation, sideIndex);
             boolean endOnSide = onSide(endLocation, sideIndex);
             if (startOnSide && endOnSide) {
@@ -583,7 +583,7 @@ public class SimplePolygon3f
         if (!result.isContainedIn(this) && maxPoints > joints.size()) {
             float bestLength = Float.MAX_VALUE;
             result = null;
-            for (int i = 0; i < numCorners; i++) {
+            for (int i = 0; i < numCorners; ++i) {
                 Vector3f corner = cornerLocations[i];
                 List<Vector3f> newJoints = new ArrayList<>(joints);
                 newJoints.add(1, corner);
@@ -693,7 +693,7 @@ public class SimplePolygon3f
          */
         int startI = 0;
         while (MyArray.first(sideMap[startI]) >= 0) {
-            startI++;
+            ++startI;
             assert startI < numCorners : startI;
         }
         /*
@@ -753,7 +753,7 @@ public class SimplePolygon3f
     private void setCentroid() {
         float sumX = 0f;
         float sumZ = 0f;
-        for (int cornerI = 0; cornerI < numCorners; cornerI++) {
+        for (int cornerI = 0; cornerI < numCorners; ++cornerI) {
             VectorXZ p1 = planarOffset(cornerI);
             int nextI = nextIndex(cornerI);
             VectorXZ p2 = planarOffset(nextI);
@@ -783,7 +783,7 @@ public class SimplePolygon3f
         if (planeNormal == null) {
             setPlane();
         }
-        for (int cornerI = 0; cornerI < numCorners; cornerI++) {
+        for (int cornerI = 0; cornerI < numCorners; ++cornerI) {
             Vector3f cross = crossProduct(cornerI);
             float dot = planeNormal.dot(cross);
             if (!(dot >= 0f)) {
@@ -872,7 +872,7 @@ public class SimplePolygon3f
      */
     private void setSignedArea() {
         float total = 0f;
-        for (int i = 0; i < numCorners; i++) {
+        for (int i = 0; i < numCorners; ++i) {
             if (planarOffsets[i] == null) {
                 setPlanarOffset(i);
             }

@@ -138,7 +138,7 @@ public class NavVertex implements Comparable<NavVertex> {
         int i = 0;
         for (NavArc arc : incoming) {
             result[i] = arc;
-            i++;
+            ++i;
         }
 
         return result;
@@ -165,7 +165,7 @@ public class NavVertex implements Comparable<NavVertex> {
         int i = 0;
         for (NavArc arc : outgoing) {
             result[i] = arc;
-            i++;
+            ++i;
         }
 
         return result;
