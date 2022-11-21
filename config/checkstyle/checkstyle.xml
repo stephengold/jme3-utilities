@@ -41,7 +41,7 @@
     <module name="TreeWalker">
         <module name="OuterTypeFilename"/>
         <module name="IllegalToken">
-            <property name="tokens" value="LITERAL_NATIVE, POST_DEC, STATIC_IMPORT"/>
+            <property name="tokens" value="LITERAL_NATIVE, POST_DEC, POST_INC, STATIC_IMPORT"/>
         </module>
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
