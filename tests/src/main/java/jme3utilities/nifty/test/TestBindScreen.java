@@ -162,8 +162,8 @@ public class TestBindScreen extends GuiApplication {
                 600, 480, // min width, height
                 2_048, 1_080 // max width, height
         );
-        displaySettings = new TbsDisplaySettings(application, applicationName,
-                sizeLimits) {
+        displaySettings = new TbsDisplaySettings(
+                application, applicationName, sizeLimits) {
             @Override
             protected void applyOverrides(AppSettings settings) {
                 super.applyOverrides(settings);
@@ -219,16 +219,14 @@ public class TestBindScreen extends GuiApplication {
         flyCam.setEnabled(false);
         setDisplayFps(false);
         setDisplayStatView(false);
-        /*
-         * Create and attach the starfield animation.
-         */
-        starfield = new StarfieldState(false, numObjects, "equator");
+
+        // Create and attach the starfield animation.
+        this.starfield = new StarfieldState(false, numObjects, "equator");
         boolean success = stateManager.attach(starfield);
         assert success;
-        /*
-         * Attach a HUD for messages.
-         */
-        messageHud = new MessageDisplay();
+
+        // Attach a HUD for messages.
+        this.messageHud = new MessageDisplay();
         messageHud.setListener(this);
         success = stateManager.attach(messageHud);
         assert success;
@@ -241,16 +239,14 @@ public class TestBindScreen extends GuiApplication {
         mode.influence(messageHud);
 
         mode.setConfigPath("Interface/bindings/TestBindScreen.properties");
-        /*
-         * Attach a screen controller for the hotkey-bindings editor.
-         */
-        bindScreen = new BindScreen();
+
+        // Attach a screen controller for the hotkey-bindings editor.
+        this.bindScreen = new BindScreen();
         success = stateManager.attach(bindScreen);
         assert success;
-        /*
-         * Attach a screen controller for the display-settings editor.
-         */
-        dsScreen = new DsScreen(displaySettings);
+
+        // Attach a screen controller for the display-settings editor.
+        this.dsScreen = new DsScreen(displaySettings);
         success = stateManager.attach(dsScreen);
         assert success;
     }
