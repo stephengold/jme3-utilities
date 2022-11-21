@@ -286,8 +286,8 @@ public class BindScreen
      * @param application (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         assert !isInitialized();
         assert !isEnabled();
 

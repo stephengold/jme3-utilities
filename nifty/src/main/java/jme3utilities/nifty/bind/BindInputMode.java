@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2020, Stephen Gold
+ Copyright (c) 2013-2022, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -112,8 +112,8 @@ public class BindInputMode extends InputMode {
      * @param application (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         Validate.nonNull(stateManager, "state manager");
         Validate.nonNull(application, "application");
 

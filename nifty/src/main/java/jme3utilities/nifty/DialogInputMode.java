@@ -80,8 +80,8 @@ class DialogInputMode extends InputMode {
     @Override
     public void onAction(String actionString, boolean ongoing, float tpf) {
         if (ongoing) {
-            logger.log(Level.INFO, "Got action {0}",
-                    MyString.quote(actionString));
+            logger.log(
+                    Level.INFO, "Got action {0}", MyString.quote(actionString));
         }
 
         GuiApplication guiApplication = (GuiApplication) simpleApplication;
@@ -149,8 +149,8 @@ class DialogInputMode extends InputMode {
      * @param application (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         AssetManager am = application.getAssetManager();
         JmeCursor cursor = (JmeCursor) am.loadAsset(cursorAssetPath);
         setCursor(cursor);

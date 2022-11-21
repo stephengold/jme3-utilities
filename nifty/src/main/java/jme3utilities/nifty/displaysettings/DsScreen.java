@@ -155,8 +155,8 @@ public class DsScreen
             final CheckBoxStateChangedEvent event) {
         Validate.nonNull(checkBoxId, "check box id");
         Validate.nonNull(event, "event");
-        Validate.require(checkBoxId.endsWith("CheckBox"),
-                "ID ends with CheckBox");
+        Validate.require(
+                checkBoxId.endsWith("CheckBox"), "ID ends with CheckBox");
 
         if (!isIgnoreGuiChanges() && hasStarted()) {
             String checkBoxName = MyString.removeSuffix(checkBoxId, "CheckBox");
@@ -424,8 +424,8 @@ public class DsScreen
      * @param application (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         assert !isInitialized();
         assert !isEnabled();
 

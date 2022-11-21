@@ -108,8 +108,8 @@ public class GuiWindowController extends WindowController {
      * @return the color indicated by the sliders (either storeResult or a new
      * instance)
      */
-    public ColorRGBA readColorBank(String bankName, SliderTransform transform,
-            ColorRGBA storeResult) {
+    public ColorRGBA readColorBank(
+            String bankName, SliderTransform transform, ColorRGBA storeResult) {
         Validate.nonNull(bankName, "bank name");
         Validate.nonNull(transform, "transform");
 
@@ -144,8 +144,8 @@ public class GuiWindowController extends WindowController {
      * @return the vector indicated by the sliders (either storeResult or a new
      * instance)
      */
-    public Vector3f readVectorBank(String bankName, SliderTransform transform,
-            Vector3f storeResult) {
+    public Vector3f readVectorBank(
+            String bankName, SliderTransform transform, Vector3f storeResult) {
         Validate.nonNull(bankName, "bank name");
         Validate.nonNull(transform, "transform");
         Vector3f result = (storeResult == null) ? new Vector3f() : storeResult;
@@ -192,8 +192,8 @@ public class GuiWindowController extends WindowController {
      * @param transform how each component has been transformed (not null)
      * @param color (not null, unaffected)
      */
-    public void setColorBank(String name, SliderTransform transform,
-            ColorRGBA color) {
+    public void setColorBank(
+            String name, SliderTransform transform, ColorRGBA color) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
         Validate.nonNull(color, "color");
@@ -208,8 +208,8 @@ public class GuiWindowController extends WindowController {
      * @param transform how the value has been transformed (not null)
      * @param inputValue input value
      */
-    public void setSlider(String name, SliderTransform transform,
-            float inputValue) {
+    public void setSlider(
+            String name, SliderTransform transform, float inputValue) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
 
@@ -249,8 +249,8 @@ public class GuiWindowController extends WindowController {
      * @param value value of the slider
      * @param statusSuffix suffix to specify a unit of measurement (not null)
      */
-    public void updateSliderStatus(String name, float value,
-            String statusSuffix) {
+    public void updateSliderStatus(
+            String name, float value, String statusSuffix) {
         Validate.nonNull(name, "name");
         Validate.nonNull(statusSuffix, "status suffix");
 

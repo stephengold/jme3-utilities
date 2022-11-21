@@ -205,8 +205,8 @@ public class PopupMenu
      * @param event details, such as which item got activated (not null)
      */
     @Override
-    public void onEvent(String controlId,
-            MenuItemActivatedEvent<String> event) {
+    public void onEvent(
+            String controlId, MenuItemActivatedEvent<String> event) {
         /*
          * Generate the action string for the item by appending the item's
          * name to this menu's action prefix.

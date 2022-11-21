@@ -363,8 +363,8 @@ public class PopScreenController extends BasicScreenController {
         TextRenderer textRenderer = prompt.getRenderer(TextRenderer.class);
         textRenderer.setText(promptMessage);
 
-        Button commitButton = dialogElement.findNiftyControl("#commit",
-                Button.class);
+        Button commitButton
+                = dialogElement.findNiftyControl("#commit", Button.class);
         commitButton.setText(commitLabel);
 
         activateDialog(popupId, actionString, "#commit", controller);
@@ -466,12 +466,12 @@ public class PopScreenController extends BasicScreenController {
      * usually the final character will be a space)
      * @param menuBuilder (not null)
      */
-    public void showPopupMenu(String actionPrefix,
-            PopupMenuBuilder menuBuilder) {
+    public void showPopupMenu(
+            String actionPrefix, PopupMenuBuilder menuBuilder) {
         Validate.nonNull(menuBuilder, "menuBuilder");
         Validate.nonNull(actionPrefix, "action prefix");
-        logger.log(Level.INFO, "actionPrefix = {0}",
-                MyString.quote(actionPrefix));
+        logger.log(
+                Level.INFO, "actionPrefix = {0}", MyString.quote(actionPrefix));
 
         if (!menuBuilder.isEmpty()) {
             String[] itemArray = menuBuilder.copyItems();
@@ -504,13 +504,13 @@ public class PopScreenController extends BasicScreenController {
      * @param itemArray array of menu items (not null, unaffected)
      * @param iconArray array of icon asset paths (not null, unaffected)
      */
-    public void showPopupMenu(String actionPrefix,
-            String[] itemArray, String[] iconArray) {
+    public void showPopupMenu(
+            String actionPrefix, String[] itemArray, String[] iconArray) {
         Validate.nonNull(actionPrefix, "prefix");
         Validate.nonNull(itemArray, "item array");
         Validate.nonNull(itemArray, "icon array");
-        Validate.require(itemArray.length == iconArray.length,
-                "equal-length arrays");
+        Validate.require(
+                itemArray.length == iconArray.length, "equal-length arrays");
         assert isEnabled();
         /*
          * Create a popup using "popup-menu" as a base.
@@ -555,8 +555,8 @@ public class PopScreenController extends BasicScreenController {
         if (activePopupMenu == null) {
             popupMenu = new PopupMenu(elementId, actionPrefix, itemArray, this);
         } else {
-            popupMenu = new PopupMenu(elementId, actionPrefix,
-                    itemArray, activePopupMenu);
+            popupMenu = new PopupMenu(
+                    elementId, actionPrefix, itemArray, activePopupMenu);
         }
 
         activatePopupMenu(popupMenu, menu);
@@ -580,8 +580,8 @@ public class PopScreenController extends BasicScreenController {
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(controller, "controller");
 
-        showTextAndCheckDialog(promptMessage, defaultValue, "", actionPrefix,
-                controller);
+        showTextAndCheckDialog(
+                promptMessage, defaultValue, "", actionPrefix, controller);
     }
 
     /**

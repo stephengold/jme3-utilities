@@ -253,8 +253,8 @@ public class BasicScreenController
      */
     public void perform(String actionString) {
         Validate.nonNull(actionString, "action string");
-        logger.log(Level.INFO, "actionString={0}",
-                MyString.quote(actionString));
+        logger.log(
+                Level.INFO, "actionString={0}", MyString.quote(actionString));
 
         BasicScreenController screen = getApplication().getEnabledScreen();
         ActionListener actionListener = screen.getListener();
@@ -277,8 +277,8 @@ public class BasicScreenController
      */
     public void performActive(String actionString) {
         Validate.nonNull(actionString, "action string");
-        logger.log(Level.INFO, "actionString={0}",
-                MyString.quote(actionString));
+        logger.log(
+                Level.INFO, "actionString={0}", MyString.quote(actionString));
 
         ActionListener actionListener = InputMode.getActiveMode();
         boolean isOngoing = true;
@@ -367,8 +367,8 @@ public class BasicScreenController
      * @param application application which owns this screen (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
 
         getNifty().registerScreenController(this);

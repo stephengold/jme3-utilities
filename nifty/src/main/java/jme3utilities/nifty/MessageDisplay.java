@@ -110,8 +110,8 @@ public class MessageDisplay extends GuiScreenController {
      * @param application application which owns this screen (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
         assert isInitialized();
         /*

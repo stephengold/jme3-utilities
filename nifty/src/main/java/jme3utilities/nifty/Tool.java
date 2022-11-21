@@ -163,8 +163,8 @@ abstract public class Tool extends GuiWindowController {
      * @param application application which owns this tool (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
 
         GuiScreenController screen = getScreenController();

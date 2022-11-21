@@ -160,8 +160,8 @@ public class WindowController extends GuiAppState {
      * @param application application which owns the window (not null)
      */
     @Override
-    public void initialize(AppStateManager stateManager,
-            Application application) {
+    public void initialize(
+            AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
 
         assert screenController.isInitialized();

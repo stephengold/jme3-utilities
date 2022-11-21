@@ -345,8 +345,8 @@ public class GuiScreenController extends PopScreenController {
      * @param event details of the event (not null)
      */
     @NiftyEventSubscriber(pattern = ".*RadioButton")
-    public void onRadioButtonChanged(final String buttonId,
-            final RadioButtonStateChangedEvent event) {
+    public void onRadioButtonChanged(
+            final String buttonId, final RadioButtonStateChangedEvent event) {
         Validate.nonNull(buttonId, "button ID");
         Validate.require(buttonId.endsWith("RadioButton"), "expected suffix");
         Validate.nonNull(event, "event");
@@ -368,8 +368,8 @@ public class GuiScreenController extends PopScreenController {
      * @param event details of the event (not null, ignored)
      */
     @NiftyEventSubscriber(pattern = ".*Slider")
-    public void onSliderChanged(final String sliderId,
-            final SliderChangedEvent event) {
+    public void onSliderChanged(
+            final String sliderId, final SliderChangedEvent event) {
         Validate.nonNull(sliderId, "slider ID");
         Validate.require(sliderId.endsWith("Slider"), "expected suffix");
         Validate.nonNull(event, "event");
@@ -391,8 +391,8 @@ public class GuiScreenController extends PopScreenController {
      * @param event details of the event (not null, ignored)
      */
     @NiftyEventSubscriber(pattern = ".*#dialogslider")
-    public void onSliderChangedInDialog(final String sliderId,
-            final SliderChangedEvent event) {
+    public void onSliderChangedInDialog(
+            final String sliderId, final SliderChangedEvent event) {
         Validate.nonNull(sliderId, "slider ID");
         Validate.require(sliderId.endsWith("#dialogslider"), "expected suffix");
         Validate.nonNull(event, "event");
@@ -415,8 +415,8 @@ public class GuiScreenController extends PopScreenController {
      * @return the color indicated by the sliders (either storeResult or a new
      * instance)
      */
-    public ColorRGBA readColorBank(String name, SliderTransform transform,
-            ColorRGBA storeResult) {
+    public ColorRGBA readColorBank(
+            String name, SliderTransform transform, ColorRGBA storeResult) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
         ColorRGBA color = (storeResult == null) ? new ColorRGBA() : storeResult;
@@ -456,8 +456,8 @@ public class GuiScreenController extends PopScreenController {
      * @return vector indicated by the sliders (either storeResult or a new
      * instance)
      */
-    public Vector3f readVectorBank(String name, SliderTransform transform,
-            Vector3f storeResult) {
+    public Vector3f readVectorBank(
+            String name, SliderTransform transform, Vector3f storeResult) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
         Vector3f vector = (storeResult == null) ? new Vector3f() : storeResult;
@@ -515,8 +515,8 @@ public class GuiScreenController extends PopScreenController {
      * @param transform how each component has been transformed (not null)
      * @param color (not null, unaffected)
      */
-    public void setColorBank(String name, SliderTransform transform,
-            ColorRGBA color) {
+    public void setColorBank(
+            String name, SliderTransform transform, ColorRGBA color) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
 
@@ -594,8 +594,8 @@ public class GuiScreenController extends PopScreenController {
      * @param transform how the value has been transformed (not null)
      * @param inputValue input value
      */
-    public void setSlider(String name, SliderTransform transform,
-            float inputValue) {
+    public void setSlider(
+            String name, SliderTransform transform, float inputValue) {
         Validate.nonNull(name, "name");
         Validate.nonNull(transform, "transform");
 
@@ -657,8 +657,8 @@ public class GuiScreenController extends PopScreenController {
      * @param value value of the slider
      * @param statusSuffix suffix to specify a unit of measurement (not null)
      */
-    public void updateSliderStatus(String name, float value,
-            String statusSuffix) {
+    public void updateSliderStatus(
+            String name, float value, String statusSuffix) {
         Validate.nonNull(name, "name");
         Validate.nonNull(statusSuffix, "status suffix");
 
@@ -675,8 +675,8 @@ public class GuiScreenController extends PopScreenController {
         }
         String valueString = String.format(format, value);
         valueString = MyString.trimFloat(valueString);
-        String statusText = String.format("%s = %s%s",
-                name, valueString, statusSuffix);
+        String statusText
+                = String.format("%s = %s%s", name, valueString, statusSuffix);
 
         String statusName = name + "SliderStatus";
         setStatusText(statusName, statusText);
@@ -773,8 +773,8 @@ public class GuiScreenController extends PopScreenController {
      * @param transform how the value has been transformed (not null)
      * @param inputValue input value
      */
-    private static void setSlider(Slider slider, SliderTransform transform,
-            float inputValue) {
+    private static void setSlider(
+            Slider slider, SliderTransform transform, float inputValue) {
         Validate.nonNull(transform, "transform");
 
         float max = slider.getMax();
