@@ -1,8 +1,13 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.31 released on TBD
+
++ Bugfix: `DsScreen` flicker when started in fullscreen mode.
++ Base on version 8.2.0 of the Heart library and version 0.9.17 of Acorus.
+
 ## Version 0.9.30 released on 24 June 2022
 
-+ Base on version 8.0.0 of the Heart library, and version 0.9.16 of Acorus.
++ Base on version 8.0.0 of the Heart library and version 0.9.16 of Acorus.
 + Add the "checkstyle" plugin to the build.
 
 ## Version 0.9.29 released on 3 May 2022
