@@ -298,7 +298,7 @@ public class BasicScreenController
      */
     final public void setListener(ActionListener newListener) {
         Validate.nonNull(newListener, "listener");
-        listener = newListener;
+        this.listener = newListener;
     }
     // *************************************************************************
     // new protected methods
@@ -429,7 +429,7 @@ public class BasicScreenController
      */
     @Override
     public void onStartScreen() {
-        hasStarted = true;
+        this.hasStarted = true;
     }
     // *************************************************************************
     // private methods
