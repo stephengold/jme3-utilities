@@ -1,5 +1,9 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.32 released on TBD
+
++ Bugfix:  menu items aren't properly sorted
+
 ## Version 0.9.31 released on 21 November 2022
 
 + Bugfix: `DsScreen` flicker when started in fullscreen mode.
@@ -7,6 +11,7 @@
 
 ## Version 0.9.30 released on 24 June 2022
 
++ Re-implement `PopupMenuBuilder` using a `HashMap` instead of parallel lists.
 + Base on version 8.0.0 of the Heart library and version 0.9.16 of Acorus.
 + Add the "checkstyle" plugin to the build.
 
