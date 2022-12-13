@@ -1,8 +1,8 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.32 released on TBD
+## Version 0.9.32 released on 12 December 2022
 
-+ Bugfix:  menu items aren't properly sorted
++ Bugfix:  menu items aren't properly ordered
 
 ## Version 0.9.31 released on 21 November 2022
 
