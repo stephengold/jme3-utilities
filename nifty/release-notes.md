@@ -1,8 +1,12 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.33 released on TBD
+
+Bugfix: JME issue 1891 (incorrect fullscreen layout with LWJGL v3)
+
 ## Version 0.9.32 released on 12 December 2022
 
-+ Bugfix:  menu items aren't properly ordered
+Bugfix:  menu items aren't properly ordered
 
 ## Version 0.9.31 released on 21 November 2022
 
