@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.33 released on TBD
+## Version 0.9.33 released on 8 January 2023
 
 Bugfix: JME issue 1891 (incorrect fullscreen layout with LWJGL v3)
 
