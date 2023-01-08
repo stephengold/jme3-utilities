@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2021 jMonkeyEngine
+ * Copyright (c) 2009-2023 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ import com.jme3.input.InputManager;
 import com.jme3.input.event.KeyInputEvent;
 import com.jme3.post.SceneProcessor;
 import com.jme3.profile.AppProfiler;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
@@ -113,7 +114,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * @param inputManager jME InputManager
      * @param audioRenderer jME AudioRenderer
      * @param viewport Viewport to use
-     * @return a new NiftyJmeDisplay instance
+     * @return new NiftyJmeDisplay instance
      */
     public static NiftyJmeDisplay newNiftyJmeDisplay(
             final AssetManager assetManager,
@@ -144,7 +145,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
      * you can use to further configure batch rendering. If unsure you can
      * simply use new BatchRenderConfiguration() in here for the default
      * configuration which should give you good default values.
-     * @return a new display
+     * @return new NiftyJmeDisplay instance
      */
     public static NiftyJmeDisplay newNiftyJmeDisplay(
             final AssetManager assetManager,
@@ -207,7 +208,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
         // additional parameter. This method should really be removed soon and
         // users should simply call the new factory methods.
         //
-        // For now, I keep this constructor as-is but have marked it as deprecated
+        // For now, I keep this constructor as-is, but have marked it as deprecated
         // to allow migration to the new way to instantiate this class.
         initialize(assetManager, inputManager, audioRenderer, viewport);
 
@@ -307,8 +308,9 @@ public class NiftyJmeDisplay implements SceneProcessor {
             final ViewPort viewport) {
         this.assetManager = assetManager;
         this.inputManager = inputManager;
-        this.width = viewport.getCamera().getWidth();
-        this.height = viewport.getCamera().getHeight();
+        Camera camera = vp.getCamera();
+        this.width = camera.getWidth();
+        this.height = camera.getHeight();
         this.soundDev = new SoundDeviceJme(assetManager, audioRenderer);
         this.inputSys = new InputSystemJme(inputManager);
     }
@@ -331,7 +333,12 @@ public class NiftyJmeDisplay implements SceneProcessor {
         this.renderer = rm.getRenderer();
 
         inputSys.reset();
-        inputSys.setHeight(vp.getCamera().getHeight());
+
+        // window size may have changed since the private initialize() above
+        Camera camera = vp.getCamera();
+        this.width = camera.getWidth();
+        this.height = camera.getHeight();
+        inputSys.setHeight(height);
     }
 
     public Nifty getNifty() {
