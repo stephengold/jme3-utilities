@@ -308,7 +308,7 @@ public class NiftyJmeDisplay implements SceneProcessor {
             final ViewPort viewport) {
         this.assetManager = assetManager;
         this.inputManager = inputManager;
-        Camera camera = vp.getCamera();
+        Camera camera = viewport.getCamera();
         this.width = camera.getWidth();
         this.height = camera.getHeight();
         this.soundDev = new SoundDeviceJme(assetManager, audioRenderer);
