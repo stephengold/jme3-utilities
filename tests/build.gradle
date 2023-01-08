@@ -12,6 +12,7 @@ dependencies {
     implementation heartCoordinates
     implementation acorusCoordinates
     runtimeOnly 'com.github.nifty-gui:nifty-style-black:1.4.3'
+   //runtimeOnly 'org.jmonkeyengine:jme3-awt-dialogs:' + jmeVersion // JMonkeyEngine v3.6 only!
     runtimeOnly 'org.jmonkeyengine:jme3-desktop:' + jme3Version
     implementation 'org.jmonkeyengine:jme3-lwjgl3:' + jme3Version
 
