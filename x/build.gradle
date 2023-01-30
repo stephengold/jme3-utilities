@@ -29,7 +29,12 @@ tasks.register('release') {
     description 'Stages Maven artifacts to Sonatype OSSRH.'
 }
 
-jar { archiveBaseName = project.ext.baseName }
+jar {
+    archiveBaseName = project.ext.baseName
+    manifest {
+        attributes 'Created-By': "${JavaVersion.current()} (${System.getProperty("java.vendor")})"
+    }
+}
 javadocJar { archiveBaseName = project.ext.baseName }
 sourcesJar { archiveBaseName = project.ext.baseName }
 
