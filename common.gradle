@@ -49,9 +49,10 @@ tasks.withType(JavaExec) { // Java runtime options:
 repositories {
     //mavenLocal() // to find local SNAPSHOTs of libraries
     mavenCentral()
+    //maven { url 'https://s01.oss.sonatype.org/content/groups/staging' } // to find libraries staged but not yet released
 }
 
-// custom tasks for creating source/javadoc JARs
+// custom tasks for creating source/javadoc JARs:
 
 tasks.register('javadocJar', Jar) {
     archiveClassifier = 'javadoc'
