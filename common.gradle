@@ -9,12 +9,12 @@ ext {
 
     // module coordinates of dependencies:
     acorusCoordinates = 'com.github.stephengold:Acorus:0.9.17'
-    heartCoordinates = 'com.github.stephengold:Heart:8.2.0'
+    heartCoordinates = 'com.github.stephengold:Heart:8.3.0+for36'
 
     // current versions of libraries:
     jme3utilitiesniftyVersion = '0.9.34-SNAPSHOT'
     jme3utilitiesxVersion = '0.3.2-SNAPSHOT'
-    jme3Version = '3.5.2-stable'
+    jme3Version = '3.6.0-beta1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_7
