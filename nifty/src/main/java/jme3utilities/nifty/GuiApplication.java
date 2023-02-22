@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -142,7 +142,7 @@ abstract public class GuiApplication extends ActionApplication {
     public void setEnabledScreen(BasicScreenController newScreen) {
         logger.log(Level.INFO, "newScreen={0}", newScreen);
         assert newScreen == null || enabledScreen == null;
-        enabledScreen = newScreen;
+        this.enabledScreen = newScreen;
     }
 
     /**
@@ -153,7 +153,7 @@ abstract public class GuiApplication extends ActionApplication {
         if (niftyDisplay != null) {
             throw new IllegalStateException("too late - already initialized");
         }
-        niftyPostViewFlag = true;
+        this.niftyPostViewFlag = true;
     }
     // *************************************************************************
     // ActionApplication methods

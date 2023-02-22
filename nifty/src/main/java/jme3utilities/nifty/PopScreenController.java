@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -386,9 +386,9 @@ public class PopScreenController extends BasicScreenController {
         // Create a popup element for the dialog box. Nifty assigns it a new id.
         if (numLines > 10 || numChars > 200) { // TODO use font information
             String masterId = registerInfoScrollDialog(numLines + 2);
-            dialogElement = getNifty().createPopup(masterId);
+            this.dialogElement = getNifty().createPopup(masterId);
         } else {
-            dialogElement = getNifty().createPopup("dialogs/info10");
+            this.dialogElement = getNifty().createPopup("dialogs/info10");
         }
         String popupId = dialogElement.getId();
         assert popupId != null;
