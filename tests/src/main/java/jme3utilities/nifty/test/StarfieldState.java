@@ -149,7 +149,7 @@ public class StarfieldState extends SimpleAppState {
      * @param velocity (in world units/second, may be negative)
      */
     public void setForwardVelocity(float velocity) {
-        forwardVelocity = velocity;
+        this.forwardVelocity = velocity;
     }
 
     /**
@@ -161,7 +161,7 @@ public class StarfieldState extends SimpleAppState {
     public void setRotation(float rate, Vector3f axis) {
         Validate.nonZero(axis, "axis");
 
-        rotationRate = rate;
+        this.rotationRate = rate;
         rotationAxis.set(axis);
     }
     // *************************************************************************
@@ -183,7 +183,7 @@ public class StarfieldState extends SimpleAppState {
          * The objects zone extends halfway to the far
          * plane of the view frustum.
          */
-        zoneRadius = 0.5f * cam.getFrustumFar();
+        this.zoneRadius = 0.5f * cam.getFrustumFar();
 
         // Initialize the scene graph.
         initializeBackdrop();
