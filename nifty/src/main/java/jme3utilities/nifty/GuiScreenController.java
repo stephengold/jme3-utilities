@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -262,7 +262,7 @@ public class GuiScreenController extends PopScreenController {
         Validate.nonNull(managingTool, "managing tool");
 
         Tool oldMapping = checkBoxMap.put(checkBoxName, managingTool);
-        assert oldMapping == null;
+        assert oldMapping == null : checkBoxName;
     }
 
     /**
@@ -277,7 +277,7 @@ public class GuiScreenController extends PopScreenController {
         Validate.nonNull(managingTool, "managing tool");
 
         Tool oldMapping = radioButtonMap.put(radioButtonName, managingTool);
-        assert oldMapping == null;
+        assert oldMapping == null : radioButtonName;
     }
 
     /**
@@ -291,7 +291,7 @@ public class GuiScreenController extends PopScreenController {
         Validate.nonNull(managingTool, "managing tool");
 
         Tool oldMapping = sliderMap.put(sliderName, managingTool);
-        assert oldMapping == null;
+        assert oldMapping == null : sliderName;
     }
 
     /**

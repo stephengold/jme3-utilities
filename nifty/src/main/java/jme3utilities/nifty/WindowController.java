@@ -171,7 +171,7 @@ public class WindowController extends GuiAppState {
             hide();
         }
 
-        assert isInitialized();
+        assert isInitialized() : controlId;
     }
 
     /**
@@ -214,8 +214,8 @@ public class WindowController extends GuiAppState {
      * Display the window without bringing it to the front.
      */
     private void display() {
-        assert isInitialized();
-        assert !isEnabled();
+        assert isInitialized() : controlId;
+        assert !isEnabled() : controlId;
 
         getElement().setVisible(true);
         super.setEnabled(true);
@@ -230,7 +230,7 @@ public class WindowController extends GuiAppState {
         Screen screen = screenController.getScreen();
         Window window = screen.findNiftyControl(controlId, Window.class);
 
-        assert window != null;
+        assert window != null : controlId;
         return window;
     }
 
@@ -238,8 +238,8 @@ public class WindowController extends GuiAppState {
      * Hide the window.
      */
     private void hide() {
-        assert isInitialized();
-        assert isEnabled();
+        assert isInitialized() : controlId;
+        assert isEnabled() : controlId;
 
         getElement().setVisible(false);
         super.setEnabled(false);

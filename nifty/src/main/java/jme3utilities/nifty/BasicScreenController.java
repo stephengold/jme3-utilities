@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2022, Stephen Gold
+ Copyright (c) 2014-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -175,7 +175,7 @@ public class BasicScreenController
      */
     public Screen getScreen() {
         Screen screen = getNifty().getScreen(screenId);
-        assert screen != null;
+        assert screen != null : "screenId = " + MyString.quote(screenId);
         return screen;
     }
 
