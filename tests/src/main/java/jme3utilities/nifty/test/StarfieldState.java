@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022 Stephen Gold
+ Copyright (c) 2017-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -176,18 +176,16 @@ public class StarfieldState extends SimpleAppState {
     @Override
     public void initialize(AppStateManager sm, Application app) {
         super.initialize(sm, app);
-        /*
-         * Relocate camera to origin.
-         */
+
+        // Relocate camera to origin.
         cam.setLocation(new Vector3f(0f, 0f, 0f));
         /*
          * The objects zone extends halfway to the far
          * plane of the view frustum.
          */
         zoneRadius = 0.5f * cam.getFrustumFar();
-        /*
-         * Initialize the scene graph.
-         */
+
+        // Initialize the scene graph.
         initializeBackdrop();
         initializeObjects();
     }

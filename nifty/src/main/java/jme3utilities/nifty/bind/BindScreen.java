@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -177,9 +177,7 @@ public class BindScreen
      */
     @Override
     public void onAction(String actionString, boolean ongoing, float ignored) {
-        /*
-         * Ignore actions that are not ongoing.
-         */
+        // Ignore actions that are not ongoing.
         if (!ongoing) {
             return;
         }
@@ -189,9 +187,8 @@ public class BindScreen
             deactivate();
             return;
         }
-        /*
-         * Split the action string into words.
-         */
+
+        // Split the action string into words.
         String[] words = actionString.split("\\s+");
         assert words.length > 0 : words;
         String verb = words[0];
@@ -259,9 +256,8 @@ public class BindScreen
         Validate.nonNull(nifty, "nifty");
         Validate.nonNull(screen, "screen");
         super.bind(nifty, screen);
-        /*
-         * Populate the action list box.
-         */
+
+        // Populate the action list box.
         ListBox<ActionItem> actionBox = getActionBox();
         actionBox.clear();
         List<String> actionNames = subjectMode.listActionNames();
@@ -270,9 +266,8 @@ public class BindScreen
             ActionItem item = new ActionItem(actionName, subjectMode);
             actionBox.addItem(item);
         }
-        /*
-         * Populate the hotkey list box, putting bound keys before unbound ones.
-         */
+
+        // Populate the hotkey list box, putting bound keys before unbound ones.
         ListBox<HotkeyItem> hotkeyBox = getHotkeyBox();
         hotkeyBox.clear();
         populateHotkeyBox(true);
@@ -307,9 +302,7 @@ public class BindScreen
 
         Screen screen = getScreen();
         if (!screen.isBound()) {
-            /*
-             * Avoid Nifty exceptions and warnings regarding unbound controls.
-             */
+            // Avoid Nifty exceptions and warnings regarding unbound controls.
             return;
         }
 

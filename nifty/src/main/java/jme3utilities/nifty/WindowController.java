@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2023, Stephen Gold
+ Copyright (c) 2017-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -181,10 +181,7 @@ public class WindowController extends GuiAppState {
      */
     @Override
     public void setEnabled(boolean newSetting) {
-        if (!isInitialized()) {
-            /*
-             * Defer until initialization.
-             */
+        if (!isInitialized()) { // Defer until initialization.
             this.startEnabled = newSetting;
             return;
         }

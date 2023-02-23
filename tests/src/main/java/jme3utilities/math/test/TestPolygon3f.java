@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -98,9 +98,7 @@ public class TestPolygon3f {
      * Initialize all test cases.
      */
     private static void initialize() {
-        /*
-         * degenerate planar test cases
-         */
+        // degenerate planar test cases:
         degenerateCase = new Vector3f[11][];
 
         degenerateCase[0] = new Vector3f[]{}; // null
@@ -165,9 +163,7 @@ public class TestPolygon3f {
             new Vector3f(2f, 4f, 1f)
         };
 
-        /*
-         * degenerate non-planar test cases
-         */
+        // degenerate non-planar test cases:
         dnpCase = new Vector3f[2][];
 
         dnpCase[0] = new Vector3f[]{ // non-planar hexagon with dup corner
@@ -187,9 +183,7 @@ public class TestPolygon3f {
             new Vector3f(-1f, 3f, 1f)
         };
 
-        /*
-         * generic planar test cases
-         */
+        // generic planar test cases:
         genericCase = new Vector3f[2][];
 
         genericCase[0] = new Vector3f[]{ // self-intersecting quad
@@ -207,9 +201,7 @@ public class TestPolygon3f {
             new Vector3f(0f, 0f, 1f)
         };
 
-        /*
-         * generic non-planar test cases
-         */
+        // generic non-planar test cases:
         gnpCase = new Vector3f[2][];
 
         gnpCase[0] = new Vector3f[]{ // skewed quad
@@ -228,9 +220,7 @@ public class TestPolygon3f {
             new Vector3f(1f, 4f, 1f)
         };
 
-        /*
-         * simple test cases
-         */
+        // simple test cases:
         simpleCase = new Vector3f[6][];
 
         simpleCase[0] = new Vector3f[]{ // 3-4-5 triangle in X-Y plane

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -78,9 +78,8 @@ public class ClockDemo extends GuiApplication {
         AppSettings appSettings = new AppSettings(loadDefaults);
         appSettings.setAudioRenderer(null);
         appSettings.setResizable(true);
-        /*
-         * Customize the window's title bar.
-         */
+
+        // Customize the window's title bar.
         String title = applicationName + " " + MyString.join(arguments);
         appSettings.setTitle(title);
         application.setSettings(appSettings);
@@ -99,18 +98,15 @@ public class ClockDemo extends GuiApplication {
      */
     @Override
     public void guiInitializeApplication() {
-        /*
-         * Log library versions.
-         */
+        // Log library versions.
         logger.log(Level.INFO, "jme3-core version is {0}",
                 MyString.quote(JmeVersion.FULL_NAME));
         logger.log(Level.INFO, "Heart version is {0}",
                 MyString.quote(Heart.versionShort()));
 
         InputMode inputMode = getDefaultInputMode();
-        /*
-         * Create and attach a controller for the main (and only) screen.
-         */
+
+        // Create and attach a controller for the main (and only) screen.
         ClockScreenController clockScreen = new ClockScreenController();
         clockScreen.setListener(inputMode);
         boolean success = stateManager.attach(clockScreen);

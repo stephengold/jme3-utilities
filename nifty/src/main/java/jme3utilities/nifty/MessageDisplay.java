@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -114,9 +114,8 @@ public class MessageDisplay extends GuiScreenController {
             AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
         assert isInitialized();
-        /*
-         * Process any backlog.
-         */
+
+        // Process any backlog.
         for (String line : backlog) {
             addLine(line);
         }

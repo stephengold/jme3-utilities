@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -216,9 +216,8 @@ public class PopupMenu
 
         // Perform the action described by the action string.
         screenController.perform(actionString);
-        /*
-         * If this menu is still active, close it and all its ancestors.
-         */
+
+        // If this menu is still active, close it and all its ancestors.
         screenController.closePopupMenu(this);
     }
     // *************************************************************************

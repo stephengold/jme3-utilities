@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019-2022, Stephen Gold
+ Copyright (c) 2019-2023 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -241,9 +241,8 @@ public class DsScreen
         int depth = displaySettings.colorDepth();
         int rate = displaySettings.refreshRate();
         RectSizeLimits sizeLimits = displaySettings.getSizeLimits();
-        /*
-         * Enumerate the most relevant display sizes.
-         */
+
+        // Enumerate the most relevant display sizes.
         Iterable<DisplayMode> modes = DsUtils.listDisplayModes();
         for (DisplayMode mode : modes) {
             int modeDepth = mode.getBitDepth();
@@ -407,10 +406,7 @@ public class DsScreen
             }
         }
 
-        if (!handled) {
-            /*
-             * Forward the unhandled action to the application.
-             */
+        if (!handled) { // Forward the unhandled action to the application.
             app.onAction(actionString, ongoing, tpf);
         }
     }
