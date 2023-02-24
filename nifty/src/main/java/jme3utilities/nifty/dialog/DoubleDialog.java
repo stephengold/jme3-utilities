@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -71,8 +71,8 @@ public class DoubleDialog extends TextEntryDialog {
      * @param max minimum value (&gt;min)
      * @param allowNull should "null" be a valid input? (not null)
      */
-    public DoubleDialog(String description, double min, double max,
-            AllowNull allowNull) {
+    public DoubleDialog(
+            String description, double min, double max, AllowNull allowNull) {
         super(description);
         Validate.require(min < max, "min < max");
         Validate.nonNull(allowNull, "allow null");

@@ -132,8 +132,8 @@ public class BasicScreenController
      * @param initialState if Enabled, enable this controller during
      * initialization; if Disabled or null, leave it disabled
      */
-    public BasicScreenController(String screenId, String xmlAssetPath,
-            InitialState initialState) {
+    public BasicScreenController(
+            String screenId, String xmlAssetPath, InitialState initialState) {
         super(InitialState.Disabled);
         Validate.nonNull(screenId, "screen id");
         Validate.nonNull(xmlAssetPath, "asset path");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2021 jMonkeyEngine
+ * Copyright (c) 2009-2023 jMonkeyEngine
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -250,11 +250,8 @@ public class InputSystemJme implements InputSystem, RawInputListener {
             ctrlDown = evt.isPressed();
         }
 
-        KeyboardInputEvent keyEvt = new KeyboardInputEvent(code,
-                evt.getKeyChar(),
-                evt.isPressed(),
-                shiftDown,
-                ctrlDown);
+        KeyboardInputEvent keyEvt = new KeyboardInputEvent(
+                code, evt.getKeyChar(), evt.isPressed(), shiftDown, ctrlDown);
 
         if (nic.processKeyboardEvent(keyEvt)) {
             evt.setConsumed();

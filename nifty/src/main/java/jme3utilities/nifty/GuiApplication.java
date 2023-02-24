@@ -210,8 +210,8 @@ abstract public class GuiApplication extends ActionApplication {
             "confirm", "info10", "multiSelect",
             "text-and-check", "text-and-slider", "text-entry"
         }) {
-            assetPath = String.format("/Interface/Nifty/dialogs/%s.xml",
-                    dialogName);
+            assetPath = String.format(
+                    "/Interface/Nifty/dialogs/%s.xml", dialogName);
             nifty.fromXmlWithoutStartScreen(assetPath);
         }
 

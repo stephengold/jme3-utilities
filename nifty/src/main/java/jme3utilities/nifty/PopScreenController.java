@@ -127,8 +127,8 @@ public class PopScreenController extends BasicScreenController {
      * @param initialState if Enabled, enable this controller during
      * initialization; if Disabled or null, leave it disabled
      */
-    public PopScreenController(String screenId, String xmlAssetPath,
-            InitialState initialState) {
+    public PopScreenController(
+            String screenId, String xmlAssetPath, InitialState initialState) {
         super(screenId, xmlAssetPath, initialState);
         assert !isInitialized();
         assert !isEnabled();
@@ -572,8 +572,8 @@ public class PopScreenController extends BasicScreenController {
      * usually the final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
-    public void showTextAndCheckDialog(String promptMessage,
-            String defaultValue, String actionPrefix,
+    public void showTextAndCheckDialog(
+            String promptMessage, String defaultValue, String actionPrefix,
             DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
@@ -594,9 +594,9 @@ public class PopScreenController extends BasicScreenController {
      * final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
-    public void showTextAndCheckDialog(String promptMessage,
-            CharSequence defaultValue, String commitLabel, String actionPrefix,
-            DialogController controller) {
+    public void showTextAndCheckDialog(
+            String promptMessage, CharSequence defaultValue, String commitLabel,
+            String actionPrefix, DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
         Validate.nonNull(commitLabel, "commit-button label");
@@ -636,16 +636,16 @@ public class PopScreenController extends BasicScreenController {
      * usually the final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
-    public void showTextAndSliderDialog(String promptMessage,
-            String defaultValue, String actionPrefix,
+    public void showTextAndSliderDialog(
+            String promptMessage, String defaultValue, String actionPrefix,
             DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
         Validate.nonNull(actionPrefix, "action prefix");
         Validate.nonNull(controller, "controller");
 
-        showTextAndSliderDialog(promptMessage, defaultValue, "", actionPrefix,
-                controller);
+        showTextAndSliderDialog(
+                promptMessage, defaultValue, "", actionPrefix, controller);
     }
 
     /**
@@ -658,9 +658,9 @@ public class PopScreenController extends BasicScreenController {
      * final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
-    public void showTextAndSliderDialog(String promptMessage,
-            CharSequence defaultValue, String commitLabel, String actionPrefix,
-            DialogController controller) {
+    public void showTextAndSliderDialog(
+            String promptMessage, CharSequence defaultValue, String commitLabel,
+            String actionPrefix, DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
         Validate.nonNull(commitLabel, "commit-button label");
@@ -721,9 +721,9 @@ public class PopScreenController extends BasicScreenController {
      * final character will be a space)
      * @param controller controller for the dialog box (not null)
      */
-    public void showTextEntryDialog(String promptMessage,
-            CharSequence defaultValue, String commitLabel, String actionPrefix,
-            DialogController controller) {
+    public void showTextEntryDialog(
+            String promptMessage, CharSequence defaultValue, String commitLabel,
+            String actionPrefix, DialogController controller) {
         Validate.nonNull(promptMessage, "prompt message");
         Validate.nonNull(defaultValue, "default value");
         Validate.nonNull(commitLabel, "commit-button label");
@@ -835,8 +835,8 @@ public class PopScreenController extends BasicScreenController {
         // Subscribe to menu events.
         Screen screen = getNifty().getCurrentScreen();
         String controlId = menu.getId();
-        getNifty().subscribe(screen, controlId, MenuItemActivatedEvent.class,
-                popupMenu);
+        getNifty().subscribe(
+                screen, controlId, MenuItemActivatedEvent.class, popupMenu);
         /*
          * The menu will appear at the mouse pointer.  For a submenu,
          * warp the pointer based on the location of the parent menu.

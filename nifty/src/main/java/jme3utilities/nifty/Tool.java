@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2022, Stephen Gold
+ Copyright (c) 2018-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -81,8 +81,8 @@ abstract public class Tool extends GuiWindowController {
      * false&rarr;unchecked)
      */
     public void onCheckBoxChanged(String name, boolean isChecked) {
-        logger.log(Level.WARNING,
-                "unexpected check-box change ignored, name={0}",
+        logger.log(
+                Level.WARNING, "unexpected check-box change ignored, name={0}",
                 MyString.quote(name));
     }
 

@@ -151,8 +151,8 @@ public class DsScreen
      */
     @NiftyEventSubscriber(pattern = ".*CheckBox")
     @Override
-    public void onCheckBoxChanged(final String checkBoxId,
-            final CheckBoxStateChangedEvent event) {
+    public void onCheckBoxChanged(
+            final String checkBoxId, final CheckBoxStateChangedEvent event) {
         Validate.nonNull(checkBoxId, "check box id");
         Validate.nonNull(event, "event");
         Validate.require(
@@ -655,8 +655,8 @@ public class DsScreen
         setButtonText("saveDisplaySettings", saveButton);
 
         InputMode defaultMode = getActionApplication().getDefaultInputMode();
-        String returnLabel = String.format("Return to %s mode",
-                MyString.quote(defaultMode.shortName()));
+        String returnLabel = String.format(
+                "Return to %s mode", MyString.quote(defaultMode.shortName()));
         setButtonText("return", returnLabel);
     }
 }

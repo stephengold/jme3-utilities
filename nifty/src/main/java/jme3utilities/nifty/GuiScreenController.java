@@ -117,8 +117,8 @@ public class GuiScreenController extends PopScreenController {
      * @param initialState if Enabled, enable this controller during
      * initialization; if Disabled or null, leave it disabled
      */
-    public GuiScreenController(String screenId, String xmlAssetPath,
-            InitialState initialState) {
+    public GuiScreenController(
+            String screenId, String xmlAssetPath, InitialState initialState) {
         super(screenId, xmlAssetPath, initialState);
         assert !isInitialized();
         assert !isEnabled();
@@ -320,12 +320,12 @@ public class GuiScreenController extends PopScreenController {
      * @param event details of the event (not null)
      */
     @NiftyEventSubscriber(pattern = ".*CheckBox")
-    public void onCheckBoxChanged(final String checkBoxId,
-            final CheckBoxStateChangedEvent event) {
+    public void onCheckBoxChanged(
+            final String checkBoxId, final CheckBoxStateChangedEvent event) {
         Validate.nonNull(checkBoxId, "check box ID");
         Validate.nonNull(event, "event");
-        Validate.require(checkBoxId.endsWith("CheckBox"),
-                "ID ends with CheckBox");
+        Validate.require(
+                checkBoxId.endsWith("CheckBox"), "ID ends with CheckBox");
 
         if (!isIgnoreGuiChanges() && hasStarted()) {
             String checkBoxName = MyString.removeSuffix(checkBoxId, "CheckBox");

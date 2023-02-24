@@ -319,8 +319,8 @@ public class BindScreen
         if (configPath == null) {
             setStatusText("configStatus", "");
         } else {
-            String configStatus = String.format("Path for load/save is %s",
-                    MyString.quote(configPath));
+            String configStatus = String.format(
+                    "Path for load/save is %s", MyString.quote(configPath));
             setStatusText("configStatus", configStatus);
         }
     }
@@ -549,8 +549,8 @@ public class BindScreen
         }
         setButtonText("bind", bindLabel);
 
-        String returnLabel = String.format("Return to %s mode",
-                MyString.quote(subjectMode.shortName()));
+        String returnLabel = String.format(
+                "Return to %s mode", MyString.quote(subjectMode.shortName()));
         setButtonText("return", returnLabel);
 
         String unbindLabel = "";
