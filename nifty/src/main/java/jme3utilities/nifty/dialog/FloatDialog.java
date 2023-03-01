@@ -77,8 +77,8 @@ public class FloatDialog extends TextEntryDialog {
         Validate.require(min < max, "min < max");
         Validate.nonNull(allowNull, "allow null");
 
-        minValue = min;
-        maxValue = max;
+        this.minValue = min;
+        this.maxValue = max;
         this.allowNull = allowNull;
     }
     // *************************************************************************

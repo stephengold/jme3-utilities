@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ public class TextEntryDialog implements DialogController {
      */
     public TextEntryDialog(String description) {
         Validate.nonEmpty(description, "description");
-        commitDescription = description;
+        this.commitDescription = description;
     }
     // *************************************************************************
     // new protected methods

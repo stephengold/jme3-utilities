@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020-2022, Stephen Gold
+ Copyright (c) 2020-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -86,9 +86,9 @@ public class FloatSliderDialog implements DialogController {
         Validate.nonEmpty(description, "description");
         Validate.require(min < max, "min < max");
 
-        commitDescription = description;
-        minValue = min;
-        maxValue = max;
+        this.commitDescription = description;
+        this.minValue = min;
+        this.maxValue = max;
     }
     // *************************************************************************
     // new methods exposed
@@ -200,7 +200,7 @@ public class FloatSliderDialog implements DialogController {
     public void update(Element dialogElement, float unused) {
         Validate.nonNull(dialogElement, "dialog element");
 
-        ignoreChanges = true;
+        this.ignoreChanges = true;
 
         String text = text(dialogElement);
         String feedback = feedback(text);
@@ -226,6 +226,6 @@ public class FloatSliderDialog implements DialogController {
             commitButton.getElement().hide();
         }
 
-        ignoreChanges = false;
+        this.ignoreChanges = false;
     }
 }

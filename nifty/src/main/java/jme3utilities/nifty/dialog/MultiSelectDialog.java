@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2021-2022, Stephen Gold
+ Copyright (c) 2021-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -78,8 +78,8 @@ public class MultiSelectDialog<ItemType> implements DialogController {
         Validate.nonEmpty(description, "description");
         Validate.nonEmpty(itemList, "item list");
 
-        commitDescription = description;
-        allItems = new ArrayList<>(itemList);
+        this.commitDescription = description;
+        this.allItems = new ArrayList<>(itemList);
     }
     // *************************************************************************
     // new methods exposed

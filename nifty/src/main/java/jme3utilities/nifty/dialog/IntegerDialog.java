@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -77,8 +77,8 @@ public class IntegerDialog extends TextEntryDialog {
         Validate.require(min < max, "min < max");
         Validate.nonNull(allowNull, "allow null");
 
-        minValue = min;
-        maxValue = max;
+        this.minValue = min;
+        this.maxValue = max;
         this.allowNull = allowNull;
     }
     // *************************************************************************
