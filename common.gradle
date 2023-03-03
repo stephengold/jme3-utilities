@@ -8,13 +8,13 @@ ext {
     websiteUrl = 'https://github.com/stephengold/jme3-utilities'
 
     // module coordinates of dependencies:
-    acorusCoordinates = 'com.github.stephengold:Acorus:0.9.17'
-    heartCoordinates = 'com.github.stephengold:Heart:8.3.0+for36'
+    acorusCoordinates = 'com.github.stephengold:Acorus:0.9.18+for36'
+    heartCoordinates = 'com.github.stephengold:Heart:8.3.1+for36'
 
     // current versions of libraries:
     jme3utilitiesniftyVersion = '0.9.34-SNAPSHOT'
     jme3utilitiesxVersion = '0.3.2-SNAPSHOT'
-    jme3Version = '3.6.0-beta2'
+    jme3Version = '3.6.0-beta3'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_7

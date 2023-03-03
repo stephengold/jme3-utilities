@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2022, Stephen Gold
+ Copyright (c) 2018-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,7 @@ public class DisplaySizeDialog extends TextEntryDialog {
         if ("min".equals(lcInput) || "max".equals(lcInput)) {
             msg = "";
         } else {
-            int[] size = DsUtils.parseDisplaySize(lcInput);
+            int[] size = DsUtils.parseDimensions(lcInput);
             if (size == null) {
                 msg = "improperly formatted display dimensions";
             } else {

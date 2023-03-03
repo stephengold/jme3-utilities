@@ -554,7 +554,7 @@ public class DsScreen
             } else if ("max".equals(lcArg)) {
                 displaySettings.setMaxSize();
             } else {
-                int[] wh = DsUtils.parseDisplaySize(lcArg);
+                int[] wh = DsUtils.parseDimensions(lcArg);
                 if (wh == null) {
                     handled = false;
                 } else {
