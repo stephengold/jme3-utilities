@@ -1,5 +1,10 @@
 # release log for the jme3-utilities-nifty library and related tests
 
+## Version 0.9.34+for36 released on TBD
+
+Base on version 3.6.0-beta3 of JMonkeyEngine, version 8.3.1+for36 of the Heart
+library, and version 0.9.18+for36 of the Acorus library.
+
 ## Version 0.9.33 released on 8 January 2023
 
 Bugfix: JME issue 1891 (incorrect fullscreen layout with LWJGL v3)
