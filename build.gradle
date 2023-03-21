@@ -10,6 +10,11 @@ subprojects {
     apply from: rootProject.file('common.gradle')
 }
 
+tasks.register('checkstyle') {
+    dependsOn ':nifty:checkstyleMain', ':tests:checkstyleMain', ':x:checkstyleMain'
+    description 'Runs the checkstyle tool on all sourcecode.'
+}
+
 def mergedJavadocSubprojects = [ ":nifty", ":x" ]
 tasks.register('mergedJavadoc', Javadoc) {
     description 'Creates Javadoc from all the projects.'
