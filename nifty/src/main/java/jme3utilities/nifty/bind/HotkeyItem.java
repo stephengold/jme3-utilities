@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2021, Stephen Gold
+ Copyright (c) 2013-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,8 @@ class HotkeyItem {
 
     /**
      * Access the hotkey.
+     *
+     * @return the pre-existing instance
      */
     Hotkey getHotkey() {
         return hotkey;

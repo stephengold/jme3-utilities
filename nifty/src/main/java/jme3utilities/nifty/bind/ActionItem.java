@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2021, Stephen Gold
+ Copyright (c) 2013-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,9 @@ class ActionItem {
     // new methods exposed
 
     /**
-     * Access the action name.
+     * Return the action name.
+     *
+     * @return the name set by the constructor
      */
     String getActionName() {
         return actionName;
@@ -104,7 +106,8 @@ class ActionItem {
     /**
      * Format a collection of hotkey names for display.
      *
-     * @param names (not null)
+     * @param names (not null, may be empty)
+     * @return formatted text (not null, may be empty)
      */
     private static String formatList(Collection<String> names) {
         StringBuilder result = new StringBuilder(30);

@@ -876,6 +876,7 @@ public class PopScreenController extends BasicScreenController {
      * capacity.
      *
      * @param capacity number of lines of text (&gt;0)
+     * @return the master ID (not null, not empty)
      */
     private String registerInfoScrollDialog(int capacity) {
         Validate.positive(capacity, "number of lines");

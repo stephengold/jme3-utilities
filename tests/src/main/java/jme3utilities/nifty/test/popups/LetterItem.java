@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2021, Stephen Gold
+ Copyright (c) 2021-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -54,6 +54,8 @@ class LetterItem {
 
     /**
      * Instantiate a new item.
+     *
+     * @param letter the letter that the item will represent
      */
     LetterItem(char letter) {
         this.letter = letter;

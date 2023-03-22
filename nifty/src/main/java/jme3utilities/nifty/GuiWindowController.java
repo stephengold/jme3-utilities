@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2022, Stephen Gold
+ Copyright (c) 2018-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -259,6 +259,11 @@ public class GuiWindowController extends WindowController {
     // *************************************************************************
     // WindowController methods
 
+    /**
+     * Access the controller for the screen that contains the window.
+     *
+     * @return the pre-existing instance (not null)
+     */
     @Override
     public GuiScreenController getScreenController() {
         BasicScreenController bsc = super.getScreenController();

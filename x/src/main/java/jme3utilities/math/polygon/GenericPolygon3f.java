@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -398,6 +398,7 @@ public class GenericPolygon3f extends Polygon3f {
      * &lt;numCorners)
      * @param corner2 index of first corner, 2nd segment (&ge;0, &lt;numCorners)
      * @param partner2 index of 2nd corner, 2nd segment (&ge;0, &lt;numCorners)
+     * @return true if overlap, otherwise false
      */
     private boolean isOverlap(int ext, int corner1, int partner1,
             int corner2, int partner2) {
