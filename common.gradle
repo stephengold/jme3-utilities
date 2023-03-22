@@ -45,7 +45,7 @@ tasks.withType(JavaExec) { // Java runtime options:
     enableAssertions true
     //jvmArgs '-verbose:gc'
     //jvmArgs '-Xbatch'
-    //jvmArgs '-Xms512m', '-Xmx512m'
+    //jvmArgs '-Xms512m', '-Xmx512m' // to enlarge the Java heap
     //jvmArgs '-XX:+PrintCompilation'
     //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
 }

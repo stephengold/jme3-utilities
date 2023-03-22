@@ -13,13 +13,13 @@
         <property name="fileNamePattern" value="java[/\\]com[/\\]jme3[/\\]"/>
     </module>
 
-    <!-- Checks for whitespace                            -->
-    <!-- See http://checkstyle.org/config_whitespace.html -->
+    <!-- Checks for whitespace                             -->
+    <!-- See https://checkstyle.org/config_whitespace.html -->
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
     </module>
 
-    <!-- Checks that a package-info.java file exists for each package. -->
+    <!-- Checks that a package-info.java file exists for each package  -->
     <!-- See https://checkstyle.org/config_javadoc.html#JavadocPackage -->
     <module name="JavadocPackage"/>
 
@@ -29,6 +29,9 @@
         <property name="maximum" value="0"/>
         <property name="message" value="Line has trailing whitespace."/>
     </module>
+
+    <!-- Checks for size violations                   -->
+    <!-- See https://checkstyle.org/config_sizes.html -->
     <module name="FileLength"/>
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
@@ -53,6 +56,9 @@
             <property name="allowByTailComment" value="true"/>
             <property name="allowNonPrintableEscapes" value="true"/>
         </module>
+
+        <!-- Checks for imports                             -->
+        <!-- See https://checkstyle.org/config_imports.html -->
         <module name="AvoidStarImport"/>
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
@@ -64,6 +70,9 @@
         <module name="NoLineWrap">
             <property name="tokens" value="PACKAGE_DEF, IMPORT, STATIC_IMPORT"/>
         </module>
+
+        <!-- Checks for blocks. You know, those {}'s       -->
+        <!-- See https://checkstyle.org/config_blocks.html -->
         <module name="EmptyBlock">
             <property name="option" value="TEXT"/>
             <property name="tokens"
@@ -101,6 +110,7 @@
             <property name="query" value="//RCURLY[parent::SLIST[count(./*)=1]
                                      or preceding-sibling::*[last()][self::LCURLY]]"/>
         </module>
+
         <module name="WhitespaceAfter">
             <property name="tokens"
                       value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE,
@@ -167,6 +177,9 @@
             <property name="tokens" value="METHOD_REF"/>
             <property name="option" value="nl"/>
         </module>
+
+        <!-- Checks for naming conventions                 -->
+        <!-- See https://checkstyle.org/config_naming.html -->
         <module name="PackageName">
             <property name="format" value="^[a-z][a-z3.]*[a-z]$"/>
             <message key="name.invalidPattern"
@@ -235,6 +248,7 @@
             <message key="name.invalidPattern"
                      value="Interface type name ''{0}'' must match pattern ''{1}''."/>
         </module>
+
         <module name="NoFinalizer"/>
         <module name="GenericWhitespace">
             <message key="ws.followed"
@@ -307,6 +321,9 @@
             <property name="allowSamelineMultipleAnnotations" value="true"/>
         </module>
         <module name="NonEmptyAtclauseDescription"/>
+
+        <!-- Checks for Javadoc comments                    -->
+        <!-- See https://checkstyle.org/config_javadoc.html -->
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocTagContinuationIndentation">
             <property name="offset" value="0"/>
@@ -348,6 +365,7 @@
         <module name="JavadocVariable">
             <property name="scope" value="package"/>
         </module>
+
         <module name="MethodName">
             <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
             <message key="name.invalidPattern"

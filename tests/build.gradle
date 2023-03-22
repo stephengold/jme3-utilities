@@ -50,7 +50,7 @@ tasks.register('cleanSOs', Delete) { // extracted Linux and Android native libra
     delete fileTree(dir: '.', include: '*.so')
 }
 
-// tasks to run the test apps:
+// tasks to run specific apps:
 
 tasks.register('TestPolygon3f', JavaExec) {
     mainClass = 'jme3utilities.math.test.TestPolygon3f'
