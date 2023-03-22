@@ -19,12 +19,17 @@
         <property name="eachLine" value="true"/>
     </module>
 
+    <!-- Checks that a package-info.java file exists for each package. -->
+    <!-- See https://checkstyle.org/config_javadoc.html#JavadocPackage -->
+    <module name="JavadocPackage"/>
+
     <module name="RegexpSingleline">
         <property name="format" value="\s+$"/>
         <property name="minimum" value="0"/>
         <property name="maximum" value="0"/>
         <property name="message" value="Line has trailing whitespace."/>
     </module>
+    <module name="FileLength"/>
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
         <property name="max" value="80"/>
@@ -49,6 +54,12 @@
             <property name="allowNonPrintableEscapes" value="true"/>
         </module>
         <module name="AvoidStarImport"/>
+        <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
+        <module name="RedundantImport"/>
+        <module name="UnusedImports">
+            <property name="processJavadoc" value="false"/>
+        </module>
+
         <module name="OneTopLevelClass"/>
         <module name="NoLineWrap">
             <property name="tokens" value="PACKAGE_DEF, IMPORT, STATIC_IMPORT"/>
@@ -192,11 +203,13 @@
             <message key="name.invalidPattern"
                      value="Local variable name ''{0}'' must match pattern ''{1}''."/>
         </module>
+        <module name="LocalFinalVariableName"/>
         <module name="PatternVariableName">
             <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
             <message key="name.invalidPattern"
                      value="Pattern variable name ''{0}'' must match pattern ''{1}''."/>
         </module>
+        <module name="StaticVariableName"/>
         <module name="ClassTypeParameterName">
             <property name="format" value="^[A-Z][A-Za-z]*$"/>
             <message key="name.invalidPattern"
@@ -328,6 +341,12 @@
                       value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF,
                       RECORD_DEF, ANNOTATION_DEF"/>
             <property name="excludeScope" value="nothing"/>
+        </module>
+        <module name="JavadocStyle">
+            <property name="checkFirstSentence" value="false"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="scope" value="package"/>
         </module>
         <module name="MethodName">
             <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
