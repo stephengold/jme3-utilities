@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ import jme3utilities.mesh.LoopMesh;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class NavDebug {
+final public class NavDebug {
     // *************************************************************************
     // constants
 
