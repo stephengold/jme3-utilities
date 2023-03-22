@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ import jme3utilities.math.noise.Generator;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestShell3f {
+final public class TestShell3f {
     // *************************************************************************
     // constants and loggers
 

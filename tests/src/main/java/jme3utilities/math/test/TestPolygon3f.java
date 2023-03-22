@@ -41,7 +41,7 @@ import jme3utilities.math.polygon.SimplePolygon3f;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public class TestPolygon3f {
+final public class TestPolygon3f {
     // *************************************************************************
     // constants and loggers
 
