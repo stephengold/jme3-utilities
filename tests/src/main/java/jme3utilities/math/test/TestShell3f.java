@@ -47,6 +47,14 @@ final public class TestShell3f {
     final private static Logger logger = Logger.getLogger(
             TestShell3f.class.getName());
     // *************************************************************************
+    // constructors
+
+    /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private TestShell3f() {
+    }
+    // *************************************************************************
     // new methods exposed
 
     /**

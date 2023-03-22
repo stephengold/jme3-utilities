@@ -74,6 +74,14 @@ final public class TestPolygon3f {
      */
     private static Vector3f[][] simpleCase;
     // *************************************************************************
+    // constructors
+
+    /**
+     * A private constructor to inhibit instantiation of this class.
+     */
+    private TestPolygon3f() {
+    }
+    // *************************************************************************
     // new methods exposed
 
     /**
