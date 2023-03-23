@@ -12,7 +12,7 @@ subprojects {
 
 tasks.register('checkstyle') {
     dependsOn ':nifty:checkstyleMain', ':tests:checkstyleMain', ':x:checkstyleMain'
-    description 'Runs the checkstyle tool on all sourcecode.'
+    description 'Checks the style of all Java sourcecode.'
 }
 
 def mergedJavadocSubprojects = [ ":nifty", ":x" ]
