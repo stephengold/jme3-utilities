@@ -1,3 +1,6 @@
+*.dll
+*.dylib
+*.so
 /.gradle/
 /.idea/
 /.nb-gradle/
@@ -6,8 +9,6 @@
 /moon-ccbysa/build/
 /nifty/build/
 /nifty/private/
-/tests/*.dll
-/tests/*.so
 /tests/build/
 /tests/private/
 /tests/src/main/java/jme3test/
