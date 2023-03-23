@@ -7,7 +7,7 @@ ext {
     group = 'com.github.stephengold'
     websiteUrl = 'https://github.com/stephengold/jme3-utilities'
 
-    // module coordinates of dependencies:
+    // module coordinates of external dependencies:
     acorusCoordinates = 'com.github.stephengold:Acorus:1.0.0'
     heartCoordinates = 'com.github.stephengold:Heart:8.3.2'
 
@@ -44,9 +44,7 @@ tasks.withType(JavaExec) { // Java runtime options:
     dependsOn 'installDist'
     enableAssertions true
     //jvmArgs '-verbose:gc'
-    //jvmArgs '-Xbatch'
     //jvmArgs '-Xms512m', '-Xmx512m' // to enlarge the Java heap
-    //jvmArgs '-XX:+PrintCompilation'
     //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
 }
 
