@@ -348,7 +348,9 @@
             <property name="allowMissingParamTags" value="false"/>
             <property name="allowMissingReturnTag" value="false"/>
             <property name="allowedAnnotations" value=""/>
-            <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF, COMPACT_CTOR_DEF"/>
+            <property name="tokens"
+                      value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF,
+                    COMPACT_CTOR_DEF"/>
         </module>
         <module name="MissingJavadocMethod">
             <property name="scope" value="public"/>
@@ -356,7 +358,7 @@
             <property name="allowedAnnotations" value=""/>
             <property name="tokens"
                       value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF,
-                     COMPACT_CTOR_DEF"/>
+                    COMPACT_CTOR_DEF"/>
         </module>
         <module name="MissingJavadocType">
             <property name="scope" value="protected"/>
