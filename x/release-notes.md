@@ -1,5 +1,11 @@
 # release log for the jme3-utilities-x library and related tests
 
+## Version 0.3.2 released on TBD
+
++ Finalized the `NavDebug` class. (API change)
++ Targeted version 3.6.0-stable of jMonkeyEngine.
++ Based on version 8.3.2 of the Heart Library.
+
 ## Version 0.3.1 released on 24 June 2022
 
 + Targeted version 3.5.2-stable of jMonkeyEngine.

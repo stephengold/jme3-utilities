@@ -1,6 +1,11 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.34+for36 released on TBD
+## Version 0.9.35 released on TBD
+
+Base on version 3.6.0-stable of JMonkeyEngine, version 8.3.2 of the Heart
+library, and version 1.0.0 of the Acorus library.
+
+## Version 0.9.34+for36 released on 3 March 2023
 
 Base on version 3.6.0-beta3 of JMonkeyEngine, version 8.3.1+for36 of the Heart
 library, and version 0.9.18+for36 of the Acorus library.
