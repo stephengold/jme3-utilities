@@ -11,26 +11,26 @@ It contains 4 sub-projects:
 3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
 4. tests: demos, examples, and test software
 
-The `SkyControl` library, formerly a sub-project, is now [a separate project
-at GitHub][skycontrol].
+The `SkyControl` library, formerly a sub-project,
+is now [a separate project at GitHub][skycontrol].
 
-The textures sub-project is now part of
-[the SkyControl Project][skycontrol].
+The textures sub-project
+is now part of[the SkyControl Project][skycontrol].
 
-The `jme3-utilities-heart` library, formerly a sub-project, is now [Heart], a separate project
-at GitHub.
+The `jme3-utilities-heart` library, formerly a sub-project,
+is now [Heart], a separate project at GitHub.
 
-The `jme3-utilities-debug` library, formerly a sub-project, is now part of
-[the Heart Library][heart].
+The `jme3-utilities-debug` library, formerly a sub-project,
+ is now part of [the Heart Library][heart].
 
-The `jme3-utilities-ui` library, formerly a sub-project, is now [Acorus], a separate project
-at GitHub.
+The `jme3-utilities-ui` library, formerly a sub-project, is now [Acorus],
+a separate project at GitHub.
 
-The `Minie` library, formerly a sub-project, is now [a separate project
-at GitHub][minie].
+The `Minie` library, formerly a sub-project,
+is now [a separate project at GitHub][minie].
 
-The `Wes` library, formerly a sub-project, is now [a separate project
-at GitHub][wes].
+The `Wes` library, formerly a sub-project,
+is now [a separate project at GitHub][wes].
 
 Complete source code (in Java) is provided under
 [a 3-clause BSD license][license].
