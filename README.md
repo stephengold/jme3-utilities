@@ -1,6 +1,6 @@
 # Jme3-utilities Project
 
-The Jme3-utilities Project contains Java packages and assets, developed for
+[The Jme3-utilities Project][utilities] contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
 
 It contains 4 sub-projects:
@@ -63,13 +63,13 @@ Complete source code (in Java) is provided under
 3. Download and extract the Jme3-utilities source code from GitHub:
   + `git clone https://github.com/stephengold/jme3-utilities.git`
   + `cd jme3-utilities`
-  + `git checkout -b latest x-0.3.1`
+  + `git checkout -b latest x-0.3.2`
 4. Run the [Gradle] wrapper:
   + using Bash or PowerShell or Zsh: `./gradlew build`
   + using Windows Command Prompt: `.\gradlew build`
 
 After a successful build,
-Maven artifacts will be found in `*/build/libs`.
+Maven artifacts will be found in "*/build/libs".
 
 You can install the artifacts to your local Maven repository:
 + using Bash or PowerShell or Zsh: `./gradlew install`

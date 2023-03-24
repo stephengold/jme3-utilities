@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-x library and related tests
 
-## Version 0.3.2 released on TBD
+## Version 0.3.2 released on 23 March 2023
 
 + Finalized the `NavDebug` class. (API change)
 + Targeted version 3.6.0-stable of jMonkeyEngine.
