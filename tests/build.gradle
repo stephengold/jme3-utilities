@@ -22,10 +22,10 @@ dependencies {
     runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jme3Version
 
     //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion" // for published library
-    implementation project(':nifty') // for latest sourcecode
+    implementation project(':nifty') // for latest library build
 
     //implementation "com.github.stephengold:jme3-utilities-x:$jme3utilitiesxVersion" // for published library
-    implementation project(':x') // for latest sourcecode
+    implementation project(':x') // for latest library build
 }
 
 startScripts.dependsOn(':nifty:assemble')
