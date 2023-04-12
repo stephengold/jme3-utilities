@@ -39,7 +39,7 @@ jobs:
           java-version: 17
       - run: ./gradlew build mergedJavadoc --console=plain --no-daemon --stacktrace
 
-  Java19-Windows:
+  Java20-Windows:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
     runs-on: windows-2022
     steps:
@@ -47,6 +47,6 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 19
+          java-version: 20
       - run: ./gradlew build mergedJavadoc --console=plain --no-daemon --stacktrace
         shell: bash
