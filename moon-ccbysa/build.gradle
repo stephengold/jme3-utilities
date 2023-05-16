@@ -9,7 +9,7 @@ plugins {
 ext {
     artifact = 'moon-ccbysa'
     version = '0.9.2'
-    baseName = "$artifact-$version"
+    baseName = "${artifact}-${version}" // for artifacts
 }
 
 jar { archiveBaseName = project.ext.baseName }
