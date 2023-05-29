@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022, Stephen Gold
+ Copyright (c) 2022-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -100,15 +100,15 @@ final public class AppChooser extends GuiApplication {
     /**
      * script to execute
      */
-    private File script;
+    private static File script;
     /**
      * controller for the main screen
      */
-    private GuiScreenController mainScreen;
+    private static GuiScreenController mainScreen;
     /**
      * index of the chosen app in the {@code mainClasses} array
      */
-    private int chosenAppIndex = 0;
+    private static int chosenAppIndex = 0;
     // *************************************************************************
     // constructors
 
@@ -170,7 +170,7 @@ final public class AppChooser extends GuiApplication {
         InputMode inputMode = getDefaultInputMode();
 
         // Create and attach a controller for the main (and only) screen.
-        this.mainScreen = new GuiScreenController(
+        mainScreen = new GuiScreenController(
                 "AppChooser/mainScreen",
                 "Interface/Nifty/screens/AppChooser/mainScreen.xml",
                 InitialState.Enabled);
@@ -178,7 +178,7 @@ final public class AppChooser extends GuiApplication {
         boolean success = stateManager.attach(mainScreen);
         assert success;
 
-        this.script = findScriptToExecute();
+        script = findScriptToExecute();
     }
 
     /**
@@ -224,7 +224,7 @@ final public class AppChooser extends GuiApplication {
                 for (int i = 0; i < mainClasses.length; ++i) {
                     String appName = mainClasses[i].getSimpleName();
                     if (arg.equals(appName)) {
-                        this.chosenAppIndex = i;
+                        chosenAppIndex = i;
                         break;
                     }
                 }
