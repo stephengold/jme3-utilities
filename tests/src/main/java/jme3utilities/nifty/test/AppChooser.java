@@ -113,7 +113,7 @@ final public class AppChooser extends GuiApplication {
     // constructors
 
     /**
-     * Instantiate a GuiApplication without the usual initial appstates.
+     * Instantiate a GuiApplication without any initial appstates.
      */
     private AppChooser() {
         super((AppState[]) null);
