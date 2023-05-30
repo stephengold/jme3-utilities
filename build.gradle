@@ -10,6 +10,10 @@ subprojects {
     apply from: rootProject.file('common.gradle')
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds' // to disable caching of SNAPSHOTs
+}
+
 tasks.register('checkstyle') {
     dependsOn ':nifty:checkstyleMain', ':tests:checkstyleMain', ':x:checkstyleMain'
     description 'Checks the style of all Java sourcecode.'
