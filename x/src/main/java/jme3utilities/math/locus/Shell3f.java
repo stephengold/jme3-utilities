@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -189,21 +189,21 @@ public class Shell3f implements Locus3f {
         this.center = center.clone();
         setOrientation(orient);
         if (uRadius == vRadius && vRadius == wRadius) {
-            weights = null;
-            outerRadius = uRadius;
+            this.weights = null;
+            this.outerRadius = uRadius;
         } else {
             float maxRadius = MyMath.max(uRadius, vRadius, wRadius);
             assert maxRadius > 0f : maxRadius;
             float uWeight = maxRadius / uRadius;
             float vWeight = maxRadius / vRadius;
             float wWeight = maxRadius / wRadius;
-            weights = new Vector3f(uWeight, vWeight, wWeight);
-            outerRadius = maxRadius;
+            this.weights = new Vector3f(uWeight, vWeight, wWeight);
+            this.outerRadius = maxRadius;
         }
-        innerRadius = 0f;
-        innerRSquared = 0.0;
-        optimalRSquared = 0.0;
-        outerRSquared = outerRadius * outerRadius;
+        this.innerRadius = 0f;
+        this.innerRSquared = 0.0;
+        this.optimalRSquared = 0.0;
+        this.outerRSquared = outerRadius * outerRadius;
     }
 
     /**
@@ -227,7 +227,7 @@ public class Shell3f implements Locus3f {
         Vector3f vAxis = new Vector3f();
         Vector3f wAxis = new Vector3f();
         MyVector3f.generateBasis(uAxis, vAxis, wAxis);
-        orientation = new Quaternion();
+        this.orientation = new Quaternion();
         orientation.fromAxes(uAxis, vAxis, wAxis);
         inverseRotation = orientation.inverse();
         if (slabFlag) {
@@ -235,11 +235,11 @@ public class Shell3f implements Locus3f {
         } else {
             weights = cylinderWeights;
         }
-        innerRadius = 0f;
-        innerRSquared = 0.0;
-        optimalRSquared = 0.0;
-        outerRadius = radius;
-        outerRSquared = radius * radius;
+        this.innerRadius = 0f;
+        this.innerRSquared = 0.0;
+        this.optimalRSquared = 0.0;
+        this.outerRadius = radius;
+        this.outerRSquared = radius * radius;
     }
 
     /**
@@ -307,7 +307,7 @@ public class Shell3f implements Locus3f {
             optimalRSquared = optimalRadius * optimalRadius;
         }
         this.outerRadius = outerRadius;
-        outerRSquared = outerRadius * outerRadius;
+        this.outerRSquared = outerRadius * outerRadius;
     }
     // *************************************************************************
     // new methods exposed
@@ -344,11 +344,11 @@ public class Shell3f implements Locus3f {
      */
     final public void setOrientation(Quaternion newOrientation) {
         if (newOrientation == null) {
-            orientation = null;
-            inverseRotation = null;
+            this.orientation = null;
+            this.inverseRotation = null;
         } else {
-            orientation = newOrientation.clone();
-            inverseRotation = newOrientation.inverse();
+            this.orientation = newOrientation.clone();
+            this.inverseRotation = newOrientation.inverse();
         }
     }
     // *************************************************************************
