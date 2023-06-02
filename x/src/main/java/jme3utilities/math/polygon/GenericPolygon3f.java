@@ -75,9 +75,8 @@ public class GenericPolygon3f extends Polygon3f {
      */
     public GenericPolygon3f(Vector3f[] cornerArray, float compareTolerance) {
         super(cornerArray, compareTolerance);
-        /*
-         * Verify that the polygon is generic.
-         */
+
+        // Verify that the polygon is generic.
         if (isDegenerate()) {
             throw new IllegalArgumentException("degenerate polygon");
         }
@@ -95,9 +94,8 @@ public class GenericPolygon3f extends Polygon3f {
      */
     public GenericPolygon3f(List<Vector3f> cornerList, float compareTolerance) {
         super(cornerList, compareTolerance);
-        /*
-         * Verify that the polygon is generic.
-         */
+
+        // Verify that the polygon is generic.
         if (isDegenerate()) {
             throw new IllegalArgumentException("degenerate polygon");
         }
@@ -144,9 +142,8 @@ public class GenericPolygon3f extends Polygon3f {
         if (corner2 == partner2) {
             throw new IllegalArgumentException("2nd segment is trivial.");
         }
-        /*
-         * Check for any corners shared between the 2 segments.
-         */
+
+        // Check for any corners shared between the 2 segments.
         BitSet corners = new BitSet(numCorners);
         corners.set(corner1);
         corners.set(partner1);
@@ -159,14 +156,11 @@ public class GenericPolygon3f extends Polygon3f {
         if (numUnique == 2) {
             assert (corner1 == partner2 && corner2 == partner1)
                     || (corner1 == partner1 && corner2 == partner2);
-            /*
-             * 2 shared corners, so the segments coincide.
-             */
+            // 2 shared corners, so the segments coincide.
             return true;
         }
-        /*
-         * Find a vector N perpendicular to the directions of both segments.
-         */
+
+        // Find a vector N perpendicular to the directions of both segments.
         Vector3f p1 = cornerLocations[corner1];
         Vector3f q1 = cornerLocations[partner1];
         Vector3f offset1 = q1.subtract(p1);
@@ -185,9 +179,8 @@ public class GenericPolygon3f extends Polygon3f {
             int firstI = longest[0];
             int lastI = longest[1];
             assert firstI != lastI;
-            /*
-             * Test the middle 2 corners.
-             */
+
+            // Test the middle 2 corners.
             BitSet middleCorners = (BitSet) corners.clone();
             middleCorners.clear(firstI);
             middleCorners.clear(lastI);
@@ -210,9 +203,7 @@ public class GenericPolygon3f extends Polygon3f {
             }
         }
         if (numUnique == 3) {
-            /*
-             * Segments not parallel with one shared corner.
-             */
+            // Segments not parallel with one shared corner.
             return false;
         }
         assert numUnique == 4 : numUnique;
@@ -285,9 +276,8 @@ public class GenericPolygon3f extends Polygon3f {
             Vector3f endLocation) {
         Validate.nonNull(startLocation, "start location");
         Validate.nonNull(endLocation, "end location");
-        /*
-         * Check for intersection at a corner.
-         */
+
+        // Check for intersection at a corner.
         for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             Vector3f result = intersectionWithCorner(cornerIndex, startLocation,
                     endLocation);
@@ -295,9 +285,8 @@ public class GenericPolygon3f extends Polygon3f {
                 return result;
             }
         }
-        /*
-         * Check for intersection with a side.
-         */
+
+        // Check for intersection with a side.
         for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
             Vector3f result = intersectionWithSide(sideIndex, startLocation,
                     endLocation);
@@ -305,9 +294,8 @@ public class GenericPolygon3f extends Polygon3f {
                 return result;
             }
         }
-        /*
-         * No intersection found.
-         */
+
+        // No intersection found.
         return null;
     }
     // *************************************************************************
@@ -327,9 +315,8 @@ public class GenericPolygon3f extends Polygon3f {
         validateIndex(cornerIndex, "corner index");
         Validate.nonNull(start, "start location");
         Validate.nonNull(end, "end location");
-        /*
-         * Calculate the direction of a straight line containing the segment.
-         */
+
+        // Calculate the direction of a straight line containing the segment.
         Vector3f segmentOffset = end.subtract(start);
         /*
          * If the segment has zero length, test its start for coincidence
@@ -344,15 +331,13 @@ public class GenericPolygon3f extends Polygon3f {
                 return null;
             }
         }
-        /*
-         * Calculate parametric value for the closest point on that line.
-         */
+
+        // Calculate parametric value for the closest point on that line.
         Vector3f cornerOffset = corner.subtract(start);
         double dot = MyVector3f.dot(cornerOffset, segmentOffset);
         double t = dot / segmentDS;
-        /*
-         * Calculate offset of the closest point on the segment.
-         */
+
+        // Calculate offset of the closest point on the segment.
         float scaleFactor = FastMath.clamp((float) t, 0f, 1f);
         Vector3f closestOffset = segmentOffset.mult(scaleFactor);
         double result = MyVector3f.distanceSquared(closestOffset, cornerOffset);
@@ -406,9 +391,8 @@ public class GenericPolygon3f extends Polygon3f {
         assert corner2 != partner2;
         assert (corner1 != partner2 || corner2 != partner1)
                 && (corner1 != partner1 || corner2 != partner2);
-        /*
-         * Test the partner of ext against both corners of the other segment.
-         */
+
+        // Test the partner of ext against both corners of the other segment.
         int otherCorner;
         int otherPartner;
         if (ext == corner1 || ext == partner1) {
@@ -443,9 +427,8 @@ public class GenericPolygon3f extends Polygon3f {
         if (sdPartner > sdOtherPartner) {
             return true;
         }
-        /*
-         * Segments are disjoint.
-         */
+
+        // Segments are disjoint.
         return false;
     }
 
@@ -456,9 +439,8 @@ public class GenericPolygon3f extends Polygon3f {
      */
     private void setIsSelfIntersecting() {
         assert isSelfIntersecting == null : isSelfIntersecting;
-        /*
-         * consider each pair of sides
-         */
+
+        // consider each pair of sides
         for (int sideI = 0; sideI < numCorners; ++sideI) {
             for (int sideJ = sideI + 1; sideJ < numCorners; ++sideJ) {
                 if (doSidesIntersect(sideI, sideJ)) {

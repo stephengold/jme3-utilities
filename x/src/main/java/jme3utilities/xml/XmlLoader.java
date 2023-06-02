@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -113,13 +113,10 @@ public class XmlLoader implements AssetLoader {
      */
     @Override
     public Object load(AssetInfo assetInfo) {
-        /*
-         * Open the asset stream.
-         */
+        // Open the asset stream.
         InputStream stream = assetInfo.openStream();
-        /*
-         * Parse the stream's data.
-         */
+
+        // Parse the stream's data.
         Document document = parse(stream, "an XML asset");
         return document;
     }
@@ -130,9 +127,7 @@ public class XmlLoader implements AssetLoader {
      * Initialize the loader.
      */
     private static void initialize() {
-        /*
-         * Create the DOM parser.
-         */
+        // Create the DOM parser.
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder tmpParser;
         try {

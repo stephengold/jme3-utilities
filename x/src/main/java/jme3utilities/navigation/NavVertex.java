@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2022, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -383,9 +383,8 @@ public class NavVertex implements Comparable<NavVertex> {
     public int compareTo(NavVertex otherVertex) {
         String otherDescription = otherVertex.getName();
         int result = name.compareTo(otherDescription);
-        /*
-         * Verify consistency with equals().
-         */
+
+        // Verify consistency with equals().
         if (result == 0) {
             assert this.equals(otherVertex);
         }

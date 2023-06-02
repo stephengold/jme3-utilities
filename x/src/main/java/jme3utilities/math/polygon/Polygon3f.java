@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -81,9 +81,8 @@ public class Polygon3f extends CornerSet3f {
      */
     public Polygon3f(Vector3f[] cornerArray, float compareTolerance) {
         super(cornerArray, compareTolerance);
-        /*
-         * Allocate array space for caching values.
-         */
+
+        // Allocate array space for caching values.
         crossProducts = new Vector3f[numCorners];
         dotProducts = new Double[numCorners];
     }
@@ -98,9 +97,8 @@ public class Polygon3f extends CornerSet3f {
      */
     public Polygon3f(List<Vector3f> cornerList, float compareTolerance) {
         super(cornerList, compareTolerance);
-        /*
-         * Allocate array space for caching values.
-         */
+
+        // Allocate array space for caching values.
         crossProducts = new Vector3f[numCorners];
         dotProducts = new Double[numCorners];
     }
@@ -260,18 +258,16 @@ public class Polygon3f extends CornerSet3f {
         if (firstIndex == lastIndex) {
             throw new IllegalArgumentException("Corner indices must differ.");
         }
-        /*
-         * Count how many corners the new polygon will include.
-         */
+
+        // Count how many corners the new polygon will include.
         int newNumCorners = 1;
         for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
             ++newNumCorners;
         }
         assert newNumCorners >= 2 : newNumCorners;
         assert newNumCorners <= numCorners : newNumCorners;
-        /*
-         * Allocate and fill the array of corner locations.
-         */
+
+        // Allocate and fill the array of corner locations.
         Vector3f[] newCornerLocations = new Vector3f[newNumCorners];
         int newI = 0;
         for (int oldI = firstIndex; oldI != lastIndex; oldI = nextIndex(oldI)) {
@@ -494,16 +490,14 @@ public class Polygon3f extends CornerSet3f {
             Vector3f storeClosest) {
         Validate.nonNull(location, "location");
         validateIndex(sideIndex, "side index");
-        /*
-         * Calculate start and direction of a straight line containing the side.
-         */
+
+        // Calculate start and direction of a straight line containing the side.
         Vector3f corner1 = cornerLocations[sideIndex];
         int nextIndex = nextIndex(sideIndex);
         Vector3f corner2 = cornerLocations[nextIndex];
         Vector3f sideOffset = corner2.subtract(corner1);
-        /*
-         * If the side has zero length, return the squared distance to corner1.
-         */
+
+        // If the side has zero length, return the squared distance to corner1.
         double sideLengthSquared = squaredDistance(sideIndex, nextIndex);
         if (sideLengthSquared == 0.0) {
             if (storeClosest != null) {
@@ -512,15 +506,13 @@ public class Polygon3f extends CornerSet3f {
             double result = MyVector3f.distanceSquared(corner1, location);
             return result;
         }
-        /*
-         * Calculate parametric value for the closest point on that line.
-         */
+
+        // Calculate parametric value for the closest point on that line.
         Vector3f pointOffset = location.subtract(corner1);
         double dot = MyVector3f.dot(pointOffset, sideOffset);
         double t = dot / sideLengthSquared;
-        /*
-         * Calculate offset of the closest point on the side.
-         */
+
+        // Calculate offset of the closest point on the side.
         float scaleFactor = FastMath.clamp((float) t, 0f, 1f);
         Vector3f closestOffset = sideOffset.mult(scaleFactor);
         if (storeClosest != null) {
@@ -557,9 +549,8 @@ public class Polygon3f extends CornerSet3f {
     private void setCornerProducts(int cornerIndex) {
         int nextI = nextIndex(cornerIndex);
         int prevI = prevIndex(cornerIndex);
-        /*
-         * Calculate the offsets of the 2 adjacent sides.
-         */
+
+        // Calculate the offsets of the 2 adjacent sides.
         Vector3f a = cornerLocations[prevI];
         Vector3f b = cornerLocations[cornerIndex];
         Vector3f c = cornerLocations[nextI];
@@ -601,9 +592,8 @@ public class Polygon3f extends CornerSet3f {
             setIsDegenerate(true);
             return;
         }
-        /*
-         * (2) Test for coincident corners.
-         */
+
+        // (2) Test for coincident corners.
         for (int iCorner = 0; iCorner < numCorners; ++iCorner) {
             for (int jCorner = iCorner + 1; jCorner < numCorners; ++jCorner) {
                 if (doCoincide(iCorner, jCorner)) {
@@ -612,9 +602,8 @@ public class Polygon3f extends CornerSet3f {
                 }
             }
         }
-        /*
-         * (3) Test for 180-degree turns.
-         */
+
+        // (3) Test for 180-degree turns.
         for (int cornerI = 0; cornerI < numCorners; ++cornerI) {
             double dot = dotProduct(cornerI);
             int nextI = nextIndex(cornerI);

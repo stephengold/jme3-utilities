@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -117,18 +117,16 @@ public class SimplePolygon3f
      */
     public SimplePolygon3f(Vector3f[] cornerArray, float compareTolerance) {
         super(cornerArray, compareTolerance);
-        /*
-         * Verify that the polygon is simple.
-         */
+
+        // Verify that the polygon is simple.
         if (!isPlanar()) {
             throw new IllegalArgumentException("non-planar polygon");
         }
         if (isSelfIntersecting()) {
             throw new IllegalArgumentException("self-intersecting polygon");
         }
-        /*
-         * Allocate array space.
-         */
+
+        // Allocate array space.
         planarOffsets = new VectorXZ[numCorners];
         planarOffsets[0] = new VectorXZ(0f, 0f);
     }
@@ -145,18 +143,16 @@ public class SimplePolygon3f
      */
     public SimplePolygon3f(List<Vector3f> cornerList, float compareTolerance) {
         super(cornerList, compareTolerance);
-        /*
-         * Verify that the polygon is simple.
-         */
+
+        // Verify that the polygon is simple.
         if (!isPlanar()) {
             throw new IllegalArgumentException("non-planar polygon");
         }
         if (isSelfIntersecting()) {
             throw new IllegalArgumentException("self-intersecting polygon");
         }
-        /*
-         * Allocate array space.
-         */
+
+        //Allocate array space.
         planarOffsets = new VectorXZ[numCorners];
         planarOffsets[0] = new VectorXZ(0f, 0f);
     }
@@ -271,16 +267,14 @@ public class SimplePolygon3f
      */
     public double turnAngle(int cornerIndex) {
         validateIndex(cornerIndex, "corner index");
-        /*
-         * Calculate the magnitude of the turn.
-         */
+
+        // Calculate the magnitude of the turn.
         double turnMagnitude = absTurnAngle(cornerIndex);
         assert !Double.isNaN(turnMagnitude);
         assert turnMagnitude >= 0.0 : turnMagnitude;
         assert turnMagnitude < Math.PI : turnMagnitude;
-        /*
-         * Calculate the direction/sign of the turn.
-         */
+
+        // Calculate the direction/sign of the turn.
         if (planeNormal == null) {
             setPlane();
         }
@@ -409,9 +403,7 @@ public class SimplePolygon3f
             boolean startOnSide = onSide(startLocation, sideIndex);
             boolean endOnSide = onSide(endLocation, sideIndex);
             if (startOnSide && endOnSide) {
-                /*
-                 * Both endpoints lie on a single side, so entirely contained.
-                 */
+                // Both endpoints lie on a single side, so entirely contained.
                 return true;
             }
         }
@@ -421,9 +413,7 @@ public class SimplePolygon3f
          */
         Vector3f joint = intersectionWithPerimeter(startLocation, endLocation);
         if (joint == null) {
-            /*
-             * No intersection with perimeter, so entirely contained.
-             */
+            // No intersection with perimeter, so entirely contained.
             return true;
         }
         /*
@@ -631,9 +621,7 @@ public class SimplePolygon3f
         float dot = planeNormal.dot(location);
         float distance = (dot + planeConstant) / planeNormal.y;
         if (distance < 0f) {
-            /*
-             * Starting point is below the plane of this polygon.
-             */
+            // Starting point is below the plane of this polygon.
             return Float.POSITIVE_INFINITY;
         }
 
@@ -641,9 +629,7 @@ public class SimplePolygon3f
         projection.y -= distance;
         assert inPlane(projection) : projection;
         if (!contains(projection)) {
-            /*
-             * Calculated point of support lies outside this polygon.
-             */
+            // Calculated point of support lies outside this polygon.
             return Float.POSITIVE_INFINITY;
         } else {
             return distance;
@@ -666,39 +652,31 @@ public class SimplePolygon3f
             setPlane();
         }
         float dot = otherNorm.dot(planeNormal);
-        if (dot == 0f) {
-            /*
-             * The planes of the 2 polygons are orthogonal.
-             */
+        if (dot == 0f) { // The planes of the 2 polygons are orthogonal.
             return null;
         }
         int otherNumCorners = other.numCorners();
         boolean[][] sideMap = new boolean[numCorners][otherNumCorners];
         if (!sharesSideWith(other, sideMap)) {
-            /*
-             * The 2 polygons have no shared sides.
-             */
+            // The 2 polygons have no shared sides.
             return null;
         }
         boolean[][] revMap = new boolean[otherNumCorners][numCorners];
         boolean success = other.sharesSideWith(this, revMap);
         assert success;
-        /*
-         * Create a list of corner locations for the result.
-         */
+
+        // Create a list of corner locations for the result.
         int maxCorners = numCorners + otherNumCorners - 2;
         List<Vector3f> result = new ArrayList<>(maxCorners);
-        /*
-         * Start with an unshared side of this polygon.
-         */
+
+        // Start with an unshared side of this polygon.
         int startI = 0;
         while (MyArray.first(sideMap[startI]) >= 0) {
             ++startI;
             assert startI < numCorners : startI;
         }
-        /*
-         * Add its first corner to the result.
-         */
+
+        // Add its first corner to the result.
         Vector3f location = cornerLocations[startI];
         result.add(location);
 
@@ -830,17 +808,14 @@ public class SimplePolygon3f
      * constituting a basis for planar coordinates.
      */
     private void setPlane() {
-        /*
-         * Find the 3 corners which form the largest triangle.
-         */
+        // Find the 3 corners which form the largest triangle.
         int[] triangle = largestTriangle();
         assert triangle != null;
         int aIndex = triangle[0];
         int bIndex = triangle[1];
         int cIndex = triangle[2];
-        /*
-         * Calculate the plane containing that triangle.
-         */
+
+        // Calculate the plane containing that triangle.
         Vector3f a = cornerLocations[aIndex];
         Vector3f b = cornerLocations[bIndex];
         Vector3f c = cornerLocations[cIndex];
@@ -849,9 +824,8 @@ public class SimplePolygon3f
         Vector3f crossProduct = offsetB.cross(offsetC);
         planeNormal = crossProduct.normalize();
         planeConstant = -planeNormal.dot(a);
-        /*
-         * Select basis vectors for planar offsets.
-         */
+
+        // Select basis vectors for planar offsets.
         planeXBasis = offsetB.normalize();
         planeZBasis = planeXBasis.cross(planeNormal);
 

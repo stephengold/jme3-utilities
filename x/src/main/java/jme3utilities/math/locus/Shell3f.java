@@ -499,10 +499,7 @@ public class Shell3f implements Locus3f {
             double fudge = 1.0 / (1.0 + fuzz);
             scaleFactor = fudge * Math.sqrt(outerRSquared / squaredValue);
 
-        } else {
-            /*
-             * The original location is in the shell.
-             */
+        } else { // The original location is in the shell.
             assert contains(location);
             return location.clone();
         }
@@ -515,9 +512,7 @@ public class Shell3f implements Locus3f {
         Vector3f result = offset.mult((float) scaleFactor);
 
         if (weights != null) {
-            /*
-             * Undo axis weighting.
-             */
+            // Undo axis weighting.
             if (weights.x != 0f) {
                 result.x /= weights.x;
             } else {
@@ -534,16 +529,12 @@ public class Shell3f implements Locus3f {
                 result.z = unweighted.z;
             }
         }
-        if (orientation != null) {
-            /*
-             * Undo rotation.
-             */
+        if (orientation != null) { // Undo rotation.
             result = MyQuaternion.rotate(orientation, result, null);
         }
         result.addLocal(center);
-        /*
-         * TODO if shell is non-spherical, optimize the result
-         */
+
+        // TODO if shell is non-spherical, optimize the result
         assert contains(result) : result;
         return result;
     }
@@ -574,9 +565,8 @@ public class Shell3f implements Locus3f {
             assert contains(result) : result;
             return result;
         }
-        /*
-         * Pick an offset on the inner surface.
-         */
+
+        // Pick an offset on the inner surface.
         if (weights == null) {
             if (metric == Metric.MANHATTAN) {
                 float coord = innerRadius / 3f;
@@ -602,10 +592,7 @@ public class Shell3f implements Locus3f {
                 result.set(0f, 0f, innerRadius);
             }
         }
-        if (orientation != null) {
-            /*
-             * Undo rotation.
-             */
+        if (orientation != null) { // Undo rotation.
             result = MyQuaternion.rotate(orientation, result, null);
         }
 

@@ -128,7 +128,7 @@ public class LightControl extends SimpleControl {
             return;
         }
         Vector3f worldLocation = spatial.localToWorld(offset, null);
-        Quaternion rotation = spatial.getWorldRotation();
+        Quaternion rotation = spatial.getWorldRotation();  // alias
         Vector3f worldDirection
                 = MyQuaternion.rotate(rotation, direction, null);
 

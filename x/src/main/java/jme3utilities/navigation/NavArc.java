@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2019, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -180,9 +180,8 @@ public class NavArc implements Comparable<NavArc> {
             return result;
         }
         result = toVertex.compareTo(otherArc.getToVertex());
-        /*
-         * Verify consistency with equals().
-         */
+
+        // Verify consistency with equals().
         assert result != 0 || this.equals(otherArc);
         return result;
     }

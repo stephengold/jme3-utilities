@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -103,20 +103,16 @@ public class CornerSet3f {
         }
         Validate.nonNegative(compareTolerance, "compare tolerance");
 
-        /*
-         * Allocate array space for caching calculated values.
-         */
+        // Allocate array space for caching calculated values.
         cornerLocations = new Vector3f[numCorners];
         squaredDistances = new Double[numCorners][numCorners];
-        /*
-         * Copy corner locations.
-         */
+
+        // Copy corner locations.
         for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             cornerLocations[cornerIndex] = cornerArray[cornerIndex].clone();
         }
-        /*
-         * Set compare tolerances.
-         */
+
+        // Set compare tolerances.
         tolerance = compareTolerance;
         tolerance2 = tolerance * tolerance;
     }
@@ -137,20 +133,17 @@ public class CornerSet3f {
             Validate.nonNull(cornerList.get(index), description);
         }
         Validate.nonNegative(compareTolerance, "compare tolerance");
-        /*
-         * Allocate array space for caching values.
-         */
+
+        // Allocate array space for caching values.
         cornerLocations = new Vector3f[numCorners];
         squaredDistances = new Double[numCorners][numCorners];
-        /*
-         * Copy corner locations.
-         */
+
+        // Copy corner locations.
         for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
             cornerLocations[cornerIndex] = cornerList.get(cornerIndex).clone();
         }
-        /*
-         * Set compare tolerances.
-         */
+
+        // Set compare tolerances.
         tolerance = compareTolerance;
         tolerance2 = tolerance * tolerance;
     }
@@ -404,14 +397,11 @@ public class CornerSet3f {
         Validate.inRange(length, "length of subset", 1, numCorners);
 
         if (doCoincide(cornerIndex1, cornerIndex2)) {
-            /*
-             * The line is ill-defined.
-             */
+            // The line is ill-defined.
             return true;
         }
-        /*
-         * Calculate the offset of the last corner from the first.
-         */
+
+        // Calculate the offset of the last corner from the first.
         Vector3f first = cornerLocations[cornerIndex1];
         Vector3f last = cornerLocations[cornerIndex2];
         Vector3f fl = last.subtract(first);
@@ -419,9 +409,8 @@ public class CornerSet3f {
         for (int middleI = subset.nextSetBit(0);
                 middleI >= 0; middleI = subset.nextSetBit(middleI + 1)) {
             assert middleI < numCorners : middleI;
-            /*
-             * Calculate the offset of the middle corner from the first.
-             */
+
+            // Calculate the offset of the middle corner from the first.
             Vector3f middle = cornerLocations[middleI];
             Vector3f fm = middle.subtract(first);
             /*
@@ -471,9 +460,8 @@ public class CornerSet3f {
                 || doCoincide(cornerIndex2, cornerIndex3)) {
             return true;
         }
-        /*
-         * The hard way: find which 2 corners are most distant from each other.
-         */
+
+        // The hard way: find which 2 corners are most distant from each other.
         BitSet corners = new BitSet(numCorners);
         corners.set(cornerIndex1);
         corners.set(cornerIndex2);
@@ -482,9 +470,8 @@ public class CornerSet3f {
         assert longest != null;
         int firstIndex = longest[0];
         int lastIndex = longest[1];
-        /*
-         * The remaining corner is the middle one.
-         */
+
+        // The remaining corner is the middle one.
         corners.clear(firstIndex);
         corners.clear(lastIndex);
         int middleIndex = corners.nextSetBit(0);
@@ -560,9 +547,8 @@ public class CornerSet3f {
         validateIndex(indexA, "index of first corner");
         validateIndex(indexB, "index of 2nd corner");
         validateIndex(indexC, "index of 3rd corner");
-        /*
-         * Calculate the offsets of B and C relative to A.
-         */
+
+        // Calculate the offsets of B and C relative to A.
         Vector3f a = cornerLocations[indexA];
         Vector3f b = cornerLocations[indexB];
         Vector3f c = cornerLocations[indexC];
@@ -622,9 +608,7 @@ public class CornerSet3f {
      * in a single plane.
      */
     private void setIsPlanar() {
-        /*
-         * Shortcut #1: all corner sets with less than 4 corners are planar.
-         */
+        // Shortcut #1: all corner sets with less than 4 corners are planar.
         if (numCorners < 4) {
             setIsPlanar(true);
             return;
@@ -646,9 +630,8 @@ public class CornerSet3f {
             setIsPlanar(true);
             return;
         }
-        /*
-         * The hard way: find the 3 corners which form the largest triangle.
-         */
+
+        // The hard way: find the 3 corners which form the largest triangle.
         int[] triangle = largestTriangle();
         if (triangle == null) {
             /*
@@ -661,9 +644,8 @@ public class CornerSet3f {
         int aIndex = triangle[0];
         int bIndex = triangle[1];
         int cIndex = triangle[2];
-        /*
-         * Calculate the plane containing that triangle.
-         */
+
+        // Calculate the plane containing that triangle.
         Vector3f a = cornerLocations[aIndex];
         Vector3f b = cornerLocations[bIndex];
         Vector3f c = cornerLocations[cIndex];

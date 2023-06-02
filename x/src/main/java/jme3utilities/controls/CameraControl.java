@@ -127,15 +127,13 @@ public class CameraControl extends SimpleControl {
         if (spatial == null) {
             return;
         }
-        /*
-         * Update the camera location.
-         */
+
+        // Update the camera location.
         Vector3f worldLocation = spatial.localToWorld(offset, null);
         camera.setLocation(worldLocation);
-        /*
-         * Update the camera orientation.
-         */
-        Quaternion rotation = spatial.getWorldRotation();
+
+        // Update the camera orientation.
+        Quaternion rotation = spatial.getWorldRotation(); // alias
         Vector3f worldLookDirection
                 = MyQuaternion.rotate(rotation, lookDirection, null);
         Vector3f worldUpDirection

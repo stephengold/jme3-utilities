@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -82,15 +82,13 @@ public class Segment3f implements Locus3f {
         Validate.nonNull(corner0, "first corner");
         Validate.nonNull(corner1, "2nd corner");
         Validate.nonNegative(compareTolerance, "compare tolerance");
-        /*
-         * Allocate array space for caching values.
-         */
+
+        // Allocate array space for caching values.
         cornerLocations = new Vector3f[2];
         cornerLocations[0] = corner0;
         cornerLocations[1] = corner1;
-        /*
-         * Set compare tolerances.
-         */
+
+        // Set compare tolerances.
         tolerance = compareTolerance;
         tolerance2 = tolerance * tolerance;
     }
@@ -262,9 +260,8 @@ public class Segment3f implements Locus3f {
      */
     public double squaredDistance(Vector3f point, Vector3f storeClosestPoint) {
         Validate.nonNull(point, "point");
-        /*
-         * Calculate the direction of a straight line containing the segment.
-         */
+
+        // Calculate the direction of a straight line containing the segment.
         Vector3f corner0 = cornerLocations[0];
         Vector3f corner1 = cornerLocations[1];
         Vector3f segmentOffset = corner1.subtract(corner0);
@@ -280,15 +277,13 @@ public class Segment3f implements Locus3f {
             double result = MyVector3f.distanceSquared(corner0, point);
             return result;
         }
-        /*
-         * Calculate parametric value for the closest point on that line.
-         */
+
+        // Calculate parametric value for the closest point on that line.
         Vector3f pointOffset = point.subtract(corner0);
         double dot = MyVector3f.dot(pointOffset, segmentOffset);
         double t = dot / segmentDS;
-        /*
-         * Calculate offset of the closest point on the side.
-         */
+
+        // Calculate offset of the closest point on the side.
         float scaleFactor = FastMath.clamp((float) t, 0f, 1f);
         Vector3f closestOffset = segmentOffset.mult(scaleFactor);
         if (storeClosestPoint != null) {

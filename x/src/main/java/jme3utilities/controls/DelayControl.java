@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -122,9 +122,8 @@ public class DelayControl extends SimpleControl {
         if (spatial == null) {
             return;
         }
-        /*
-         * Update the time remaining.
-         */
+
+        //Update the time remaining.
         remainingSeconds -= updateInterval;
         if (remainingSeconds < 0f) {
             String name = spatial.getName();

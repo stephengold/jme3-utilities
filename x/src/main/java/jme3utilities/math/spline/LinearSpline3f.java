@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2022, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -85,9 +85,8 @@ public class LinearSpline3f implements Spline3f {
             Validate.nonNull(point, "control point");
             if (previousPoint != null) {
                 float distance = previousPoint.distance(point);
-                /*
-                 * Skip any redundant control point.
-                 */
+
+                // Skip any redundant control point.
                 if (distance > 0f) {
                     sumDistance += distance;
                     controlPoints.add(point);
@@ -122,9 +121,8 @@ public class LinearSpline3f implements Spline3f {
             Validate.nonNull(point, "control point");
             if (previousPoint != null) {
                 float distance = previousPoint.distance(point);
-                /*
-                 * Skip any redundant control point.
-                 */
+
+                // Skip any redundant control point.
                 if (distance > 0f) {
                     sumDistance += distance;
                     controlPoints.add(point);
@@ -328,9 +326,8 @@ public class LinearSpline3f implements Spline3f {
         if (sampleT < 0f) {
             return -1;
         }
-        /*
-         * TODO: implement binary search
-         */
+
+        // TODO: implement binary search
         int numPoints = controlTs.size();
         for (int index = 1; index < numPoints; ++index) {
             float controlT = controlTs.get(index);

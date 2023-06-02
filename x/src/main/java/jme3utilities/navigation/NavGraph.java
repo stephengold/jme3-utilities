@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2022, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -301,17 +301,15 @@ public class NavGraph {
      */
     public NavVertex findContains(Vector3f point) {
         Validate.nonNull(point, "point");
-        /*
-         * Test the closest vertex first.
-         */
+
+        // Test the closest vertex first.
         Collection<NavVertex> allVertices = vertices.values();
         NavVertex result = findNearest(allVertices, point);
         if (result == null || result.getLocus().contains(point)) {
             return result;
         }
-        /*
-         * Test the next closest, and so on.  TODO sort
-         */
+
+        // Test the next closest, and so on.  TODO sort
         Collection<NavVertex> remainingVertices
                 = new HashSet<>(vertices.values());
         boolean success = remainingVertices.remove(result);
@@ -768,13 +766,11 @@ public class NavGraph {
                 && hopCount > minHopCounts.get(visit)) {
             return;
         }
-        /*
-         * Update the hop count of the current vertex.
-         */
+
+        // Update the hop count of the current vertex.
         minHopCounts.put(visit, hopCount);
-        /*
-         * Follow each outgoing arc from the current vertex.
-         */
+
+        // Follow each outgoing arc from the current vertex.
         int nextHopCount = hopCount + 1;
         for (NavArc arc : visit.copyOutgoing()) {
             NavVertex nextVisit = arc.getToVertex();
@@ -803,13 +799,11 @@ public class NavGraph {
                 && totalCost > minTotalCosts.get(visit)) {
             return;
         }
-        /*
-         * Update the total cost of the current vertex.
-         */
+
+        // Update the total cost of the current vertex.
         minTotalCosts.put(visit, totalCost);
-        /*
-         * Follow each incoming arc of the current vertex.
-         */
+
+        // Follow each incoming arc of the current vertex.
         for (NavArc arc : visit.copyIncoming()) {
             NavVertex nextVisit = arc.getFromVertex();
             float arcCost = arcCosts.get(arc);
