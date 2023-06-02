@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2022, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ import com.jme3.renderer.Camera;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
 
 /**
  * Simple control which manages the position and orientation of a camera in the
@@ -135,8 +136,10 @@ public class CameraControl extends SimpleControl {
          * Update the camera orientation.
          */
         Quaternion rotation = spatial.getWorldRotation();
-        Vector3f worldLookDirection = rotation.mult(lookDirection);
-        Vector3f worldUpDirection = rotation.mult(upDirection);
+        Vector3f worldLookDirection
+                = MyQuaternion.rotate(rotation, lookDirection, null);
+        Vector3f worldUpDirection
+                = MyQuaternion.rotate(rotation, upDirection, null);
         camera.lookAtDirection(worldLookDirection, worldUpDirection);
     }
 }

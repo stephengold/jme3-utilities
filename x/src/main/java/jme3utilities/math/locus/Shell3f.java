@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Validate;
 import jme3utilities.math.MyMath;
+import jme3utilities.math.MyQuaternion;
 import jme3utilities.math.MyVector3f;
 import jme3utilities.math.spline.LinearSpline3f;
 import jme3utilities.math.spline.Spline3f;
@@ -386,7 +387,7 @@ public class Shell3f implements Locus3f {
     public boolean contains(Vector3f location) {
         Vector3f offset = location.subtract(center);
         if (inverseRotation != null) {
-            offset = inverseRotation.mult(offset);
+            offset = MyQuaternion.rotate(inverseRotation, offset, null);
         }
         if (weights != null) {
             offset.multLocal(weights);
@@ -438,7 +439,7 @@ public class Shell3f implements Locus3f {
          */
         Vector3f unweighted = location.subtract(center);
         if (inverseRotation != null) {
-            unweighted = inverseRotation.mult(unweighted);
+            unweighted = MyQuaternion.rotate(inverseRotation, unweighted, null);
         }
         Vector3f offset;
         if (weights == null) {
@@ -537,7 +538,7 @@ public class Shell3f implements Locus3f {
             /*
              * Undo rotation.
              */
-            result = orientation.mult(result);
+            result = MyQuaternion.rotate(orientation, result, null);
         }
         result.addLocal(center);
         /*
@@ -605,7 +606,7 @@ public class Shell3f implements Locus3f {
             /*
              * Undo rotation.
              */
-            result = orientation.mult(result);
+            result = MyQuaternion.rotate(orientation, result, null);
         }
 
         result.addLocal(center);
@@ -623,7 +624,7 @@ public class Shell3f implements Locus3f {
     public double score(Vector3f location) {
         Vector3f offset = location.subtract(center);
         if (inverseRotation != null) {
-            offset = inverseRotation.mult(offset);
+            offset = MyQuaternion.rotate(inverseRotation, offset, null);
         }
         if (weights != null) {
             offset.multLocal(weights);

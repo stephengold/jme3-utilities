@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2017, Stephen Gold
+ Copyright (c) 2014-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ import com.jme3.math.Vector3f;
 import java.util.logging.Logger;
 import jme3utilities.SimpleControl;
 import jme3utilities.Validate;
+import jme3utilities.math.MyQuaternion;
 
 /**
  * Simple control which manages a light source attached to a Spatial.
@@ -128,7 +129,8 @@ public class LightControl extends SimpleControl {
         }
         Vector3f worldLocation = spatial.localToWorld(offset, null);
         Quaternion rotation = spatial.getWorldRotation();
-        Vector3f worldDirection = rotation.mult(direction);
+        Vector3f worldDirection
+                = MyQuaternion.rotate(rotation, direction, null);
 
         if (light instanceof DirectionalLight) {
             DirectionalLight directionalLight = (DirectionalLight) light;
