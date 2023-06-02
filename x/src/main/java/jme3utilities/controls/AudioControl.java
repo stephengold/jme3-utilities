@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ public class AudioControl extends SimpleControl {
      * Schedule the audio node to be played.
      */
     public void playInstance() {
-        startFlag = true;
+        this.startFlag = true;
     }
     // *************************************************************************
     // AbstractControl methods
@@ -104,7 +104,7 @@ public class AudioControl extends SimpleControl {
         if (startFlag) {
             AudioNode node = (AudioNode) spatial;
             node.play();
-            startFlag = false;
+            this.startFlag = false;
         }
     }
 }

@@ -98,7 +98,7 @@ public class LinearSpline3f implements Spline3f {
             }
             previousPoint = point;
         }
-        totalLength = sumDistance;
+        this.totalLength = sumDistance;
 
         assert controlPoints.size() == controlTs.size() : controlTs.size();
     }
@@ -134,7 +134,7 @@ public class LinearSpline3f implements Spline3f {
             }
             previousPoint = point;
         }
-        totalLength = sumDistance;
+        this.totalLength = sumDistance;
 
         assert controlPoints.size() == controlTs.size() : controlTs.size();
     }

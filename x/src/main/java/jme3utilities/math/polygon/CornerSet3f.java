@@ -96,7 +96,7 @@ public class CornerSet3f {
      */
     public CornerSet3f(Vector3f[] cornerArray, float compareTolerance) {
         Validate.nonNull(cornerArray, "corner array");
-        numCorners = cornerArray.length;
+        this.numCorners = cornerArray.length;
         for (int index = 0; index < numCorners; ++index) {
             String description = String.format("cornerList[%d]", index);
             Validate.nonNull(cornerArray[index], description);
@@ -104,17 +104,18 @@ public class CornerSet3f {
         Validate.nonNegative(compareTolerance, "compare tolerance");
 
         // Allocate array space for caching calculated values.
-        cornerLocations = new Vector3f[numCorners];
-        squaredDistances = new Double[numCorners][numCorners];
+        this.cornerLocations = new Vector3f[numCorners];
+        this.squaredDistances = new Double[numCorners][numCorners];
 
         // Copy corner locations.
         for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
-            cornerLocations[cornerIndex] = cornerArray[cornerIndex].clone();
+            this.cornerLocations[cornerIndex]
+                    = cornerArray[cornerIndex].clone();
         }
 
         // Set compare tolerances.
-        tolerance = compareTolerance;
-        tolerance2 = tolerance * tolerance;
+        this.tolerance = compareTolerance;
+        this.tolerance2 = tolerance * tolerance;
     }
 
     /**
@@ -127,7 +128,7 @@ public class CornerSet3f {
      */
     public CornerSet3f(List<Vector3f> cornerList, float compareTolerance) {
         Validate.nonNull(cornerList, "corner list");
-        numCorners = cornerList.size();
+        this.numCorners = cornerList.size();
         for (int index = 0; index < numCorners; ++index) {
             String description = String.format("cornerList[%d]", index);
             Validate.nonNull(cornerList.get(index), description);
@@ -135,17 +136,18 @@ public class CornerSet3f {
         Validate.nonNegative(compareTolerance, "compare tolerance");
 
         // Allocate array space for caching values.
-        cornerLocations = new Vector3f[numCorners];
-        squaredDistances = new Double[numCorners][numCorners];
+        this.cornerLocations = new Vector3f[numCorners];
+        this.squaredDistances = new Double[numCorners][numCorners];
 
         // Copy corner locations.
         for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
-            cornerLocations[cornerIndex] = cornerList.get(cornerIndex).clone();
+            this.cornerLocations[cornerIndex]
+                    = cornerList.get(cornerIndex).clone();
         }
 
         // Set compare tolerances.
-        tolerance = compareTolerance;
-        tolerance2 = tolerance * tolerance;
+        this.tolerance = compareTolerance;
+        this.tolerance2 = tolerance * tolerance;
     }
     // *************************************************************************
     // new methods exposed
@@ -735,10 +737,10 @@ public class CornerSet3f {
         assert newValue[1] > newValue[0];
         assert newValue[2] > newValue[1];
 
-        largestTriangle = new int[3];
-        largestTriangle[0] = newValue[0];
-        largestTriangle[1] = newValue[1];
-        largestTriangle[2] = newValue[2];
+        this.largestTriangle = new int[3];
+        this.largestTriangle[0] = newValue[0];
+        this.largestTriangle[1] = newValue[1];
+        this.largestTriangle[2] = newValue[2];
     }
 
     /**
@@ -780,7 +782,7 @@ public class CornerSet3f {
         assert squaredDistances[ci1][ci2] == null;
         assert squaredDistances[ci2][ci1] == null;
 
-        squaredDistances[ci1][ci2] = newValue;
-        squaredDistances[ci2][ci1] = newValue;
+        this.squaredDistances[ci1][ci2] = newValue;
+        this.squaredDistances[ci2][ci1] = newValue;
     }
 }

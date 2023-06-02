@@ -83,8 +83,8 @@ public class Polygon3f extends CornerSet3f {
         super(cornerArray, compareTolerance);
 
         // Allocate array space for caching values.
-        crossProducts = new Vector3f[numCorners];
-        dotProducts = new Double[numCorners];
+        this.crossProducts = new Vector3f[numCorners];
+        this.dotProducts = new Double[numCorners];
     }
 
     /**
@@ -99,8 +99,8 @@ public class Polygon3f extends CornerSet3f {
         super(cornerList, compareTolerance);
 
         // Allocate array space for caching values.
-        crossProducts = new Vector3f[numCorners];
-        dotProducts = new Double[numCorners];
+        this.crossProducts = new Vector3f[numCorners];
+        this.dotProducts = new Double[numCorners];
     }
     // *************************************************************************
     // new methods exposed
@@ -577,8 +577,8 @@ public class Polygon3f extends CornerSet3f {
         assert crossProducts[cornerIndex] == null;
         assert dotProducts[cornerIndex] == null;
 
-        crossProducts[cornerIndex] = newCross.clone();
-        dotProducts[cornerIndex] = newDot;
+        this.crossProducts[cornerIndex] = newCross.clone();
+        this.dotProducts[cornerIndex] = newDot;
     }
 
     /**
@@ -629,6 +629,6 @@ public class Polygon3f extends CornerSet3f {
      */
     private void setIsDegenerate(boolean newValue) {
         assert isDegenerate == null;
-        isDegenerate = newValue;
+        this.isDegenerate = newValue;
     }
 }

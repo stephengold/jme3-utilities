@@ -105,7 +105,7 @@ public class DelayControl extends SimpleControl {
      */
     public void setRemainingSeconds(float newSeconds) {
         Validate.nonNegative(newSeconds, "seconds");
-        remainingSeconds = newSeconds;
+        this.remainingSeconds = newSeconds;
     }
     // *************************************************************************
     // SimpleControl methods

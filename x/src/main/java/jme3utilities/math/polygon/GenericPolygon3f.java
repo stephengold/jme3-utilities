@@ -450,6 +450,6 @@ public class GenericPolygon3f extends Polygon3f {
             }
         }
 
-        isSelfIntersecting = false;
+        this.isSelfIntersecting = false;
     }
 }

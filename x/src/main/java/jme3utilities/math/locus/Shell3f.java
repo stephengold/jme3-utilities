@@ -222,7 +222,7 @@ public class Shell3f implements Locus3f {
         Validate.positive(radius, "radius");
         Validate.finite(radius, "radius");
 
-        metric = Metric.EUCLID;
+        this.metric = Metric.EUCLID;
         this.center = center.clone();
         Vector3f uAxis = axis.clone();
         Vector3f vAxis = new Vector3f();
@@ -230,11 +230,11 @@ public class Shell3f implements Locus3f {
         MyVector3f.generateBasis(uAxis, vAxis, wAxis);
         this.orientation = new Quaternion();
         orientation.fromAxes(uAxis, vAxis, wAxis);
-        inverseRotation = orientation.inverse();
+        this.inverseRotation = orientation.inverse();
         if (slabFlag) {
-            weights = slabWeights;
+            this.weights = slabWeights;
         } else {
-            weights = cylinderWeights;
+            this.weights = cylinderWeights;
         }
         this.innerRadius = 0f;
         this.innerRSquared = 0.0;
@@ -299,9 +299,9 @@ public class Shell3f implements Locus3f {
             this.weights = weights.clone();
         }
         this.innerRadius = innerRadius;
-        innerRSquared = innerRadius * innerRadius;
+        this.innerRSquared = innerRadius * innerRadius;
         if (Float.isInfinite(outerRadius)) {
-            optimalRSquared = Double.POSITIVE_INFINITY;
+            this.optimalRSquared = Double.POSITIVE_INFINITY;
         } else {
             assert !Float.isInfinite(innerRadius);
             double optimalRadius = 0.5 * (innerRadius + outerRadius);

@@ -127,8 +127,8 @@ public class SimplePolygon3f
         }
 
         // Allocate array space.
-        planarOffsets = new VectorXZ[numCorners];
-        planarOffsets[0] = new VectorXZ(0f, 0f);
+        this.planarOffsets = new VectorXZ[numCorners];
+        this.planarOffsets[0] = new VectorXZ(0f, 0f);
     }
 
     /**
@@ -153,8 +153,8 @@ public class SimplePolygon3f
         }
 
         //Allocate array space.
-        planarOffsets = new VectorXZ[numCorners];
-        planarOffsets[0] = new VectorXZ(0f, 0f);
+        this.planarOffsets = new VectorXZ[numCorners];
+        this.planarOffsets[0] = new VectorXZ(0f, 0f);
     }
     // *************************************************************************
     // new methods exposed
@@ -747,7 +747,7 @@ public class SimplePolygon3f
         }
         float x = sumX / (6f * signedArea);
         float z = sumZ / (6f * signedArea);
-        centroid = new VectorXZ(x, z);
+        this.centroid = new VectorXZ(x, z);
     }
 
     /**
@@ -765,11 +765,11 @@ public class SimplePolygon3f
             Vector3f cross = crossProduct(cornerI);
             float dot = planeNormal.dot(cross);
             if (!(dot >= 0f)) {
-                isConvex = false;
+                this.isConvex = false;
                 return;
             }
         }
-        isConvex = true;
+        this.isConvex = true;
     }
 
     /**
@@ -792,7 +792,7 @@ public class SimplePolygon3f
 
         float x = offset.dot(planeXBasis);
         float z = offset.dot(planeZBasis);
-        planarOffsets[cornerIndex] = new VectorXZ(x, z);
+        this.planarOffsets[cornerIndex] = new VectorXZ(x, z);
     }
 
     /**
@@ -822,12 +822,12 @@ public class SimplePolygon3f
         Vector3f offsetB = b.subtract(a);
         Vector3f offsetC = c.subtract(b);
         Vector3f crossProduct = offsetB.cross(offsetC);
-        planeNormal = crossProduct.normalize();
-        planeConstant = -planeNormal.dot(a);
+        this.planeNormal = crossProduct.normalize();
+        this.planeConstant = -planeNormal.dot(a);
 
         // Select basis vectors for planar offsets.
-        planeXBasis = offsetB.normalize();
-        planeZBasis = planeXBasis.cross(planeNormal);
+        this.planeXBasis = offsetB.normalize();
+        this.planeZBasis = planeXBasis.cross(planeNormal);
 
         float ls = planeZBasis.lengthSquared();
         assert ls > 0.9999 : ls;
@@ -857,6 +857,6 @@ public class SimplePolygon3f
             float cross = planarOffsets[i].cross(planarOffsets[next]);
             total += cross;
         }
-        signedArea = 0.5f * total;
+        this.signedArea = 0.5f * total;
     }
 }

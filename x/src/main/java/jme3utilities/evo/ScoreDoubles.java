@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2022, Stephen Gold
+ Copyright (c) 2017-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -64,8 +64,8 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
     public ScoreDoubles(double subscore) {
         Validate.number(subscore, "sub-score");
 
-        subscores = new double[1];
-        subscores[0] = subscore;
+        this.subscores = new double[1];
+        this.subscores[0] = subscore;
     }
 
     /**
@@ -78,9 +78,9 @@ public class ScoreDoubles implements Comparable<ScoreDoubles> {
         Validate.number(subscore0, "first sub-score");
         Validate.number(subscore1, "2nd sub-score");
 
-        subscores = new double[2];
-        subscores[0] = subscore0;
-        subscores[1] = subscore1;
+        this.subscores = new double[2];
+        this.subscores[0] = subscore0;
+        this.subscores[1] = subscore1;
     }
 
     /**

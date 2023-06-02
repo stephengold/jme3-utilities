@@ -84,13 +84,13 @@ public class Segment3f implements Locus3f {
         Validate.nonNegative(compareTolerance, "compare tolerance");
 
         // Allocate array space for caching values.
-        cornerLocations = new Vector3f[2];
-        cornerLocations[0] = corner0;
-        cornerLocations[1] = corner1;
+        this.cornerLocations = new Vector3f[2];
+        this.cornerLocations[0] = corner0;
+        this.cornerLocations[1] = corner1;
 
         // Set compare tolerances.
-        tolerance = compareTolerance;
-        tolerance2 = tolerance * tolerance;
+        this.tolerance = compareTolerance;
+        this.tolerance2 = tolerance * tolerance;
     }
     // *************************************************************************
     // new methods exposed
