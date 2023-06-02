@@ -215,8 +215,8 @@ public class Shell3f implements Locus3f {
      * @param radius (in world units, &gt;0, finite)
      * @param slabFlag (true for a slab, false for a cylinder)
      */
-    public Shell3f(Vector3f center, Vector3f axis, float radius,
-            boolean slabFlag) {
+    public Shell3f(
+            Vector3f center, Vector3f axis, float radius, boolean slabFlag) {
         Validate.nonNull(center, "center");
         Validate.nonZero(axis, "axis");
         Validate.positive(radius, "radius");
@@ -637,8 +637,8 @@ public class Shell3f implements Locus3f {
      * @return a new path spline, or null if none found
      */
     @Override
-    public Spline3f shortestPath(Vector3f startLocation,
-            Vector3f goalLocation, int maxPoints) {
+    public Spline3f shortestPath(
+            Vector3f startLocation, Vector3f goalLocation, int maxPoints) {
         Validate.nonNull(startLocation, "start location");
         Validate.nonNull(goalLocation, "goal location");
         Validate.inRange(maxPoints, "max control points", 2, Integer.MAX_VALUE);

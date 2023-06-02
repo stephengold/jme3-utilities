@@ -127,8 +127,8 @@ public class DelayControl extends SimpleControl {
         remainingSeconds -= updateInterval;
         if (remainingSeconds < 0f) {
             String name = spatial.getName();
-            logger.log(Level.INFO, "timed out, spatial={0}",
-                    MyString.quote(name));
+            logger.log(
+                    Level.INFO, "timed out, spatial={0}", MyString.quote(name));
             for (Control slave : slaves) {
                 enableSlave(slave);
             }

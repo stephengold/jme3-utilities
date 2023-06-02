@@ -110,8 +110,8 @@ final public class XmlOutput {
      * @param floatValue value of the attribute
      * @param precision max digits after the decimal point (&ge;0)
      */
-    public static void putAttribute(PrintStream stream, String name,
-            float floatValue, int precision) {
+    public static void putAttribute(
+            PrintStream stream, String name, float floatValue, int precision) {
         Validate.nonNull(stream, "stream");
         Validate.nonEmpty(name, "name");
         Validate.nonNegative(precision, "precision");
@@ -129,8 +129,8 @@ final public class XmlOutput {
      * @param name name of the attribute (not null, not empty)
      * @param stringValue value of the attribute (not null)
      */
-    public static void putAttribute(PrintStream stream, String name,
-            CharSequence stringValue) {
+    public static void putAttribute(
+            PrintStream stream, String name, CharSequence stringValue) {
         Validate.nonEmpty(name, "name");
         Validate.nonNull(stringValue, "value");
 

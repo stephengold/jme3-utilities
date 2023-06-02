@@ -86,8 +86,8 @@ public class NavGraph {
      * @param initialCost initial cost (or length) of the arc (&ge;0)
      * @return a new member arc
      */
-    public NavArc addArc(NavVertex origin, NavVertex terminus,
-            float initialCost) {
+    public NavArc addArc(
+            NavVertex origin, NavVertex terminus, float initialCost) {
         validateMember(origin, "origin");
         validateMember(terminus, "terminus");
         if (origin == terminus) {
@@ -269,8 +269,8 @@ public class NavGraph {
      * @param startVertex (member)
      * @return a new list of pre-existing member vertices
      */
-    public List<NavVertex> findByHops(int minHopCount, int maxHopCount,
-            NavVertex startVertex) {
+    public List<NavVertex> findByHops(
+            int minHopCount, int maxHopCount, NavVertex startVertex) {
         Validate.nonNegative(minHopCount, "count");
         if (minHopCount > maxHopCount) {
             logger.log(Level.SEVERE, "min={0} max={1}",
@@ -353,8 +353,8 @@ public class NavGraph {
      * @param subset (not null, all members of this graph, unaffected)
      * @return a new list of pre-existing member vertices
      */
-    public List<NavVertex> findMostHops(NavVertex startVertex,
-            Collection<? extends NavVertex> subset) {
+    public List<NavVertex> findMostHops(
+            NavVertex startVertex, Collection<? extends NavVertex> subset) {
         validateMember(startVertex, "start vertex");
 
         Map<NavVertex, Integer> hopData = new HashMap<>(subset.size());
@@ -821,8 +821,8 @@ public class NavGraph {
      * @param visitedVertices set of vertices previously visited, initially
      * empty (not null, updated)
      */
-    private void visitReachable(NavVertex visit,
-            Set<? super NavVertex> visitedVertices) {
+    private void visitReachable(
+            NavVertex visit, Set<? super NavVertex> visitedVertices) {
         assert contains(visit) : visit;
         assert visitedVertices != null;
 

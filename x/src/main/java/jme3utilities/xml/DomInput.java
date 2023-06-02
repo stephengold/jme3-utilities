@@ -106,8 +106,8 @@ final public class DomInput {
      * @param defaultValue value used if the attribute is missing
      * @return value obtained
      */
-    public static float getFloat(NamedNodeMap map, String name,
-            float defaultValue) {
+    public static float getFloat(
+            NamedNodeMap map, String name, float defaultValue) {
         Validate.nonNull(name, "name");
 
         Attr attr = (Attr) map.getNamedItem(name);

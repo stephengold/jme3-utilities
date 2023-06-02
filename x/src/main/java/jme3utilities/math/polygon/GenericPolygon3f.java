@@ -130,8 +130,8 @@ public class GenericPolygon3f extends Polygon3f {
      * @param partner2 index of 2nd corner, 2nd segment (&ge;0, &lt;numCorners)
      * @return true if the segments intersect, otherwise false
      */
-    protected boolean doSegmentsIntersect(int corner1, int partner1,
-            int corner2, int partner2) {
+    protected boolean doSegmentsIntersect(
+            int corner1, int partner1, int corner2, int partner2) {
         validateIndex(corner1, "index of first corner of first segment");
         validateIndex(partner1, "index of 2nd corner of first segment");
         if (corner1 == partner1) {
@@ -190,8 +190,8 @@ public class GenericPolygon3f extends Polygon3f {
                  * All corners are collinear.  The segments intersect
                  * if and only if they overlap.
                  */
-                boolean result = isOverlap(firstI, corner1, partner1,
-                        corner2, partner2);
+                boolean result = isOverlap(
+                        firstI, corner1, partner1, corner2, partner2);
                 return result;
             } else {
                 /*
@@ -272,15 +272,15 @@ public class GenericPolygon3f extends Polygon3f {
      * @param endLocation coordinates of end of segment (not null, unaffected)
      * @return a new coordinate vector or null if no intersection found
      */
-    protected Vector3f intersectionWithPerimeter(Vector3f startLocation,
-            Vector3f endLocation) {
+    protected Vector3f intersectionWithPerimeter(
+            Vector3f startLocation, Vector3f endLocation) {
         Validate.nonNull(startLocation, "start location");
         Validate.nonNull(endLocation, "end location");
 
         // Check for intersection at a corner.
         for (int cornerIndex = 0; cornerIndex < numCorners; ++cornerIndex) {
-            Vector3f result = intersectionWithCorner(cornerIndex, startLocation,
-                    endLocation);
+            Vector3f result = intersectionWithCorner(
+                    cornerIndex, startLocation, endLocation);
             if (result != null) {
                 return result;
             }
@@ -288,8 +288,8 @@ public class GenericPolygon3f extends Polygon3f {
 
         // Check for intersection with a side.
         for (int sideIndex = 0; sideIndex < numCorners; ++sideIndex) {
-            Vector3f result = intersectionWithSide(sideIndex, startLocation,
-                    endLocation);
+            Vector3f result = intersectionWithSide(
+                    sideIndex, startLocation, endLocation);
             if (result != null) {
                 return result;
             }
@@ -310,8 +310,8 @@ public class GenericPolygon3f extends Polygon3f {
      * @param end coordinates of end of segment (not null, unaffected)
      * @return a new coordinate vector or null if no intersection found
      */
-    private Vector3f intersectionWithCorner(int cornerIndex, Vector3f start,
-            Vector3f end) {
+    private Vector3f intersectionWithCorner(
+            int cornerIndex, Vector3f start, Vector3f end) {
         validateIndex(cornerIndex, "corner index");
         Validate.nonNull(start, "start location");
         Validate.nonNull(end, "end location");
@@ -358,8 +358,8 @@ public class GenericPolygon3f extends Polygon3f {
      * @param end coordinates of end of segment (not null, unaffected)
      * @return a new coordinate vector or null if no intersection found
      */
-    private Vector3f intersectionWithSide(int sideIndex,
-            Vector3f start, Vector3f end) {
+    private Vector3f intersectionWithSide(
+            int sideIndex, Vector3f start, Vector3f end) {
         validateIndex(sideIndex, "side index");
         Validate.nonNull(start, "start location");
         Validate.nonNull(end, "end location");
@@ -367,8 +367,8 @@ public class GenericPolygon3f extends Polygon3f {
         Vector3f corner1 = cornerLocations[sideIndex];
         int corner2Index = nextIndex(sideIndex);
         Vector3f corner2 = cornerLocations[corner2Index];
-        Vector3f result = MyVector3f.intersectSegments(corner1, corner2,
-                start, end, tolerance2);
+        Vector3f result = MyVector3f.intersectSegments(
+                corner1, corner2, start, end, tolerance2);
 
         return result;
     }
@@ -385,8 +385,8 @@ public class GenericPolygon3f extends Polygon3f {
      * @param partner2 index of 2nd corner, 2nd segment (&ge;0, &lt;numCorners)
      * @return true if overlap, otherwise false
      */
-    private boolean isOverlap(int ext, int corner1, int partner1,
-            int corner2, int partner2) {
+    private boolean isOverlap(
+            int ext, int corner1, int partner1, int corner2, int partner2) {
         assert corner1 != partner1;
         assert corner2 != partner2;
         assert (corner1 != partner2 || corner2 != partner1)

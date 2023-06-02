@@ -537,8 +537,8 @@ public class SimplePolygon3f
         Vector3f closestLocation = new Vector3f();
         int sideIndex = findSide(location, closestLocation);
         assert sideIndex >= 0 : sideIndex;
-        double distanceSquared = MyVector3f.distanceSquared(
-                location, closestLocation);
+        double distanceSquared
+                = MyVector3f.distanceSquared(location, closestLocation);
 
         if (contains(location)) {
             return distanceSquared;
@@ -557,8 +557,8 @@ public class SimplePolygon3f
      * @return a new path spline, or null if none found
      */
     @Override
-    public Spline3f shortestPath(Vector3f startLocation, Vector3f goalLocation,
-            int maxPoints) {
+    public Spline3f shortestPath(
+            Vector3f startLocation, Vector3f goalLocation, int maxPoints) {
         Validate.nonNull(startLocation, "start location");
         Validate.nonNull(goalLocation, "goal location");
         Validate.inRange(maxPoints, "max control points", 2, Integer.MAX_VALUE);

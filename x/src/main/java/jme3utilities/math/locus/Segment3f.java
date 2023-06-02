@@ -77,8 +77,8 @@ public class Segment3f implements Locus3f {
      * @param compareTolerance tolerance (&ge;0) used when comparing two points
      * or testing for intersection
      */
-    public Segment3f(Vector3f corner0, Vector3f corner1,
-            float compareTolerance) {
+    public Segment3f(
+            Vector3f corner0, Vector3f corner1, float compareTolerance) {
         Validate.nonNull(corner0, "first corner");
         Validate.nonNull(corner1, "2nd corner");
         Validate.nonNegative(compareTolerance, "compare tolerance");
@@ -462,8 +462,8 @@ public class Segment3f implements Locus3f {
      * @return a new path spline, or null if none found
      */
     @Override
-    public Spline3f shortestPath(Vector3f startLocation,
-            Vector3f goalLocation, int maxPoints) {
+    public Spline3f shortestPath(
+            Vector3f startLocation, Vector3f goalLocation, int maxPoints) {
         Validate.nonNull(startLocation, "start location");
         Validate.nonNull(goalLocation, "goal location");
         Validate.inRange(maxPoints, "max control points", 2, Integer.MAX_VALUE);

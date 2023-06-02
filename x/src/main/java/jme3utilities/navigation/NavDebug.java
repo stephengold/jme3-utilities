@@ -106,8 +106,8 @@ final public class NavDebug {
      * @param material material for geometries that represent vertices (not
      * null)
      */
-    public static void addBalls(NavGraph graph, Node parentNode, float radius,
-            Material material) {
+    public static void addBalls(
+            NavGraph graph, Node parentNode, float radius, Material material) {
         Validate.nonNull(parentNode, "parent node");
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
@@ -155,8 +155,8 @@ final public class NavDebug {
      * @param parentNode where in the scene to attach the geometries (not null)
      * @param material material for geometries that represent loci (not null)
      */
-    public static void addLoops(NavGraph graph, Node parentNode,
-            Material material) {
+    public static void addLoops(
+            NavGraph graph, Node parentNode, Material material) {
         Validate.nonNull(parentNode, "parent node");
         Validate.nonNull(material, "material");
 
@@ -174,8 +174,8 @@ final public class NavDebug {
      * @param radius radius of each stick (in world units, &gt;0)
      * @param material for geometries that represent navigation arcs (not null)
      */
-    public static void addSticks(NavGraph graph, Node parentNode, float radius,
-            Material material) {
+    public static void addSticks(
+            NavGraph graph, Node parentNode, float radius, Material material) {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
@@ -194,8 +194,8 @@ final public class NavDebug {
      * null)
      * @return a new orphaned Geometry
      */
-    public static Spatial makeBall(NavVertex vertex, float radius,
-            Material material) {
+    public static Spatial makeBall(
+            NavVertex vertex, float radius, Material material) {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 
@@ -237,8 +237,8 @@ final public class NavDebug {
      * @param material material for geometries that represent arcs (not null)
      * @return a new orphaned Geometry
      */
-    public static Spatial makeStick(NavArc arc, float radius,
-            Material material) {
+    public static Spatial makeStick(
+            NavArc arc, float radius, Material material) {
         Validate.positive(radius, "radius");
         Validate.nonNull(material, "material");
 

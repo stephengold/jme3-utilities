@@ -410,8 +410,8 @@ public class Polygon3f extends CornerSet3f {
      * other.numCorners columns used to record shared sides (updated)
      * @return true if one or more shared sides were found, otherwise false
      */
-    public boolean sharesSideWith(Polygon3f other,
-            boolean[][] storeSharedSides) {
+    public boolean sharesSideWith(
+            Polygon3f other, boolean[][] storeSharedSides) {
         Validate.nonNull(other, "other polygon");
         if (other.getTolerance() != tolerance) {
             throw new IllegalArgumentException("tolerances differ");
@@ -486,8 +486,8 @@ public class Polygon3f extends CornerSet3f {
      * closest location (updated)
      * @return squared distance from location to side (&ge;0)
      */
-    public double squaredDistanceToSide(Vector3f location, int sideIndex,
-            Vector3f storeClosest) {
+    public double squaredDistanceToSide(
+            Vector3f location, int sideIndex, Vector3f storeClosest) {
         Validate.nonNull(location, "location");
         validateIndex(sideIndex, "side index");
 
@@ -569,8 +569,8 @@ public class Polygon3f extends CornerSet3f {
      * @param newDot value for dot product
      * @param newCross vector for cross product (not null, unaffected)
      */
-    private void setCornerProducts(int cornerIndex, double newDot,
-            Vector3f newCross) {
+    private void setCornerProducts(
+            int cornerIndex, double newDot, Vector3f newCross) {
         assert cornerIndex >= 0 : cornerIndex;
         assert cornerIndex < numCorners : cornerIndex;
         assert newCross != null;

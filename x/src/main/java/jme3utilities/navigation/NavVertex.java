@@ -252,8 +252,8 @@ public class NavVertex implements Comparable<NavVertex> {
      * &ge;-1)
      * @return a pre-existing instance, or null if none found
      */
-    public NavArc findOutgoing(ReadXZ horizontalDirection,
-            double cosineTolerance) {
+    public NavArc findOutgoing(
+            ReadXZ horizontalDirection, double cosineTolerance) {
         VectorXZ.validateNonZero(horizontalDirection, "horizontal direction");
         Validate.inRange(cosineTolerance, "cosine tolerance", -1.0, 1.0);
 

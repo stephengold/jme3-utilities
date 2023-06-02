@@ -323,8 +323,8 @@ public class CornerSet3f {
      * other.numCorners columns used to record shared corners (updated)
      * @return true if one or more shared corners were found, otherwise false
      */
-    public boolean sharesCornerWith(CornerSet3f other,
-            boolean[][] storeSharedCorners) {
+    public boolean sharesCornerWith(
+            CornerSet3f other, boolean[][] storeSharedCorners) {
         Validate.nonNull(other, "other corner set");
         if (other.getTolerance() != tolerance) {
             throw new IllegalArgumentException("tolerances differ");

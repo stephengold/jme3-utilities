@@ -112,8 +112,8 @@ public interface Locus3f {
      * @param maxPoints maximum number of control points to use (&ge;2)
      * @return a new path spline, or null if none found
      */
-    Spline3f shortestPath(Vector3f startLocation, Vector3f goalLocation,
-            int maxPoints);
+    Spline3f shortestPath(
+            Vector3f startLocation, Vector3f goalLocation, int maxPoints);
 
     /**
      * Calculate the distance from the specified starting point to the first
