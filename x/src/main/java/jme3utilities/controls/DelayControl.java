@@ -123,8 +123,8 @@ public class DelayControl extends SimpleControl {
             return;
         }
 
-        //Update the time remaining.
-        remainingSeconds -= updateInterval;
+        // Update the time remaining.
+        this.remainingSeconds -= updateInterval;
         if (remainingSeconds < 0f) {
             String name = spatial.getName();
             logger.log(
