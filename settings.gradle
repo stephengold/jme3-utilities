@@ -1,5 +1,5 @@
 /*
- * settings.gradle: global settings shared by all subprojects
+ * settings.gradle: global settings shared by all jme3-utilities subprojects
  */
 
 rootProject.name = 'jme3-utilities'
