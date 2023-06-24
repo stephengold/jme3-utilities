@@ -14,7 +14,7 @@ ext {
     // current versions of libraries:
     jme3utilitiesniftyVersion = '0.9.36-SNAPSHOT'
     jme3utilitiesxVersion = '0.3.3-SNAPSHOT'
-    jme3Version = '3.6.0-stable'
+    jme3Version = '3.6.1-stable'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_7
