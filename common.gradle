@@ -17,8 +17,10 @@ ext {
     jme3Version = '3.6.1-stable'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 checkstyle {
     toolVersion '9.3'
