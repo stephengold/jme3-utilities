@@ -50,13 +50,6 @@ tasks.withType(JavaExec) { // Java runtime options:
     //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
 }
 
-repositories {
-    //mavenLocal() // to find local SNAPSHOTs of libraries
-    mavenCentral()
-    //maven { url 'https://s01.oss.sonatype.org/content/groups/staging' } // to find libraries staged but not yet released
-    //maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' } // to find public SNAPSHOTs of libraries
-}
-
 // custom tasks for creating source/javadoc JARs:
 
 tasks.register('javadocJar', Jar) {
