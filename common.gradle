@@ -50,7 +50,7 @@ tasks.withType(JavaExec).configureEach { // Java runtime options:
     //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
 }
 
-// custom tasks for creating source/javadoc JARs:
+// Register custom tasks for creating source/javadoc JARs:
 
 tasks.register('javadocJar', Jar) {
     archiveClassifier = 'javadoc'
