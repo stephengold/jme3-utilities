@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2020-2022, Stephen Gold
+ Copyright (c) 2020-2023, Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,9 @@ public class TbsDisplaySettings extends DisplaySettings {
     public boolean canApply() {
         boolean result = super.canApply();
         if (result) {
-            AppSettings current = getApplication().getSettings();
+            ActionApplication application
+                    = (ActionApplication) getApplication();
+            AppSettings current = application.getSettings();
 
             boolean currentFull = current.isFullscreen();
             boolean goFull = !currentFull && isFullscreen();
@@ -100,7 +102,9 @@ public class TbsDisplaySettings extends DisplaySettings {
     public String feedbackApplicable() {
         String result = super.feedbackApplicable();
         if (result.isEmpty()) {
-            AppSettings current = getApplication().getSettings();
+            ActionApplication application
+                    = (ActionApplication) getApplication();
+            AppSettings current = application.getSettings();
 
             boolean currentFull = current.isFullscreen();
             boolean goFull = !currentFull && isFullscreen();
