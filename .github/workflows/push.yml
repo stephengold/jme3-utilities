@@ -25,7 +25,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 11
-      - uses: gradle/wrapper-validation-action@v1
+      - uses: gradle/wrapper-validation-action@v2
       - run: ./gradlew build mergedJavadoc --console=plain --no-daemon --stacktrace
 
   Java17-MacOS:
