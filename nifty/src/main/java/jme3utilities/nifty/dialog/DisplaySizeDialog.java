@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2018-2023, Stephen Gold
+ Copyright (c) 2018-2024 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,9 @@ package jme3utilities.nifty.dialog;
 
 import java.util.Locale;
 import java.util.logging.Logger;
+import jme3utilities.DsUtils;
 import jme3utilities.Validate;
 import jme3utilities.math.RectSizeLimits;
-import jme3utilities.ui.DsUtils;
 
 /**
  * Controller for a text-entry dialog box used to input display dimensions.

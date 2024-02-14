@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2019-2023 Stephen Gold
+ Copyright (c) 2019-2024 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ import java.awt.DisplayMode;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jme3utilities.DsUtils;
 import jme3utilities.InitialState;
 import jme3utilities.MyString;
 import jme3utilities.Validate;
@@ -49,7 +50,6 @@ import jme3utilities.nifty.dialog.DialogController;
 import jme3utilities.nifty.dialog.DisplaySizeDialog;
 import jme3utilities.ui.ActionApplication;
 import jme3utilities.ui.DisplaySettings;
-import jme3utilities.ui.DsUtils;
 import jme3utilities.ui.InputMode;
 
 /**
