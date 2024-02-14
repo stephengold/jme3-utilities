@@ -80,7 +80,7 @@ You can restore the project to a pristine state:
 + using Bash or Fish or PowerShell or Zsh: `./gradlew clean`
 + using Windows Command Prompt: `.\gradlew clean`
 
-[Jump to table of contents](#toc)
+[Jump to the table of contents](#toc)
 
 
 <a name="downloads"></a>
@@ -95,7 +95,7 @@ are available from MavenCentral:
 [nifty](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-nifty)
 and [x](https://repo1.maven.org/maven2/com/github/stephengold/jme3-utilities-x/).
 
-[Jump to table of contents](#toc)
+[Jump to the table of contents](#toc)
 
 
 <a name="conventions"></a>
@@ -108,7 +108,7 @@ jMonkeyEngine, however, retain their original names, which began with `com.jme3`
 The source code is compatible with JDK 7.
 The pre-built libraries are compatible with JDK 8.
 
-[Jump to table of contents](#toc)
+[Jump to the table of contents](#toc)
 
 
 <a name="history"></a>
@@ -127,7 +127,7 @@ The evolution of each sub-project is chronicled in its release notes:
 + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
 + [x](https://github.com/stephengold/jme3-utilities/blob/master/x/release-notes.md)
 
-[Jump to table of contents](#toc)
+[Jump to the table of contents](#toc)
 
 
 <a name="acks"></a>
@@ -171,7 +171,7 @@ I'm also grateful to my dear Holly, for keeping me sane.
 If I've misattributed anything or left anyone out, please let me know, so I can
 correct the situation: sgold@sonic.net
 
-[Jump to table of contents](#toc)
+[Jump to the table of contents](#toc)
 
 
 [acorus]: https://github.com/stephengold/Acorus "Acorus Project"
