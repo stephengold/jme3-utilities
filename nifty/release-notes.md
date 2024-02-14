@@ -1,6 +1,6 @@
 # release log for the jme3-utilities-nifty library and related tests
 
-## Version 0.9.37 released on TBD
+## Version 0.9.37 released on 13 February 2024
 
 Base on version 9.0.0 of the Heart library and version 2.0.0
 of the Acorus library.
