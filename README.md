@@ -195,7 +195,7 @@ correct the situation: sgold@sonic.net
 [jme]: https://jmonkeyengine.org "jMonkeyEngine Project"
 [license]: https://github.com/stephengold/jme3-utilities/blob/master/license.txt "jme3-utilities license"
 [markdown]: https://daringfireball.net/projects/markdown "Markdown Project"
-[meld]: https://meldmerge.org "Meld Tool"
+[meld]: https://meldmerge.org "Meld merge tool"
 [minie]: https://stephengold.github.io/Minie/minie/overview.html "Minie Project"
 [mint]: https://linuxmint.com "Linux Mint Project"
 [netbeans]: https://netbeans.org "NetBeans Project"
