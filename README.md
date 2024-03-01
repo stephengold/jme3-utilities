@@ -192,7 +192,7 @@ correct the situation: sgold@sonic.net
 [imgur]: https://imgur.com/ "Imgur"
 [java]: https://en.wikipedia.org/wiki/Java_(programming_language) "Java programming language"
 [jfrog]: https://www.jfrog.com "JFrog"
-[jme]: https://jmonkeyengine.org  "jMonkeyEngine Project"
+[jme]: https://jmonkeyengine.org "jMonkeyEngine Project"
 [license]: https://github.com/stephengold/jme3-utilities/blob/master/license.txt "jme3-utilities license"
 [markdown]: https://daringfireball.net/projects/markdown "Markdown Project"
 [meld]: https://meldmerge.org "Meld Tool"
