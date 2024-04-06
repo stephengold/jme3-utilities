@@ -9,22 +9,22 @@ jobs:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 8
+      - uses: actions/checkout@v4
       - run: ./gradlew build mergedJavadoc --console=plain --no-daemon --stacktrace
 
   Java11-Linux:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 11
+      - uses: actions/checkout@v4
       - uses: gradle/wrapper-validation-action@v2
       - run: ./gradlew build mergedJavadoc --console=plain --no-daemon --stacktrace
 
@@ -32,21 +32,21 @@ jobs:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
     runs-on: macOS-14
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 17
+      - uses: actions/checkout@v4
       - run: ./gradlew build mergedJavadoc --console=plain --no-daemon --stacktrace
 
   Java21-Windows:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 21
+      - uses: actions/checkout@v4
       - run: ./gradlew build mergedJavadoc --console=plain --no-daemon --stacktrace
         shell: bash
