@@ -1,4 +1,4 @@
-// Gradle build script for the jme3-utilities project
+// Gradle script to build the jme3-utilities project
 
 import org.gradle.api.artifacts.*
 

@@ -1,11 +1,13 @@
+// Gradle script to build the jme3-utilities/nifty sub-project
+
 // Note: "common.gradle" in the root project contains additional initialization
 //   for this project. This initialization is applied in the "build.gradle"
 //   of the root project.
 
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'signing'
+    id 'java-library'  // to build JVM libraries
+    id 'maven-publish' // to publish artifacts to Maven repositories
+    id 'signing'       // to sign artifacts for publication
 }
 
 ext {
