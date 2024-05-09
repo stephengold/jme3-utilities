@@ -14,7 +14,7 @@ ext {
     // current versions of libraries:
     jme3utilitiesniftyVersion = '0.9.38-SNAPSHOT'
     jme3utilitiesxVersion = '0.3.3-SNAPSHOT'
-    jme3Version = '3.7.0-alpha3.1'
+    jme3Version = '3.7.0-beta1'
 }
 
 java {
