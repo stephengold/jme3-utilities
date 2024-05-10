@@ -3,7 +3,7 @@
 [The Jme3-utilities Project][utilities] contains Java packages and assets, developed for
 sgold's jMonkeyEngine projects, which might prove useful in similar projects.
 
-It contains 4 sub-projects:
+It contains 4 subprojects:
 
 1. nifty: the `jme3-utilities-nifty` library for using NiftyGUI user
    interfaces with jMonkeyEngine
@@ -11,25 +11,25 @@ It contains 4 sub-projects:
 3. moon-ccbysa: assets for a realistic Moon in `SkyControl`
 4. tests: demos, examples, and test software
 
-The `SkyControl` library, formerly a sub-project,
+The `SkyControl` library, formerly a subproject,
 is now [a separate project at GitHub][skycontrol].
 
-The textures sub-project
+The textures subproject
 is now part of[the SkyControl Project][skycontrol].
 
-The `jme3-utilities-heart` library, formerly a sub-project,
+The `jme3-utilities-heart` library, formerly a subproject,
 is now [Heart], a separate project at GitHub.
 
-The `jme3-utilities-debug` library, formerly a sub-project,
+The `jme3-utilities-debug` library, formerly a subproject,
  is now part of [the Heart Library][heart].
 
-The `jme3-utilities-ui` library, formerly a sub-project, is now [Acorus],
+The `jme3-utilities-ui` library, formerly a subproject, is now [Acorus],
 a separate project at GitHub.
 
-The `Minie` library, formerly a sub-project,
+The `Minie` library, formerly a subproject,
 is now [a separate project at GitHub][minie].
 
-The `Wes` library, formerly a sub-project,
+The `Wes` library, formerly a subproject,
 is now [a separate project at GitHub][wes].
 
 Complete source code (in Java) is provided under
@@ -124,7 +124,7 @@ Since September 2015, the Jme3-utilities Project has been hosted at
 From November 2013 to September 2015, it was hosted at
 [Google Code](https://code.google.com/archive/).
 
-The evolution of each sub-project is chronicled in its release notes:
+The evolution of each subproject is chronicled in its release notes:
 
 + [debug](https://github.com/stephengold/jme3-utilities/blob/master/debug/release-notes.md)
 + [nifty](https://github.com/stephengold/jme3-utilities/blob/master/nifty/release-notes.md)
