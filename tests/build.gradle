@@ -1,4 +1,4 @@
-// Gradle script to build the jme3-utilities/tests sub-project
+// Gradle script to build the "test" subproject of jme3-utilities
 
 // Note: "common.gradle" in the root project contains additional initialization
 //   for this project. This initialization is applied in the "build.gradle"
