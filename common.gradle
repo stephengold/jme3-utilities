@@ -3,20 +3,6 @@
 apply plugin: 'checkstyle' // to analyze Java sourcecode for style violations
 apply plugin: 'java'
 
-ext {
-    group = 'com.github.stephengold'
-    websiteUrl = 'https://github.com/stephengold/jme3-utilities'
-
-    // module coordinates of external dependencies:
-    acorusCoordinates = 'com.github.stephengold:Acorus:2.0.0'
-    heartCoordinates = 'com.github.stephengold:Heart:9.0.0'
-
-    // current versions of libraries:
-    jme3utilitiesniftyVersion = '0.9.38-SNAPSHOT'
-    jme3utilitiesxVersion = '0.3.3-SNAPSHOT'
-    jme3Version = '3.7.0-beta1'
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_7
     targetCompatibility = JavaVersion.VERSION_1_8
