@@ -33,6 +33,9 @@ tasks.register('release') {
 
 jar {
     archiveBaseName = project.ext.baseName
+    doLast {
+        println "using Java ${JavaVersion.current()} (${System.getProperty("java.vendor")})"
+    }
     manifest {
         attributes 'Created-By': "${JavaVersion.current()} (${System.getProperty("java.vendor")})"
     }
