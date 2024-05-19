@@ -16,7 +16,6 @@ ext {
 
 java {
     withJavadocJar()
-    withSourcesJar()
 }
 
 jar { archiveBaseName = project.ext.baseName }
@@ -35,6 +34,7 @@ tasks.register('pom', Copy) {
 publishing {
     publications {
         maven(MavenPublication) {
+            artifact sourcesJar
             artifactId artifact
             from components.java
             groupId rootProject.ext.group

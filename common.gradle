@@ -35,3 +35,9 @@ tasks.withType(JavaExec).configureEach { // Java runtime options:
     //jvmArgs '-Xms512m', '-Xmx512m' // to enlarge the Java heap
     //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
 }
+
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier = 'sources'
+    description 'Creates a JAR of Java sourcecode.'
+    from sourceSets.main.allJava // default is ".allSource", which include resources
+}

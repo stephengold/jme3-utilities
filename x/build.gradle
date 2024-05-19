@@ -22,7 +22,6 @@ dependencies {
 
 java {
     withJavadocJar()
-    withSourcesJar()
 }
 
 // Register publishing tasks:
@@ -81,6 +80,7 @@ tasks.register('pomAsc', Copy) {
 publishing {
     publications {
         maven(MavenPublication) {
+            artifact sourcesJar
             artifactId artifact
             from components.java
             groupId rootProject.ext.group
