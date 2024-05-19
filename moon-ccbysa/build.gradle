@@ -14,6 +14,11 @@ ext {
     baseName = "${artifact}-${version}" // for artifacts
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 jar { archiveBaseName = project.ext.baseName }
 javadocJar { archiveBaseName = project.ext.baseName }
 sourcesJar { archiveBaseName = project.ext.baseName }

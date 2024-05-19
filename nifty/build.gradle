@@ -24,6 +24,11 @@ dependencies {
     api acorusCoordinates
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 javadoc {
     // Disable doclint for JDK15+ to avoid "no comment" warnings.
     if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_15)) {
@@ -87,8 +92,6 @@ tasks.register('pomAsc', Copy) {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact javadocJar
-            artifact sourcesJar
             artifactId artifact
             from components.java
             groupId rootProject.ext.group

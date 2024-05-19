@@ -20,6 +20,11 @@ dependencies {
     api heartCoordinates
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 // Register publishing tasks:
 
 tasks.register('install') {
@@ -76,8 +81,6 @@ tasks.register('pomAsc', Copy) {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact javadocJar
-            artifact sourcesJar
             artifactId artifact
             from components.java
             groupId rootProject.ext.group
