@@ -39,5 +39,5 @@ tasks.withType(JavaExec).configureEach { // Java runtime options:
 tasks.register('sourcesJar', Jar) {
     archiveClassifier = 'sources'
     description 'Creates a JAR of Java sourcecode.'
-    from sourceSets.main.allJava // default is ".allSource", which include resources
+    from sourceSets.main.allJava // default is ".allSource", which includes resources
 }

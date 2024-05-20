@@ -1,6 +1,4 @@
-/*
- * settings.gradle: global settings shared by all jme3-utilities subprojects
- */
+// global build settings for the jme3-utilities project
 
 dependencyResolutionManagement {
     repositories {
@@ -16,7 +14,7 @@ rootProject.name = 'jme3-utilities'
 /*
  * Enumerate subdirectories in the project's root directory that contain a
  * "build.gradle" file. Any subdirectory that contains a "build.gradle" file is
- * automatically a subproject of this project.
+ * automatically included as a subproject.
  */
 def subDirs = rootDir.listFiles(
     new FileFilter() {
