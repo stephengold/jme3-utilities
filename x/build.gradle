@@ -17,7 +17,7 @@ ext {
 }
 
 dependencies {
-    api heartCoordinates
+    api(libs.heart)
 }
 
 java {

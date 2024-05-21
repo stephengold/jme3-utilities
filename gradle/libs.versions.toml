@@ -1,0 +1,25 @@
+## catalog of libraries and plugins used to build the jme3-utilities project
+
+[versions]
+
+checkstyle = "9.3"
+jme = "3.7.0-beta1"
+nifty = "1.4.3"
+
+[libraries]
+
+acorus = "com.github.stephengold:Acorus:2.0.0"
+commons-exec = "org.apache.commons:commons-exec:1.3"
+heart = "com.github.stephengold:Heart:9.0.0"
+jme3-awt-dialogs = { module = "org.jmonkeyengine:jme3-awt-dialogs", version.ref = "jme" }
+jme3-desktop = { module = "org.jmonkeyengine:jme3-desktop", version.ref = "jme" }
+jme3-jogg = { module = "org.jmonkeyengine:jme3-jogg", version.ref = "jme" }
+jme3-lwjgl3 = { module = "org.jmonkeyengine:jme3-lwjgl3", version.ref = "jme" }
+jme3-plugins = { module = "org.jmonkeyengine:jme3-plugins", version.ref = "jme" }
+nifty = { module = "com.github.nifty-gui:nifty", version.ref = "nifty" }
+nifty-controls = { module = "com.github.nifty-gui:nifty-default-controls", version.ref = "nifty" }
+nifty-style-black = { module = "com.github.nifty-gui:nifty-style-black", version.ref = "nifty" }
+
+[bundles]
+
+[plugins]

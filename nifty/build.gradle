@@ -17,11 +17,11 @@ ext {
 }
 
 dependencies {
-    api 'com.github.nifty-gui:nifty:1.4.3'
-    api 'com.github.nifty-gui:nifty-default-controls:1.4.3'
+    api(libs.nifty)
+    api(libs.nifty.controls)
 
-    api heartCoordinates
-    api acorusCoordinates
+    api(libs.heart)
+    api(libs.acorus)
 }
 
 java {
