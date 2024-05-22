@@ -400,6 +400,7 @@
         <!-- Checks for whitespace                        -->
         <!-- See https://checkstyle.org/checks/whitespace -->
         <module name="EmptyForIteratorPad"/>
+        <module name="NoWhitespaceAfter"/>
         <module name="TypecastParenPad"/>
 
         <!-- Modifier checks                            -->
