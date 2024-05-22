@@ -1,17 +1,27 @@
 *.dll
 *.dylib
 *.so
+
+# Ignore Gradle's project-specific cache directory:
 /.gradle/
+
+# Ignore IDE-specific directories:
 /.idea/
 /.nb-gradle/
 /.nb-gradle-properties
+
+# Ignore Gradle's build output directories:
 /build/
 /moon-ccbysa/build/
 /nifty/build/
+
 /nifty/private/
 /tests/build/
 /tests/private/
 /tests/src/main/java/jme3test/
+
+# Ignore the Acorus sandbox:
 /tests/Written Assets/
+
 /ui/build/
 /x/build/
