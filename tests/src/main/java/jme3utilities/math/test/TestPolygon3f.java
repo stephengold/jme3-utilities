@@ -111,59 +111,59 @@ final public class TestPolygon3f {
 
         degenerateCase[0] = new Vector3f[]{}; // null
 
-        degenerateCase[1] = new Vector3f[]{ // 1-gon
+        degenerateCase[1] = new Vector3f[]{// 1-gon
             new Vector3f(1f, 2f, 3f)
         };
 
-        degenerateCase[2] = new Vector3f[]{ // duplicative 2-gon
+        degenerateCase[2] = new Vector3f[]{// duplicative 2-gon
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 0f)
         };
 
-        degenerateCase[3] = new Vector3f[]{ // distinct 2-gon
+        degenerateCase[3] = new Vector3f[]{// distinct 2-gon
             new Vector3f(1f, 4f, 9f),
             new Vector3f(1f, 9f, 4f)
         };
 
-        degenerateCase[4] = new Vector3f[]{ // duplicative triangle
+        degenerateCase[4] = new Vector3f[]{// duplicative triangle
             new Vector3f(3f, 4f, -1f),
             new Vector3f(3f, 4f, 2f),
             new Vector3f(3f, 4f, -1f)
         };
 
-        degenerateCase[5] = new Vector3f[]{ // near-duplicative triangle
+        degenerateCase[5] = new Vector3f[]{// near-duplicative triangle
             new Vector3f(3f, 2f, 0.0005f),
             new Vector3f(5f, 2f, 1f),
             new Vector3f(3f, 2f, 0f)
         };
 
-        degenerateCase[6] = new Vector3f[]{ // small collinear triangle
+        degenerateCase[6] = new Vector3f[]{// small collinear triangle
             new Vector3f(3f, 4f, 12f),
             new Vector3f(2.9f, 4.1f, 11.9f),
             new Vector3f(2.8f, 4.2f, 11.8f)
         };
 
-        degenerateCase[7] = new Vector3f[]{ // lopsided collinear triangle
+        degenerateCase[7] = new Vector3f[]{// lopsided collinear triangle
             new Vector3f(3f, 4f, 12f),
             new Vector3f(2.9999f, 4.0001f, 11.9999f),
             new Vector3f(0f, 0f, 0f)
         };
 
-        degenerateCase[8] = new Vector3f[]{ // small collinear quad
+        degenerateCase[8] = new Vector3f[]{// small collinear quad
             new Vector3f(3f, 4f, 12f),
             new Vector3f(2.9f, 4.1f, 11.9f),
             new Vector3f(2.8f, 4.2f, 11.8f),
             new Vector3f(2.7f, 4.3f, 11.7f)
         };
 
-        degenerateCase[9] = new Vector3f[]{ // duplicative quad in Y-Z plane
+        degenerateCase[9] = new Vector3f[]{// duplicative quad in Y-Z plane
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 1f),
             new Vector3f(3f, 5f, 1f),
             new Vector3f(3f, 4f, 0f)
         };
 
-        degenerateCase[10] = new Vector3f[]{ // duplicative pent in X-Z plane
+        degenerateCase[10] = new Vector3f[]{// duplicative pent in X-Z plane
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(1f, 4f, 0f),
@@ -174,7 +174,7 @@ final public class TestPolygon3f {
         // degenerate non-planar test cases:
         dnpCase = new Vector3f[2][];
 
-        dnpCase[0] = new Vector3f[]{ // non-planar hexagon with dup corner
+        dnpCase[0] = new Vector3f[]{// non-planar hexagon with dup corner
             new Vector3f(1f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
@@ -183,7 +183,7 @@ final public class TestPolygon3f {
             new Vector3f(1f, 4f, 1f)
         };
 
-        dnpCase[1] = new Vector3f[]{ // non-planar pentagon with 180
+        dnpCase[1] = new Vector3f[]{// non-planar pentagon with 180
             new Vector3f(1f, 2f, 1f),
             new Vector3f(1f, 2f, 3f),
             new Vector3f(1f, 2f, 2f),
@@ -194,14 +194,14 @@ final public class TestPolygon3f {
         // generic planar test cases:
         genericCase = new Vector3f[2][];
 
-        genericCase[0] = new Vector3f[]{ // self-intersecting quad
+        genericCase[0] = new Vector3f[]{// self-intersecting quad
             new Vector3f(1f, 9f, 9f),
             new Vector3f(1f, -9f, -9f),
             new Vector3f(2f, 9f, 9f),
             new Vector3f(2f, -9f, -9f)
         };
 
-        genericCase[1] = new Vector3f[]{ // chevron with clipped point
+        genericCase[1] = new Vector3f[]{// chevron with clipped point
             new Vector3f(1f, 0f, 2f),
             new Vector3f(0f, 0f, 0f),
             new Vector3f(1f, 0f, -2f),
@@ -212,14 +212,14 @@ final public class TestPolygon3f {
         // generic non-planar test cases:
         gnpCase = new Vector3f[2][];
 
-        gnpCase[0] = new Vector3f[]{ // skewed quad
+        gnpCase[0] = new Vector3f[]{// skewed quad
             new Vector3f(0f, 9f, 9f),
             new Vector3f(0f, 12f, 9f),
             new Vector3f(1f, 12f, 6f),
             new Vector3f(0f, 9f, 6f)
         };
 
-        gnpCase[1] = new Vector3f[]{ // non-planar hexagon with redundant corner
+        gnpCase[1] = new Vector3f[]{// non-planar hexagon with redundant corner
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
@@ -231,40 +231,40 @@ final public class TestPolygon3f {
         // simple test cases:
         simpleCase = new Vector3f[6][];
 
-        simpleCase[0] = new Vector3f[]{ // 3-4-5 triangle in X-Y plane
+        simpleCase[0] = new Vector3f[]{// 3-4-5 triangle in X-Y plane
             new Vector3f(0f, 9f, 9f),
             new Vector3f(0f, 12f, 9f),
             new Vector3f(4f, 12f, 9f)
         };
 
-        simpleCase[1] = new Vector3f[]{ // square in Y-Z plane
+        simpleCase[1] = new Vector3f[]{// square in Y-Z plane
             new Vector3f(0f, 9f, 9f),
             new Vector3f(0f, 12f, 9f),
             new Vector3f(0f, 12f, 6f),
             new Vector3f(0f, 9f, 6f)
         };
 
-        simpleCase[2] = new Vector3f[]{ // horizontal concave chevron
+        simpleCase[2] = new Vector3f[]{// horizontal concave chevron
             new Vector3f(1f, 0f, 2f),
             new Vector3f(0f, 0f, 0f),
             new Vector3f(1f, 0f, -2f),
             new Vector3f(-1f, 0f, 0f)
         };
 
-        simpleCase[3] = new Vector3f[]{ // long base passes origin
+        simpleCase[3] = new Vector3f[]{// long base passes origin
             new Vector3f(1f, 9f, 9f),
             new Vector3f(1f, -9f, -9f),
             new Vector3f(2f, 0f, 0f)
         };
 
-        simpleCase[4] = new Vector3f[]{ // horizontal quad with 180
+        simpleCase[4] = new Vector3f[]{// horizontal quad with 180
             new Vector3f(1f, 4f, 0f),
             new Vector3f(2f, 4f, 0f),
             new Vector3f(3f, 4f, 0f),
             new Vector3f(2f, 4f, 1f)
         };
 
-        simpleCase[5] = new Vector3f[]{ // four-pointed star
+        simpleCase[5] = new Vector3f[]{// four-pointed star
             new Vector3f(1f, 2f, 0f),
             new Vector3f(0f, 6f, 0f),
             new Vector3f(-1f, 2f, 0f),
