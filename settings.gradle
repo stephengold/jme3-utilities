@@ -1,4 +1,4 @@
-// global build settings for the jme3-utilities project
+// global build settings shared by all jme3-utilities subprojects
 
 dependencyResolutionManagement {
     repositories {
