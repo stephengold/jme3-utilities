@@ -21,7 +21,7 @@ The `jme3-utilities-heart` library, formerly a subproject,
 is now [Heart], a separate project at GitHub.
 
 The `jme3-utilities-debug` library, formerly a subproject,
- is now part of [the Heart Library][heart].
+is now part of [the Heart Library][heart].
 
 The `jme3-utilities-ui` library, formerly a subproject, is now [Acorus],
 a separate project at GitHub.
