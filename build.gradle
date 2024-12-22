@@ -25,12 +25,12 @@ configurations.configureEach {
 
 tasks.register('checkstyle') {
     dependsOn ':nifty:checkstyleMain', ':tests:checkstyleMain', ':x:checkstyleMain'
-    description 'Checks the style of all Java sourcecode.'
+    description = 'Checks the style of all Java sourcecode.'
 }
 
 def mergedJavadocSubprojects = [ ":nifty", ":x" ]
 tasks.register('mergedJavadoc', Javadoc) {
-    description 'Creates Javadoc from all the projects.'
+    description = 'Creates Javadoc from all the projects.'
     destinationDir = new File(project.buildDir, 'merged-javadoc')
     title = 'All modules'
 
