@@ -25,7 +25,7 @@ sourcesJar { archiveBaseName = project.ext.baseName }
 build.dependsOn('pom')
 tasks.register('pom', Copy) {
     dependsOn 'generatePomFileForMavenPublication'
-    description 'Copies the Maven POM to build/libs.'
+    description = 'Copies the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml"
     into "${buildDir}/libs"
     rename 'pom-default.xml', baseName + '.pom'
@@ -35,9 +35,9 @@ publishing {
     publications {
         maven(MavenPublication) {
             artifact sourcesJar
-            artifactId artifact
+            artifactId = artifact
             from components.java
-            groupId rootProject.ext.group
+            groupId = rootProject.ext.group
             pom {
                 licenses {
                     license {
@@ -47,7 +47,7 @@ publishing {
                     }
                 }
             }
-            version project.ext.version
+            version = project.ext.version
         }
     }
 }

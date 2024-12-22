@@ -48,28 +48,28 @@ sourcesJar { archiveBaseName = project.ext.baseName }
 assemble.dependsOn('module', 'moduleAsc', 'pom', 'pomAsc')
 tasks.register('module', Copy) {
     dependsOn 'generateMetadataFileForMavenPublication'
-    description 'Copies the module metadata to build/libs.'
+    description = 'Copies the module metadata to build/libs.'
     from "${buildDir}/publications/maven/module.json"
     into "${buildDir}/libs"
     rename 'module.json', project.ext.baseName + '.module'
 }
 tasks.register('moduleAsc', Copy) {
     dependsOn 'signMavenPublication'
-    description 'Copies the signature of the module metadata to build/libs.'
+    description = 'Copies the signature of the module metadata to build/libs.'
     from "${buildDir}/publications/maven/module.json.asc"
     into "${buildDir}/libs"
     rename 'module.json.asc', project.ext.baseName + '.module.asc'
 }
 tasks.register('pom', Copy) {
     dependsOn 'generatePomFileForMavenPublication'
-    description 'Copies the Maven POM to build/libs.'
+    description = 'Copies the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml"
     into "${buildDir}/libs"
     rename 'pom-default.xml', project.ext.baseName + '.pom'
 }
 tasks.register('pomAsc', Copy) {
     dependsOn 'signMavenPublication'
-    description 'Copies the signature of the Maven POM to build/libs.'
+    description = 'Copies the signature of the Maven POM to build/libs.'
     from "${buildDir}/publications/maven/pom-default.xml.asc"
     into "${buildDir}/libs"
     rename 'pom-default.xml.asc', project.ext.baseName + '.pom.asc'
@@ -79,9 +79,9 @@ publishing {
     publications {
         maven(MavenPublication) {
             artifact sourcesJar
-            artifactId artifact
+            artifactId = artifact
             from components.java
-            groupId rootProject.ext.group
+            groupId = rootProject.ext.group
             pom {
                 description = 'An experimental library for jMonkeyEngine.'
                 developers {
@@ -105,7 +105,7 @@ publishing {
                 }
                 url = rootProject.ext.websiteUrl
             }
-            version project.ext.version
+            version = project.ext.version
         }
     }
     // Staging to OSSRH relies on the existence of 2 properties

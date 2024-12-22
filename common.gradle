@@ -9,7 +9,7 @@ java {
 }
 
 checkstyle {
-    toolVersion libs.versions.checkstyle.get()
+    toolVersion = libs.versions.checkstyle.get()
 }
 
 tasks.withType(JavaCompile).configureEach { // Java compile-time options:
@@ -38,6 +38,6 @@ tasks.withType(JavaExec).configureEach { // Java runtime options:
 
 tasks.register('sourcesJar', Jar) {
     archiveClassifier = 'sources'
-    description 'Creates a JAR of Java sourcecode.'
+    description = 'Creates a JAR of Java sourcecode.'
     from sourceSets.main.allJava // default is ".allSource", which includes resources
 }
