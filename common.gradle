@@ -26,11 +26,16 @@ tasks.withType(JavaCompile).configureEach { // Java compile-time options:
     }
 }
 
+Boolean enableNativeAccess = JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)
+
 tasks.withType(JavaExec).configureEach { // Java runtime options:
     //args '--verbose' // to enable additional log output
     classpath sourceSets.main.runtimeClasspath
     dependsOn 'installDist'
     enableAssertions = true
+    if (enableNativeAccess) {
+        jvmArgs '--enable-native-access=ALL-UNNAMED' // suppress System::load() warning
+    }
     //jvmArgs '-verbose:gc'
     //jvmArgs '-Xms512m', '-Xmx512m' // to enlarge the Java heap
     //jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=10'
