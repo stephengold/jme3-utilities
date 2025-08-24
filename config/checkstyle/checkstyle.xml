@@ -13,6 +13,10 @@
     <!-- See https://checkstyle.org/checks/javadoc/javadocpackage.html -->
     <module name="JavadocPackage"/>
 
+    <!-- Miscellaneous checks:                  -->
+    <!-- See https://checkstyle.org/checks/misc -->
+    <module name="NewlineAtEndOfFile"/>
+
     <!-- Regexp checks:                           -->
     <!-- See https://checkstyle.org/checks/regexp -->
     <module name="RegexpSingleline">
@@ -54,6 +58,8 @@
             <property name="id" value="AnnotationLocationVariables"/>
             <property name="tokens" value="VARIABLE_DEF"/>
         </module>
+        <module name="AnnotationUseStyle"/>
+        <module name="MissingDeprecated"/>
 
         <!-- Checks for blocks:                       -->
         <!-- See https://checkstyle.org/checks/blocks -->
@@ -95,10 +101,18 @@
 
         <!-- Checks for common coding problems:       -->
         <!-- See https://checkstyle.org/checks/coding -->
+        <module name="AvoidNoArgumentSuperConstructorCall"/>
+        <module name="ConstructorsDeclarationGrouping"/>
+        <module name="CovariantEquals"/>
+        <module name="DefaultComesLast"/>
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
         <module name="FallThrough"/>
+        <module name="HiddenField">
+            <property name="tokens" value="VARIABLE_DEF"/>
+        </module>
         <module name="IllegalInstantiation"/>
+        <module name="IllegalThrows"/>
         <module name="IllegalToken">
             <property name="tokens" value="LITERAL_NATIVE, POST_DEC, POST_INC, STATIC_IMPORT"/>
         </module>
@@ -107,6 +121,7 @@
             <property name="message" value="Use special escape sequence instead of octal value or Unicode escaped value."/>
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
         </module>
+        <module name="IllegalType"/>
         <module name="MissingSwitchDefault"/>
         <module name="MultipleVariableDeclarations"/>
         <module name="NoFinalizer"/>
@@ -115,6 +130,7 @@
         <!-- Checks for imports:                       -->
         <!-- See https://checkstyle.org/checks/imports -->
         <module name="AvoidStarImport"/>
+        <module name="AvoidStaticImport"/>
         <module name="CustomImportOrder">
             <property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE"/>
             <property name="separateLineBetweenGroups" value="true"/>
@@ -187,6 +203,7 @@
             <property name="lineWrappingIndentation" value="4"/>
             <property name="throwsIndent" value="4"/>
         </module>
+        <module name="NoCodeInFile"/>
         <module name="OuterTypeFilename"/>
         <module name="UpperEll"/>
 
@@ -260,6 +277,17 @@
             <message key="name.invalidPattern" value="Type name ''{0}'' must match pattern ''{1}''."/>
         </module>
 
+        <!-- Regexp checks:                           -->
+        <!-- See https://checkstyle.org/checks/regexp -->
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="static (abstract|final|native|package|private|protected)|(native|package|private|protected) (abstract|final)"/>
+            <property name="message" value="Modifiers must appear in alphabetical order."/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="\{[ ]+\}"/>
+            <property name="message" value="Empty blocks must not contain spaces."/>
+        </module>
+
         <!-- Checks for size violations:             -->
         <!-- See https://checkstyle.org/checks/sizes -->
         <module name="MethodLength">
@@ -271,6 +299,7 @@
 
         <!-- Checks for whitespace:                       -->
         <!-- See https://checkstyle.org/checks/whitespace -->
+        <module name="EmptyForInitializerPad"/>
         <module name="EmptyForIteratorPad"/>
         <module name="EmptyLineSeparator">
             <property name="allowNoEmptyLineBetweenFields" value="true"/>
