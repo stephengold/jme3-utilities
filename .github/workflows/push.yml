@@ -39,14 +39,14 @@ jobs:
       - uses: actions/checkout@v5
       - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
 
-  Java24-Windows:
+  Java25-Windows:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
     runs-on: windows-2025
     steps:
       - uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
-          java-version: 24
+          distribution: 'liberica'
+          java-version: 25
       - uses: actions/checkout@v5
       - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
         shell: bash
