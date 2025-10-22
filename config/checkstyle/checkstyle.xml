@@ -20,7 +20,7 @@
     <!-- Regexp checks:                           -->
     <!-- See https://checkstyle.org/checks/regexp -->
     <module name="RegexpSingleline">
-        <property name="format" value="\s+$"/>
+        <property name="format" value="\s$"/>
         <property name="message" value="Line has trailing whitespace."/>
     </module>
 
@@ -176,7 +176,7 @@
         <module name="RequireEmptyLineBeforeBlockTagGroup"/>
         <module name="SingleLineJavadoc"/>
         <module name="SummaryJavadoc">
-            <property name="forbiddenSummaryFragments" value="^@return the *|^This method returns |^A [{]@code [a-zA-Z0-9]+[}]( is a )"/>
+            <property name="forbiddenSummaryFragments" value="^@return the *|^This method returns |^A [{]@code [0-9A-Za-z]+[}]( is a )"/>
             <property name="period" value=""/>
         </module>
 
@@ -279,7 +279,7 @@
         <!-- Regexp checks:                           -->
         <!-- See https://checkstyle.org/checks/regexp -->
         <module name="RegexpSinglelineJava">
-            <property name="format" value="static (abstract|final|native|package|private|protected)|(native|package|private|protected) (abstract|final)"/>
+            <property name="format" value="static (abstract|final|package|private|protected)|(package|private|protected) (abstract|final)"/>
             <property name="message" value="Modifiers must appear in alphabetical order."/>
         </module>
         <module name="RegexpSinglelineJava">
