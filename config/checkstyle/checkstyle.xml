@@ -26,9 +26,10 @@
 
     <!-- Checks for size violations:             -->
     <!-- See https://checkstyle.org/checks/sizes -->
-    <module name="FileLength"/>
+    <module name="FileLength">
+        <property name="max" value="999"/>
+    </module>
     <module name="LineLength">
-        <property name="fileExtensions" value="java"/>
         <property name="max" value="80"/>
     </module>
 
@@ -168,9 +169,10 @@
         </module>
         <module name="MissingJavadocMethod">
             <property name="allowedAnnotations" value=""/>
+            <property name="scope" value="private"/>
         </module>
         <module name="MissingJavadocType">
-            <property name="scope" value="protected"/>
+            <property name="scope" value="private"/>
         </module>
         <module name="NonEmptyAtclauseDescription"/>
         <module name="RequireEmptyLineBeforeBlockTagGroup"/>
@@ -255,7 +257,7 @@
             <message key="name.invalidPattern" value="Package name ''{0}'' must match pattern ''{1}''."/>
         </module>
         <module name="ParameterName">
-            <property name="format" value="^[a-z][0-9A-Za-z]{0,26}$"/>
+            <property name="format" value="^[a-z][0-9A-Za-z]{0,25}$"/>
             <message key="name.invalidPattern" value="Parameter name ''{0}'' must match pattern ''{1}''."/>
         </module>
         <module name="PatternVariableName">
