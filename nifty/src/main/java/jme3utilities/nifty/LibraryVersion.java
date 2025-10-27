@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2024 Stephen Gold
+ Copyright (c) 2017-2025 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-public final class LibraryVersion {
+final public class LibraryVersion {
     // *************************************************************************
     // constants and loggers
 
