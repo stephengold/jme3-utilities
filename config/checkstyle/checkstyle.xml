@@ -29,9 +29,7 @@
     <module name="FileLength">
         <property name="max" value="999"/>
     </module>
-    <module name="LineLength">
-        <property name="max" value="80"/>
-    </module>
+    <module name="LineLength"/>
 
     <!-- Checks for whitespace:                       -->
     <!-- See https://checkstyle.org/checks/whitespace -->
@@ -254,7 +252,7 @@
             <message key="name.invalidPattern" value="Method type name ''{0}'' must match pattern ''{1}''."/>
         </module>
         <module name="PackageName">
-            <property name="format" value="^[a-z][a-z3.]*[a-z]$"/>
+            <property name="format" value="^[a-z][.3a-z]*[a-z]$"/>
             <message key="name.invalidPattern" value="Package name ''{0}'' must match pattern ''{1}''."/>
         </module>
         <module name="ParameterName">
