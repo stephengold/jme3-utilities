@@ -98,7 +98,8 @@
         <module name="MutableException"/>
         <module name="OneTopLevelClass"/>
         <module name="ThrowsCount">
-            <property name="max" value="1"/>
+            <property name="ignorePrivateMethods" value="false"/>
+            <property name="max" value="0"/>
         </module>
 
         <!-- Checks for common coding problems:       -->
