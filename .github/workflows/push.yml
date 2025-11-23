@@ -13,7 +13,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 17
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: gradle/actions/wrapper-validation@v5
       - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
 
@@ -25,7 +25,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 21
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
 
   Java25-Windows:
@@ -36,6 +36,6 @@ jobs:
         with:
           distribution: 'liberica'
           java-version: 25
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
         shell: bash
