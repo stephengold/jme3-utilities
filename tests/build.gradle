@@ -23,10 +23,10 @@ dependencies {
     runtimeOnly(libs.jme3.jogg)
     runtimeOnly(libs.jme3.plugins)
 
-    //implementation "com.github.stephengold:jme3-utilities-nifty:$jme3utilitiesniftyVersion" // for published library
+    //implementation 'com.github.stephengold:jme3-utilities-nifty:' + providers.gradleProperty('jme3utilitiesniftyVersion').get() // for published library
     implementation project(':nifty') // for local library build
 
-    //implementation "com.github.stephengold:jme3-utilities-x:$jme3utilitiesxVersion" // for published library
+    //implementation 'com.github.stephengold:jme3-utilities-x:' + providers.gradleProperty('jme3utilitiesxVersion').get() // for published library
     implementation project(':x') // for local library build
 }
 

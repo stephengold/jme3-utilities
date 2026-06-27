@@ -12,7 +12,7 @@ plugins {
 
 ext {
     artifact = 'jme3-utilities-nifty'
-    version = jme3utilitiesniftyVersion
+    version = providers.gradleProperty('jme3utilitiesniftyVersion').get()
     baseName = "${artifact}-${version}" // for artifacts
 }
 

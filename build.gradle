@@ -9,10 +9,6 @@ plugins {
 ext {
     group = 'com.github.stephengold'
     websiteUrl = 'https://github.com/stephengold/jme3-utilities'
-
-    // current versions of libraries:
-    jme3utilitiesniftyVersion = '0.9.38-SNAPSHOT'
-    jme3utilitiesxVersion = '0.3.3-SNAPSHOT'
 }
 
 subprojects {
