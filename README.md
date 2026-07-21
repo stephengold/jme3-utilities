@@ -179,7 +179,7 @@ correct the situation: sgold@sonic.net
 
 
 [acorus]: https://github.com/stephengold/Acorus "Acorus Project"
-[adoptium]: https://adoptium.net/releases.html "Adoptium Project"
+[adoptium]: https://adoptium.net/temurin/releases/ "Adoptium Project"
 [ant]: https://ant.apache.org "Apache Ant Project"
 [checkstyle]: https://checkstyle.org "Checkstyle"
 [chrome]: https://www.google.com/chrome "Chrome"
