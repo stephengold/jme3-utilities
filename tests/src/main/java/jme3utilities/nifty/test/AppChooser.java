@@ -267,6 +267,7 @@ final public class AppChooser extends GuiApplication {
         Class<?> mainClass = mainClasses[chosenAppIndex];
         String mainClassName = mainClass.getName();
         commandLine.addArgument(mainClassName);
+        logger.warning("Execute " + mainClassName);
 
         DefaultExecutor.Builder builder = new DefaultExecutor.Builder();
         ExecuteStreamHandler handler = new PumpStreamHandler();
