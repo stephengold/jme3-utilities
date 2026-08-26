@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022-2023, Stephen Gold
+ Copyright (c) 2022-2026 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,8 @@ import com.jme3.system.Platform;
 import de.lessvoid.nifty.controls.Button;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jme3utilities.Heart;
@@ -47,6 +49,8 @@ import jme3utilities.ui.InputMode;
 import jme3utilities.ui.UiVersion;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteStreamHandler;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.lwjgl.system.Configuration;
 
 /**
@@ -264,7 +268,13 @@ final public class AppChooser extends GuiApplication {
         String mainClassName = mainClass.getName();
         commandLine.addArgument(mainClassName);
 
-        DefaultExecutor executor = new DefaultExecutor();
+        DefaultExecutor.Builder builder = new DefaultExecutor.Builder();
+        ExecuteStreamHandler handler = new PumpStreamHandler();
+        Path workingDirectoryPath = Paths.get(".");
+        DefaultExecutor executor = builder
+                .setExecuteStreamHandler(handler)
+                .setWorkingDirectory(workingDirectoryPath)
+                .get();
         try {
             executor.execute(commandLine);
             // ignore the return code
