@@ -78,7 +78,7 @@ final public class AppChooser extends GuiApplication {
     final private static Logger logger
             = Logger.getLogger(AppChooser.class.getName());
     /**
-     * action prefix to choose an app
+     * action prefix to choose an app from a popup menu
      */
     final private static String apChooseApp = "choose app ";
     /**
@@ -91,11 +91,11 @@ final public class AppChooser extends GuiApplication {
      */
     final private static String asChooseApp = "choose app";
     /**
-     * action string to delete any persistent settings of the selected app
+     * action string to delete any persistent settings of the chosen app
      */
     final private static String asDeleteSettings = "delete settings";
     /**
-     * action string to execute the selected app
+     * action string to execute the chosen app
      */
     final private static String asExecute = "execute";
     // *************************************************************************
@@ -288,7 +288,8 @@ final public class AppChooser extends GuiApplication {
      * Look for the shell script (or batch file) to execute in
      * "./build/install/tests/bin".
      *
-     * @return a new instance
+     * @return a new file instance that refers to a pre-existing script file
+     * (not null)
      */
     private static File findScriptToExecute() {
         File buildDir = new File("build");
