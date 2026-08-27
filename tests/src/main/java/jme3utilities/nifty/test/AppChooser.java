@@ -58,7 +58,7 @@ import org.lwjgl.system.Configuration;
  *
  * @author Stephen Gold sgold@sonic.net
  */
-final public class AppChooser extends GuiApplication {
+final class AppChooser extends GuiApplication {
     // *************************************************************************
     // constants and loggers
 
@@ -136,7 +136,7 @@ final public class AppChooser extends GuiApplication {
             Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
         }
 
-        String title = applicationName + " " + MyString.join(arguments);
+        final String title = applicationName + " " + MyString.join(arguments);
         AppChooser application = new AppChooser();
         Heart.parseAppArgs(application, arguments);
 
@@ -261,7 +261,7 @@ final public class AppChooser extends GuiApplication {
     /**
      * Execute the chosen app.
      */
-    private void executeChosenApp() {
+    private static void executeChosenApp() {
         CommandLine commandLine = new CommandLine(script);
 
         Class<?> mainClass = mainClasses[chosenAppIndex];
