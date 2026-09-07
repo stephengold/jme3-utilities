@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2023, Stephen Gold
+ Copyright (c) 2017-2026 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -277,7 +277,7 @@ public class Shell3f implements Locus3f {
         Validate.nonNegative(innerRadius, "inner radius");
         if (outerRadius < innerRadius) {
             logger.log(Level.SEVERE, "innerRadius={0}, outerRadius={1}",
-                    new Object[]{innerRadius, outerRadius});
+                    new Object[] {innerRadius, outerRadius});
             throw new IllegalArgumentException(
                     "Inner radius must not exceed outer radius.");
         }

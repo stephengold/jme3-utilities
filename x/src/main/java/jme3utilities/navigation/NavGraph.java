@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014-2023, Stephen Gold
+ Copyright (c) 2014-2026 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -274,7 +274,7 @@ public class NavGraph {
         Validate.nonNegative(minHopCount, "count");
         if (minHopCount > maxHopCount) {
             logger.log(Level.SEVERE, "min={0} max={1}",
-                    new Object[]{minHopCount, maxHopCount});
+                    new Object[] {minHopCount, maxHopCount});
             throw new IllegalArgumentException("min should exceed max");
         }
         validateMember(startVertex, "start vertex");
@@ -671,7 +671,7 @@ public class NavGraph {
                 what = description;
             }
 
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, arc});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[] {what, arc});
             String message = String.format("%s must be a member.", what);
             throw new IllegalArgumentException(message);
         }
@@ -695,7 +695,7 @@ public class NavGraph {
                 what = description;
             }
 
-            logger.log(Level.SEVERE, "{0}={1}", new Object[]{what, vertex});
+            logger.log(Level.SEVERE, "{0}={1}", new Object[] {what, vertex});
             String message = String.format("%s must be a member.", what);
             throw new IllegalArgumentException(message);
         }

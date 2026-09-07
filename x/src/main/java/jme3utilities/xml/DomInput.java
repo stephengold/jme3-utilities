@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2022, Stephen Gold
+ Copyright (c) 2013-2026 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -114,7 +114,7 @@ final public class DomInput {
         if (attr == null) {
             logger.log(Level.SEVERE,
                     "Attribute {0} was missing from XML document, set to {1}.",
-                    new Object[]{
+                    new Object[] {
                         MyString.quote(name), defaultValue
                     });
             return defaultValue;

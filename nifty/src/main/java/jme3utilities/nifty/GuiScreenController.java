@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2023 Stephen Gold
+ Copyright (c) 2013-2026 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -167,7 +167,7 @@ public class GuiScreenController extends PopScreenController {
         if (button == null) {
             String qnid = MyString.quote(niftyId);
             logger.log(Level.SEVERE, "missing button {0} in {1}",
-                    new Object[]{
+                    new Object[] {
                         qnid, MyString.quote(getScreenId())
                     });
             throw new IllegalArgumentException("missing button: " + qnid);
@@ -192,7 +192,7 @@ public class GuiScreenController extends PopScreenController {
         if (box == null) {
             String qnid = MyString.quote(niftyId);
             logger.log(Level.SEVERE, "missing check box {0} in {1}",
-                    new Object[]{
+                    new Object[] {
                         qnid, MyString.quote(getScreenId())
                     });
             throw new IllegalArgumentException("missing check box: " + qnid);
@@ -216,7 +216,7 @@ public class GuiScreenController extends PopScreenController {
         Slider slider = screen.findNiftyControl(niftyId, Slider.class);
         if (slider == null) {
             String qnid = MyString.quote(niftyId);
-            logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[]{
+            logger.log(Level.SEVERE, "missing slider {0} in {1}", new Object[] {
                 qnid, MyString.quote(getScreenId())
             });
             throw new IllegalArgumentException("missing slider: " + qnid);
@@ -554,7 +554,7 @@ public class GuiScreenController extends PopScreenController {
             button.select();
         } catch (NullPointerException exception) {
             logger.log(Level.WARNING, "screen {0} lacks radio button {1}",
-                    new Object[]{
+                    new Object[] {
                         MyString.quote(getScreenId()),
                         MyString.quote(elementId)
                     });
@@ -580,7 +580,7 @@ public class GuiScreenController extends PopScreenController {
             }
         } catch (NullPointerException exception) {
             logger.log(Level.WARNING, "screen {0} lacks radio button {1}",
-                    new Object[]{
+                    new Object[] {
                         MyString.quote(getScreenId()),
                         MyString.quote(elementId)
                     });
@@ -634,7 +634,7 @@ public class GuiScreenController extends PopScreenController {
         Element element = getScreen().findElementById(elementId);
         if (element == null) {
             logger.log(Level.WARNING, "screen {0} lacks element {1}",
-                    new Object[]{
+                    new Object[] {
                         MyString.quote(getScreenId()),
                         MyString.quote(elementId)
                     });

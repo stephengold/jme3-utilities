@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2013-2023, Stephen Gold
+ Copyright (c) 2013-2026 Stephen Gold
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -206,7 +206,7 @@ abstract public class GuiApplication extends ActionApplication {
         String assetPath = "Interface/Nifty/popup-menu.xml";
         nifty.fromXmlWithoutStartScreen(assetPath);
 
-        for (String dialogName : new String[]{
+        for (String dialogName : new String[] {
             "confirm", "info10", "multiSelect",
             "text-and-check", "text-and-slider", "text-entry"
         }) {
