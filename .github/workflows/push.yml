@@ -29,14 +29,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
 
-  Java26-Windows:
+  Java27-Windows:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
     runs-on: windows-2025
     steps:
       - uses: actions/setup-java@v6
         with:
           distribution: 'liberica'
-          java-version: 26
+          java-version: 27
       - uses: actions/checkout@v7
       - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
