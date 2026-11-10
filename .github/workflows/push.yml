@@ -12,10 +12,12 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: 'zulu'
-          java-version: 17
+          java-version: '17'
       - uses: actions/checkout@v7
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
+      - run: |
+          ./gradlew build mergedJavadoc install \
+            --console=plain --stacktrace
 
   Java21-MacOS:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
@@ -24,10 +26,12 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: 'zulu'
-          java-version: 21
+          java-version: '21'
       - uses: actions/checkout@v7
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
+      - run: |
+          ./gradlew build mergedJavadoc install \
+            --console=plain --stacktrace
 
   Java27-Windows:
     if: contains(toJson(github.event.commits), '[ci skip] ') == false
@@ -36,8 +40,10 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: 'liberica'
-          java-version: 27
+          java-version: '27'
       - uses: actions/checkout@v7
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew build mergedJavadoc install --console=plain --stacktrace
+      - run: |
+          ./gradlew build mergedJavadoc install \
+            --console=plain --stacktrace
         shell: bash
